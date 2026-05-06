@@ -1,0 +1,16 @@
+.DS_Store
+
+# Editor settings
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local env files
+.env
+.env.*
+
+# Temporary files
+*.log
