@@ -30,21 +30,18 @@ This repository is compatible with:
 Compatibility mapping:
 
 - `Codex` uses `andy-coding/SKILL.md`
+- `Claude Code` uses `andy-coding/SKILL.md`
 - `OpenCode` uses `andy-coding/SKILL.md`
-- `Claude Code` uses `.claude/agents/andy-coding.md`
 
 Notes:
 
 - `agents/openai.yaml` mainly provides better UI metadata for Codex.
-- `SKILL.md` and `references/` contain the shared portable content for Codex and OpenCode.
-- `.claude/agents/andy-coding.md` is the Claude Code specific adaptation for its subagent mechanism.
+- `SKILL.md` and `references/` contain the shared portable content for all three runtimes.
+- `Claude Code` and `OpenCode` both support directory-based `SKILL.md` skills.
 
 ## Repository Structure
 
 ```text
-.claude/
-  agents/
-    andy-coding.md
 andy-coding/
   SKILL.md
   agents/openai.yaml
@@ -69,8 +66,8 @@ cp -R andy-coding "${CODEX_HOME:-$HOME/.codex}/skills/"
 ### 2. Install for Claude Code
 
 ```bash
-mkdir -p "$HOME/.claude/agents"
-cp .claude/agents/andy-coding.md "$HOME/.claude/agents/"
+mkdir -p "$HOME/.claude/skills"
+cp -R andy-coding "$HOME/.claude/skills/"
 ```
 
 ### 3. Install for OpenCode
@@ -98,7 +95,7 @@ If you want one skill to work across `Codex`, `Claude Code`, and `OpenCode`, kee
 The lowest-maintenance setup is:
 
 1. Install `Codex` to `${CODEX_HOME:-$HOME/.codex}/skills/andy-coding`
-2. Install `Claude Code` to `~/.claude/agents/andy-coding.md`
+2. Install `Claude Code` to `~/.claude/skills/andy-coding`
 3. Install `OpenCode` to `~/.config/opencode/skills/andy-coding`
 4. If you prefer OpenCode's Claude-compatible path, install it to `~/.claude/skills/andy-coding`
 
@@ -114,12 +111,12 @@ Use $andy-coding to implement a new feature with a brief plan first, then verify
 
 ### Claude Code
 
-Use it through Claude Code's subagent mechanism. After installation, `andy-coding` is available as a dedicated agent for matching tasks.
+Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
 
 Explicit example:
 
 ```text
-Use the andy-coding subagent to design and implement this feature, then verify it and update docs in Chinese.
+/andy-coding
 ```
 
 ### OpenCode

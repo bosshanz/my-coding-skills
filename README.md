@@ -30,21 +30,18 @@ English version: [README.en.md](./README.en.md)
 兼容方式如下：
 
 - `Codex` 使用 `andy-coding/SKILL.md`
+- `Claude Code` 使用 `andy-coding/SKILL.md`
 - `OpenCode` 使用 `andy-coding/SKILL.md`
-- `Claude Code` 使用 `.claude/agents/andy-coding.md`
 
 说明：
 
 - `agents/openai.yaml` 主要给 Codex 提供更好的 UI 展示元数据。
-- `SKILL.md` 和 `references/` 是 Codex / OpenCode 共享的主体内容。
-- `.claude/agents/andy-coding.md` 是针对 Claude Code subagent 机制的适配版本。
+- `SKILL.md` 和 `references/` 是三种运行时共享的主体内容。
+- `Claude Code` 和 `OpenCode` 都支持 `SKILL.md` 目录式 Skills。
 
 ## 目录结构
 
 ```text
-.claude/
-  agents/
-    andy-coding.md
 andy-coding/
   SKILL.md
   agents/openai.yaml
@@ -69,8 +66,8 @@ cp -R andy-coding "${CODEX_HOME:-$HOME/.codex}/skills/"
 ### 2. 安装到 Claude Code
 
 ```bash
-mkdir -p "$HOME/.claude/agents"
-cp .claude/agents/andy-coding.md "$HOME/.claude/agents/"
+mkdir -p "$HOME/.claude/skills"
+cp -R andy-coding "$HOME/.claude/skills/"
 ```
 
 ### 3. 安装到 OpenCode
@@ -98,7 +95,7 @@ cp -R andy-coding "$HOME/.claude/skills/"
 最省维护成本的方式是：
 
 1. `Codex` 安装到 `${CODEX_HOME:-$HOME/.codex}/skills/andy-coding`
-2. `Claude Code` 安装到 `~/.claude/agents/andy-coding.md`
+2. `Claude Code` 安装到 `~/.claude/skills/andy-coding`
 3. `OpenCode` 安装到 `~/.config/opencode/skills/andy-coding`
 4. 如果你想让 `OpenCode` 走 Claude 兼容路径，也可以安装到 `~/.claude/skills/andy-coding`
 
@@ -114,12 +111,12 @@ Use $andy-coding to implement a new feature with a brief plan first, then verify
 
 ### Claude Code
 
-通过 Claude Code 的 subagent 机制使用。安装后可以在合适任务中调用 `andy-coding` 这个 agent。
+Claude Code 会按需发现并加载 Skill。安装后可以自动触发，也可以直接显式调用。
 
 显式调用示例：
 
 ```text
-Use the andy-coding subagent to design and implement this feature, then verify it and update docs in Chinese.
+/andy-coding
 ```
 
 ### OpenCode
