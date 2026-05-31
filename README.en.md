@@ -5,7 +5,7 @@ Andy's personal skills repository for publishing, reuse, and ongoing iteration.
 
 ## Included Skill
 
-The repository currently includes one primary skill:
+The repository currently includes two primary skills:
 
 ### `andy-coding`
 
@@ -19,6 +19,16 @@ This is a personal full-stack delivery skill focused on:
 - Verification, Chinese-language delivery notes, and concise documentation updates
 - Diagrams for architecture and workflow design, preferably Mermaid
 
+### `kimi-code`
+
+This skill lets Codex dispatch Kimi Code CLI for coding or research work, focused on:
+
+- Dispatching Kimi Code as an external coding agent
+- Repository research, failure analysis, approach comparison, and independent review
+- Scoped implementation tasks, refactors, test additions, and terminal automation
+- Having Codex review Kimi's diff, run verification, and deliver the final conclusion
+- Kimi Code setup, login, sessions, skill directories, and command reference
+
 ## Compatibility
 
 This repository is compatible with:
@@ -30,8 +40,11 @@ This repository is compatible with:
 Compatibility mapping:
 
 - `Codex` uses `andy-coding/SKILL.md`
+- `Codex` uses `kimi-code/SKILL.md`
 - `Claude Code` uses `andy-coding/SKILL.md`
+- `Claude Code` uses `kimi-code/SKILL.md`
 - `OpenCode` uses `andy-coding/SKILL.md`
+- `OpenCode` uses `kimi-code/SKILL.md`
 
 Notes:
 
@@ -49,6 +62,13 @@ andy-coding/
     stack.md
     design-and-research.md
     documentation.md
+kimi-code/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    kimi-code-reference.md
+  scripts/
+    kimi-code-status.sh
 LICENSE
 README.md
 README.en.md
@@ -61,6 +81,7 @@ README.en.md
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R andy-coding "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
 ### 2. Install for Claude Code
@@ -68,6 +89,7 @@ cp -R andy-coding "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```bash
 mkdir -p "$HOME/.claude/skills"
 cp -R andy-coding "$HOME/.claude/skills/"
+cp -R kimi-code "$HOME/.claude/skills/"
 ```
 
 ### 3. Install for OpenCode
@@ -79,6 +101,7 @@ Option A, use the native OpenCode directory:
 ```bash
 mkdir -p "$HOME/.config/opencode/skills"
 cp -R andy-coding "$HOME/.config/opencode/skills/"
+cp -R kimi-code "$HOME/.config/opencode/skills/"
 ```
 
 Option B, reuse the Claude Code directory:
@@ -86,6 +109,7 @@ Option B, reuse the Claude Code directory:
 ```bash
 mkdir -p "$HOME/.claude/skills"
 cp -R andy-coding "$HOME/.claude/skills/"
+cp -R kimi-code "$HOME/.claude/skills/"
 ```
 
 ## Recommended Setup
@@ -94,10 +118,10 @@ If you want one skill to work across `Codex`, `Claude Code`, and `OpenCode`, kee
 
 The lowest-maintenance setup is:
 
-1. Install `Codex` to `${CODEX_HOME:-$HOME/.codex}/skills/andy-coding`
-2. Install `Claude Code` to `~/.claude/skills/andy-coding`
-3. Install `OpenCode` to `~/.config/opencode/skills/andy-coding`
-4. If you prefer OpenCode's Claude-compatible path, install it to `~/.claude/skills/andy-coding`
+1. Install `Codex` to `${CODEX_HOME:-$HOME/.codex}/skills/<skill-name>`
+2. Install `Claude Code` to `~/.claude/skills/<skill-name>`
+3. Install `OpenCode` to `~/.config/opencode/skills/<skill-name>`
+4. If you prefer OpenCode's Claude-compatible path, install it to `~/.claude/skills/<skill-name>`
 
 ## Usage
 
@@ -109,6 +133,10 @@ You can invoke it explicitly:
 Use $andy-coding to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
+```text
+Use $kimi-code to dispatch Kimi Code for a scoped repository research task.
+```
+
 ### Claude Code
 
 Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
@@ -117,6 +145,10 @@ Explicit example:
 
 ```text
 /andy-coding
+```
+
+```text
+/kimi-code
 ```
 
 ### OpenCode
