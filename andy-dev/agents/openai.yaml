@@ -1,0 +1,4 @@
+interface:
+  display_name: "Andy Dev"
+  short_description: "Lightweight personal delivery workflow for Andy."
+  default_prompt: "Use $andy-dev to handle Andy's development work with lightweight design, implementation, testing, review, verification, and concise documentation updates."
