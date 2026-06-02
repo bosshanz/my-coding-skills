@@ -1,13 +1,15 @@
 ---
-name: andy-coding
-description: Use when handling Andy's software work across Python, Node, Go, and web systems, especially for feature delivery, bug fixes, refactors, frontend UI or interaction design, backend technical research, architecture decisions, or middleware integration involving MySQL, PostgreSQL, Redis, or RocketMQ. Trigger when the task should start with planning and solution design, continue through implementation and verification, and end with concise documentation updates.
+name: andy-dev
+description: Use when handling Andy's software development work across Python, Node, Go, and web systems, especially for feature delivery, bug fixes, refactors, frontend UI or interaction design, backend technical research, architecture decisions, middleware integration involving MySQL, PostgreSQL, Redis, or RocketMQ, or tasks that need lightweight design, plan, TDD-oriented implementation, code review, verification, and concise documentation.
 ---
 
-# Andy Coding
+# Andy Dev
 
 ## Overview
 
-Drive a personal full-stack delivery workflow that begins with planning, continues with implementation, and ends with verification and concise documentation. Favor clear technical judgment, practical execution, and short but complete delivery notes.
+Drive a lightweight personal development workflow that turns rough intent into shipped, verified work. Keep the process practical: clarify enough, design enough, implement with tests, review the result, and document only the durable decisions.
+
+This skill intentionally keeps only the useful core of heavier agentic methodologies: collaborative design, explicit implementation plans, test-first behavior changes, systematic debugging, review gates, and evidence-based completion. Do not introduce mandatory worktrees, mandatory long spec files, or subagent-per-task workflows unless the user asks for them.
 
 ## Workflow
 
@@ -15,7 +17,8 @@ Follow this order unless the user explicitly asks for something narrower:
 
 1. Clarify the task.
    - Restate the goal, constraints, and expected output.
-   - Surface missing assumptions early.
+   - Ask only the minimum necessary questions; prefer one high-signal question at a time.
+   - If the request is too broad, decompose it into smaller deliverable slices before designing details.
 2. Plan before coding.
    - Give a compact plan.
    - For non-trivial work, compare 2-3 approaches and recommend one.
@@ -25,16 +28,23 @@ Follow this order unless the user explicitly asks for something narrower:
    - For frontend work, cover layout, visual hierarchy, states, and interaction flow.
    - For backend work, cover boundaries, data flow, storage, middleware, and failure modes.
    - When producing architecture or process design, include diagrams instead of text-only descriptions.
-4. Execute with the user's stack in mind.
+4. Execute in small, reviewable steps.
    - Prefer maintainable, idiomatic changes over novelty.
    - Follow existing project conventions before introducing new patterns.
-5. Verify before claiming success.
+   - For behavior changes and bug fixes, prefer a RED-GREEN-REFACTOR loop: write or identify a failing test, implement the smallest fix, then clean up.
+   - For tasks without a practical automated test path, state the reason and use the strongest available functional check.
+5. Debug systematically when something fails.
+   - Read errors and stack traces fully before changing code.
+   - Reproduce the issue, inspect recent changes, compare with nearby working examples, and form a testable hypothesis before fixing.
+   - Fix causes, not symptoms; after 2 failed guesses, stop and re-investigate the design or assumptions.
+6. Review before claiming success.
+   - Check the diff against the goal, edge cases, project conventions, test coverage, and documentation impact.
+   - Treat warnings, flaky output, or partial verification as residual risk instead of success.
+7. Verify before delivery.
    - Run targeted tests first, then broader checks when justified, then state a plain-language acceptance conclusion.
    - Confirm behavior, not only syntax or type health.
-6. Deliver clearly.
+8. Deliver clearly and update documentation.
    - Use a stable delivery structure: goal, solution, implementation, verification, risk, documentation update.
-   - Summarize what changed, how it was verified, and any residual risk.
-7. Update documentation.
    - Add or update a concise note before or after completion, depending on the task shape.
    - Present documents, plans, and solution writeups in Chinese unless the user explicitly requests another language.
    - Include simple diagrams in architecture and process design work, preferably using Mermaid for flows, boundaries, and dependencies.
@@ -49,8 +59,9 @@ Follow this order unless the user explicitly asks for something narrower:
 - Present plans, design notes, and delivery documents in Chinese by default.
 - Keep code, commands, protocol names, and configuration keys in their original language; keep explanations, decisions, document text, and diagram titles in Chinese.
 - Add lightweight diagrams to architecture and workflow descriptions instead of delivering text-only design notes.
-- Do not skip planning, verification, or documentation unless the user explicitly narrows the task.
 - Prefer updating an existing canonical document before creating a new one.
+- Prefer evidence over claims: name the checks run, summarize what they prove, and call out anything not verified.
+- Keep the process lightweight: do not require worktrees, long specs, or separate agent orchestration unless the task complexity justifies it or the user asks.
 
 ## Trigger Examples
 
@@ -61,6 +72,8 @@ Typical requests that should trigger this skill:
 - "调研 Redis 和 RocketMQ 的组合方案，并给出推荐。"
 - "实现一个 Python / Node / Go 的 Web 功能，并补齐验证和文档。"
 - "为一个现有系统做架构梳理，要求给中文方案和图。"
+- "修这个 bug，先定位根因，不要盲改。"
+- "按 TDD 做一个小功能。"
 
 ## Anti-Patterns
 
@@ -72,9 +85,11 @@ Do not do the following unless the user explicitly asks for a reduced process:
 - Claim something is verified without naming the checks or tests that were run.
 - Scatter documentation into ad hoc new files when an existing canonical document can be updated.
 - Produce English-heavy plans or design notes when Chinese was expected by default.
+- Patch symptoms before reproducing and understanding the root cause.
+- Add heavyweight process artifacts that are larger than the actual task.
 
 ## Reference Guide
 
 - Read `references/stack.md` when choosing language, framework, database, cache, queue, or integration approach.
-- Read `references/design-and-research.md` when the task needs frontend design, UI, interaction design, backend research, or architecture framing.
-- Read `references/documentation.md` when deciding what to record before delivery or immediately after completion.
+- Read `references/design-and-research.md` when the task needs frontend design, UI, interaction design, backend research, architecture framing, or a lightweight implementation plan.
+- Read `references/documentation.md` when deciding what to record before delivery or immediately after completion, or when choosing verification and review depth.
