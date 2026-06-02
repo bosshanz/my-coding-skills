@@ -1,20 +1,20 @@
 # My Coding Skills
 
-Andy's personal skills repository for publishing, reuse, and ongoing iteration.  
+Skills repository for publishing, reuse, and ongoing iteration.
 中文主版本: [README.md](./README.md)
 
 ## Included Skills
 
 The repository currently includes two primary skills:
 
-### `andy-dev`
+### `dev-workflow`
 
-This is a lightweight personal full-stack delivery skill focused on:
+This is a lightweight full-stack delivery skill with a generic name, focused on:
 
 - Clarification and lightweight solution design before implementation
 - Option comparison and recommendation for non-trivial tasks
-- Frontend design, UI design, and interaction design
-- Backend research, architecture design, and middleware decisions
+- Frontend design, UI design, interaction design, accessibility, and performance quality gates
+- Backend research, architecture design, capacity estimation, failure modes, and middleware decisions
 - Delivery across Python, Node, and Go
 - Test-first RED-GREEN-REFACTOR for behavior changes when practical
 - Reproduction and root-cause analysis before bug fixes
@@ -41,11 +41,11 @@ This repository is compatible with:
 
 Compatibility mapping:
 
-- `Codex` uses `andy-dev/SKILL.md`
+- `Codex` uses `dev-workflow/SKILL.md`
 - `Codex` uses `kimi-code/SKILL.md`
-- `Claude Code` uses `andy-dev/SKILL.md`
+- `Claude Code` uses `dev-workflow/SKILL.md`
 - `Claude Code` uses `kimi-code/SKILL.md`
-- `OpenCode` uses `andy-dev/SKILL.md`
+- `OpenCode` uses `dev-workflow/SKILL.md`
 - `OpenCode` uses `kimi-code/SKILL.md`
 
 Notes:
@@ -57,13 +57,15 @@ Notes:
 ## Repository Structure
 
 ```text
-andy-dev/
+dev-workflow/
   SKILL.md
   agents/openai.yaml
   references/
     stack.md
     design-and-research.md
     documentation.md
+    frontend-quality.md
+    backend-architecture.md
 kimi-code/
   SKILL.md
   agents/openai.yaml
@@ -82,7 +84,7 @@ README.en.md
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-cp -R andy-dev "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
@@ -90,7 +92,7 @@ cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R andy-dev "$HOME/.claude/skills/"
+cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
 ```
 
@@ -102,7 +104,7 @@ Option A, use the native OpenCode directory:
 
 ```bash
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R andy-dev "$HOME/.config/opencode/skills/"
+cp -R dev-workflow "$HOME/.config/opencode/skills/"
 cp -R kimi-code "$HOME/.config/opencode/skills/"
 ```
 
@@ -110,7 +112,7 @@ Option B, reuse the Claude Code directory:
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R andy-dev "$HOME/.claude/skills/"
+cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
 ```
 
@@ -132,7 +134,7 @@ The lowest-maintenance setup is:
 You can invoke it explicitly:
 
 ```text
-Use $andy-dev to implement a new feature with a brief plan first, then verify it and update docs.
+Use $dev-workflow to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
 ```text
@@ -146,7 +148,7 @@ Claude Code discovers and loads matching skills on demand. After installation, i
 Explicit example:
 
 ```text
-/andy-dev
+/dev-workflow
 ```
 
 ```text
@@ -167,6 +169,7 @@ This skill defaults to:
 - Test-first work for behavior changes and root-cause analysis for bug fixes when practical
 - Explicit verification steps, review conclusions, and plain-language acceptance conclusions before delivery
 - Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
+- Reference-based frontend quality and backend architecture checklists when needed, instead of turning external skills into a long default process
 
 ## License
 

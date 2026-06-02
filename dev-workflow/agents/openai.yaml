@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dev Workflow"
+  short_description: "Lightweight full-stack delivery workflow."
+  default_prompt: "Use $dev-workflow to handle development work with lightweight design, implementation, testing, review, verification, and concise documentation updates."
