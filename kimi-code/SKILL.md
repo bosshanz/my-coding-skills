@@ -1,11 +1,11 @@
 ---
 name: kimi-code
-description: "Dispatch Kimi Code CLI from Codex as an external coding or research agent: ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have Codex review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting."
+description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent: ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting."
 ---
 
 # Kimi Code
 
-Use Kimi Code CLI as an external terminal agent that Codex can dispatch for coding and research work. Kimi can inspect the repo, run commands, edit files, and report findings; Codex remains responsible for scoping the delegation, reviewing the result, and verifying before presenting work as complete.
+Use Kimi Code CLI as an external terminal agent that another coding agent can dispatch for coding and research work. Kimi can inspect the repo, run commands, edit files, and report findings; the calling agent remains responsible for scoping the delegation, reviewing the result, and verifying before presenting work as complete.
 
 ## First Steps
 
@@ -25,11 +25,11 @@ Dispatch Kimi when parallel or second-pass agent work is useful:
 - Review: ask for an independent read of a diff, suspected bug, missing test, or risky migration.
 - Terminal work: batch file inspection or command-driven investigation where Kimi can produce a concise report.
 
-Keep work in Codex when the task is tiny, requires sensitive credentials, depends on UI-only state, or needs direct control over user approvals.
+Keep work in the calling agent when the task is tiny, requires sensitive credentials, depends on UI-only state, or needs direct control over user approvals.
 
 ## Invocation
 
-Use non-interactive mode for research, review, and bounded coding tasks where Codex needs Kimi's answer back in the current turn:
+Use non-interactive mode for research, review, and bounded coding tasks where the calling agent needs Kimi's answer back in the current turn:
 
 ```sh
 kimi -p "Research this repository. Summarize the architecture, important entry points, and likely test commands. Do not edit files."
@@ -63,7 +63,7 @@ Use `--yolo` or `--auto` only for trusted workspaces after the user explicitly a
 
 ## Delegation Pattern
 
-When delegating from Codex to Kimi:
+When delegating to Kimi:
 
 1. State the exact working directory and objective in the prompt.
 2. Specify mode: `research-only`, `propose-only`, or `implement`.
@@ -90,6 +90,13 @@ Review example:
 ```sh
 kimi -p "Mode: research-only. Review the current git diff for correctness risks and missing tests. Do not edit files. Return only actionable findings with file paths and reasoning."
 ```
+
+## Recursion And Delegation Limits
+
+- Do not dispatch Kimi Code when Kimi Code is already the current host agent.
+- Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
+- Keep delegation depth to one hop by default.
+- Do not start a duplicate external agent on the same scope when one is already active.
 
 ## Kimi Skills
 

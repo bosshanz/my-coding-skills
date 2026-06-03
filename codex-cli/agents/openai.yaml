@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex CLI"
+  short_description: "Dispatch Codex CLI as an external coding agent."
+  default_prompt: "Use $codex-cli to dispatch Codex CLI for a scoped coding, research, or review task."
