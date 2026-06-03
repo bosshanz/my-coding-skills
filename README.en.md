@@ -5,7 +5,7 @@ Skills repository for publishing, reuse, and ongoing iteration.
 
 ## Included Skills
 
-The repository currently includes two primary skills:
+The repository currently includes four primary skills:
 
 ### `dev-workflow`
 
@@ -23,13 +23,31 @@ This is a lightweight full-stack delivery skill with a generic name, focused on:
 
 ### `kimi-code`
 
-This skill lets Codex dispatch Kimi Code CLI for coding or research work, focused on:
+This skill lets another agent dispatch Kimi Code CLI for coding or research work, focused on:
 
 - Dispatching Kimi Code as an external coding agent
 - Repository research, failure analysis, approach comparison, and independent review
 - Scoped implementation tasks, refactors, test additions, and terminal automation
-- Having Codex review Kimi's diff, run verification, and deliver the final conclusion
+- Having the calling agent review Kimi's diff, run verification, and deliver the final conclusion
 - Kimi Code setup, login, sessions, skill directories, and command reference
+
+### `claude-code`
+
+This skill lets another agent dispatch Claude Code CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- Non-interactive print mode, structured output, sessions, and permission controls
+- Safe permission defaults and calling-agent review of results
+- Claude Code setup, authentication, permissions, and command reference
+
+### `codex-cli`
+
+This skill lets another agent dispatch Codex CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- `codex exec`, sandboxing, approvals, structured output, and session resume
+- Least-privilege sandbox defaults and calling-agent review of results
+- Codex CLI setup, authentication, configuration, and command reference
 
 ## Compatibility
 
@@ -43,10 +61,16 @@ Compatibility mapping:
 
 - `Codex` uses `dev-workflow/SKILL.md`
 - `Codex` uses `kimi-code/SKILL.md`
+- `Codex` uses `claude-code/SKILL.md`
+- `Codex` uses `codex-cli/SKILL.md`
 - `Claude Code` uses `dev-workflow/SKILL.md`
 - `Claude Code` uses `kimi-code/SKILL.md`
+- `Claude Code` uses `claude-code/SKILL.md`
+- `Claude Code` uses `codex-cli/SKILL.md`
 - `OpenCode` uses `dev-workflow/SKILL.md`
 - `OpenCode` uses `kimi-code/SKILL.md`
+- `OpenCode` uses `claude-code/SKILL.md`
+- `OpenCode` uses `codex-cli/SKILL.md`
 
 Notes:
 
@@ -73,6 +97,20 @@ kimi-code/
     kimi-code-reference.md
   scripts/
     kimi-code-status.sh
+claude-code/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    claude-code-reference.md
+  scripts/
+    claude-code-status.sh
+codex-cli/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    codex-cli-reference.md
+  scripts/
+    codex-cli-status.sh
 LICENSE
 README.md
 README.en.md
@@ -86,6 +124,8 @@ README.en.md
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
 ### 2. Install for Claude Code
@@ -94,6 +134,8 @@ cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 mkdir -p "$HOME/.claude/skills"
 cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
+cp -R claude-code "$HOME/.claude/skills/"
+cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
 ### 3. Install for OpenCode
@@ -106,6 +148,8 @@ Option A, use the native OpenCode directory:
 mkdir -p "$HOME/.config/opencode/skills"
 cp -R dev-workflow "$HOME/.config/opencode/skills/"
 cp -R kimi-code "$HOME/.config/opencode/skills/"
+cp -R claude-code "$HOME/.config/opencode/skills/"
+cp -R codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 Option B, reuse the Claude Code directory:
@@ -114,6 +158,8 @@ Option B, reuse the Claude Code directory:
 mkdir -p "$HOME/.claude/skills"
 cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
+cp -R claude-code "$HOME/.claude/skills/"
+cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
 ## Recommended Setup
@@ -141,6 +187,14 @@ Use $dev-workflow to implement a new feature with a brief plan first, then verif
 Use $kimi-code to dispatch Kimi Code for a scoped repository research task.
 ```
 
+```text
+Use $claude-code to dispatch Claude Code for an independent diff review.
+```
+
+```text
+Use $codex-cli to dispatch Codex CLI for a read-only repository research task.
+```
+
 ### Claude Code
 
 Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
@@ -153,6 +207,14 @@ Explicit example:
 
 ```text
 /kimi-code
+```
+
+```text
+/claude-code
+```
+
+```text
+/codex-cli
 ```
 
 ### OpenCode

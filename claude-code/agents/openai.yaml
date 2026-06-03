@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude Code"
+  short_description: "Dispatch Claude Code CLI as an external coding agent."
+  default_prompt: "Use $claude-code to dispatch Claude Code CLI for a scoped coding, research, or review task."
