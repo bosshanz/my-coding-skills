@@ -1,11 +1,30 @@
-# My Coding Skills
+# Agent Delegation Skills
 
-Skills repository for publishing, reuse, and ongoing iteration.
+A portable collection of development workflow and agent delegation skills for Codex, Claude Code, OpenCode, and other terminal-capable coding agents.
+
+The repository lets a caller agent explicitly delegate work to external agents such as Kimi Code, Claude Code CLI, or Codex CLI, then review, integrate, and verify the result.
+
+Core principles:
+
+- If the user names a target agent, invoke that target agent.
+- If the target is unavailable, fail explicitly; do not silently substitute.
+- Never simulate, impersonate, or fabricate the target agent's output.
+- Delegated results must remain auditable, reviewable, and verifiable.
+
 中文主版本: [README.md](./README.md)
 
 ## Included Skills
 
-The repository currently includes four primary skills:
+The repository currently includes five primary skills:
+
+### `agent-delegation`
+
+This is the shared entry point for external-agent delegation, focused on:
+
+- Explicit delegation priority: user choice first, project policy second, and authorized task-based routing only
+- No simulated calls, silent fallback, or unauthorized external-agent dispatch
+- A common structure for target-agent output, caller review, and final delivery
+- Permission, credential, failure, one-hop delegation, and same-agent child-process rules
 
 ### `dev-workflow`
 
@@ -59,14 +78,17 @@ This repository is compatible with:
 
 Compatibility mapping:
 
+- `Codex` uses `agent-delegation/SKILL.md`
 - `Codex` uses `dev-workflow/SKILL.md`
 - `Codex` uses `kimi-code/SKILL.md`
 - `Codex` uses `claude-code/SKILL.md`
 - `Codex` uses `codex-cli/SKILL.md`
+- `Claude Code` uses `agent-delegation/SKILL.md`
 - `Claude Code` uses `dev-workflow/SKILL.md`
 - `Claude Code` uses `kimi-code/SKILL.md`
 - `Claude Code` uses `claude-code/SKILL.md`
 - `Claude Code` uses `codex-cli/SKILL.md`
+- `OpenCode` uses `agent-delegation/SKILL.md`
 - `OpenCode` uses `dev-workflow/SKILL.md`
 - `OpenCode` uses `kimi-code/SKILL.md`
 - `OpenCode` uses `claude-code/SKILL.md`
@@ -81,6 +103,13 @@ Notes:
 ## Repository Structure
 
 ```text
+agent-delegation/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    routing-policy.md
+    output-contract.md
+    safety-policy.md
 dev-workflow/
   SKILL.md
   agents/openai.yaml
@@ -122,6 +151,7 @@ README.en.md
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
+cp -R agent-delegation "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
@@ -132,6 +162,7 @@ cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
+cp -R agent-delegation "$HOME/.claude/skills/"
 cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
 cp -R claude-code "$HOME/.claude/skills/"
@@ -146,6 +177,7 @@ Option A, use the native OpenCode directory:
 
 ```bash
 mkdir -p "$HOME/.config/opencode/skills"
+cp -R agent-delegation "$HOME/.config/opencode/skills/"
 cp -R dev-workflow "$HOME/.config/opencode/skills/"
 cp -R kimi-code "$HOME/.config/opencode/skills/"
 cp -R claude-code "$HOME/.config/opencode/skills/"
@@ -156,6 +188,7 @@ Option B, reuse the Claude Code directory:
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
+cp -R agent-delegation "$HOME/.claude/skills/"
 cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
 cp -R claude-code "$HOME/.claude/skills/"
@@ -180,6 +213,10 @@ The lowest-maintenance setup is:
 You can invoke it explicitly:
 
 ```text
+Use $agent-delegation to ask Kimi Code to review this module, then separately verify its findings.
+```
+
+```text
 Use $dev-workflow to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
@@ -202,6 +239,10 @@ Claude Code discovers and loads matching skills on demand. After installation, i
 Explicit example:
 
 ```text
+/agent-delegation
+```
+
+```text
 /dev-workflow
 ```
 
@@ -221,9 +262,21 @@ Explicit example:
 
 OpenCode discovers and loads matching skills on demand. Once installed in a supported directory, normal task prompts can trigger it.
 
+## Agent Delegation Contract
+
+When the user explicitly names an external agent, the caller must actually invoke that target. The caller must not replace, simulate, or impersonate the target agent's output.
+
+Recommended delivery separates:
+
+1. Target-agent invocation status and original findings
+2. Caller-agent review, corrections, and additional risks
+3. Final recommendation and verification conclusion
+
+If the target agent, CLI, authentication, or required permission is unavailable, report the failure explicitly and obtain user approval before substituting another target or completing the work directly.
+
 ## Default Behavior
 
-This skill defaults to:
+`dev-workflow` defaults to:
 
 - Chinese for plans, design notes, and delivery documents
 - Original language for code, commands, protocol names, and configuration keys

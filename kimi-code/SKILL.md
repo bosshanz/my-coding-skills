@@ -1,11 +1,37 @@
 ---
 name: kimi-code
-description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent: ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting."
+description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent: ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting. Use especially when the user explicitly names Kimi Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
 ---
 
 # Kimi Code
 
 Use Kimi Code CLI as an external terminal agent that another coding agent can dispatch for coding and research work. Kimi can inspect the repo, run commands, edit files, and report findings; the calling agent remains responsible for scoping the delegation, reviewing the result, and verifying before presenting work as complete.
+
+## Adapter Contract
+
+Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+
+### Must Use When
+
+- The user explicitly asks to use Kimi Code, including common wording such as “use Kimi Code”, “ask Kimi Code”, or the matching Skill name.
+- An authorized project delegation policy selects Kimi Code.
+
+### Must Not Use When
+
+- The user explicitly asks the caller agent to solve the task directly without external delegation.
+- Kimi Code CLI is unavailable, cannot authenticate, or cannot access the required context.
+- Invoking the target would violate security, privacy, permission, or project policy.
+
+### Invocation Integrity
+
+- Actually invoke Kimi Code; do not simulate, impersonate, or fabricate its response.
+- Do not summarize what Kimi Code might say without invoking it when invocation is required.
+- If invocation fails, report the failure and do not fabricate findings.
+- Do not silently substitute another agent.
+
+### Output Contract
+
+Ask Kimi Code to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
 
 ## First Steps
 
@@ -93,7 +119,7 @@ kimi -p "Mode: research-only. Review the current git diff for correctness risks 
 
 ## Recursion And Delegation Limits
 
-- Do not dispatch Kimi Code when Kimi Code is already the current host agent.
+- Do not recursively dispatch Kimi Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.

@@ -1,11 +1,37 @@
 ---
 name: codex-cli
-description: "Dispatch Codex CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Codex CLI to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Codex CLI installation, authentication, non-interactive codex exec mode, sandboxing, approvals, sessions, structured output, configuration, or troubleshooting."
+description: "Dispatch Codex CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Codex CLI to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Codex CLI installation, authentication, non-interactive codex exec mode, sandboxing, approvals, sessions, structured output, configuration, or troubleshooting. Use especially when the user explicitly names Codex CLI; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
 ---
 
 # Codex CLI
 
 Use Codex CLI as an external terminal agent. Codex can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+
+## Adapter Contract
+
+Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+
+### Must Use When
+
+- The user explicitly asks to use Codex CLI, including common wording such as “use Codex CLI”, “ask Codex CLI”, or the matching Skill name.
+- An authorized project delegation policy selects Codex CLI.
+
+### Must Not Use When
+
+- The user explicitly asks the caller agent to solve the task directly without external delegation.
+- Codex CLI is unavailable, cannot authenticate, or cannot access the required context.
+- Invoking the target would violate security, privacy, permission, or project policy.
+
+### Invocation Integrity
+
+- Actually invoke Codex CLI; do not simulate, impersonate, or fabricate its response.
+- Do not summarize what Codex CLI might say without invoking it when invocation is required.
+- If invocation fails, report the failure and do not fabricate findings.
+- Do not silently substitute another agent.
+
+### Output Contract
+
+Ask Codex CLI to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
 
 ## First Steps
 
@@ -79,7 +105,7 @@ codex exec \
 
 ## Recursion And Delegation Limits
 
-- Do not dispatch Codex CLI when Codex is already the current host agent.
+- Do not recursively dispatch Codex CLI without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.

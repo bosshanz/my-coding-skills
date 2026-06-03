@@ -1,11 +1,37 @@
 ---
 name: claude-code
-description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting."
+description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
 ---
 
 # Claude Code
 
 Use Claude Code CLI as an external terminal agent. Claude Code can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+
+## Adapter Contract
+
+Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+
+### Must Use When
+
+- The user explicitly asks to use Claude Code, including common wording such as “use Claude Code”, “ask Claude Code”, or the matching Skill name.
+- An authorized project delegation policy selects Claude Code.
+
+### Must Not Use When
+
+- The user explicitly asks the caller agent to solve the task directly without external delegation.
+- Claude Code CLI is unavailable, cannot authenticate, or cannot access the required context.
+- Invoking the target would violate security, privacy, permission, or project policy.
+
+### Invocation Integrity
+
+- Actually invoke Claude Code; do not simulate, impersonate, or fabricate its response.
+- Do not summarize what Claude Code might say without invoking it when invocation is required.
+- If invocation fails, report the failure and do not fabricate findings.
+- Do not silently substitute another agent.
+
+### Output Contract
+
+Ask Claude Code to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
 
 ## First Steps
 
@@ -76,7 +102,7 @@ claude
 
 ## Recursion And Delegation Limits
 
-- Do not dispatch Claude Code when Claude Code is already the current host agent.
+- Do not recursively dispatch Claude Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.

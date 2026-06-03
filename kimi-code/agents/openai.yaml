@@ -1,4 +1,4 @@
 interface:
   display_name: "Kimi Code"
-  short_description: "Dispatch Kimi Code CLI as an external coding agent."
-  default_prompt: "Use $kimi-code to dispatch Kimi Code CLI for a scoped coding, research, or review task."
+  short_description: "Delegate real work to Kimi Code CLI."
+  default_prompt: "Use $kimi-code to actually invoke Kimi Code CLI for this scoped task, preserve its output, then review and verify the result without simulating or silently substituting the target."
