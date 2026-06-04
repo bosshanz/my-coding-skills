@@ -35,7 +35,7 @@ Ask Claude Code to return, when supported: `task_summary`, `findings`, `suggeste
 
 ## First Steps
 
-1. Run `${CLAUDE_CODE_SKILL_DIR}/scripts/claude-code-status.sh` in a new environment.
+1. Run the bundled `scripts/claude-code-status.sh` from this Skill directory in a new environment.
 2. If `claude` is missing, explain the official installation options instead of installing without user approval.
 3. If authentication is missing, ask the user to complete Claude Code login. Never ask for or print credentials.
 4. Run from the intended repository directory so project instructions and local configuration are discovered.

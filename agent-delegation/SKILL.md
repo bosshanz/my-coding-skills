@@ -23,7 +23,7 @@ Use external coding agents through explicit, auditable delegation. The caller co
 2. Confirm that the matching adapter and target CLI, tool, or API are available.
 3. Build a bounded delegation task with objective, mode, working directory, scope, permissions, and expected output.
 4. Invoke the target through its adapter; do not merely describe what the target might say.
-5. Capture invocation status, target output, evidence, and unresolved risks.
+5. Capture invocation status, target output, invocation evidence, and unresolved risks.
 6. Review the target result against local files, requirements, and project conventions.
 7. Run appropriate verification before accepting implementation or review findings.
 8. Deliver the target result, caller review, and final recommendation as distinct sections.
@@ -56,8 +56,17 @@ Treat these as explicit delegation failures, not invitations to fabricate a resu
 
 Report the failure, explain what was and was not executed, and ask before choosing another target.
 
+## Comet-Inspired Lightweight Infrastructure
+
+Borrow the useful infrastructure pattern from Comet-style workflows: keep the protocol lightweight, but support doctor checks and invocation evidence so the caller can prove a target agent was actually invoked. Do not introduce a full state machine, installer, or multi-agent orchestrator unless the user asks for it.
+
+- Run `scripts/agent-delegation-doctor.sh` from this repository or installed Skill collection to check Skill structure, old path cleanup, script executability, and target CLI availability.
+- Use invocation evidence for delegated review, implementation, or any result that may be resumed or audited later.
+
 ## References
 
 - Read `references/routing-policy.md` to resolve target selection and fallback behavior.
-- Read `references/output-contract.md` to structure target output, caller review, and final delivery.
+- Read `references/output-contract.md` to structure target output, caller review, final delivery, and evidence envelopes.
 - Read `references/safety-policy.md` for permissions, recursion, credentials, and failure handling.
+- Read `references/invocation-evidence.md` when a delegation needs proof of real target invocation.
+- Read `references/platform-compatibility.md` before claiming support for additional coding-agent runtimes.

@@ -35,7 +35,7 @@ Ask Kimi Code to return, when supported: `task_summary`, `findings`, `suggested_
 
 ## First Steps
 
-1. Run `${KIMI_SKILL_DIR}/scripts/kimi-code-status.sh` before using Kimi Code in a new environment.
+1. Run the bundled `scripts/kimi-code-status.sh` from this Skill directory before using Kimi Code in a new environment.
 2. If `kimi` is missing, explain the install options instead of installing without user approval:
    - macOS/Linux script install: `curl -fsSL https://code.kimi.com/kimi-code/install.sh | bash`
    - npm install: `npm install -g @moonshot-ai/kimi-code` with Node.js 24.15.0 or newer

@@ -35,7 +35,7 @@ Ask Codex CLI to return, when supported: `task_summary`, `findings`, `suggested_
 
 ## First Steps
 
-1. Run `${CODEX_CLI_SKILL_DIR}/scripts/codex-cli-status.sh` in a new environment.
+1. Run the bundled `scripts/codex-cli-status.sh` from this Skill directory in a new environment.
 2. If `codex` is missing, explain the official installation options instead of installing without user approval.
 3. If authentication is missing, ask the user to complete Codex login. Never ask for or print credentials.
 4. Run from the intended repository directory so `AGENTS.md`, configuration, and project Skills are discovered.

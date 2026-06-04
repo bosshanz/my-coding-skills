@@ -23,8 +23,9 @@ This is the shared entry point for external-agent delegation, focused on:
 
 - Explicit delegation priority: user choice first, project policy second, and authorized task-based routing only
 - No simulated calls, silent fallback, or unauthorized external-agent dispatch
-- A common structure for target-agent output, caller review, and final delivery
+- A common structure for target-agent output, caller review, invocation evidence, and final delivery
 - Permission, credential, failure, one-hop delegation, and same-agent child-process rules
+- A lightweight doctor script for Skill structure, old paths, script permissions, and target CLI availability
 
 ### `dev-workflow`
 
@@ -32,13 +33,15 @@ This is a lightweight full-stack delivery skill with a generic name, focused on:
 
 - Clarification and lightweight solution design before implementation
 - Option comparison and recommendation for non-trivial tasks
-- Frontend design, UI design, interaction design, accessibility, and performance quality gates
-- Backend research, architecture design, capacity estimation, failure modes, and middleware decisions
+- Frontend design, UI design, interaction design, state ownership, accessibility, and performance debugging paths
+- Backend research, architecture design, capacity estimation, API/event contracts, migrations, failure modes, and middleware decisions
 - Delivery across Python, Node, and Go
 - Test-first RED-GREEN-REFACTOR for behavior changes when practical
 - Reproduction and root-cause analysis before bug fixes
 - Diff review, verification, Chinese-language delivery notes, and concise documentation updates
 - Diagrams for architecture and workflow design, preferably Mermaid
+
+Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
 
 ### `kimi-code`
 
@@ -110,6 +113,10 @@ agent-delegation/
     routing-policy.md
     output-contract.md
     safety-policy.md
+    invocation-evidence.md
+    platform-compatibility.md
+  scripts/
+    agent-delegation-doctor.sh
 dev-workflow/
   SKILL.md
   agents/openai.yaml
@@ -143,6 +150,20 @@ codex-cli/
 LICENSE
 README.md
 README.en.md
+```
+
+
+## Comet-Inspired Direction
+
+This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering pattern without copying its OpenSpec + Superpowers five-phase workflow. The first absorbed layer is intentionally lightweight:
+
+- Use invocation evidence to prove that the requested target agent was actually invoked.
+- Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
+- Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
+- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
 ## Installation
@@ -210,7 +231,7 @@ The lowest-maintenance setup is:
 
 ### Codex
 
-You can invoke it explicitly:
+You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev-workflow` without requiring `$dev-workflow`:
 
 ```text
 Use $agent-delegation to ask Kimi Code to review this module, then separately verify its findings.
@@ -261,6 +282,13 @@ Explicit example:
 ### OpenCode
 
 OpenCode discovers and loads matching skills on demand. Once installed in a supported directory, normal task prompts can trigger it.
+
+
+## Automatic Trigger Guidance
+
+- Use `dev-workflow` by default for ordinary software development requests: feature implementation, bug fixes, debugging, refactoring, tests, review, docs, UI/interaction design, backend research, architecture, and middleware integration.
+- Use `agent-delegation` or a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
+- If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev-workflow` as the main workflow.
 
 ## Agent Delegation Contract
 

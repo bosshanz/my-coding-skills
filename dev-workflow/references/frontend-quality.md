@@ -71,3 +71,52 @@ This reference is a high-level, localized extraction inspired by:
 
 - Anthropic `frontend-design`: distinctive, production-grade interfaces and avoiding generic AI aesthetics. Source: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
 - PeterHdd `engineering-frontend-developer`: frontend architecture, layout, accessibility, Core Web Vitals, typed API clients, and verification gates. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-frontend-developer
+
+## Frontend Task Classification
+
+Before implementing UI, classify the task so the checklist stays useful instead of decorative:
+
+| Task type | Focus |
+| --- | --- |
+| Internal CRUD/admin | Density, keyboard flow, validation, errors, permission states, bulk actions. |
+| Dashboard/analytics | Information hierarchy, filtering, loading skeletons, chart empty states, responsive grid. |
+| Public/marketing page | Distinct aesthetic direction, typography, motion restraint, content hierarchy, performance. |
+| Component/library work | API clarity, controlled/uncontrolled behavior, accessibility states, examples, regression tests. |
+| Frontend architecture | Data fetching boundary, route ownership, typed API client, state placement, bundle impact. |
+
+## State And Data Ownership
+
+- Keep server data, URL state, form draft state, and ephemeral UI state separate.
+- Prefer URL state for filters, search, pagination, sort, selected tabs, and shareable dashboard views.
+- Prefer local component state for temporary UI affordances such as open menus, hover details, and non-shareable drafts.
+- Use a shared store only when multiple distant components need the same mutable client state.
+- Keep backend calls behind the project’s API/client layer; avoid scattering `fetch` or raw SDK calls across components.
+
+## Accessibility Interaction Patterns
+
+- Buttons perform actions; links navigate. Do not swap semantics for styling convenience.
+- Modals and drawers must move focus inside on open, trap focus while open, close with Escape when safe, and restore focus to the trigger.
+- Dropdowns, comboboxes, tabs, and menus should follow native or established project patterns for arrow keys and selection.
+- Form validation should show visible errors, link errors to fields, and preserve user input after failed submission.
+- Loading states should not remove important context or cause large layout shifts.
+
+## Performance Debugging Paths
+
+Use these targeted paths instead of generic “optimize performance” work:
+
+- Slow first render: inspect data waterfall, server/client rendering split, image size, blocking scripts, and route-level code splitting.
+- Slow interaction: inspect expensive renders, unnecessary global state updates, synchronous validation, and oversized lists.
+- Layout shift: check missing image dimensions, late-loading fonts, conditional banners, and unstable skeleton heights.
+- Bundle growth: identify newly imported libraries, route leakage, icon imports, chart libraries, editors, and date/time packages.
+- Hydration mismatch: compare server/client branches, browser-only APIs, non-deterministic time/random values, and locale formatting.
+
+## UI Delivery Template
+
+For non-trivial frontend delivery, report:
+
+- Aesthetic direction or reason for using existing style.
+- Main user flow and affected states.
+- Accessibility checks performed.
+- Performance risk and whether it was tested.
+- Responsive behavior checked.
+- Known gaps or follow-up.

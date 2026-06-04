@@ -102,3 +102,61 @@ This reference is a high-level, localized extraction inspired by:
 
 - PeterHdd `engineering-system-designer`: requirements, capacity estimation, simplest viable architecture, datastore/API design, failure modes, monitoring, and self-verification. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-system-designer
 - PeterHdd `engineering-backend-architect`: modular monolith bias, database/query rules, cache TTL and invalidation, event idempotency/schema version, health checks, migrations, endpoint verification, and reliability debugging. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-backend-architect
+
+## Architecture Decision Template
+
+Use this compact template for non-trivial backend decisions:
+
+- Context: current system, constraints, and traffic/data shape.
+- Requirement: functional goal and non-functional targets.
+- Options: 2-3 realistic approaches, including the simplest viable option.
+- Decision: chosen option and why simpler alternatives are insufficient.
+- Data model: entities, ownership, indexes, retention, and migration path.
+- API/event contract: request/response or message schema, errors, retries, and versioning.
+- Failure mode: blast radius, detection, fallback, recovery, and rollback.
+- Verification: tests, query plans, migration dry run, load sanity check, and observability.
+
+## Capacity Estimation Template
+
+For systems where scale matters, estimate with visible assumptions:
+
+```text
+Users: ...
+Peak QPS: ...
+Read/write ratio: ...
+Payload size: ...
+Daily storage growth: ...
+Retention: ...
+Hot data set: ...
+1x / 5x / 10x bottleneck: ...
+```
+
+Convert estimates into design decisions: connection pool size, indexes, pagination, cache TTL, queue partitions/topics, consumer concurrency, storage growth, and alert thresholds.
+
+## API And Error Contract Checklist
+
+- Define success response, validation errors, auth errors, permission errors, conflict errors, rate limits, and dependency failures.
+- Keep error codes stable and machine-readable when clients depend on them.
+- Include idempotency keys for create/payment/job-trigger style endpoints where retries are likely.
+- Bound list endpoints with pagination, maximum page size, and deterministic ordering.
+- Define timeout and retry expectations between services; do not rely on default HTTP/client behavior.
+
+## Data Migration Playbook
+
+For production data changes:
+
+1. Expand: add nullable columns, new tables, or compatible event fields.
+2. Backfill: migrate historical data in bounded batches with progress visibility.
+3. Dual write or compatibility read: keep old and new paths consistent during rollout.
+4. Cut over reads: move traffic gradually and monitor symptoms.
+5. Contract: remove old shape only after compatibility windows and rollback risk are gone.
+
+Always document rollback limits. Some migrations are forward-only; say so explicitly.
+
+## Reliability Debugging Paths
+
+- High latency: separate app time, database time, cache time, queue wait, and downstream dependency time.
+- Error spikes: group by endpoint, dependency, deploy version, tenant, and input class.
+- Queue backlog: compare producer rate, consumer rate, retry rate, dead-letter count, and oldest message age.
+- Database saturation: inspect slow queries, locks, connection pool exhaustion, missing indexes, and transaction length.
+- Cache problems: inspect hit rate, stampede, stale data, key cardinality, TTL distribution, and invalidation path.

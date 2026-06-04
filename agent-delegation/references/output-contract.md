@@ -63,3 +63,28 @@ Use distinct sections in the final response:
 ```
 
 The caller must clearly label any conclusion that was not produced by the target agent.
+
+## Delegation Evidence Envelope
+
+When a task needs an auditable record, wrap the target output in an evidence envelope:
+
+```json
+{
+  "delegation_id": "2026-06-04T120000Z-kimi-review-auth",
+  "target_agent": "kimi-code",
+  "adapter": "$kimi-code",
+  "status": "success",
+  "mode": "review-only",
+  "working_directory": "/path/to/repo",
+  "scope": ["src/auth", "tests/auth"],
+  "edits_allowed": false,
+  "tests_allowed": false,
+  "exit_code": 0,
+  "raw_output_path": ".agent-delegation/results/2026-06-04T120000Z-kimi-review-auth/output.txt",
+  "parsed_output": null,
+  "caller_review_required": true,
+  "error": null
+}
+```
+
+The envelope records invocation facts; it must not invent target-agent findings. If parsing fails, keep `parsed_output` null and preserve `raw_output_path`.

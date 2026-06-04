@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: Use when handling software development work across Python, Node, Go, and web systems, especially for feature delivery, bug fixes, refactors, frontend UI or interaction design, frontend quality review, backend technical research, architecture decisions, middleware integration involving MySQL, PostgreSQL, Redis, or RocketMQ, or tasks that need lightweight design, plan, TDD-oriented implementation, code review, verification, and concise documentation.
+description: "Default development workflow for ordinary software engineering tasks. Use automatically when the user asks to implement, fix, debug, refactor, test, review, document, design UI, research backend options, make architecture decisions, or work with Python, Node, Go, web systems, MySQL, PostgreSQL, Redis, or RocketMQ. Prefer this skill for normal coding requests even when the user does not explicitly name dev-workflow; use agent-delegation instead only when the user requests an external agent or auditable delegation."
 ---
 
 # Dev Workflow
@@ -10,6 +10,12 @@ description: Use when handling software development work across Python, Node, Go
 Drive a lightweight full-stack development workflow that turns rough intent into shipped, verified work. Keep the process practical: clarify enough, design enough, implement with tests, review the result, and document only the durable decisions.
 
 This skill intentionally keeps only the useful core of heavier agentic methodologies: collaborative design, explicit implementation plans, test-first behavior changes, systematic debugging, review gates, and evidence-based completion. Do not introduce mandatory worktrees, mandatory long spec files, or subagent-per-task workflows unless the user asks for them.
+
+## Automatic Trigger Guidance
+
+This is the default Skill for normal development work. Use it even when the user does not explicitly say `$dev-workflow` if the request is about implementation, bug fixing, debugging, refactoring, testing, code review, documentation, UI design, backend research, architecture, or middleware integration.
+
+Do not require the user to name this Skill. Reserve `$agent-delegation`, `$kimi-code`, `$claude-code`, and `$codex-cli` for explicit external-agent delegation or auditable cross-agent review.
 
 ## Workflow
 
