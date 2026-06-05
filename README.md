@@ -179,6 +179,28 @@ bin/
 agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
+
+## Dev Workflow 集成方向
+
+`dev-workflow` 不是完整 Superpowers 的安装包，也不是单独的前端设计 Skill。它是一个默认触发的集合体：
+
+- 从 Superpowers 吸收轻量工程纪律：澄清、设计、计划、TDD、系统化调试、review gate、完成前验证和 evidence over claims。
+- 从 Frontend Design 吸收 UI 质量纪律：先确定审美方向，避免 generic AI UI，覆盖真实状态、交互、可访问性和性能。
+- 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
+
+## Comet 吸收方向
+
+本仓库参考 [Comet](https://github.com/rpamis/comet) 项目的工程化思路，但不照搬其 OpenSpec + Superpowers 五阶段流程。当前只吸收第一阶段能力：
+
+- 用调用证据证明目标 Agent 被真实调用，而不是由调用方模拟。
+- 用轻量 doctor 脚本检查 Skill 结构、脚本权限、旧目录残留和目标 CLI 可用性。
+- 用平台兼容文档区分已验证运行时和计划支持运行时。
+- 保持 `agent-delegation` 轻量，不引入完整 installer、状态机或自动多 Agent 编排。
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
+```
+
 ## 安装方式
 
 ### 方式 A：通过 npm / bunx 安装

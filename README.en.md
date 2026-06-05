@@ -179,6 +179,28 @@ This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering p
 agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
+
+## Dev Workflow Integration Direction
+
+`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+
+- Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
+- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
+
+## Comet-Inspired Direction
+
+This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering pattern without copying its OpenSpec + Superpowers five-phase workflow. The first absorbed layer is intentionally lightweight:
+
+- Use invocation evidence to prove that the requested target agent was actually invoked.
+- Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
+- Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
+- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
+```
+
 ## Installation
 
 ### Option A: Install with npm / bunx
