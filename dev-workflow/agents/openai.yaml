@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dev Workflow"
+  short_description: "Default Superpowers Lite + Frontend Design workflow for coding tasks."
+  default_prompt: "Use $dev-workflow as the default Superpowers Lite + Frontend Design workflow for implementation, debugging, TDD, review gates, UI aesthetics, backend design, verification, and concise documentation."

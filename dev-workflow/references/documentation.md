@@ -15,7 +15,17 @@ Write a short note when the task is non-trivial, affects architecture, or needs 
 - Goal
 - Chosen approach
 - Key tradeoff or risk
+- Verification plan
 - Diagram when the topic involves system boundaries, flow, or multi-step process
+
+## During Implementation
+
+Use lightweight review gates instead of heavyweight process artifacts:
+
+- For feature or bug-fix work, prefer test-first when practical: failing test or reproduced failure first, minimal implementation second, cleanup third.
+- For debugging, record the root cause evidence before documenting the fix.
+- For plans, keep steps small enough to inspect and verify; avoid writing large standalone plan files unless the user wants them.
+- For code review, check goal alignment, edge cases, project conventions, test coverage, and documentation impact.
 
 ## After Completion
 
@@ -41,8 +51,10 @@ Use this structure for final delivery:
 
 State verification in this order when applicable:
 
+- Reproduction or RED check for bugs and behavior changes
 - Targeted test or direct functional check
 - Broader build, integration, or regression check
+- Diff review against requirements and edge cases
 - Plain-language acceptance conclusion
 
 ## Compact Templates
