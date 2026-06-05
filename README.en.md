@@ -1,33 +1,76 @@
-# My Coding Skills
+# Agent Delegation Skills
 
-Andy's personal skills repository for publishing, reuse, and ongoing iteration.  
+A portable collection of development workflow and agent delegation skills for Codex, Claude Code, OpenCode, and other terminal-capable coding agents.
+
+The repository lets a caller agent explicitly delegate work to external agents such as Kimi Code, Claude Code CLI, or Codex CLI, then review, integrate, and verify the result.
+
+Core principles:
+
+- If the user names a target agent, invoke that target agent.
+- If the target is unavailable, fail explicitly; do not silently substitute.
+- Never simulate, impersonate, or fabricate the target agent's output.
+- Delegated results must remain auditable, reviewable, and verifiable.
+
 中文主版本: [README.md](./README.md)
 
-## Included Skill
+## Included Skills
 
-The repository currently includes two primary skills:
+The repository currently includes five primary skills:
 
-### `andy-coding`
+### `agent-delegation`
 
-This is a personal full-stack delivery skill focused on:
+This is the shared entry point for external-agent delegation, focused on:
 
-- Planning and solution design before implementation
+- Explicit delegation priority: user choice first, project policy second, and authorized task-based routing only
+- No simulated calls, silent fallback, or unauthorized external-agent dispatch
+- A common structure for target-agent output, caller review, invocation evidence, and final delivery
+- Permission, credential, failure, one-hop delegation, and same-agent child-process rules
+- A lightweight doctor script for Skill structure, old paths, script permissions, and target CLI availability
+
+### `dev-workflow`
+
+This is the default full-stack workflow skill that integrates **Superpowers Lite** and **Frontend Design**, focused on:
+
+- Superpowers Lite: clarification, lightweight design, executable plans, TDD, systematic debugging, review gates, and verification before completion
+- Frontend Design: define purpose, tone, constraints, and differentiation before implementing non-generic UI with real states and interactions
 - Option comparison and recommendation for non-trivial tasks
-- Frontend design, UI design, and interaction design
-- Backend research, architecture design, and middleware decisions
+- Frontend design, UI design, interaction design, state ownership, accessibility, and performance debugging paths
+- Backend research, architecture design, capacity estimation, API/event contracts, migrations, failure modes, and middleware decisions
 - Delivery across Python, Node, and Go
-- Verification, Chinese-language delivery notes, and concise documentation updates
+- Test-first RED-GREEN-REFACTOR for behavior changes when practical
+- Reproduction and root-cause analysis before bug fixes
+- Diff review, verification, Chinese-language delivery notes, and concise documentation updates
 - Diagrams for architecture and workflow design, preferably Mermaid
+
+Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, frontend aesthetic polish, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. It loads `superpowers-lite.md` and `frontend-quality.md` as needed, so normal development requests do not need a full Superpowers install or a separate Frontend Design skill. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
 
 ### `kimi-code`
 
-This skill lets Codex dispatch Kimi Code CLI for coding or research work, focused on:
+This skill lets another agent dispatch Kimi Code CLI for coding or research work, focused on:
 
 - Dispatching Kimi Code as an external coding agent
 - Repository research, failure analysis, approach comparison, and independent review
 - Scoped implementation tasks, refactors, test additions, and terminal automation
-- Having Codex review Kimi's diff, run verification, and deliver the final conclusion
+- Having the calling agent review Kimi's diff, run verification, and deliver the final conclusion
 - Kimi Code setup, login, sessions, skill directories, and command reference
+
+### `claude-code`
+
+This skill lets another agent dispatch Claude Code CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- Non-interactive print mode, structured output, sessions, and permission controls
+- Safe permission defaults and calling-agent review of results
+- Claude Code setup, authentication, permissions, and command reference
+
+### `codex-cli`
+
+This skill lets another agent dispatch Codex CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- `codex exec`, sandboxing, approvals, structured output, and session resume
+- Least-privilege sandbox defaults and calling-agent review of results
+- Codex CLI setup, authentication, configuration, and command reference
 
 ## Compatibility
 
@@ -39,12 +82,21 @@ This repository is compatible with:
 
 Compatibility mapping:
 
-- `Codex` uses `andy-coding/SKILL.md`
+- `Codex` uses `agent-delegation/SKILL.md`
+- `Codex` uses `dev-workflow/SKILL.md`
 - `Codex` uses `kimi-code/SKILL.md`
-- `Claude Code` uses `andy-coding/SKILL.md`
+- `Codex` uses `claude-code/SKILL.md`
+- `Codex` uses `codex-cli/SKILL.md`
+- `Claude Code` uses `agent-delegation/SKILL.md`
+- `Claude Code` uses `dev-workflow/SKILL.md`
 - `Claude Code` uses `kimi-code/SKILL.md`
-- `OpenCode` uses `andy-coding/SKILL.md`
+- `Claude Code` uses `claude-code/SKILL.md`
+- `Claude Code` uses `codex-cli/SKILL.md`
+- `OpenCode` uses `agent-delegation/SKILL.md`
+- `OpenCode` uses `dev-workflow/SKILL.md`
 - `OpenCode` uses `kimi-code/SKILL.md`
+- `OpenCode` uses `claude-code/SKILL.md`
+- `OpenCode` uses `codex-cli/SKILL.md`
 
 Notes:
 
@@ -55,13 +107,27 @@ Notes:
 ## Repository Structure
 
 ```text
-andy-coding/
+agent-delegation/
   SKILL.md
   agents/openai.yaml
   references/
+    routing-policy.md
+    output-contract.md
+    safety-policy.md
+    invocation-evidence.md
+    platform-compatibility.md
+  scripts/
+    agent-delegation-doctor.sh
+dev-workflow/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    superpowers-lite.md
     stack.md
     design-and-research.md
     documentation.md
+    frontend-quality.md
+    backend-architecture.md
 kimi-code/
   SKILL.md
   agents/openai.yaml
@@ -69,9 +135,45 @@ kimi-code/
     kimi-code-reference.md
   scripts/
     kimi-code-status.sh
+claude-code/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    claude-code-reference.md
+  scripts/
+    claude-code-status.sh
+codex-cli/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    codex-cli-reference.md
+  scripts/
+    codex-cli-status.sh
 LICENSE
 README.md
 README.en.md
+```
+
+
+## Dev Workflow Integration Direction
+
+`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+
+- Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
+- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
+
+## Comet-Inspired Direction
+
+This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering pattern without copying its OpenSpec + Superpowers five-phase workflow. The first absorbed layer is intentionally lightweight:
+
+- Use invocation evidence to prove that the requested target agent was actually invoked.
+- Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
+- Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
+- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
 ## Installation
@@ -80,16 +182,22 @@ README.en.md
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-cp -R andy-coding "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R agent-delegation "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
+cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
 ### 2. Install for Claude Code
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R andy-coding "$HOME/.claude/skills/"
+cp -R agent-delegation "$HOME/.claude/skills/"
+cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
+cp -R claude-code "$HOME/.claude/skills/"
+cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
 ### 3. Install for OpenCode
@@ -100,16 +208,22 @@ Option A, use the native OpenCode directory:
 
 ```bash
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R andy-coding "$HOME/.config/opencode/skills/"
+cp -R agent-delegation "$HOME/.config/opencode/skills/"
+cp -R dev-workflow "$HOME/.config/opencode/skills/"
 cp -R kimi-code "$HOME/.config/opencode/skills/"
+cp -R claude-code "$HOME/.config/opencode/skills/"
+cp -R codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 Option B, reuse the Claude Code directory:
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R andy-coding "$HOME/.claude/skills/"
+cp -R agent-delegation "$HOME/.claude/skills/"
+cp -R dev-workflow "$HOME/.claude/skills/"
 cp -R kimi-code "$HOME/.claude/skills/"
+cp -R claude-code "$HOME/.claude/skills/"
+cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
 ## Recommended Setup
@@ -127,14 +241,26 @@ The lowest-maintenance setup is:
 
 ### Codex
 
-You can invoke it explicitly:
+You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev-workflow` without requiring `$dev-workflow`:
 
 ```text
-Use $andy-coding to implement a new feature with a brief plan first, then verify it and update docs.
+Use $agent-delegation to ask Kimi Code to review this module, then separately verify its findings.
+```
+
+```text
+Use $dev-workflow to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
 ```text
 Use $kimi-code to dispatch Kimi Code for a scoped repository research task.
+```
+
+```text
+Use $claude-code to dispatch Claude Code for an independent diff review.
+```
+
+```text
+Use $codex-cli to dispatch Codex CLI for a read-only repository research task.
 ```
 
 ### Claude Code
@@ -144,25 +270,59 @@ Claude Code discovers and loads matching skills on demand. After installation, i
 Explicit example:
 
 ```text
-/andy-coding
+/agent-delegation
+```
+
+```text
+/dev-workflow
 ```
 
 ```text
 /kimi-code
 ```
 
+```text
+/claude-code
+```
+
+```text
+/codex-cli
+```
+
 ### OpenCode
 
 OpenCode discovers and loads matching skills on demand. Once installed in a supported directory, normal task prompts can trigger it.
 
+
+## Automatic Trigger Guidance
+
+- Use `dev-workflow` by default for ordinary software development requests: feature implementation, bug fixes, debugging, refactoring, tests, review, docs, UI/interaction design, backend research, architecture, and middleware integration.
+- Use `agent-delegation` or a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
+- If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev-workflow` as the main workflow.
+
+## Agent Delegation Contract
+
+When the user explicitly names an external agent, the caller must actually invoke that target. The caller must not replace, simulate, or impersonate the target agent's output.
+
+Recommended delivery separates:
+
+1. Target-agent invocation status and original findings
+2. Caller-agent review, corrections, and additional risks
+3. Final recommendation and verification conclusion
+
+If the target agent, CLI, authentication, or required permission is unavailable, report the failure explicitly and obtain user approval before substituting another target or completing the work directly.
+
 ## Default Behavior
 
-This skill defaults to:
+`dev-workflow` defaults to:
 
 - Chinese for plans, design notes, and delivery documents
 - Original language for code, commands, protocol names, and configuration keys
 - Lightweight diagrams for architecture and process design
-- Explicit verification steps and plain-language acceptance conclusions before delivery
+- Test-first work for behavior changes and root-cause analysis for bug fixes when practical
+- Explicit verification steps, review conclusions, and plain-language acceptance conclusions before delivery
+- Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
+- Reference-based frontend quality and backend architecture checklists when needed, instead of turning external skills into a long default process
 
 ## License
 
