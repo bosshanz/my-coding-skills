@@ -152,6 +152,31 @@ codex-cli/
 LICENSE
 README.md
 README.en.md
+package.json
+bin/
+  skills.mjs
+```
+
+
+## Dev Workflow Integration Direction
+
+`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+
+- Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
+- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
+
+## Comet-Inspired Direction
+
+This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering pattern without copying its OpenSpec + Superpowers five-phase workflow. The first absorbed layer is intentionally lightweight:
+
+- Use invocation evidence to prove that the requested target agent was actually invoked.
+- Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
+- Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
+- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
 
@@ -178,7 +203,51 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ## Installation
 
-### 1. Install for Codex
+### Option A: Install with npm / bunx
+
+This repository now ships a dependency-free `skills` CLI that copies Skill directories into the discovery path for Codex, Claude Code, or OpenCode. After publishing to npm, use it like this; if the package is ultimately published as `skills`, the command shape becomes the `bunx --bun skills add ...` style:
+
+```bash
+bunx --bun agent-delegation-skills add all --target codex --force
+```
+
+Common examples:
+
+```bash
+# Install only the default development workflow for Codex
+bunx --bun agent-delegation-skills add dev-workflow --target codex --force
+
+# Install every Skill for Claude Code
+bunx --bun agent-delegation-skills add all --target claude --force
+
+# Install every Skill for Codex, Claude Code, and OpenCode
+bunx --bun agent-delegation-skills add all --target all --force
+
+# Preview install paths without writing files
+bunx --bun agent-delegation-skills add all --target codex --dry-run
+```
+
+If the package has not been published to npm yet, the same package can be run from GitHub or a local checkout. The binary name is `skills`, so a global install also supports `skills add ...` directly.
+
+```bash
+# Local development smoke check
+node bin/skills.mjs list
+node bin/skills.mjs add dev-workflow --dest /tmp/skills --dry-run
+```
+
+Supported skills and groups:
+
+- `dev-workflow`: default development workflow integrating Superpowers Lite and Frontend Design
+- `agent-delegation`: external-agent delegation contract
+- `kimi-code` / `claude-code` / `codex-cli`: external-agent adapters
+- `workflow`: install only `dev-workflow`
+- `delegation`: install `agent-delegation` and all adapters
+- `adapters`: install the three adapters only
+- `all`: install every Skill
+
+### Option B: Manual copy install
+
+#### 1. Install for Codex
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
@@ -189,7 +258,7 @@ cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-### 2. Install for Claude Code
+#### 2. Install for Claude Code
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
@@ -200,7 +269,7 @@ cp -R claude-code "$HOME/.claude/skills/"
 cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
-### 3. Install for OpenCode
+#### 3. Install for OpenCode
 
 You can choose either option:
 

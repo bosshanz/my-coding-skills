@@ -29,6 +29,10 @@ check_command() {
 info "Agent Delegation doctor"
 info "root=$ROOT"
 
+check_file "package.json"
+check_file "bin/skills.mjs"
+check_executable "bin/skills.mjs"
+
 for skill in agent-delegation dev-workflow kimi-code claude-code codex-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"

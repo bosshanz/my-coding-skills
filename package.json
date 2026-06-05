@@ -1,0 +1,36 @@
+{
+  "name": "agent-delegation-skills",
+  "version": "0.1.0",
+  "description": "Portable development workflow and agent delegation skills for Codex, Claude Code, and OpenCode.",
+  "type": "module",
+  "bin": {
+    "skills": "./bin/skills.mjs"
+  },
+  "files": [
+    "agent-delegation",
+    "dev-workflow",
+    "kimi-code",
+    "claude-code",
+    "codex-cli",
+    "bin/skills.mjs",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "doctor": "bash agent-delegation/scripts/agent-delegation-doctor.sh",
+    "check:cli": "node bin/skills.mjs list"
+  },
+  "keywords": [
+    "codex",
+    "claude-code",
+    "opencode",
+    "skills",
+    "agent-delegation",
+    "dev-workflow"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

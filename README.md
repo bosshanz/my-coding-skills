@@ -152,6 +152,31 @@ codex-cli/
 LICENSE
 README.md
 README.en.md
+package.json
+bin/
+  skills.mjs
+```
+
+
+## Dev Workflow 集成方向
+
+`dev-workflow` 不是完整 Superpowers 的安装包，也不是单独的前端设计 Skill。它是一个默认触发的集合体：
+
+- 从 Superpowers 吸收轻量工程纪律：澄清、设计、计划、TDD、系统化调试、review gate、完成前验证和 evidence over claims。
+- 从 Frontend Design 吸收 UI 质量纪律：先确定审美方向，避免 generic AI UI，覆盖真实状态、交互、可访问性和性能。
+- 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
+
+## Comet 吸收方向
+
+本仓库参考 [Comet](https://github.com/rpamis/comet) 项目的工程化思路，但不照搬其 OpenSpec + Superpowers 五阶段流程。当前只吸收第一阶段能力：
+
+- 用调用证据证明目标 Agent 被真实调用，而不是由调用方模拟。
+- 用轻量 doctor 脚本检查 Skill 结构、脚本权限、旧目录残留和目标 CLI 可用性。
+- 用平台兼容文档区分已验证运行时和计划支持运行时。
+- 保持 `agent-delegation` 轻量，不引入完整 installer、状态机或自动多 Agent 编排。
+
+```bash
+agent-delegation/scripts/agent-delegation-doctor.sh
 ```
 
 
@@ -178,7 +203,51 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ## 安装方式
 
-### 1. 安装到 Codex
+### 方式 A：通过 npm / bunx 安装
+
+本仓库现在提供一个零依赖 `skills` CLI，可以把 Skill 目录复制到 Codex、Claude Code 或 OpenCode 的发现路径。发布到 npm 后，可以像下面这样使用；如果你最终把 npm 包名发布为 `skills`，命令形态就可以变成你提到的 `bunx --bun skills add ...`：
+
+```bash
+bunx --bun agent-delegation-skills add all --target codex --force
+```
+
+常用示例：
+
+```bash
+# 只安装默认研发工作流到 Codex
+bunx --bun agent-delegation-skills add dev-workflow --target codex --force
+
+# 安装全部 Skill 到 Claude Code
+bunx --bun agent-delegation-skills add all --target claude --force
+
+# 同时安装到 Codex、Claude Code、OpenCode
+bunx --bun agent-delegation-skills add all --target all --force
+
+# 只查看会安装到哪里，不实际写入
+bunx --bun agent-delegation-skills add all --target codex --dry-run
+```
+
+如果暂时没有发布到 npm，也可以从 GitHub / 本地路径运行同一个 package；CLI 的 binary 名称仍然是 `skills`，因此全局安装后也可以直接运行 `skills add ...`。
+
+```bash
+# 本地开发验证
+node bin/skills.mjs list
+node bin/skills.mjs add dev-workflow --dest /tmp/skills --dry-run
+```
+
+支持的 Skill / 分组：
+
+- `dev-workflow`：默认研发工作流，集成 Superpowers Lite 和 Frontend Design
+- `agent-delegation`：外部 Agent 委托协议
+- `kimi-code` / `claude-code` / `codex-cli`：外部 Agent Adapter
+- `workflow`：只安装 `dev-workflow`
+- `delegation`：安装 `agent-delegation` 和三个 Adapter
+- `adapters`：只安装三个 Adapter
+- `all`：安装全部 Skill
+
+### 方式 B：手动复制安装
+
+#### 1. 安装到 Codex
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
@@ -189,7 +258,7 @@ cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
 cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-### 2. 安装到 Claude Code
+#### 2. 安装到 Claude Code
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
@@ -200,7 +269,7 @@ cp -R claude-code "$HOME/.claude/skills/"
 cp -R codex-cli "$HOME/.claude/skills/"
 ```
 
-### 3. 安装到 OpenCode
+#### 3. 安装到 OpenCode
 
 推荐两种方式，任选其一：
 
