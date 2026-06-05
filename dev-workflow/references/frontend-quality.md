@@ -1,15 +1,26 @@
-# Frontend Quality
+# Frontend Design And Quality
 
 ## When To Use
 
-Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components.
+Use this reference for UI implementation, frontend design, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. This is the Frontend Design layer inside `dev-workflow`; load it before coding meaningful UI, not only at the final polish step.
+
+## Frontend Design Gate
+
+Before coding a meaningful UI, make a small design commitment:
+
+- Purpose: what job does this interface do, and who uses it?
+- Tone: what should it feel like in this product context: utilitarian, editorial, playful, premium, dense, calm, technical, or something else?
+- Constraints: framework, existing design system, accessibility, performance, responsive targets, and content shape.
+- Differentiation: what makes this screen specific to this product instead of a generic template?
+
+Do not over-design internal tools, but do make even internal tools feel intentional.
 
 ## Frontend Aesthetic Gate
 
-- Choose a clear aesthetic direction before coding UI: purpose, audience, product tone, constraints, and differentiation.
+- Choose a clear aesthetic direction before coding UI: purpose, audience, product tone, constraints, differentiation, and one memorable design idea when appropriate.
 - Avoid generic AI-looking UI: predictable layouts, timid palettes, overused fonts, context-free gradients, and template-like component arrangements.
 - Define typography, color roles, spacing rhythm, motion, hierarchy, and visual details intentionally instead of relying on defaults.
-- Match visual intensity to product context: internal tools favor clarity, density, and predictability; public or marketing pages can be more distinctive and expressive.
+- Match visual intensity to product context: internal tools favor clarity, density, and predictability; public or marketing pages can be more distinctive and expressive; dashboards need hierarchy and trust more than decoration.
 - Make the interface feel designed for this product and task flow, not generated from a default template.
 - Align with the existing design language when the repository already has tokens, components, or brand rules.
 
@@ -55,6 +66,16 @@ Use this only when the page is user-facing, high-traffic, slow, or performance-s
 - Prefer server-side or build-time data loading when it clearly improves first render and fits the framework.
 - Treat hydration errors as correctness bugs: compare server/client markup, browser-only APIs, time/random values, and conditional rendering.
 
+## Frontend Delivery Template
+
+For UI-heavy delivery, include:
+
+- Design direction: the chosen tone and why it fits.
+- Implementation: components, data flow, and states covered.
+- Accessibility: keyboard, focus, semantics, form errors, and contrast considerations.
+- Responsiveness: target breakpoints or layout behavior.
+- Verification: tests, visual checks, manual interaction checks, and known limits.
+
 ## Verification Checklist
 
 Before delivery, use the smallest applicable set:
@@ -69,7 +90,7 @@ Before delivery, use the smallest applicable set:
 
 This reference is a high-level, localized extraction inspired by:
 
-- Anthropic `frontend-design`: distinctive, production-grade interfaces and avoiding generic AI aesthetics. Source: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
+- Anthropic `frontend-design`: deliberate aesthetic direction, production-grade UI, and avoiding generic AI aesthetics. Source: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
 - PeterHdd `engineering-frontend-developer`: frontend architecture, layout, accessibility, Core Web Vitals, typed API clients, and verification gates. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-frontend-developer
 
 ## Frontend Task Classification

@@ -1,15 +1,18 @@
 ---
 name: dev-workflow
-description: "Default development workflow for ordinary software engineering tasks. Use automatically when the user asks to implement, fix, debug, refactor, test, review, document, design UI, research backend options, make architecture decisions, or work with Python, Node, Go, web systems, MySQL, PostgreSQL, Redis, or RocketMQ. Prefer this skill for normal coding requests even when the user does not explicitly name dev-workflow; use agent-delegation instead only when the user requests an external agent or auditable delegation."
+description: "Default development workflow for ordinary software engineering tasks; an integrated Superpowers Lite + Frontend Design + full-stack quality workflow. Use automatically when the user asks to implement, fix, debug, refactor, test, review, document, design UI, polish frontend aesthetics, research backend options, make architecture decisions, or work with Python, Node, Go, web systems, MySQL, PostgreSQL, Redis, or RocketMQ. Prefer this skill for normal coding requests even when not explicitly named; use agent-delegation only for external-agent delegation."
 ---
 
 # Dev Workflow
 
 ## Overview
 
-Drive a lightweight full-stack development workflow that turns rough intent into shipped, verified work. Keep the process practical: clarify enough, design enough, implement with tests, review the result, and document only the durable decisions.
+Drive a lightweight full-stack development workflow that turns rough intent into shipped, verified work. Treat `dev-workflow` as the default collection that integrates two first-class layers:
 
-This skill intentionally keeps only the useful core of heavier agentic methodologies: collaborative design, explicit implementation plans, test-first behavior changes, systematic debugging, review gates, and evidence-based completion. Do not introduce mandatory worktrees, mandatory long spec files, or subagent-per-task workflows unless the user asks for them.
+- **Superpowers Lite**: clarify first, design enough, plan executable steps, prefer TDD for behavior changes, debug systematically, review before completion, and verify with evidence.
+- **Frontend Design**: for UI work, choose a deliberate aesthetic direction, avoid generic AI-looking interfaces, implement real states and interactions, and keep accessibility/performance in scope.
+
+Keep the process practical: clarify enough, design enough, implement with tests, review the result, and document only durable decisions. Do not introduce mandatory worktrees, mandatory long spec files, or subagent-per-task workflows unless the user asks for them.
 
 ## Automatic Trigger Guidance
 
@@ -17,9 +20,9 @@ This is the default Skill for normal development work. Use it even when the user
 
 Do not require the user to name this Skill. Reserve `$agent-delegation`, `$kimi-code`, `$claude-code`, and `$codex-cli` for explicit external-agent delegation or auditable cross-agent review.
 
-## Workflow
+## Integrated Workflow
 
-Follow this order unless the user explicitly asks for something narrower:
+Follow this order unless the user explicitly asks for something narrower. For non-trivial tasks, load `references/superpowers-lite.md`; for UI work, load `references/frontend-quality.md`.
 
 1. Clarify the task.
    - Restate the goal, constraints, and expected output.
@@ -31,7 +34,7 @@ Follow this order unless the user explicitly asks for something narrower:
    - Call out risks, dependencies, and validation strategy.
    - For trivial edits such as copy updates, single-line config fixes, or narrowly scoped mechanical changes, use a lightweight plan instead of a full design.
 3. Design or research as needed.
-   - For frontend work, cover layout, visual hierarchy, states, and interaction flow.
+   - For frontend work, choose an aesthetic direction before coding, then cover layout, visual hierarchy, states, interaction flow, accessibility, and performance risk.
    - For backend work, cover boundaries, data flow, storage, middleware, and failure modes.
    - When producing architecture or process design, include diagrams instead of text-only descriptions.
 4. Execute in small, reviewable steps.
@@ -68,6 +71,8 @@ Follow this order unless the user explicitly asks for something narrower:
 - Prefer updating an existing canonical document before creating a new one.
 - Prefer evidence over claims: name the checks run, summarize what they prove, and call out anything not verified.
 - Keep the process lightweight: do not require worktrees, long specs, or separate agent orchestration unless the task complexity justifies it or the user asks.
+- Use Superpowers Lite as discipline, not ceremony: evidence over claims, tiny designs over long specs, and review gates over blind optimism.
+- Use Frontend Design as product-quality guidance, not decoration: every UI should have a context-appropriate visual direction and complete interaction states.
 
 ## Trigger Examples
 
@@ -80,6 +85,7 @@ Typical requests that should trigger this skill:
 - "为一个现有系统做架构梳理，要求给中文方案和图。"
 - "修这个 bug，先定位根因，不要盲改。"
 - "按 TDD 做一个小功能。"
+- "做一个不要 AI 味的前端页面，注意视觉和交互细节。"
 
 ## Anti-Patterns
 
@@ -96,6 +102,7 @@ Do not do the following unless the user explicitly asks for a reduced process:
 
 ## Reference Guide
 
+- Read `references/superpowers-lite.md` when the task needs stricter engineering discipline: lightweight design, executable planning, TDD, systematic debugging, review gates, or verification before completion.
 - Read `references/stack.md` when choosing language, framework, database, cache, queue, or integration approach.
 - Read `references/design-and-research.md` when the task needs frontend design, UI, interaction design, backend research, architecture framing, or a lightweight implementation plan.
 - Read `references/frontend-quality.md` when the task involves UI implementation, frontend architecture, accessibility, frontend performance, visual polish, dashboards, or interaction-heavy components.

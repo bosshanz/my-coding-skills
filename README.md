@@ -29,9 +29,10 @@ English version: [README.en.md](./README.en.md)
 
 ### `dev-workflow`
 
-这是一个面向全栈研发工作流的轻量 Skill，重点包括：
+这是一个把 **Superpowers Lite** 与 **Frontend Design** 集成在一起的默认全栈研发工作流 Skill，重点包括：
 
-- 先澄清、先出轻量方案，再执行
+- Superpowers Lite：先澄清、轻量设计、可执行计划、TDD、系统化调试、review gate 和完成前验证
+- Frontend Design：先确定页面目的、语气、约束和差异化，再实现非模板化、有状态、有交互的 UI
 - 非简单任务先做方案对比并给出推荐
 - 前端设计、UI 设计、交互设计、状态所有权、可访问性和性能排查路径
 - 后端技术调研、架构设计、容量估算、API/事件合同、迁移、失败模式和中间件选型
@@ -41,7 +42,7 @@ English version: [README.en.md](./README.en.md)
 - 交付前做 diff review、验证测试、中文交付、精简文档补充
 - 架构和流程设计配套图示，优先 Mermaid
 
-触发建议：普通编码、修 Bug、重构、调试、测试、review、文档、UI 设计、后端调研和架构任务应默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 时，才走 `agent-delegation` 或对应 Adapter。
+触发建议：普通编码、修 Bug、重构、调试、测试、review、文档、UI 设计、前端审美打磨、后端调研和架构任务应默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。它内部按需加载 `superpowers-lite.md` 和 `frontend-quality.md`，因此普通开发请求不需要再单独安装完整 Superpowers 或单独调用 Frontend Design。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 时，才走 `agent-delegation` 或对应 Adapter。
 
 ### `kimi-code`
 
@@ -121,6 +122,7 @@ dev-workflow/
   SKILL.md
   agents/openai.yaml
   references/
+    superpowers-lite.md
     stack.md
     design-and-research.md
     documentation.md
@@ -152,6 +154,14 @@ README.md
 README.en.md
 ```
 
+
+## Dev Workflow 集成方向
+
+`dev-workflow` 不是完整 Superpowers 的安装包，也不是单独的前端设计 Skill。它是一个默认触发的集合体：
+
+- 从 Superpowers 吸收轻量工程纪律：澄清、设计、计划、TDD、系统化调试、review gate、完成前验证和 evidence over claims。
+- 从 Frontend Design 吸收 UI 质量纪律：先确定审美方向，避免 generic AI UI，覆盖真实状态、交互、可访问性和性能。
+- 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
 
 ## Comet 吸收方向
 

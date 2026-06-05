@@ -45,6 +45,10 @@ for ref in routing-policy.md output-contract.md safety-policy.md invocation-evid
   check_file "agent-delegation/references/$ref"
 done
 
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-quality.md backend-architecture.md; do
+  check_file "dev-workflow/references/$ref"
+done
+
 check_file "kimi-code/references/kimi-code-reference.md"
 check_file "claude-code/references/claude-code-reference.md"
 check_file "codex-cli/references/codex-cli-reference.md"

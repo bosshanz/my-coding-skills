@@ -29,9 +29,10 @@ This is the shared entry point for external-agent delegation, focused on:
 
 ### `dev-workflow`
 
-This is a lightweight full-stack delivery skill with a generic name, focused on:
+This is the default full-stack workflow skill that integrates **Superpowers Lite** and **Frontend Design**, focused on:
 
-- Clarification and lightweight solution design before implementation
+- Superpowers Lite: clarification, lightweight design, executable plans, TDD, systematic debugging, review gates, and verification before completion
+- Frontend Design: define purpose, tone, constraints, and differentiation before implementing non-generic UI with real states and interactions
 - Option comparison and recommendation for non-trivial tasks
 - Frontend design, UI design, interaction design, state ownership, accessibility, and performance debugging paths
 - Backend research, architecture design, capacity estimation, API/event contracts, migrations, failure modes, and middleware decisions
@@ -41,7 +42,7 @@ This is a lightweight full-stack delivery skill with a generic name, focused on:
 - Diff review, verification, Chinese-language delivery notes, and concise documentation updates
 - Diagrams for architecture and workflow design, preferably Mermaid
 
-Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
+Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, frontend aesthetic polish, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. It loads `superpowers-lite.md` and `frontend-quality.md` as needed, so normal development requests do not need a full Superpowers install or a separate Frontend Design skill. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
 
 ### `kimi-code`
 
@@ -121,6 +122,7 @@ dev-workflow/
   SKILL.md
   agents/openai.yaml
   references/
+    superpowers-lite.md
     stack.md
     design-and-research.md
     documentation.md
@@ -152,6 +154,14 @@ README.md
 README.en.md
 ```
 
+
+## Dev Workflow Integration Direction
+
+`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+
+- Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
+- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
 
 ## Comet-Inspired Direction
 
