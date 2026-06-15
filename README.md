@@ -40,6 +40,8 @@ English version: [README.en.md](./README.en.md)
 
 触发建议：新增需求和 Bug 修复都默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 参与时，才走 `agent-delegation` 或对应 Adapter。
 
+触发建议：普通编码、修 Bug、重构、调试、测试、review、文档、UI 设计、前端审美打磨、后端调研和架构任务应默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。它内部按需加载 `superpowers-lite.md` 和 `frontend-quality.md`，因此普通开发请求不需要再单独安装完整 Superpowers 或单独调用 Frontend Design。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 时，才走 `agent-delegation` 或对应 Adapter。
+
 ### `kimi-code`
 
 这是一个让其他 Agent 调度 Kimi Code CLI 做编码或研究的 Skill，重点包括：

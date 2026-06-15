@@ -40,6 +40,8 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 
 Trigger guidance: both new requirements and Bug fixes should trigger `dev-workflow` by default without requiring `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
 
+Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, frontend aesthetic polish, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. It loads `superpowers-lite.md` and `frontend-quality.md` as needed, so normal development requests do not need a full Superpowers install or a separate Frontend Design skill. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
+
 ### `kimi-code`
 
 This skill lets another agent dispatch Kimi Code CLI for coding or research work, focused on:
