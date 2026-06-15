@@ -29,9 +29,8 @@ check_command() {
 info "Agent Delegation doctor"
 info "root=$ROOT"
 
-check_file "package.json"
-check_file "bin/skills.mjs"
-check_executable "bin/skills.mjs"
+check_file "install.sh"
+check_executable "install.sh"
 
 for skill in agent-delegation dev-workflow kimi-code claude-code codex-cli; do
   check_file "$skill/SKILL.md"
@@ -63,6 +62,7 @@ check_executable "agent-delegation/scripts/agent-delegation-doctor.sh"
 
 check_absent "andy-coding"
 check_absent "andy-dev"
+check_absent "codebase-improve"
 
 if grep -R "_SKILL_DIR" "$ROOT" --exclude-dir=.git --exclude=agent-delegation-doctor.sh >/tmp/agent-delegation-doctor-grep.$$ 2>/dev/null; then
   fail "undocumented *_SKILL_DIR reference found"

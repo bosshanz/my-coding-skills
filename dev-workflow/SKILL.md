@@ -1,110 +1,167 @@
 ---
 name: dev-workflow
-description: "Default development workflow for ordinary software engineering tasks; an integrated Superpowers Lite + Frontend Design + full-stack quality workflow. Use automatically when the user asks to implement, fix, debug, refactor, test, review, document, design UI, polish frontend aesthetics, research backend options, make architecture decisions, or work with Python, Node, Go, web systems, MySQL, PostgreSQL, Redis, or RocketMQ. Prefer this skill for normal coding requests even when not explicitly named; use agent-delegation only for external-agent delegation."
+description: "Default end-to-end workflow for the two primary software-development scenarios: delivering a new requirement and fixing a bug. Use automatically when the user asks to discuss, design, implement, test, accept, debug, investigate, or repair software. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce and inspect the problem, identify the root cause, propose a fix, implement the smallest safe repair, add regression coverage, and verify acceptance. Includes Superpowers Lite, Frontend Design, and full-stack architecture guidance; no explicit skill name is required."
 ---
 
 # Dev Workflow
 
-## Overview
+## Purpose
 
-Drive a lightweight full-stack development workflow that turns rough intent into shipped, verified work. Treat `dev-workflow` as the default collection that integrates two first-class layers:
+Use one default Skill for the user's real development loop:
 
-- **Superpowers Lite**: clarify first, design enough, plan executable steps, prefer TDD for behavior changes, debug systematically, review before completion, and verify with evidence.
-- **Frontend Design**: for UI work, choose a deliberate aesthetic direction, avoid generic AI-looking interfaces, implement real states and interactions, and keep accessibility/performance in scope.
+1. **New requirement**: discuss and confirm the requirement, agree on a solution, implement it, test it, and complete acceptance.
+2. **Bug fix**: inspect and reproduce the problem, identify the root cause, agree on the repair, implement it, add regression coverage, and complete acceptance.
 
-Keep the process practical: clarify enough, design enough, implement with tests, review the result, and document only durable decisions. Do not introduce mandatory worktrees, mandatory long spec files, or subagent-per-task workflows unless the user asks for them.
+Keep the process conversational and proportional. The plan supports delivery; it is not a separate product unless the user asks for a durable design or plan document.
 
-## Automatic Trigger Guidance
+This Skill integrates:
 
-This is the default Skill for normal development work. Use it even when the user does not explicitly say `$dev-workflow` if the request is about implementation, bug fixing, debugging, refactoring, testing, code review, documentation, UI design, backend research, architecture, or middleware integration.
+- **Superpowers Lite** for clarification, lightweight design, test-first changes, systematic debugging, review gates, and evidence-based completion.
+- **Frontend Design** for intentional UI direction, complete states, accessibility, responsiveness, and performance.
+- **Full-stack guidance** for APIs, data, storage, cache, queues, migrations, observability, and reliability.
 
-Do not require the user to name this Skill. Reserve `$agent-delegation`, `$kimi-code`, `$claude-code`, and `$codex-cli` for explicit external-agent delegation or auditable cross-agent review.
+Do not require worktrees, long specs, repository-wide audits, or subagent-per-task workflows by default.
 
-## Integrated Workflow
+## Automatic Trigger
 
-Follow this order unless the user explicitly asks for something narrower. For non-trivial tasks, load `references/superpowers-lite.md`; for UI work, load `references/frontend-quality.md`.
+Use this Skill automatically for ordinary software work, especially requests equivalent to:
 
-1. Clarify the task.
-   - Restate the goal, constraints, and expected output.
-   - Ask only the minimum necessary questions; prefer one high-signal question at a time.
-   - If the request is too broad, decompose it into smaller deliverable slices before designing details.
-2. Plan before coding.
-   - Give a compact plan.
-   - For non-trivial work, compare 2-3 approaches and recommend one.
-   - Call out risks, dependencies, and validation strategy.
-   - For trivial edits such as copy updates, single-line config fixes, or narrowly scoped mechanical changes, use a lightweight plan instead of a full design.
-3. Design or research as needed.
-   - For frontend work, choose an aesthetic direction before coding, then cover layout, visual hierarchy, states, interaction flow, accessibility, and performance risk.
-   - For backend work, cover boundaries, data flow, storage, middleware, and failure modes.
-   - When producing architecture or process design, include diagrams instead of text-only descriptions.
-4. Execute in small, reviewable steps.
-   - Prefer maintainable, idiomatic changes over novelty.
-   - Follow existing project conventions before introducing new patterns.
-   - For behavior changes and bug fixes, prefer a RED-GREEN-REFACTOR loop: write or identify a failing test, implement the smallest fix, then clean up.
-   - For tasks without a practical automated test path, state the reason and use the strongest available functional check.
-5. Debug systematically when something fails.
-   - Read errors and stack traces fully before changing code.
-   - Reproduce the issue, inspect recent changes, compare with nearby working examples, and form a testable hypothesis before fixing.
-   - Fix causes, not symptoms; after 2 failed guesses, stop and re-investigate the design or assumptions.
-6. Review before claiming success.
-   - Check the diff against the goal, edge cases, project conventions, test coverage, and documentation impact.
-   - Treat warnings, flaky output, or partial verification as residual risk instead of success.
-7. Verify before delivery.
-   - Run targeted tests first, then broader checks when justified, then state a plain-language acceptance conclusion.
-   - Confirm behavior, not only syntax or type health.
-8. Deliver clearly and update documentation.
-   - Use a stable delivery structure: goal, solution, implementation, verification, risk, documentation update.
-   - Add or update a concise note before or after completion, depending on the task shape.
-   - Present documents, plans, and solution writeups in Chinese unless the user explicitly requests another language.
-   - Include simple diagrams in architecture and process design work, preferably using Mermaid for flows, boundaries, and dependencies.
+- “我有一个新需求，先聊清楚方案再实现。”
+- “实现这个功能并补测试、验收。”
+- “这个页面/接口有问题，帮我定位并修复。”
+- “先分析这个 Bug 的根因，不要直接猜着改。”
 
-## Operating Rules
+Do not make the user explicitly invoke `$dev-workflow`.
 
-- Prefer Python, Node, or Go according to the surrounding codebase and task fit.
-- Default to web-oriented solutions and production-practical tradeoffs.
-- Use design judgment, not only implementation judgment.
-- Use research when requirements, libraries, APIs, architecture, or middleware behavior are uncertain.
-- Keep documentation short, concrete, and easy to scan.
-- Present plans, design notes, and delivery documents in Chinese by default.
-- Keep code, commands, protocol names, and configuration keys in their original language; keep explanations, decisions, document text, and diagram titles in Chinese.
-- Add lightweight diagrams to architecture and workflow descriptions instead of delivering text-only design notes.
-- Prefer updating an existing canonical document before creating a new one.
-- Prefer evidence over claims: name the checks run, summarize what they prove, and call out anything not verified.
-- Keep the process lightweight: do not require worktrees, long specs, or separate agent orchestration unless the task complexity justifies it or the user asks.
-- Use Superpowers Lite as discipline, not ceremony: evidence over claims, tiny designs over long specs, and review gates over blind optimism.
-- Use Frontend Design as product-quality guidance, not decoration: every UI should have a context-appropriate visual direction and complete interaction states.
+Use `agent-delegation` and a matching adapter only when the user explicitly asks another external agent to participate.
 
-## Trigger Examples
+## Select A Track
 
-Typical requests that should trigger this skill:
+At the start, classify the task:
 
-- "先出方案，再实现这个后台功能。"
-- "设计一个用户中心模块，包含接口、数据表和交互流程。"
-- "调研 Redis 和 RocketMQ 的组合方案，并给出推荐。"
-- "实现一个 Python / Node / Go 的 Web 功能，并补齐验证和文档。"
-- "为一个现有系统做架构梳理，要求给中文方案和图。"
-- "修这个 bug，先定位根因，不要盲改。"
-- "按 TDD 做一个小功能。"
-- "做一个不要 AI 味的前端页面，注意视觉和交互细节。"
+- Choose **New Requirement Track** when the desired behavior does not exist yet or the user asks to extend/change product behavior.
+- Choose **Bug Fix Track** when actual behavior differs from expected behavior, a test fails, an error occurs, or an existing flow regressed.
+- If unclear, ask one high-signal question: “这是新增行为，还是已有行为没有按预期工作？”
 
-## Anti-Patterns
+Do not run both tracks mechanically. Share only the common review, verification, and delivery gates.
 
-Do not do the following unless the user explicitly asks for a reduced process:
+## Track A: New Requirement
 
-- Write code first and explain the plan later.
-- Give a final recommendation without alternatives or tradeoffs for non-trivial tasks.
-- Deliver architecture or process design as pure text when a diagram is warranted.
-- Claim something is verified without naming the checks or tests that were run.
-- Scatter documentation into ad hoc new files when an existing canonical document can be updated.
-- Produce English-heavy plans or design notes when Chinese was expected by default.
-- Patch symptoms before reproducing and understanding the root cause.
-- Add heavyweight process artifacts that are larger than the actual task.
+### 1. Discuss And Confirm
+
+- Understand the user goal, main user flow, constraints, non-goals, and acceptance criteria.
+- Inspect the relevant repository structure and existing conventions before proposing architecture.
+- Ask the minimum questions needed to remove material ambiguity, preferably one at a time.
+- Restate the confirmed requirement in plain language before implementation.
+
+### 2. Propose And Agree On A Solution
+
+- For non-trivial work, compare 2-3 realistic approaches, including the simplest viable option.
+- Recommend one approach with tradeoffs, risks, affected modules, data/API impact, and verification strategy.
+- For frontend work, define purpose, visual direction, interaction flow, responsive behavior, and loading/empty/error/success states.
+- For backend work, define boundaries, data flow, schema/API/event contracts, failure behavior, migration, and observability as applicable.
+- Use a small Mermaid diagram when it materially clarifies architecture or flow.
+- Do not start implementation while a material product or architecture decision is still unresolved.
+
+### 3. Plan The Change
+
+- Break implementation into small, reviewable steps.
+- Name relevant files/modules when known.
+- Define tests and acceptance checks before editing.
+- Prefer RED-GREEN-REFACTOR for behavior changes when the project supports it.
+
+### 4. Implement
+
+- Follow existing project patterns before introducing new abstractions or dependencies.
+- Implement the smallest complete slice that satisfies the agreed acceptance criteria.
+- Keep behavioral changes separate from unrelated cleanup.
+- Cover user-visible states and error paths, not only the happy path.
+
+### 5. Test And Accept
+
+- Run targeted tests first, then broader checks justified by the changed boundary.
+- Perform functional acceptance against each agreed criterion.
+- For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
+- State what passed, what was not verified, and whether the requirement is accepted.
+
+## Track B: Bug Fix
+
+### 1. Inspect And Reproduce
+
+- Capture expected behavior, actual behavior, environment, inputs, frequency, and impact.
+- Read the full error, stack trace, logs, failing test, or user evidence before editing.
+- Reproduce the issue with the smallest reliable case when possible.
+- If reproduction is unavailable, state the evidence gap and avoid presenting a hypothesis as fact.
+
+### 2. Locate The Root Cause
+
+- Trace the failing path through callers, data, state, configuration, dependencies, and recent changes.
+- Compare with nearby working paths and established project patterns.
+- Form one testable hypothesis at a time and gather evidence for or against it.
+- Distinguish root cause, trigger, and visible symptom.
+- After two failed guesses, stop editing and re-investigate assumptions or design.
+
+### 3. Propose The Repair
+
+- Explain the root cause and affected scope in plain language.
+- Compare alternatives when the repair has meaningful compatibility, data, security, or architecture tradeoffs.
+- Recommend the smallest safe fix that addresses the cause rather than hiding the symptom.
+- Define regression coverage and explicit acceptance checks before implementation.
+
+### 4. Implement The Fix
+
+- Add or identify a failing regression test first when practical.
+- Make the minimum behavior change needed to fix the root cause.
+- Avoid broad refactors unless they are necessary for correctness and explicitly included in the agreed solution.
+- Preserve backward compatibility, data integrity, and operational safety where relevant.
+
+### 5. Verify The Fix
+
+- Confirm the original reproduction no longer fails.
+- Run the regression test and relevant nearby tests.
+- Check likely side effects and adjacent flows.
+- Run broader build, type, lint, integration, migration, or performance checks only when justified.
+- State whether the Bug is accepted as fixed and identify any residual risk.
+
+## Common Review Gate
+
+Before claiming success on either track:
+
+- Compare the diff to the agreed requirement or root-cause repair.
+- Check edge cases, error paths, permissions, compatibility, and project conventions.
+- Confirm tests prove the behavior, not merely syntax or compilation.
+- Review docs, migration, rollout, rollback, monitoring, and support impact when applicable.
+- Treat warnings, skipped checks, flaky output, and partial verification as residual risk.
+- Never say “done” or “fixed” without naming the verification performed or explaining why it could not run.
+
+## Delivery Format
+
+Deliver in Chinese by default using the applicable structure.
+
+For a new requirement:
+
+- 需求确认
+- 方案与关键取舍
+- 实现内容
+- 测试与验收
+- 风险与未验证项
+
+For a Bug fix:
+
+- 问题现象与复现
+- 根因
+- 修复方案
+- 修改内容
+- 回归测试与验收
+- 风险与未验证项
+
+Keep code, commands, protocol names, and configuration keys in their original language.
 
 ## Reference Guide
 
-- Read `references/superpowers-lite.md` when the task needs stricter engineering discipline: lightweight design, executable planning, TDD, systematic debugging, review gates, or verification before completion.
-- Read `references/stack.md` when choosing language, framework, database, cache, queue, or integration approach.
-- Read `references/design-and-research.md` when the task needs frontend design, UI, interaction design, backend research, architecture framing, or a lightweight implementation plan.
-- Read `references/frontend-quality.md` when the task involves UI implementation, frontend architecture, accessibility, frontend performance, visual polish, dashboards, or interaction-heavy components.
-- Read `references/backend-architecture.md` when the task involves service boundaries, storage, cache, queue, consistency, capacity, production migration, security boundaries, observability, or reliability risk.
-- Read `references/documentation.md` when deciding what to record before delivery or immediately after completion, or when choosing verification and review depth.
+- Read `references/superpowers-lite.md` for stricter design, TDD, debugging, review, and verification discipline.
+- Read `references/frontend-quality.md` for UI design, interaction states, accessibility, responsiveness, and frontend performance.
+- Read `references/backend-architecture.md` for APIs, storage, cache, queue, consistency, migration, observability, and reliability.
+- Read `references/design-and-research.md` for solution comparison, research, diagrams, and lightweight planning.
+- Read `references/stack.md` for language, framework, database, cache, queue, and integration choices.
+- Read `references/documentation.md` for documentation, review depth, verification, and acceptance reporting.

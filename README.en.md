@@ -29,18 +29,16 @@ This is the shared entry point for external-agent delegation, focused on:
 
 ### `dev-workflow`
 
-This is the default full-stack workflow skill that integrates **Superpowers Lite** and **Frontend Design**, focused on:
+This is the default Skill for two real development scenarios: end-to-end new-requirement delivery and end-to-end Bug repair:
 
-- Superpowers Lite: clarification, lightweight design, executable plans, TDD, systematic debugging, review gates, and verification before completion
-- Frontend Design: define purpose, tone, constraints, and differentiation before implementing non-generic UI with real states and interactions
-- Option comparison and recommendation for non-trivial tasks
-- Frontend design, UI design, interaction design, state ownership, accessibility, and performance debugging paths
-- Backend research, architecture design, capacity estimation, API/event contracts, migrations, failure modes, and middleware decisions
-- Delivery across Python, Node, and Go
-- Test-first RED-GREEN-REFACTOR for behavior changes when practical
-- Reproduction and root-cause analysis before bug fixes
-- Diff review, verification, Chinese-language delivery notes, and concise documentation updates
-- Diagrams for architecture and workflow design, preferably Mermaid
+- New requirements: clarify goals and acceptance criteria through conversation, agree on a solution, then implement, test, and accept it
+- Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
+- Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
+- Frontend Design: purpose, aesthetic direction, interaction flow, complete states, accessibility, responsiveness, and visual acceptance
+- Backend architecture: APIs, data, storage, cache, messaging, migrations, failure modes, observability, and reliability
+- Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
+
+Trigger guidance: both new requirements and Bug fixes should trigger `dev-workflow` by default without requiring `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
 
 Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, frontend aesthetic polish, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. It loads `superpowers-lite.md` and `frontend-quality.md` as needed, so normal development requests do not need a full Superpowers install or a separate Frontend Design skill. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
 
@@ -152,9 +150,7 @@ codex-cli/
 LICENSE
 README.md
 README.en.md
-package.json
-bin/
-  skills.mjs
+install.sh
 ```
 
 
@@ -173,29 +169,7 @@ This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering p
 - Use invocation evidence to prove that the requested target agent was actually invoked.
 - Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
 - Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
-- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
-
-```bash
-agent-delegation/scripts/agent-delegation-doctor.sh
-```
-
-
-## Dev Workflow Integration Direction
-
-`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
-
-- Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
-- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
-- Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
-
-## Comet-Inspired Direction
-
-This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering pattern without copying its OpenSpec + Superpowers five-phase workflow. The first absorbed layer is intentionally lightweight:
-
-- Use invocation evidence to prove that the requested target agent was actually invoked.
-- Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
-- Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
-- Keep `agent-delegation` lightweight; do not introduce a full installer, state machine, or automatic multi-agent orchestration yet.
+- Keep `agent-delegation` lightweight: provide only a directory-copying `install.sh`, without a package manager, state machine, or automatic multi-agent orchestration.
 
 ```bash
 agent-delegation/scripts/agent-delegation-doctor.sh
@@ -203,36 +177,42 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ## Installation
 
-### Option A: Install with npm / bunx
+### Option A: Use `install.sh` (recommended)
 
-This repository now ships a dependency-free `skills` CLI that copies Skill directories into the discovery path for Codex, Claude Code, or OpenCode. After publishing to npm, use it like this; if the package is ultimately published as `skills`, the command shape becomes the `bunx --bun skills add ...` style:
+The repository includes a dependency-free Shell installer. It does not require Node, npm, or the npm registry. Clone the repository and run:
 
 ```bash
-bunx --bun agent-delegation-skills add all --target codex --force
+git clone <your-repository-url>
+cd my-coding-skills
+./install.sh all --target codex --force
 ```
 
 Common examples:
 
 ```bash
+# Default: install every Skill for Codex
+./install.sh
+
 # Install only the default development workflow for Codex
-bunx --bun agent-delegation-skills add dev-workflow --target codex --force
+./install.sh dev-workflow --target codex --force
 
 # Install every Skill for Claude Code
-bunx --bun agent-delegation-skills add all --target claude --force
+./install.sh all --target claude --force
+
+# Install the delegation contract and all adapters for OpenCode
+./install.sh delegation --target opencode --force
 
 # Install every Skill for Codex, Claude Code, and OpenCode
-bunx --bun agent-delegation-skills add all --target all --force
+./install.sh all --target all --force
 
-# Preview install paths without writing files
-bunx --bun agent-delegation-skills add all --target codex --dry-run
-```
+# Install into a custom directory
+./install.sh dev-workflow --dest /tmp/skills --force
 
-If the package has not been published to npm yet, the same package can be run from GitHub or a local checkout. The binary name is `skills`, so a global install also supports `skills add ...` directly.
+# Preview operations without writing files
+./install.sh all --target codex --dry-run
 
-```bash
-# Local development smoke check
-node bin/skills.mjs list
-node bin/skills.mjs add dev-workflow --dest /tmp/skills --dry-run
+# Show help, Skills, and groups
+./install.sh --list
 ```
 
 Supported skills and groups:
@@ -243,7 +223,15 @@ Supported skills and groups:
 - `workflow`: install only `dev-workflow`
 - `delegation`: install `agent-delegation` and all adapters
 - `adapters`: install the three adapters only
-- `all`: install every Skill
+- `all`: install every Skill; this is the default when no Skill is named
+
+Installer options:
+
+- `--target codex|claude|opencode|all`
+- `--dest <directory>`
+- `--force` / `-f`
+- `--dry-run`
+- `--list`
 
 ### Option B: Manual copy install
 
@@ -317,6 +305,9 @@ Use $agent-delegation to ask Kimi Code to review this module, then separately ve
 ```
 
 ```text
+```
+
+```text
 Use $dev-workflow to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
@@ -343,6 +334,9 @@ Explicit example:
 ```
 
 ```text
+```
+
+```text
 /dev-workflow
 ```
 
@@ -365,7 +359,8 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Automatic Trigger Guidance
 
-- Use `dev-workflow` by default for ordinary software development requests: feature implementation, bug fixes, debugging, refactoring, tests, review, docs, UI/interaction design, backend research, architecture, and middleware integration.
+- Use the new-requirement track in `dev-workflow` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
+- Use the Bug-fix track in `dev-workflow` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Use `agent-delegation` or a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev-workflow` as the main workflow.
 
