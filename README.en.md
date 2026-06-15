@@ -74,7 +74,7 @@ Every Skill follows the directory format defined by the [Agent Skills specificat
 
 | Installer target | User-level directory | Notes |
 | --- | --- | --- |
-| `agents` | `~/.agents/skills/` | **Default and recommended.** Codex officially supports this path, and it is a useful shared standards-oriented Skill root. |
+| `agents` | `~/.agents/skills/` | **Recommended shared directory.** Codex officially supports this path, and it is a useful shared standards-oriented Skill root. The default `./install.sh` installs to every supported target. |
 | `claude` | `~/.claude/skills/` | Claude Code user discovery path. |
 | `gemini` | `~/.gemini/skills/` | Gemini CLI user discovery path. |
 | `opencode` | `~/.config/opencode/skills/` | OpenCode user discovery path. |
@@ -159,7 +159,7 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ### Option A: Use `install.sh` (recommended)
 
-The repository includes a dependency-free Shell installer. By default it installs every Skill into `~/.agents/skills/`:
+The repository includes a dependency-free Shell installer. By default it installs every Skill into all supported target directories (`~/.agents/skills/`, `~/.claude/skills/`, `~/.gemini/skills/`, and `~/.config/opencode/skills/`):
 
 ```bash
 git clone <your-repository-url>
@@ -170,7 +170,7 @@ cd my-coding-skills
 Common examples:
 
 ```bash
-# Default: install every Skill into ~/.agents/skills/
+# Default: install every Skill into all supported target directories
 ./install.sh
 
 # Install only the default workflow into the shared standards-oriented directory
@@ -242,10 +242,10 @@ cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.conf
 
 ## Recommended Setup
 
-1. Prefer `~/.agents/skills/` as the shared, standards-oriented Skill root.
-2. Codex can use that directory directly; older environments can still select `--target codex`.
-3. Use explicit Claude Code, Gemini CLI, or OpenCode targets when those tools do not scan the shared directory.
-4. `--target all` writes to `agents`, `claude`, `gemini`, and `opencode`; it does not duplicate the install into the legacy Codex path.
+1. By default, `./install.sh` writes to `agents`, `claude`, `gemini`, and `opencode` so every agent can discover the Skills.
+2. To install only into the shared directory, use `--target agents`; older Codex environments can still select `--target codex`.
+3. To install into a single runtime only, use `--target claude|gemini|opencode`.
+4. Prefer `~/.agents/skills/` as the shared, standards-oriented Skill root, but because Claude Code, Gemini CLI, and OpenCode do not currently scan that directory, the default strategy is to install everywhere.
 
 ## Usage
 

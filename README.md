@@ -74,7 +74,7 @@ English version: [README.en.md](./README.en.md)
 
 | 安装目标 | 用户级目录 | 说明 |
 | --- | --- | --- |
-| `agents` | `~/.agents/skills/` | **默认、推荐**。Codex 官方支持该目录，也适合作为共享的标准化 Skill 根目录。 |
+| `agents` | `~/.agents/skills/` | **推荐共享目录**。Codex 官方支持该目录，也适合作为共享的标准化 Skill 根目录。默认 `./install.sh` 会同时安装到所有支持的目标。 |
 | `claude` | `~/.claude/skills/` | Claude Code 的用户级发现目录。 |
 | `gemini` | `~/.gemini/skills/` | Gemini CLI 的用户级发现目录。 |
 | `opencode` | `~/.config/opencode/skills/` | OpenCode 的用户级发现目录。 |
@@ -159,7 +159,7 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ### 方式 A：使用 `install.sh`（推荐）
 
-仓库根目录提供零依赖 Shell 安装器。默认命令会把全部 Skill 安装到 `~/.agents/skills/`：
+仓库根目录提供零依赖 Shell 安装器。默认命令会把全部 Skill 安装到所有支持的目标目录（`~/.agents/skills/`、`~/.claude/skills/`、`~/.gemini/skills/`、`~/.config/opencode/skills/`）：
 
 ```bash
 git clone <your-repository-url>
@@ -170,7 +170,7 @@ cd my-coding-skills
 常用示例：
 
 ```bash
-# 默认：安装全部 Skill 到 ~/.agents/skills/
+# 默认：安装全部 Skill 到所有支持的目标目录
 ./install.sh
 
 # 只安装默认研发工作流到开放标准目录
@@ -242,10 +242,10 @@ cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.conf
 
 ## 推荐安装策略
 
-1. 优先把 `~/.agents/skills/` 作为共享、标准化的 Skill 根目录。
-2. Codex 可直接使用该目录；旧环境可继续选择 `--target codex`。
-3. Claude Code、Gemini CLI、OpenCode 若未扫描共享目录，则使用各自的显式 target。
-4. `--target all` 会写入 `agents`、`claude`、`gemini`、`opencode` 四个目录，不额外写入 Codex legacy 目录。
+1. 默认 `./install.sh` 会同时写入 `agents`、`claude`、`gemini`、`opencode` 四个目录，保证各 Agent 都能发现 Skill。
+2. 如果只想安装到共享目录，使用 `--target agents`；Codex 旧环境可继续选择 `--target codex`。
+3. 如果只想安装到某个特定 Agent，使用 `--target claude|gemini|opencode`。
+4. 推荐把 `~/.agents/skills/` 作为共享、标准化的 Skill 根目录，但 Claude Code、Gemini CLI、OpenCode 目前不扫描该目录，因此默认策略是全部安装。
 
 ## 使用方式
 

@@ -11,7 +11,8 @@ ALL_SKILLS=(
   codex-cli
 )
 
-TARGET="agents"
+TARGET="all"
+TARGET_WAS_SET=0
 DEST=""
 FORCE=0
 DRY_RUN=0
@@ -41,7 +42,7 @@ Groups:
 
 Options:
   --target TARGET   agents, codex, claude, gemini, opencode, or all
-                    (default: agents)
+                    (default: all)
   --dest DIR        Install into a custom Skills directory
   --force, -f       Replace an existing installed Skill
   --dry-run         Print operations without changing files
@@ -123,7 +124,9 @@ resolve_destinations() {
   DESTINATIONS=()
 
   if [[ -n "$DEST" ]]; then
-    [[ "$TARGET" != "all" ]] || fail "--dest cannot be combined with --target all"
+    if [[ "$TARGET" == "all" && "$TARGET_WAS_SET" -eq 1 ]]; then
+      fail "--dest cannot be combined with --target all"
+    fi
     DESTINATIONS+=("$DEST")
     return
   fi
@@ -189,6 +192,7 @@ while [[ "$#" -gt 0 ]]; do
     --target|--runtime)
       [[ "$#" -ge 2 ]] || fail "$1 requires a value"
       TARGET="$2"
+      TARGET_WAS_SET=1
       shift 2
       ;;
     --dest|--dir)
