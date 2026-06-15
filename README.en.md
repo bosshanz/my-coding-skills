@@ -1,6 +1,6 @@
 # Agent Delegation Skills
 
-A portable collection of development workflow and agent delegation skills for Codex, Claude Code, OpenCode, and other terminal-capable coding agents.
+A portable collection of development workflow and agent delegation skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
 The repository lets a caller agent explicitly delegate work to external agents such as Kimi Code, Claude Code CLI, or Codex CLI, then review, integrate, and verify the result.
 
@@ -40,8 +40,6 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 
 Trigger guidance: both new requirements and Bug fixes should trigger `dev-workflow` by default without requiring `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
 
-Trigger guidance: ordinary coding, bug fixing, refactoring, debugging, testing, review, documentation, UI design, frontend aesthetic polish, backend research, and architecture tasks should trigger `dev-workflow` by default without requiring the user to explicitly write `$dev-workflow`. It loads `superpowers-lite.md` and `frontend-quality.md` as needed, so normal development requests do not need a full Superpowers install or a separate Frontend Design skill. Use `agent-delegation` or an Adapter only when the user explicitly asks for Kimi, Claude Code, Codex CLI, or another external agent.
-
 ### `kimi-code`
 
 This skill lets another agent dispatch Kimi Code CLI for coding or research work, focused on:
@@ -72,35 +70,17 @@ This skill lets another agent dispatch Codex CLI, focused on:
 
 ## Compatibility
 
-This repository is compatible with:
+Every Skill follows the directory format defined by the [Agent Skills specification](https://agentskills.io/specification), with `SKILL.md` as the portable core. The specification standardizes the **Skill format**; it does not require every client to scan one universal global directory.
 
-- `Codex`
-- `Claude Code`
-- `OpenCode`
+| Installer target | User-level directory | Notes |
+| --- | --- | --- |
+| `agents` | `~/.agents/skills/` | **Default and recommended.** Codex officially supports this path, and it is a useful shared standards-oriented Skill root. |
+| `claude` | `~/.claude/skills/` | Claude Code user discovery path. |
+| `gemini` | `~/.gemini/skills/` | Gemini CLI user discovery path. |
+| `opencode` | `~/.config/opencode/skills/` | OpenCode user discovery path. |
+| `codex` | `${CODEX_HOME:-$HOME/.codex}/skills/` | Legacy Codex-compatible path; prefer `~/.agents/skills/` for new installs. |
 
-Compatibility mapping:
-
-- `Codex` uses `agent-delegation/SKILL.md`
-- `Codex` uses `dev-workflow/SKILL.md`
-- `Codex` uses `kimi-code/SKILL.md`
-- `Codex` uses `claude-code/SKILL.md`
-- `Codex` uses `codex-cli/SKILL.md`
-- `Claude Code` uses `agent-delegation/SKILL.md`
-- `Claude Code` uses `dev-workflow/SKILL.md`
-- `Claude Code` uses `kimi-code/SKILL.md`
-- `Claude Code` uses `claude-code/SKILL.md`
-- `Claude Code` uses `codex-cli/SKILL.md`
-- `OpenCode` uses `agent-delegation/SKILL.md`
-- `OpenCode` uses `dev-workflow/SKILL.md`
-- `OpenCode` uses `kimi-code/SKILL.md`
-- `OpenCode` uses `claude-code/SKILL.md`
-- `OpenCode` uses `codex-cli/SKILL.md`
-
-Notes:
-
-- `agents/openai.yaml` mainly provides better UI metadata for Codex.
-- `SKILL.md` and `references/` contain the shared portable content for all three runtimes.
-- `Claude Code` and `OpenCode` both support directory-based `SKILL.md` skills.
+`agents/openai.yaml` only enhances Codex UI metadata. Other runtimes share `SKILL.md`, `references/`, and `scripts/`. If a tool does not document discovery from `~/.agents/skills/`, use its runtime-specific target instead of assuming format compatibility implies path discovery.
 
 ## Repository Structure
 
@@ -179,37 +159,37 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ### Option A: Use `install.sh` (recommended)
 
-The repository includes a dependency-free Shell installer. It does not require Node, npm, or the npm registry. Clone the repository and run:
+The repository includes a dependency-free Shell installer. By default it installs every Skill into `~/.agents/skills/`:
 
 ```bash
 git clone <your-repository-url>
 cd my-coding-skills
-./install.sh all --target codex --force
+./install.sh
 ```
 
 Common examples:
 
 ```bash
-# Default: install every Skill for Codex
+# Default: install every Skill into ~/.agents/skills/
 ./install.sh
 
-# Install only the default development workflow for Codex
-./install.sh dev-workflow --target codex --force
+# Install only the default workflow into the shared standards-oriented directory
+./install.sh dev-workflow --target agents --force
 
-# Install every Skill for Claude Code
+# Install into runtime-specific Claude Code, Gemini CLI, or OpenCode paths
 ./install.sh all --target claude --force
+./install.sh all --target gemini --force
+./install.sh all --target opencode --force
 
-# Install the delegation contract and all adapters for OpenCode
-./install.sh delegation --target opencode --force
-
-# Install every Skill for Codex, Claude Code, and OpenCode
+# Install into ~/.agents plus Claude, Gemini, and OpenCode paths
 ./install.sh all --target all --force
 
-# Install into a custom directory
-./install.sh dev-workflow --dest /tmp/skills --force
+# Explicitly use the legacy Codex location when required
+./install.sh all --target codex --force
 
-# Preview operations without writing files
-./install.sh all --target codex --dry-run
+# Use a custom directory or preview operations
+./install.sh dev-workflow --dest /tmp/skills --force
+./install.sh all --target agents --dry-run
 
 # Show help, Skills, and groups
 ./install.sh --list
@@ -223,11 +203,11 @@ Supported skills and groups:
 - `workflow`: install only `dev-workflow`
 - `delegation`: install `agent-delegation` and all adapters
 - `adapters`: install the three adapters only
-- `all`: install every Skill; this is the default when no Skill is named
+- `all`: install every Skill; default when no Skill is named
 
 Installer options:
 
-- `--target codex|claude|opencode|all`
+- `--target agents|codex|claude|gemini|opencode|all`
 - `--dest <directory>`
 - `--force` / `-f`
 - `--dry-run`
@@ -235,64 +215,37 @@ Installer options:
 
 ### Option B: Manual copy install
 
-#### 1. Install for Codex
+Install into the shared directory first:
 
 ```bash
-mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-cp -R agent-delegation "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
+mkdir -p "$HOME/.agents/skills"
+for skill in agent-delegation dev-workflow kimi-code claude-code codex-cli; do
+  cp -R "$skill" "$HOME/.agents/skills/"
+done
 ```
 
-#### 2. Install for Claude Code
+If the target tool does not scan `~/.agents/skills/`, copy the same directories into its runtime-specific location:
 
 ```bash
+# Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R agent-delegation "$HOME/.claude/skills/"
-cp -R dev-workflow "$HOME/.claude/skills/"
-cp -R kimi-code "$HOME/.claude/skills/"
-cp -R claude-code "$HOME/.claude/skills/"
-cp -R codex-cli "$HOME/.claude/skills/"
-```
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.claude/skills/"
 
-#### 3. Install for OpenCode
+# Gemini CLI
+mkdir -p "$HOME/.gemini/skills"
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
 
-You can choose either option:
-
-Option A, use the native OpenCode directory:
-
-```bash
+# OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R agent-delegation "$HOME/.config/opencode/skills/"
-cp -R dev-workflow "$HOME/.config/opencode/skills/"
-cp -R kimi-code "$HOME/.config/opencode/skills/"
-cp -R claude-code "$HOME/.config/opencode/skills/"
-cp -R codex-cli "$HOME/.config/opencode/skills/"
-```
-
-Option B, reuse the Claude Code directory:
-
-```bash
-mkdir -p "$HOME/.claude/skills"
-cp -R agent-delegation "$HOME/.claude/skills/"
-cp -R dev-workflow "$HOME/.claude/skills/"
-cp -R kimi-code "$HOME/.claude/skills/"
-cp -R claude-code "$HOME/.claude/skills/"
-cp -R codex-cli "$HOME/.claude/skills/"
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
 
-If you want one skill to work across `Codex`, `Claude Code`, and `OpenCode`, keep this repository in any development directory and then copy or symlink the skill into each runtime's discovery path.
-
-The lowest-maintenance setup is:
-
-1. Install `Codex` to `${CODEX_HOME:-$HOME/.codex}/skills/<skill-name>`
-2. Install `Claude Code` to `~/.claude/skills/<skill-name>`
-3. Install `OpenCode` to `~/.config/opencode/skills/<skill-name>`
-4. If you prefer OpenCode's Claude-compatible path, install it to `~/.claude/skills/<skill-name>`
+1. Prefer `~/.agents/skills/` as the shared, standards-oriented Skill root.
+2. Codex can use that directory directly; older environments can still select `--target codex`.
+3. Use explicit Claude Code, Gemini CLI, or OpenCode targets when those tools do not scan the shared directory.
+4. `--target all` writes to `agents`, `claude`, `gemini`, and `opencode`; it does not duplicate the install into the legacy Codex path.
 
 ## Usage
 

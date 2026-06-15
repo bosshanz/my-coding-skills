@@ -11,7 +11,7 @@ ALL_SKILLS=(
   codex-cli
 )
 
-TARGET="codex"
+TARGET="agents"
 DEST=""
 FORCE=0
 DRY_RUN=0
@@ -40,7 +40,8 @@ Groups:
   adapters     Install kimi-code, claude-code, and codex-cli
 
 Options:
-  --target TARGET   codex, claude, opencode, or all (default: codex)
+  --target TARGET   agents, codex, claude, gemini, opencode, or all
+                    (default: agents)
   --dest DIR        Install into a custom Skills directory
   --force, -f       Replace an existing installed Skill
   --dry-run         Print operations without changing files
@@ -49,10 +50,19 @@ Options:
 
 Examples:
   ./install.sh
-  ./install.sh dev-workflow --target codex
+  ./install.sh dev-workflow --target agents
   ./install.sh delegation --target claude --force
+  ./install.sh all --target gemini --force
   ./install.sh all --target all --force
   ./install.sh dev-workflow --dest /tmp/skills --dry-run
+
+Targets:
+  agents    $HOME/.agents/skills (recommended shared location; Codex-supported)
+  codex     ${CODEX_HOME:-$HOME/.codex}/skills (legacy Codex location)
+  claude    $HOME/.claude/skills
+  gemini    $HOME/.gemini/skills
+  opencode  $HOME/.config/opencode/skills
+  all       agents, claude, gemini, and opencode locations
 EOF
 }
 
@@ -120,19 +130,26 @@ resolve_destinations() {
 
   local codex_home="${CODEX_HOME:-$HOME/.codex}"
   case "$TARGET" in
+    agents|standard)
+      DESTINATIONS+=("$HOME/.agents/skills")
+      ;;
     codex)
       DESTINATIONS+=("$codex_home/skills")
       ;;
     claude)
       DESTINATIONS+=("$HOME/.claude/skills")
       ;;
+    gemini)
+      DESTINATIONS+=("$HOME/.gemini/skills")
+      ;;
     opencode)
       DESTINATIONS+=("$HOME/.config/opencode/skills")
       ;;
     all)
       DESTINATIONS+=(
-        "$codex_home/skills"
+        "$HOME/.agents/skills"
         "$HOME/.claude/skills"
+        "$HOME/.gemini/skills"
         "$HOME/.config/opencode/skills"
       )
       ;;

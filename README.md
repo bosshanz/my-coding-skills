@@ -2,7 +2,7 @@
 
 这是一个面向多 Agent 编码工作流的可移植 Skill 集合。
 
-它提供研发工作流和外部 Agent 委托协议，让 Codex、Claude Code、OpenCode 及其他支持终端命令的调用方 Agent，可以将任务显式委托给 Kimi Code、Claude Code CLI 或 Codex CLI，并对结果进行复核、整合和交付。
+它提供研发工作流和外部 Agent 委托协议，让 Codex、Claude Code、Gemini CLI、OpenCode 及其他支持 Agent Skills 的调用方 Agent，可以共享同一套 Skill 内容，并将任务显式委托给 Kimi Code、Claude Code CLI 或 Codex CLI。
 
 核心原则：
 
@@ -40,8 +40,6 @@ English version: [README.en.md](./README.en.md)
 
 触发建议：新增需求和 Bug 修复都默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 参与时，才走 `agent-delegation` 或对应 Adapter。
 
-触发建议：普通编码、修 Bug、重构、调试、测试、review、文档、UI 设计、前端审美打磨、后端调研和架构任务应默认触发 `dev-workflow`，不需要用户显式写 `$dev-workflow`。它内部按需加载 `superpowers-lite.md` 和 `frontend-quality.md`，因此普通开发请求不需要再单独安装完整 Superpowers 或单独调用 Frontend Design。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 时，才走 `agent-delegation` 或对应 Adapter。
-
 ### `kimi-code`
 
 这是一个让其他 Agent 调度 Kimi Code CLI 做编码或研究的 Skill，重点包括：
@@ -72,35 +70,17 @@ English version: [README.en.md](./README.en.md)
 
 ## 兼容性
 
-这个仓库同时兼容以下运行时：
+所有 Skill 都遵循 [Agent Skills 开放规范](https://agentskills.io/specification) 的目录形式，以 `SKILL.md` 作为可移植主体。需要注意：开放规范统一的是 **Skill 格式**，并不要求所有客户端扫描同一个全局目录。
 
-- `Codex`
-- `Claude Code`
-- `OpenCode`
+| 安装目标 | 用户级目录 | 说明 |
+| --- | --- | --- |
+| `agents` | `~/.agents/skills/` | **默认、推荐**。Codex 官方支持该目录，也适合作为共享的标准化 Skill 根目录。 |
+| `claude` | `~/.claude/skills/` | Claude Code 的用户级发现目录。 |
+| `gemini` | `~/.gemini/skills/` | Gemini CLI 的用户级发现目录。 |
+| `opencode` | `~/.config/opencode/skills/` | OpenCode 的用户级发现目录。 |
+| `codex` | `${CODEX_HOME:-$HOME/.codex}/skills/` | Codex 旧兼容目录；新安装优先使用 `~/.agents/skills/`。 |
 
-兼容方式如下：
-
-- `Codex` 使用 `agent-delegation/SKILL.md`
-- `Codex` 使用 `dev-workflow/SKILL.md`
-- `Codex` 使用 `kimi-code/SKILL.md`
-- `Codex` 使用 `claude-code/SKILL.md`
-- `Codex` 使用 `codex-cli/SKILL.md`
-- `Claude Code` 使用 `agent-delegation/SKILL.md`
-- `Claude Code` 使用 `dev-workflow/SKILL.md`
-- `Claude Code` 使用 `kimi-code/SKILL.md`
-- `Claude Code` 使用 `claude-code/SKILL.md`
-- `Claude Code` 使用 `codex-cli/SKILL.md`
-- `OpenCode` 使用 `agent-delegation/SKILL.md`
-- `OpenCode` 使用 `dev-workflow/SKILL.md`
-- `OpenCode` 使用 `kimi-code/SKILL.md`
-- `OpenCode` 使用 `claude-code/SKILL.md`
-- `OpenCode` 使用 `codex-cli/SKILL.md`
-
-说明：
-
-- `agents/openai.yaml` 主要给 Codex 提供更好的 UI 展示元数据。
-- `SKILL.md` 和 `references/` 是三种运行时共享的主体内容。
-- `Claude Code` 和 `OpenCode` 都支持 `SKILL.md` 目录式 Skills。
+`agents/openai.yaml` 仅用于增强 Codex UI 元数据；其他运行时共享 `SKILL.md`、`references/` 和 `scripts/`。若一个工具尚未声明会扫描 `~/.agents/skills/`，请使用对应的运行时目标，不要仅凭格式兼容性假设它会自动发现该目录。
 
 ## 目录结构
 
@@ -179,37 +159,37 @@ agent-delegation/scripts/agent-delegation-doctor.sh
 
 ### 方式 A：使用 `install.sh`（推荐）
 
-仓库根目录提供零依赖 Shell 安装器，不需要 Node、npm 或 npm registry。克隆仓库后直接执行：
+仓库根目录提供零依赖 Shell 安装器。默认命令会把全部 Skill 安装到 `~/.agents/skills/`：
 
 ```bash
 git clone <your-repository-url>
 cd my-coding-skills
-./install.sh all --target codex --force
+./install.sh
 ```
 
 常用示例：
 
 ```bash
-# 默认：安装全部 Skill 到 Codex
+# 默认：安装全部 Skill 到 ~/.agents/skills/
 ./install.sh
 
-# 只安装默认研发工作流到 Codex
-./install.sh dev-workflow --target codex --force
+# 只安装默认研发工作流到开放标准目录
+./install.sh dev-workflow --target agents --force
 
-# 安装全部 Skill 到 Claude Code
+# 安装到 Claude Code、Gemini CLI 或 OpenCode 的专用目录
 ./install.sh all --target claude --force
+./install.sh all --target gemini --force
+./install.sh all --target opencode --force
 
-# 安装委托协议和三个外部 Agent Adapter 到 OpenCode
-./install.sh delegation --target opencode --force
-
-# 同时安装到 Codex、Claude Code、OpenCode
+# 同时安装到 ~/.agents、Claude、Gemini 和 OpenCode 目录
 ./install.sh all --target all --force
 
-# 安装到自定义目录
-./install.sh dev-workflow --dest /tmp/skills --force
+# 仍需旧 Codex 路径时显式选择 legacy target
+./install.sh all --target codex --force
 
-# 只预览操作，不写入文件
-./install.sh all --target codex --dry-run
+# 安装到自定义目录或仅预览
+./install.sh dev-workflow --dest /tmp/skills --force
+./install.sh all --target agents --dry-run
 
 # 查看帮助、Skill 和分组
 ./install.sh --list
@@ -227,7 +207,7 @@ cd my-coding-skills
 
 安装器支持：
 
-- `--target codex|claude|opencode|all`
+- `--target agents|codex|claude|gemini|opencode|all`
 - `--dest <directory>`
 - `--force` / `-f`
 - `--dry-run`
@@ -235,64 +215,37 @@ cd my-coding-skills
 
 ### 方式 B：手动复制安装
 
-#### 1. 安装到 Codex
+推荐先安装到共享目录：
 
 ```bash
-mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-cp -R agent-delegation "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R dev-workflow "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R kimi-code "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R claude-code "${CODEX_HOME:-$HOME/.codex}/skills/"
-cp -R codex-cli "${CODEX_HOME:-$HOME/.codex}/skills/"
+mkdir -p "$HOME/.agents/skills"
+for skill in agent-delegation dev-workflow kimi-code claude-code codex-cli; do
+  cp -R "$skill" "$HOME/.agents/skills/"
+done
 ```
 
-#### 2. 安装到 Claude Code
+如果目标工具不扫描 `~/.agents/skills/`，将相同目录复制到对应位置：
 
 ```bash
+# Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R agent-delegation "$HOME/.claude/skills/"
-cp -R dev-workflow "$HOME/.claude/skills/"
-cp -R kimi-code "$HOME/.claude/skills/"
-cp -R claude-code "$HOME/.claude/skills/"
-cp -R codex-cli "$HOME/.claude/skills/"
-```
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.claude/skills/"
 
-#### 3. 安装到 OpenCode
+# Gemini CLI
+mkdir -p "$HOME/.gemini/skills"
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
 
-推荐两种方式，任选其一：
-
-方式 A，使用 OpenCode 原生目录：
-
-```bash
+# OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R agent-delegation "$HOME/.config/opencode/skills/"
-cp -R dev-workflow "$HOME/.config/opencode/skills/"
-cp -R kimi-code "$HOME/.config/opencode/skills/"
-cp -R claude-code "$HOME/.config/opencode/skills/"
-cp -R codex-cli "$HOME/.config/opencode/skills/"
-```
-
-方式 B，复用 Claude Code 目录：
-
-```bash
-mkdir -p "$HOME/.claude/skills"
-cp -R agent-delegation "$HOME/.claude/skills/"
-cp -R dev-workflow "$HOME/.claude/skills/"
-cp -R kimi-code "$HOME/.claude/skills/"
-cp -R claude-code "$HOME/.claude/skills/"
-cp -R codex-cli "$HOME/.claude/skills/"
+cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## 推荐安装策略
 
-如果你希望同时兼容 `Codex`、`Claude Code`、`OpenCode`，建议把仓库保留在任意开发目录，然后按各自运行时建立副本或软链接。
-
-最省维护成本的方式是：
-
-1. `Codex` 安装到 `${CODEX_HOME:-$HOME/.codex}/skills/<skill-name>`
-2. `Claude Code` 安装到 `~/.claude/skills/<skill-name>`
-3. `OpenCode` 安装到 `~/.config/opencode/skills/<skill-name>`
-4. 如果你想让 `OpenCode` 走 Claude 兼容路径，也可以安装到 `~/.claude/skills/<skill-name>`
+1. 优先把 `~/.agents/skills/` 作为共享、标准化的 Skill 根目录。
+2. Codex 可直接使用该目录；旧环境可继续选择 `--target codex`。
+3. Claude Code、Gemini CLI、OpenCode 若未扫描共享目录，则使用各自的显式 target。
+4. `--target all` 会写入 `agents`、`claude`、`gemini`、`opencode` 四个目录，不额外写入 Codex legacy 目录。
 
 ## 使用方式
 
