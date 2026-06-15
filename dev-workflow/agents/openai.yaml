@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dev Workflow"
+  short_description: "Deliver new requirements and fix Bugs through complete verified workflows."
+  default_prompt: "Use $dev-workflow. For a new requirement, clarify and agree on the solution before implementing, testing, and acceptance. For a Bug, reproduce and identify the root cause before proposing, implementing, regression-testing, and accepting the fix."

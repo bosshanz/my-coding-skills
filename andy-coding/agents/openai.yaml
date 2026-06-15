@@ -1,4 +1,0 @@
-interface:
-  display_name: "Andy Coding"
-  short_description: "Personal full-stack coding workflow for Andy."
-  default_prompt: "Use $andy-coding to handle Andy's coding work with planning, design, implementation, verification, and concise documentation updates."

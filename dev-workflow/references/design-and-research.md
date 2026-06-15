@@ -1,5 +1,21 @@
 # Design And Research
 
+## Lightweight Design
+
+- Start from the user's goal, success criteria, constraints, and the smallest useful deliverable.
+- Ask only enough questions to remove material ambiguity; prefer one clear question at a time.
+- For non-trivial work, propose 2-3 approaches with tradeoffs, then recommend one.
+- Scale the design to the task: a few bullets for small work, a short structured design for larger work, and a diagram only when it clarifies boundaries or flow.
+- Avoid mandatory long design docs unless the user asks or the decision needs durable review.
+
+## Implementation Planning
+
+- Break work into small, reviewable steps that can be verified independently.
+- Each step should name the relevant files or modules when they are known.
+- Include the expected verification for the step: failing test, targeted test, build check, manual functional check, or review checklist.
+- Use YAGNI aggressively: remove scope that does not directly support the current goal.
+- Prefer batching only mechanical or low-risk changes; keep behavior changes easy to inspect.
+
 ## Frontend Design
 
 - Start from user goal, main task flow, and the information hierarchy.
