@@ -1,4 +1,0 @@
-interface:
-  display_name: "Agent Delegation"
-  short_description: "Explicit, auditable delegation to external coding agents."
-  default_prompt: "Use $agent-delegation to delegate this task to the requested external agent without simulating or silently substituting it."

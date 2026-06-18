@@ -2,7 +2,7 @@
 
 ## When To Use
 
-Use this reference for UI implementation, frontend design, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. This is the Frontend Design layer inside `dev-workflow`; load it before coding meaningful UI, not only at the final polish step.
+Use this reference for UI implementation, frontend design, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. This is the Frontend Design layer inside `dev`; load it before coding meaningful UI, not only at the final polish step.
 
 ## Frontend Design Gate
 

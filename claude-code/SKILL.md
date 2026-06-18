@@ -9,7 +9,7 @@ Use Claude Code CLI as an external terminal agent. Claude Code can inspect repos
 
 ## Adapter Contract
 
-Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+Follow this external-agent contract whenever Claude Code is used from another agent.
 
 ### Must Use When
 

@@ -9,7 +9,7 @@ Use Codex CLI as an external terminal agent. Codex can inspect repositories, run
 
 ## Adapter Contract
 
-Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+Follow this external-agent contract whenever Codex CLI is used from another agent.
 
 ### Must Use When
 

@@ -9,7 +9,7 @@ Use Kimi Code CLI as an external terminal agent that another coding agent can di
 
 ## Adapter Contract
 
-Follow the shared `$agent-delegation` contract whenever this Skill is used for external-agent delegation.
+Follow this external-agent contract whenever Kimi Code is used from another agent.
 
 ### Must Use When
 

@@ -1,24 +1,25 @@
 {
-  "name": "agent-delegation-skills",
+  "name": "my-coding-skills",
   "version": "0.1.0",
-  "description": "Portable development workflow and agent delegation skills for Codex, Claude Code, and OpenCode.",
+  "description": "Portable clarify, dev, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, and OpenCode.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
   },
   "files": [
-    "agent-delegation",
-    "dev-workflow",
+    "clarify",
+    "dev",
     "kimi-code",
     "claude-code",
     "codex-cli",
+    "scripts/skills-doctor.sh",
     "bin/skills.mjs",
     "README.md",
     "README.en.md",
     "LICENSE"
   ],
   "scripts": {
-    "doctor": "bash agent-delegation/scripts/agent-delegation-doctor.sh",
+    "doctor": "bash scripts/skills-doctor.sh",
     "check:cli": "node bin/skills.mjs list"
   },
   "keywords": [
@@ -26,8 +27,8 @@
     "claude-code",
     "opencode",
     "skills",
-    "agent-delegation",
-    "dev-workflow"
+    "clarify",
+    "dev"
   ],
   "license": "MIT",
   "engines": {

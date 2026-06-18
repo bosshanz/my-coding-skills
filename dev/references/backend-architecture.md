@@ -16,6 +16,9 @@ Use this reference when a task changes service boundaries, storage, cache, queue
 ## Service Boundary And API Contract
 
 - Define each service or module's responsibility, owner, inputs, outputs, and failure behavior.
+- Prefer deep modules at important seams: keep caller-facing interfaces small while hiding meaningful behavior, invariants, retries, and failure handling inside the module.
+- Do not add a new adapter seam just because it is theoretically testable. A seam should have real variation, a meaningful external dependency, or a concrete testing/operability reason.
+- Use the deletion test for architecture proposals: if removing the module removes complexity, it may be shallow pass-through; if removing it spreads complexity across callers, it likely provides leverage and locality.
 - Document API contracts for service boundaries: request schema, response schema, error codes, auth requirement, rate limits, and versioning expectations.
 - Keep public API versioning discoverable and stable; avoid breaking existing clients without a migration path.
 - Bound result sizes with pagination or limits; avoid unbounded queries and over-fetching.

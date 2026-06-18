@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this reference when `dev-workflow` needs stronger engineering discipline without installing or reenacting the full Superpowers methodology. It extracts the useful core: clarify before coding, lightweight design, executable plans, test-first behavior changes, systematic debugging, review gates, and verification before completion.
+Use this reference when `dev` needs stronger engineering discipline without installing or reenacting the full Superpowers methodology. It extracts the useful core: clarify before coding, lightweight design, executable plans, test-first behavior changes, systematic debugging, review gates, and verification before completion.
 
 This is not a full Superpowers fork. Keep it lightweight and proportional to the task.
 
@@ -24,8 +24,8 @@ Do not load it for tiny copy edits, one-line config changes, or simple mechanica
 - Design enough before coding.
 - Prefer YAGNI and the simplest viable approach.
 - Make plans executable and reviewable.
-- Prefer RED-GREEN-REFACTOR for behavior changes and regressions.
-- Debug systematically instead of guessing.
+- Prefer RED-GREEN-REFACTOR for behavior changes and regressions, one behavior at a time.
+- Debug systematically by building a red-capable feedback loop before relying on hypotheses.
 - Review the diff before claiming success.
 - Verify with evidence, not confidence language.
 
@@ -37,7 +37,7 @@ Do not load it for tiny copy edits, one-line config changes, or simple mechanica
 - Multi-hour autonomous execution without checkpoints.
 - Heavy branch finishing rituals.
 - Strict TDD punishment loops such as deleting all code written before a test.
-- Automatic external-agent dispatch; use `agent-delegation` only when the user or project policy authorizes it.
+- Automatic external-agent dispatch; use `kimi-code`, `claude-code`, or `codex-cli` only when the user or project policy authorizes it.
 
 ## Lightweight Workflow
 
@@ -57,14 +57,17 @@ Use this scaled workflow for non-trivial work:
    - Include the verification plan before editing.
 4. Test-first when practical.
    - For bug fixes, reproduce or identify a failing test before changing behavior.
-   - For new behavior, add the smallest useful test first when the project supports it.
+   - For new behavior, add the smallest useful behavior test first when the project supports it.
+   - Avoid horizontal TDD: do not write a large batch of imagined tests before implementation. Use vertical tracer bullets: one behavior test, the minimum code to pass it, then the next behavior.
    - If test-first is impractical, explain why and use the strongest available verification.
 5. Implement in small steps.
    - Keep behavior changes separate from mechanical refactors when possible.
    - Prefer existing project patterns over novel abstractions.
    - Stop before broad rewrites unless the task explicitly requires them.
 6. Debug systematically.
-   - Read the full error, reproduce, compare to known-good paths, form one hypothesis, test it, and fix the root cause.
+   - Read the full error and build the tightest available feedback loop before changing code: failing test, `curl`/HTTP script, CLI fixture, browser script, captured trace replay, or a small harness.
+   - Confirm the loop is red-capable: it exercises the user's exact symptom and can fail before the fix and pass after the fix.
+   - Minimize the reproduction, compare to known-good paths, form one falsifiable hypothesis at a time, test it, and fix the root cause.
    - After two failed guesses, pause and re-investigate assumptions instead of continuing random edits.
 7. Review gate.
    - Compare the diff to the goal.
@@ -97,15 +100,25 @@ Verification plan:
 ## Debugging Loop
 
 ```text
-Symptom → Reproduction → Evidence → Hypothesis → Experiment → Root cause → Fix → Regression coverage → Verification
+Symptom → Red-capable feedback loop → Reproduction → Minimal case → Evidence → Hypothesis → Experiment → Root cause → Fix → Regression coverage → Verification
 ```
 
 Rules:
 
 - Do not patch symptoms before proving the cause.
+- Treat the feedback loop as the first deliverable. If no red-capable command can be built, state the evidence gap and ask for logs, traces, access, or permission to add temporary instrumentation.
 - Prefer one controlled experiment at a time.
+- Tag temporary diagnostic logs with a unique prefix and remove them before delivery.
 - Preserve diagnostic evidence in the final explanation when it matters.
 - Add regression coverage when practical; if not, document the manual or functional check used.
+
+## Test-First Rules
+
+- Test observable behavior through the highest useful public interface, not private implementation details.
+- Use vertical slices. Each cycle should add one behavior, make it pass, then reveal what the next behavior should be.
+- Prefer integration-style tests when they exercise the real user or system path without excessive setup.
+- Use mocks only at true external seams such as payment gateways, network providers, clocks, or nondeterministic dependencies.
+- During refactors, keep tests stable across internal reshaping. If tests fail only because a private helper changed, the test is too coupled.
 
 ## Review Gate Checklist
 
@@ -129,4 +142,7 @@ Do not say “done”, “fixed”, or “complete” unless at least one of the
 
 ## Source Inspiration
 
-This reference is a localized, lightweight extraction inspired by Superpowers' published methodology: brainstorming/design before coding, explicit plans, TDD discipline, systematic debugging, code review, and verification before completion. Source: https://github.com/obra/superpowers
+This reference is a localized, lightweight extraction inspired by:
+
+- Superpowers' published methodology: brainstorming/design before coding, explicit plans, TDD discipline, systematic debugging, code review, and verification before completion. Source: https://github.com/obra/superpowers
+- Matt Pocock's `diagnosing-bugs` and `tdd` skills: red-capable feedback loops, minimized reproductions, falsifiable hypotheses, and tracer-bullet TDD. Source: https://github.com/mattpocock/skills

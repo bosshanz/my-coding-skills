@@ -6,16 +6,17 @@ import { homedir } from 'node:os';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const availableSkills = [
-  'agent-delegation',
-  'dev-workflow',
+  'clarify',
+  'dev',
   'kimi-code',
   'claude-code',
   'codex-cli',
 ];
 const groups = new Map([
   ['all', availableSkills],
-  ['workflow', ['dev-workflow']],
-  ['delegation', ['agent-delegation', 'kimi-code', 'claude-code', 'codex-cli']],
+  ['workflow', ['dev']],
+  ['planning', ['clarify']],
+  ['delegation', ['kimi-code', 'claude-code', 'codex-cli']],
   ['adapters', ['kimi-code', 'claude-code', 'codex-cli']],
 ]);
 
@@ -24,7 +25,7 @@ function usage() {
 
 Usage:
   skills list
-  skills add <skill|group...> [--target codex|claude|opencode|all] [--dest <dir>] [--force] [--dry-run]
+  skills add <skill|group...> [--target agents|codex|claude|gemini|opencode|all] [--dest <dir>] [--force] [--dry-run]
   skills doctor
 
 Skills:
@@ -32,21 +33,25 @@ Skills:
 
 Groups:
   all          Install every skill
-  workflow     Install dev-workflow only
-  delegation   Install agent-delegation and all external-agent adapters
+  workflow     Install dev only
+  planning     Install clarify only
+  delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, and codex-cli
 
 Targets:
+  agents       ${join(homedir(), '.agents', 'skills')}
   codex        ${join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'skills')}
   claude       ${join(homedir(), '.claude', 'skills')}
+  gemini       ${join(homedir(), '.gemini', 'skills')}
   opencode     ${join(homedir(), '.config', 'opencode', 'skills')}
-  all          Install to all three target directories
+  all          Install to agents, claude, gemini, and opencode target directories
 
 Examples:
-  skills add dev-workflow --target codex
+  skills add dev --target agents
+  skills add planning --target agents
   skills add all --target claude --force
   skills add delegation --target all --force
-  skills add dev-workflow --dest ./skills --dry-run
+  skills add dev --dest ./skills --dry-run
 `;
 }
 
@@ -81,12 +86,15 @@ function targetDirs(target, dest) {
   }
   const codexHome = process.env.CODEX_HOME || join(homedir(), '.codex');
   const targets = {
+    agents: join(homedir(), '.agents', 'skills'),
+    standard: join(homedir(), '.agents', 'skills'),
     codex: join(codexHome, 'skills'),
     claude: join(homedir(), '.claude', 'skills'),
+    gemini: join(homedir(), '.gemini', 'skills'),
     opencode: join(homedir(), '.config', 'opencode', 'skills'),
   };
   if (target === 'all') {
-    return Object.values(targets);
+    return [targets.agents, targets.claude, targets.gemini, targets.opencode];
   }
   if (!targets[target]) {
     throw new Error(`unknown target: ${target}`);

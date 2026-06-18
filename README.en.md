@@ -1,8 +1,8 @@
-# Agent Delegation Skills
+# Coding Agent Skills
 
-A portable collection of development workflow and agent delegation skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
+A portable collection of `clarify`, `dev`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent explicitly delegate work to external agents such as Kimi Code, Claude Code CLI, or Codex CLI, then review, integrate, and verify the result.
+The repository lets a caller agent clarify work, deliver development tasks, and explicitly call external agents such as Kimi Code, Claude Code CLI, or Codex CLI when needed.
 
 Core principles:
 
@@ -17,17 +17,7 @@ Core principles:
 
 The repository currently includes five primary skills:
 
-### `agent-delegation`
-
-This is the shared entry point for external-agent delegation, focused on:
-
-- Explicit delegation priority: user choice first, project policy second, and authorized task-based routing only
-- No simulated calls, silent fallback, or unauthorized external-agent dispatch
-- A common structure for target-agent output, caller review, invocation evidence, and final delivery
-- Permission, credential, failure, one-hop delegation, and same-agent child-process rules
-- A lightweight doctor script for Skill structure, old paths, script permissions, and target CLI availability
-
-### `dev-workflow`
+### `dev`
 
 This is the default Skill for two real development scenarios: end-to-end new-requirement delivery and end-to-end Bug repair:
 
@@ -38,7 +28,19 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Backend architecture: APIs, data, storage, cache, messaging, migrations, failure modes, observability, and reliability
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
-Trigger guidance: both new requirements and Bug fixes should trigger `dev-workflow` by default without requiring `$dev-workflow`. Use `agent-delegation` or an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
+Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
+
+### `clarify`
+
+This is an opt-in requirement and architecture alignment Skill for conversations before coding:
+
+- Ask one high-value question at a time and include a recommended answer
+- Inspect repository docs or code for factual answers instead of asking the user
+- Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
+- Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
+- Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`
+
+Trigger guidance: use it when the user explicitly requests `$clarify`, a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
 
 ### `kimi-code`
 
@@ -85,18 +87,7 @@ Every Skill follows the directory format defined by the [Agent Skills specificat
 ## Repository Structure
 
 ```text
-agent-delegation/
-  SKILL.md
-  agents/openai.yaml
-  references/
-    routing-policy.md
-    output-contract.md
-    safety-policy.md
-    invocation-evidence.md
-    platform-compatibility.md
-  scripts/
-    agent-delegation-doctor.sh
-dev-workflow/
+dev/
   SKILL.md
   agents/openai.yaml
   references/
@@ -106,6 +97,9 @@ dev-workflow/
     documentation.md
     frontend-quality.md
     backend-architecture.md
+clarify/
+  SKILL.md
+  agents/openai.yaml
 kimi-code/
   SKILL.md
   agents/openai.yaml
@@ -127,6 +121,8 @@ codex-cli/
     codex-cli-reference.md
   scripts/
     codex-cli-status.sh
+scripts/
+  skills-doctor.sh
 LICENSE
 README.md
 README.en.md
@@ -134,11 +130,12 @@ install.sh
 ```
 
 
-## Dev Workflow Integration Direction
+## Dev Integration Direction
 
-`dev-workflow` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+`dev` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
 
 - Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
+- Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
 - Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
 
@@ -149,10 +146,10 @@ This repository borrows [Comet](https://github.com/rpamis/comet)'s engineering p
 - Use invocation evidence to prove that the requested target agent was actually invoked.
 - Use a lightweight doctor script to check Skill structure, script permissions, old path cleanup, and target CLI availability.
 - Use platform compatibility documentation to separate verified runtimes from planned or unverified runtimes.
-- Keep `agent-delegation` lightweight: provide only a directory-copying `install.sh`, without a package manager, state machine, or automatic multi-agent orchestration.
+- Keep external-agent adapters lightweight: provide only a directory-copying `install.sh`, without a package manager, state machine, or automatic multi-agent orchestration.
 
 ```bash
-agent-delegation/scripts/agent-delegation-doctor.sh
+scripts/skills-doctor.sh
 ```
 
 ## Installation
@@ -174,7 +171,10 @@ Common examples:
 ./install.sh
 
 # Install only the default workflow into the shared standards-oriented directory
-./install.sh dev-workflow --target agents --force
+./install.sh dev --target agents --force
+
+# Install only the requirement/architecture interview Skill
+./install.sh planning --target agents --force
 
 # Install into runtime-specific Claude Code, Gemini CLI, or OpenCode paths
 ./install.sh all --target claude --force
@@ -188,7 +188,7 @@ Common examples:
 ./install.sh all --target codex --force
 
 # Use a custom directory or preview operations
-./install.sh dev-workflow --dest /tmp/skills --force
+./install.sh dev --dest /tmp/skills --force
 ./install.sh all --target agents --dry-run
 
 # Show help, Skills, and groups
@@ -197,11 +197,12 @@ Common examples:
 
 Supported skills and groups:
 
-- `dev-workflow`: default development workflow integrating Superpowers Lite and Frontend Design
-- `agent-delegation`: external-agent delegation contract
+- `dev`: default development workflow integrating Superpowers Lite and Frontend Design
+- `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `kimi-code` / `claude-code` / `codex-cli`: external-agent adapters
-- `workflow`: install only `dev-workflow`
-- `delegation`: install `agent-delegation` and all adapters
+- `workflow`: install only `dev`
+- `planning`: install only `clarify`
+- `delegation`: install all external-agent adapters
 - `adapters`: install the three adapters only
 - `all`: install every Skill; default when no Skill is named
 
@@ -219,7 +220,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in agent-delegation dev-workflow kimi-code claude-code codex-cli; do
+for skill in clarify dev kimi-code claude-code codex-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -229,15 +230,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.claude/skills/"
+cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
+cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
+cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -251,17 +252,14 @@ cp -R agent-delegation dev-workflow kimi-code claude-code codex-cli "$HOME/.conf
 
 ### Codex
 
-You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev-workflow` without requiring `$dev-workflow`:
+You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev` without requiring `$dev`:
 
 ```text
-Use $agent-delegation to ask Kimi Code to review this module, then separately verify its findings.
+Use $dev to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
 ```text
-```
-
-```text
-Use $dev-workflow to implement a new feature with a brief plan first, then verify it and update docs.
+Use $clarify to clarify this refactor one question at a time before we implement it.
 ```
 
 ```text
@@ -283,14 +281,11 @@ Claude Code discovers and loads matching skills on demand. After installation, i
 Explicit example:
 
 ```text
-/agent-delegation
+/dev
 ```
 
 ```text
-```
-
-```text
-/dev-workflow
+/clarify
 ```
 
 ```text
@@ -312,12 +307,13 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Automatic Trigger Guidance
 
-- Use the new-requirement track in `dev-workflow` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
-- Use the Bug-fix track in `dev-workflow` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
-- Use `agent-delegation` or a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
-- If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev-workflow` as the main workflow.
+- Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
+- Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
+- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; return to `dev` for implementation afterward.
+- Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
+- If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
-## Agent Delegation Contract
+## External Agent Adapter Contract
 
 When the user explicitly names an external agent, the caller must actually invoke that target. The caller must not replace, simulate, or impersonate the target agent's output.
 
@@ -331,7 +327,7 @@ If the target agent, CLI, authentication, or required permission is unavailable,
 
 ## Default Behavior
 
-`dev-workflow` defaults to:
+`dev` defaults to:
 
 - Chinese for plans, design notes, and delivery documents
 - Original language for code, commands, protocol names, and configuration keys

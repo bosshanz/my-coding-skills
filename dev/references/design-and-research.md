@@ -15,6 +15,21 @@
 - Include the expected verification for the step: failing test, targeted test, build check, manual functional check, or review checklist.
 - Use YAGNI aggressively: remove scope that does not directly support the current goal.
 - Prefer batching only mechanical or low-risk changes; keep behavior changes easy to inspect.
+- Split delivery into tracer-bullet vertical slices when the work spans layers. Each slice should prove a narrow complete path, not only one horizontal layer.
+
+## Codebase Design Vocabulary
+
+Use this vocabulary when discussing module shape or refactoring:
+
+- **Module**: anything with an interface and an implementation, from a function to a package.
+- **Interface**: everything a caller must know to use the module correctly: types, invariants, ordering, errors, configuration, and performance expectations.
+- **Seam**: the place where behavior can vary without editing the caller.
+- **Adapter**: a concrete implementation that sits at a seam.
+- **Depth**: how much useful behavior sits behind how little interface a caller must learn.
+- **Leverage**: the caller benefit from a deep module.
+- **Locality**: the maintainer benefit from concentrating change, bugs, and verification in one place.
+
+Prefer deep modules: small interfaces with meaningful behavior behind them. Use the deletion test: if deleting a module makes complexity disappear, it was probably pass-through; if deleting it spreads complexity across callers, it was earning its place.
 
 ## Frontend Design
 
@@ -49,10 +64,15 @@ Use this structure for technical research:
 
 ## Architecture Framing
 
-- Define service boundaries, responsibilities, and integration points early.
+- Define module or service seams, responsibilities, and integration points early.
 - State data flow, consistency model, retry behavior, timeout strategy, and observability needs.
 - Design for operability: logging, metrics, tracing, error surfacing, and rollback path.
 - Favor evolvable structures over premature platform complexity.
+- Avoid speculative seams. One adapter means a seam is only hypothetical; two real adapters or a concrete testing/operational need make it worth considering.
 - For architecture design, include at least one component or service relationship diagram.
 - For process design, include at least one flowchart or sequence diagram.
 - When data movement is central to the design, include a lightweight data flow diagram.
+
+## Source Inspiration
+
+This reference includes a localized extraction of Matt Pocock's `codebase-design` vocabulary: deep modules, interfaces, seams, adapters, leverage, and locality. Source: https://github.com/mattpocock/skills

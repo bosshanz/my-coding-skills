@@ -14,18 +14,17 @@ ALL_SKILLS=(
 TARGET="all"
 TARGET_WAS_SET=0
 DEST=""
-FORCE=0
 DRY_RUN=0
 LIST_ONLY=0
 REQUESTED=()
 
 usage() {
   cat <<'EOF'
-Install this repository's coding-agent Skills.
+Uninstall this repository's coding-agent Skills.
 
 Usage:
-  ./install.sh [skill|group ...] [options]
-  ./install.sh --list
+  ./uninstall.sh [skill|group ...] [options]
+  ./uninstall.sh --list
 
 Skills:
   clarify
@@ -35,29 +34,27 @@ Skills:
   codex-cli
 
 Groups:
-  all          Install every Skill (default)
-  workflow     Install dev
-  planning     Install clarify
-  delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, and codex-cli
+  all          Uninstall every Skill (default)
+  workflow     Uninstall dev
+  planning     Uninstall clarify
+  delegation   Uninstall all external-agent adapters
+  adapters     Uninstall kimi-code, claude-code, and codex-cli
 
 Options:
   --target TARGET   agents, codex, claude, gemini, opencode, or all
                     (default: all)
-  --dest DIR        Install into a custom Skills directory
-  --force, -f       Replace an existing installed Skill
+  --dest DIR        Uninstall from a custom Skills directory
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
   --help, -h        Show this help
 
 Examples:
-  ./install.sh
-  ./install.sh dev --target agents
-  ./install.sh planning --target agents
-  ./install.sh delegation --target claude --force
-  ./install.sh all --target gemini --force
-  ./install.sh all --target all --force
-  ./install.sh dev --dest /tmp/skills --dry-run
+  ./uninstall.sh
+  ./uninstall.sh dev --target agents
+  ./uninstall.sh planning --target agents
+  ./uninstall.sh delegation --target claude
+  ./uninstall.sh all --target all
+  ./uninstall.sh dev --dest /tmp/skills --dry-run
 
 Targets:
   agents    $HOME/.agents/skills (recommended shared location; Codex-supported)
@@ -70,7 +67,7 @@ EOF
 }
 
 fail() {
-  printf 'install: %s\n' "$*" >&2
+  printf 'uninstall: %s\n' "$*" >&2
   exit 1
 }
 
@@ -166,29 +163,23 @@ resolve_destinations() {
   esac
 }
 
-install_skill() {
+uninstall_skill() {
   local skill="$1"
   local destination_root="$2"
-  local source="$ROOT/$skill"
   local destination="$destination_root/$skill"
 
-  [[ -f "$source/SKILL.md" ]] || fail "missing source Skill: $source/SKILL.md"
-
-  if [[ -e "$destination" && "$FORCE" -ne 1 ]]; then
-    fail "destination already exists: $destination (use --force to replace it)"
-  fi
-
-  if [[ "$DRY_RUN" -eq 1 ]]; then
-    printf 'would install %s -> %s\n' "$skill" "$destination"
+  if [[ ! -e "$destination" ]]; then
+    printf 'not installed: %s\n' "$destination"
     return
   fi
 
-  mkdir -p "$destination_root"
-  if [[ -e "$destination" ]]; then
-    rm -rf "$destination"
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    printf 'would uninstall %s -> %s\n' "$skill" "$destination"
+    return
   fi
-  cp -R "$source" "$destination"
-  printf 'installed %s -> %s\n' "$skill" "$destination"
+
+  rm -rf "$destination"
+  printf 'uninstalled %s -> %s\n' "$skill" "$destination"
 }
 
 while [[ "$#" -gt 0 ]]; do
@@ -203,10 +194,6 @@ while [[ "$#" -gt 0 ]]; do
       [[ "$#" -ge 2 ]] || fail "$1 requires a value"
       DEST="$2"
       shift 2
-      ;;
-    --force|-f)
-      FORCE=1
-      shift
       ;;
     --dry-run)
       DRY_RUN=1
@@ -240,6 +227,6 @@ resolve_destinations
 
 for destination_root in "${DESTINATIONS[@]}"; do
   for skill in "${RESOLVED[@]}"; do
-    install_skill "$skill" "$destination_root"
+    uninstall_skill "$skill" "$destination_root"
   done
 done

@@ -1,9 +1,9 @@
 ---
-name: dev-workflow
+name: dev
 description: "Default end-to-end workflow for the two primary software-development scenarios: delivering a new requirement and fixing a bug. Use automatically when the user asks to discuss, design, implement, test, accept, debug, investigate, or repair software. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce and inspect the problem, identify the root cause, propose a fix, implement the smallest safe repair, add regression coverage, and verify acceptance. Includes Superpowers Lite, Frontend Design, and full-stack architecture guidance; no explicit skill name is required."
 ---
 
-# Dev Workflow
+# Dev
 
 ## Purpose
 
@@ -31,9 +31,9 @@ Use this Skill automatically for ordinary software work, especially requests equ
 - “这个页面/接口有问题，帮我定位并修复。”
 - “先分析这个 Bug 的根因，不要直接猜着改。”
 
-Do not make the user explicitly invoke `$dev-workflow`.
+Do not make the user explicitly invoke `$dev`.
 
-Use `agent-delegation` and a matching adapter only when the user explicitly asks another external agent to participate.
+Use the matching adapter (`kimi-code`, `claude-code`, or `codex-cli`) only when the user explicitly asks another external agent to participate.
 
 ## Select A Track
 
