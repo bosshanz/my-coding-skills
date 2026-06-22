@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ALL_SKILLS=(
   clarify
   dev
+  acceptance
   kimi-code
   claude-code
   codex-cli
@@ -29,6 +30,7 @@ Usage:
 Skills:
   clarify
   dev
+  acceptance
   kimi-code
   claude-code
   codex-cli
@@ -52,6 +54,7 @@ Examples:
   ./uninstall.sh
   ./uninstall.sh dev --target agents
   ./uninstall.sh planning --target agents
+  ./uninstall.sh acceptance --target agents
   ./uninstall.sh delegation --target claude
   ./uninstall.sh all --target all
   ./uninstall.sh dev --dest /tmp/skills --dry-run
@@ -111,7 +114,7 @@ resolve_requests() {
         append_unique claude-code
         append_unique codex-cli
         ;;
-      clarify|dev|kimi-code|claude-code|codex-cli)
+      clarify|dev|acceptance|kimi-code|claude-code|codex-cli)
         append_unique "$request"
         ;;
       *)

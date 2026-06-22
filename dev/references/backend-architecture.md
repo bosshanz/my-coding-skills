@@ -27,6 +27,7 @@ Use this reference when a task changes service boundaries, storage, cache, queue
 
 ## Data Store And Query Rules
 
+- For schema design, constraints, indexes, transactions, query plans, migrations, backfills, and database operations, also load `database-engineering.md`.
 - Choose the data store from access patterns, transaction needs, consistency needs, scale, and operational familiarity.
 - Prefer MySQL or PostgreSQL for relational models, transactional workflows, reporting joins, and strong schema constraints.
 - Define each table or collection's top query patterns, expected cardinality, index strategy, and latency expectation when volume matters.

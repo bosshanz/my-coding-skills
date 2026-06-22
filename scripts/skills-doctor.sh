@@ -34,7 +34,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in clarify dev kimi-code claude-code codex-cli; do
+for skill in clarify dev acceptance kimi-code claude-code codex-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -46,7 +46,7 @@ for skill in clarify dev kimi-code claude-code codex-cli; do
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-quality.md backend-architecture.md; do
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-quality.md backend-architecture.md database-engineering.md; do
   check_file "dev/references/$ref"
 done
 

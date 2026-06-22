@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-A portable collection of `clarify`, `dev`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
+A portable collection of `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent clarify work, deliver development tasks, and explicitly call external agents such as Kimi Code, Claude Code CLI, or Codex CLI when needed.
+The repository lets a caller agent clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, or Codex CLI when needed.
 
 Core principles:
 
@@ -15,7 +15,7 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes five primary skills:
+The repository currently includes six primary skills:
 
 ### `dev`
 
@@ -25,10 +25,11 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
 - Frontend Design: purpose, aesthetic direction, interaction flow, complete states, accessibility, responsiveness, and visual acceptance
-- Backend architecture: APIs, data, storage, cache, messaging, migrations, failure modes, observability, and reliability
+- Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
+- Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
-Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
+Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
 
 ### `clarify`
 
@@ -41,6 +42,17 @@ This is an opt-in requirement and architecture alignment Skill for conversations
 - Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`
 
 Trigger guidance: use it when the user explicitly requests `$clarify`, a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
+
+### `acceptance`
+
+This is a top-level independent acceptance Skill for go/no-go review after implementation:
+
+- Compare against clarified requirements, acceptance criteria, issues, PR descriptions, or task notes
+- Review current diff, test evidence, CI, manual checks, screenshots, logs, docs, migrations, and rollback notes
+- Stay in verification mode by default; when issues are found, report blockers, risks, and the next `$dev` repair step
+- Return `accepted`, `accepted with risk`, or `rejected`
+
+Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, needs a pre-launch go/no-go decision, or wants a clear clarify -> develop -> accept workflow.
 
 ### `kimi-code`
 
@@ -97,7 +109,11 @@ dev/
     documentation.md
     frontend-quality.md
     backend-architecture.md
+    database-engineering.md
 clarify/
+  SKILL.md
+  agents/openai.yaml
+acceptance/
   SKILL.md
   agents/openai.yaml
 kimi-code/
@@ -132,12 +148,15 @@ install.sh
 
 ## Dev Integration Direction
 
-`dev` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger collection that combines:
+`dev` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger thin dispatcher that combines:
 
 - Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
 - Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
+- Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
+- Top-level `acceptance` provides independent acceptance; `dev` still keeps its lightweight internal acceptance gate so small tasks do not require a split workflow.
 
 ## Comet-Inspired Direction
 
@@ -176,6 +195,9 @@ Common examples:
 # Install only the requirement/architecture interview Skill
 ./install.sh planning --target agents --force
 
+# Install only the independent acceptance Skill
+./install.sh acceptance --target agents --force
+
 # Install into runtime-specific Claude Code, Gemini CLI, or OpenCode paths
 ./install.sh all --target claude --force
 ./install.sh all --target gemini --force
@@ -199,6 +221,7 @@ Supported skills and groups:
 
 - `dev`: default development workflow integrating Superpowers Lite and Frontend Design
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
+- `acceptance`: independent acceptance and go/no-go verification
 - `kimi-code` / `claude-code` / `codex-cli`: external-agent adapters
 - `workflow`: install only `dev`
 - `planning`: install only `clarify`
@@ -220,7 +243,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in clarify dev kimi-code claude-code codex-cli; do
+for skill in clarify dev acceptance kimi-code claude-code codex-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -230,15 +253,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.claude/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R clarify dev kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -260,6 +283,10 @@ Use $dev to implement a new feature with a brief plan first, then verify it and 
 
 ```text
 Use $clarify to clarify this refactor one question at a time before we implement it.
+```
+
+```text
+Use $acceptance to independently verify the completed change against the agreed criteria and return accepted, accepted with risk, or rejected.
 ```
 
 ```text
@@ -289,6 +316,10 @@ Explicit example:
 ```
 
 ```text
+/acceptance
+```
+
+```text
 /kimi-code
 ```
 
@@ -309,7 +340,9 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
+- Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; return to `dev` for implementation afterward.
+- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
@@ -335,7 +368,7 @@ If the target agent, CLI, authentication, or required permission is unavailable,
 - Test-first work for behavior changes and root-cause analysis for bug fixes when practical
 - Explicit verification steps, review conclusions, and plain-language acceptance conclusions before delivery
 - Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
-- Reference-based frontend quality and backend architecture checklists when needed, instead of turning external skills into a long default process
+- Reference-based frontend quality, backend architecture, and database engineering checklists when needed, instead of turning external skills into a long default process
 
 ## License
 

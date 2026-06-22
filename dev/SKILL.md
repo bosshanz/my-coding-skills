@@ -1,13 +1,13 @@
 ---
 name: dev
-description: "Default end-to-end workflow for the two primary software-development scenarios: delivering a new requirement and fixing a bug. Use automatically when the user asks to discuss, design, implement, test, accept, debug, investigate, or repair software. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce and inspect the problem, identify the root cause, propose a fix, implement the smallest safe repair, add regression coverage, and verify acceptance. Includes Superpowers Lite, Frontend Design, and full-stack architecture guidance; no explicit skill name is required."
+description: "Thin default dispatcher for the two primary software-development scenarios: delivering a new requirement and fixing a bug. Use automatically when the user asks to discuss, design, implement, test, accept, debug, investigate, or repair software. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce and inspect the problem, identify the root cause, propose a fix, implement the smallest safe repair, add regression coverage, and verify acceptance. Load focused references only when their trigger conditions apply."
 ---
 
 # Dev
 
 ## Purpose
 
-Use one default Skill for the user's real development loop:
+Use one default Skill as a thin dispatcher for the user's real development loop:
 
 1. **New requirement**: discuss and confirm the requirement, agree on a solution, implement it, test it, and complete acceptance.
 2. **Bug fix**: inspect and reproduce the problem, identify the root cause, agree on the repair, implement it, add regression coverage, and complete acceptance.
@@ -19,12 +19,13 @@ This Skill integrates:
 - **Superpowers Lite** for clarification, lightweight design, test-first changes, systematic debugging, review gates, and evidence-based completion.
 - **Frontend Design** for intentional UI direction, complete states, accessibility, responsiveness, and performance.
 - **Full-stack guidance** for APIs, data, storage, cache, queues, migrations, observability, and reliability.
+- **Database engineering** for schema design, constraints, transactions, indexes, query plans, migrations, capacity, and production database safety.
 
-Do not require worktrees, long specs, repository-wide audits, or subagent-per-task workflows by default.
+Do not require worktrees, long specs, repository-wide audits, or subagent-per-task workflows by default. Do not treat every integrated reference as always-on context; load only the focused references that match the task.
 
 ## Automatic Trigger
 
-Use this Skill automatically for ordinary software work, especially requests equivalent to:
+Use this Skill automatically for ordinary software work in a repository, especially requests equivalent to:
 
 - “我有一个新需求，先聊清楚方案再实现。”
 - “实现这个功能并补测试、验收。”
@@ -32,6 +33,8 @@ Use this Skill automatically for ordinary software work, especially requests equ
 - “先分析这个 Bug 的根因，不要直接猜着改。”
 
 Do not make the user explicitly invoke `$dev`.
+
+Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, or one-off terminal facts that do not need a development workflow.
 
 Use the matching adapter (`kimi-code`, `claude-code`, or `codex-cli`) only when the user explicitly asks another external agent to participate.
 
@@ -44,6 +47,8 @@ At the start, classify the task:
 - If unclear, ask one high-signal question: “这是新增行为，还是已有行为没有按预期工作？”
 
 Do not run both tracks mechanically. Share only the common review, verification, and delivery gates.
+
+For tiny mechanical edits, skip formal track ceremony and perform the smallest direct change plus an appropriate verification check.
 
 ## Track A: New Requirement
 
@@ -157,11 +162,28 @@ For a Bug fix:
 
 Keep code, commands, protocol names, and configuration keys in their original language.
 
+## Reference Loading Policy
+
+Start with this `SKILL.md`, classify the task, and load the smallest reference set that can materially improve the work. Do not read every reference just because `dev` triggered.
+
+If a task touches multiple boundaries, load the references for the boundaries that actually change. If a reference has its own `When To Use` or `When To Load` section, follow that stricter condition too.
+
+| Reference | Load when | Do not load when |
+| --- | --- | --- |
+| `references/superpowers-lite.md` | Behavior, architecture, API, data, deployment risk, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. | Tiny copy edits, simple formatting, one-line config edits, or direct factual answers. |
+| `references/design-and-research.md` | The task needs solution comparison, module or workflow design, diagrams, technical research, or a multi-step implementation plan. | The implementation path is obvious and local. |
+| `references/frontend-quality.md` | Meaningful UI, frontend architecture, interaction states, visual polish, accessibility, responsiveness, or frontend performance changes. | Backend-only, CLI-only, docs-only, or non-visual changes. |
+| `references/backend-architecture.md` | Service boundaries, APIs, storage choice, cache, queue, consistency, migrations, observability, reliability, security boundary, or production rollout risk. | Pure UI styling, small local helper changes, or database-only work that does not affect service architecture. |
+| `references/database-engineering.md` | Schema design, relational modeling, constraints, indexes, query plans, transactions, locks, isolation, migrations, backfills, replication, partitioning, database capacity, or database incidents. | Non-persistent state, simple CRUD wiring without schema/query risk, or storage-agnostic business logic. |
+| `references/stack.md` | Choosing language, framework, database, cache, queue, or integration technology. | The repository already has a clear standard and the task does not change it. |
+| `references/documentation.md` | The user asks for docs, the task changes durable behavior or architecture, or delivery needs a reusable note. | Routine small edits where final response is enough. |
+
 ## Reference Guide
 
 - Read `references/superpowers-lite.md` for stricter design, TDD, debugging, review, and verification discipline.
 - Read `references/frontend-quality.md` for UI design, interaction states, accessibility, responsiveness, and frontend performance.
 - Read `references/backend-architecture.md` for APIs, storage, cache, queue, consistency, migration, observability, and reliability.
+- Read `references/database-engineering.md` for schema design, constraints, transactions, indexes, query plans, migrations, and production database safety.
 - Read `references/design-and-research.md` for solution comparison, research, diagrams, and lightweight planning.
 - Read `references/stack.md` for language, framework, database, cache, queue, and integration choices.
 - Read `references/documentation.md` for documentation, review depth, verification, and acceptance reporting.

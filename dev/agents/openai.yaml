@@ -1,4 +1,4 @@
 interface:
   display_name: "Dev"
-  short_description: "Deliver new requirements and fix Bugs through complete verified workflows."
-  default_prompt: "Use $dev. For a new requirement, clarify and agree on the solution before implementing, testing, and acceptance. For a Bug, reproduce and identify the root cause before proposing, implementing, regression-testing, and accepting the fix."
+  short_description: "Deliver new requirements and fix Bugs through focused, verified workflows."
+  default_prompt: "Use $dev as a thin dispatcher. For a new requirement, clarify and agree on the solution before implementing, testing, and acceptance. For a Bug, reproduce and identify the root cause before proposing, implementing, regression-testing, and accepting the fix. Load only the focused references that match the task."

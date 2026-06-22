@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
   "version": "0.1.0",
-  "description": "Portable clarify, dev, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, and OpenCode.",
+  "description": "Portable clarify, dev, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, and OpenCode.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
@@ -9,6 +9,7 @@
   "files": [
     "clarify",
     "dev",
+    "acceptance",
     "kimi-code",
     "claude-code",
     "codex-cli",
@@ -28,7 +29,8 @@
     "opencode",
     "skills",
     "clarify",
-    "dev"
+    "dev",
+    "acceptance"
   ],
   "license": "MIT",
   "engines": {

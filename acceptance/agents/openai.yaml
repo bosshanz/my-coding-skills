@@ -1,0 +1,4 @@
+interface:
+  display_name: "Acceptance"
+  short_description: "Independently verify development work."
+  default_prompt: "Use $acceptance to independently verify whether the implemented change satisfies the agreed criteria, review evidence and risks, and return accepted, rejected, or accepted with risk."

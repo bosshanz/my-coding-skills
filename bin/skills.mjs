@@ -8,6 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const availableSkills = [
   'clarify',
   'dev',
+  'acceptance',
   'kimi-code',
   'claude-code',
   'codex-cli',
@@ -49,6 +50,7 @@ Targets:
 Examples:
   skills add dev --target agents
   skills add planning --target agents
+  skills add acceptance --target agents
   skills add all --target claude --force
   skills add delegation --target all --force
   skills add dev --dest ./skills --dry-run
