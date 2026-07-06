@@ -10,6 +10,8 @@ Core principles:
 - If the target is unavailable, fail explicitly; do not silently substitute.
 - Never simulate, impersonate, or fabricate the target agent's output.
 - Delegated results must remain auditable, reviewable, and verifiable.
+- Use first-principles decomposition before choosing solutions for complex requirements and architecture decisions.
+- Use adversarial review for non-trivial designs, fixes, and acceptance decisions by actively looking for counterexamples and weak assumptions.
 
 中文主版本: [README.md](./README.md)
 
@@ -27,6 +29,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Frontend Design: purpose, aesthetic direction, interaction flow, complete states, accessibility, responsiveness, and visual acceptance
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
+- First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
 Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
@@ -37,6 +40,7 @@ This is an opt-in requirement and architecture alignment Skill for conversations
 
 - Ask one high-value question at a time and include a recommended answer
 - Inspect repository docs or code for factual answers instead of asking the user
+- Apply first-principles decomposition to solution-shaped requests by separating goals, facts, constraints, assumptions, and non-goals
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
 - Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`
@@ -49,6 +53,7 @@ This is a top-level independent acceptance Skill for go/no-go review after imple
 
 - Compare against clarified requirements, acceptance criteria, issues, PR descriptions, or task notes
 - Review current diff, test evidence, CI, manual checks, screenshots, logs, docs, migrations, and rollback notes
+- Adversarially test the acceptance decision against edge inputs, permissions, concurrency, migrations, rollback, and recovery paths
 - Stay in verification mode by default; when issues are found, report blockers, risks, and the next `$dev` repair step
 - Return `accepted`, `accepted with risk`, or `rejected`
 
@@ -154,6 +159,7 @@ install.sh
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
 - Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
 - Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
+- First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
 - Top-level `acceptance` provides independent acceptance; `dev` still keeps its lightweight internal acceptance gate so small tasks do not require a split workflow.

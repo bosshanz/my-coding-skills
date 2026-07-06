@@ -8,6 +8,24 @@
 - Scale the design to the task: a few bullets for small work, a short structured design for larger work, and a diagram only when it clarifies boundaries or flow.
 - Avoid mandatory long design docs unless the user asks or the decision needs durable review.
 
+## First-Principles Design
+
+Use this when a task is solution-shaped, architecture-heavy, expensive to reverse, or full of inherited assumptions:
+
+- Reduce the problem to the desired outcome, hard constraints, facts, assumptions, invariants, and non-goals.
+- Derive the simplest viable solution from those primitives before choosing a familiar pattern, framework feature, cache, queue, service split, or abstraction.
+- Ask what would change if the current implementation detail disappeared: UI, API, datastore, provider, framework, or deployment shape.
+- Keep only abstractions that protect a real invariant, hide meaningful complexity, or preserve locality under likely change.
+
+## Adversarial Design Review
+
+Before locking in a non-trivial design, try to disprove it:
+
+- What input, user role, permission state, data volume, network failure, concurrency case, migration order, or rollback path breaks the design?
+- Which assumption has the least evidence?
+- What cheaper design would satisfy the same first-principles constraints?
+- What test, query plan, manual check, or rollout guard would reveal the failure?
+
 ## Implementation Planning
 
 - Break work into small, reviewable steps that can be verified independently.

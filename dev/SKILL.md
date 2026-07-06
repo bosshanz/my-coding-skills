@@ -20,6 +20,7 @@ This Skill integrates:
 - **Frontend Design** for intentional UI direction, complete states, accessibility, responsiveness, and performance.
 - **Full-stack guidance** for APIs, data, storage, cache, queues, migrations, observability, and reliability.
 - **Database engineering** for schema design, constraints, transactions, indexes, query plans, migrations, capacity, and production database safety.
+- **Adversarial review** for stress-testing assumptions, designs, fixes, and completion claims before delivery.
 
 Do not require worktrees, long specs, repository-wide audits, or subagent-per-task workflows by default. Do not treat every integrated reference as always-on context; load only the focused references that match the task.
 
@@ -63,6 +64,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 
 - For non-trivial work, compare 2-3 realistic approaches, including the simplest viable option.
 - Recommend one approach with tradeoffs, risks, affected modules, data/API impact, and verification strategy.
+- Adversarially test the recommended approach: name what would make it fail, what assumption is weakest, and which evidence or test will catch that failure.
 - For frontend work, define purpose, visual direction, interaction flow, responsive behavior, and loading/empty/error/success states.
 - For backend work, define boundaries, data flow, schema/API/event contracts, failure behavior, migration, and observability as applicable.
 - Use a small Mermaid diagram when it materially clarifies architecture or flow.
@@ -111,6 +113,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 - Explain the root cause and affected scope in plain language.
 - Compare alternatives when the repair has meaningful compatibility, data, security, or architecture tradeoffs.
 - Recommend the smallest safe fix that addresses the cause rather than hiding the symptom.
+- Adversarially test the repair: identify how the bug could still reproduce, which adjacent path could regress, and which check would expose that failure.
 - Define regression coverage and explicit acceptance checks before implementation.
 
 ### 4. Implement The Fix
@@ -133,6 +136,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 Before claiming success on either track:
 
 - Compare the diff to the agreed requirement or root-cause repair.
+- Perform an adversarial pass: try to disprove the solution with edge inputs, missing permissions, stale state, concurrency, rollout order, rollback needs, and user-visible failure paths that apply.
 - Check edge cases, error paths, permissions, compatibility, and project conventions.
 - Confirm tests prove the behavior, not merely syntax or compilation.
 - Review docs, migration, rollout, rollback, monitoring, and support impact when applicable.

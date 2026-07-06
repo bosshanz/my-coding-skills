@@ -50,6 +50,8 @@ Use this scaled workflow for non-trivial work:
 2. Tiny design.
    - Compare 2-3 realistic options, including the simplest viable option.
    - Recommend one option with tradeoffs and risks.
+   - Use first-principles reasoning for solution-shaped or architecture-heavy tasks: separate desired outcome, facts, constraints, assumptions, invariants, and non-goals before selecting a pattern.
+   - Run an adversarial design pass for non-trivial work: identify the weakest assumption, likely failure mode, and the check that would expose it.
    - For architecture or workflow design, include a small Mermaid diagram when it improves clarity.
 3. Executable plan.
    - Break work into small steps that are easy to review.
@@ -71,6 +73,7 @@ Use this scaled workflow for non-trivial work:
    - After two failed guesses, pause and re-investigate assumptions instead of continuing random edits.
 7. Review gate.
    - Compare the diff to the goal.
+   - Try to disprove the solution before delivery: edge inputs, permissions, stale state, concurrency, data volume, rollback, and adjacent flows where relevant.
    - Check edge cases, compatibility, project conventions, docs impact, and security/reliability risk.
    - Treat warnings, skipped checks, and flaky output as residual risk.
 8. Verification gate.

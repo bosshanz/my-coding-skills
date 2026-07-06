@@ -1,6 +1,6 @@
 ---
 name: acceptance
-description: "Independent acceptance and verification review after implementation. Use when the user explicitly invokes $acceptance, asks for final acceptance, wants a separate verification pass after $dev, needs go/no-go judgment, or wants implementation evidence checked against clarified requirements, tests, risks, rollout, rollback, docs, and unresolved gaps."
+description: "Independent acceptance and adversarial verification review after implementation. Use when the user explicitly invokes $acceptance, asks for final acceptance, wants a separate verification pass after $dev, needs go/no-go judgment, or wants implementation evidence checked against clarified requirements, tests, risks, rollout, rollback, docs, and unresolved gaps."
 ---
 
 # Acceptance
@@ -37,15 +37,18 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
    - Review the diff against the requirement or root cause.
    - Check that behavior, edge cases, errors, permissions, data, API, UI, docs, migrations, and rollout notes are covered where relevant.
    - Confirm unrelated changes are not mixed into the acceptance surface.
-3. Verify evidence:
+3. Run an adversarial review:
+   - Try to disprove acceptance with realistic failure cases: edge inputs, missing permissions, stale state, concurrency, data volume, migration order, rollback, dependency failure, and user-visible recovery paths when applicable.
+   - Identify the weakest assumption and whether current evidence actually covers it.
+4. Verify evidence:
    - Prefer commands that were already run, then run targeted checks when needed and safe.
    - Confirm tests prove behavior, not only syntax or compilation.
    - Treat skipped, flaky, missing, or stale checks as residual risk.
-4. Decide:
+5. Decide:
    - `accepted`: criteria are met and verification evidence is adequate.
    - `accepted with risk`: criteria appear met but named residual risks remain.
    - `rejected`: criteria are not met, evidence is insufficient for a critical area, or a blocking regression exists.
-5. Report the result with file, test, and risk references.
+6. Report the result with file, test, and risk references.
 
 ## Review Focus
 

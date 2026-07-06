@@ -10,6 +10,8 @@
 - 不能调用时明确失败，不静默替换。
 - 不模拟、不伪装、不编造目标 Agent 的输出。
 - 外部 Agent 的结果必须可审计、可复核、可验证。
+- 对复杂需求和架构选择先做第一性原理拆解，再选择方案。
+- 对非平凡设计、修复和验收结论做对抗式审查，主动寻找反例和薄弱假设。
 
 English version: [README.en.md](./README.en.md)
 
@@ -27,6 +29,7 @@ English version: [README.en.md](./README.en.md)
 - Frontend Design：页面目的、审美方向、交互流程、完整状态、可访问性和响应式验收
 - 后端架构：API、服务边界、缓存、消息、失败模式、可观测性和可靠性
 - 数据库工程：schema、约束、事务、索引、查询计划、迁移、回填、容量和生产安全
+- 第一性原理设计和对抗式审查：从目标、事实、约束和假设推出方案，并主动寻找失败路径
 - 交付前对照需求或根因做 diff review，并明确测试、验收和未验证风险
 
 触发建议：新增需求和 Bug 修复都默认触发 `dev`，不需要用户显式写 `$dev`。`dev` 先作为薄调度器判断任务边界，再按矩阵加载相关 reference。只有用户明确要求 Kimi / Claude Code / Codex CLI 等外部 Agent 参与时，才走对应 Adapter。
@@ -37,6 +40,7 @@ English version: [README.en.md](./README.en.md)
 
 - 一次只问一个高价值问题，并给出推荐答案
 - 能从仓库文档或代码查到的事实就先查，不把问题抛回给用户
+- 对 solution-shaped 的请求做第一性原理拆解，分离目标、事实、约束、假设和非目标
 - 需要时维护 `CONTEXT.md` 里的领域词汇，但不把它变成实现方案或草稿
 - 只在决策难以逆转、未来读者会疑惑、且确有取舍时建议写 ADR
 - 访谈结束后把清晰的行为、非目标、边界和验证策略交给 `dev`
@@ -49,6 +53,7 @@ English version: [README.en.md](./README.en.md)
 
 - 对照澄清后的需求、验收标准、issue、PR 描述或任务记录
 - 审查当前 diff、测试证据、CI、手动验证、截图、日志、文档、迁移和回滚说明
+- 对验收结论做对抗式反证，检查边界输入、权限、并发、迁移、回滚和恢复路径
 - 默认只验收不改代码；发现问题时给出阻塞项、风险和下一步 `$dev` 修复建议
 - 输出 `accepted`、`accepted with risk` 或 `rejected`
 
@@ -154,6 +159,7 @@ install.sh
 - 从 Matt Pocock 的 Skills 吸收更硬的工程规则：red-capable 调试反馈环、tracer-bullet TDD、deep module / seam / interface 架构词汇。
 - 从 Frontend Design 吸收 UI 质量纪律：先确定审美方向，避免 generic AI UI，覆盖真实状态、交互、可访问性和性能。
 - 从资深数据库工程实践吸收数据建模、约束、事务、索引、查询计划、迁移、回填和生产数据库安全。
+- 用第一性原理约束方案选择，用对抗式审查反证设计、修复和完成声明。
 - 按任务边界懒加载 reference，不把所有检查清单变成每个任务的默认上下文。
 - 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
 - 顶层 `acceptance` 提供独立验收；`dev` 内部仍保留轻量验收 gate，避免小任务被迫拆流程。

@@ -41,6 +41,16 @@ If no repository context exists, proceed as a stateless interview and say so bri
 
 Prefer concrete scenarios over abstract categories. Stress-test edge cases, permissions, failure modes, lifecycle behavior, data ownership, migration impact, and rollback paths when relevant.
 
+## First-Principles Clarification
+
+Use first-principles clarification when the request is ambiguous, solution-shaped, architecture-heavy, or likely to encode hidden assumptions:
+
+- Separate the user's desired outcome from the proposed implementation.
+- Identify facts, constraints, assumptions, invariants, and non-goals before debating solutions.
+- Ask what must remain true if the current UI, API, storage model, framework, or workflow were replaced.
+- Challenge inherited labels and abstractions when they obscure the real domain behavior.
+- Convert resolved assumptions into acceptance criteria or domain terms before handing off to `$dev`.
+
 ## Domain Language
 
 When domain terms matter, keep the vocabulary sharp:
