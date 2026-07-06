@@ -2,7 +2,7 @@
 
 A portable collection of `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, or Codex CLI when needed.
+The repository lets a caller agent clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
 
 Core principles:
 
@@ -17,7 +17,7 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes six primary skills:
+The repository currently includes seven primary skills:
 
 ### `dev`
 
@@ -32,7 +32,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
-Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, or another external agent to participate.
+Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, OpenCode CLI, or another external agent to participate.
 
 ### `clarify`
 
@@ -86,6 +86,15 @@ This skill lets another agent dispatch Codex CLI, focused on:
 - `codex exec`, sandboxing, approvals, structured output, and session resume
 - Least-privilege sandbox defaults and calling-agent review of results
 - Codex CLI setup, authentication, configuration, and command reference
+
+### `opencode`
+
+This skill lets another agent dispatch OpenCode CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- Non-interactive `opencode run`, TUI interaction, session continuation, agent selection, file attachments, and JSON output
+- Invocation evidence plus calling-agent review after OpenCode completes
+- OpenCode setup, login, Skill / Rules directories, and command reference
 
 ## Compatibility
 
@@ -142,6 +151,13 @@ codex-cli/
     codex-cli-reference.md
   scripts/
     codex-cli-status.sh
+opencode/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    opencode-reference.md
+  scripts/
+    opencode-status.sh
 scripts/
   skills-doctor.sh
 LICENSE
@@ -228,11 +244,11 @@ Supported skills and groups:
 - `dev`: default development workflow integrating Superpowers Lite and Frontend Design
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `acceptance`: independent acceptance and go/no-go verification
-- `kimi-code` / `claude-code` / `codex-cli`: external-agent adapters
+- `kimi-code` / `claude-code` / `codex-cli` / `opencode`: external-agent adapters
 - `workflow`: install only `dev`
 - `planning`: install only `clarify`
 - `delegation`: install all external-agent adapters
-- `adapters`: install the three adapters only
+- `adapters`: install the four adapters only
 - `all`: install every Skill; default when no Skill is named
 
 Installer options:
@@ -249,7 +265,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in clarify dev acceptance kimi-code claude-code codex-cli; do
+for skill in clarify dev acceptance kimi-code claude-code codex-cli opencode; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -259,15 +275,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.claude/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.gemini/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli "$HOME/.config/opencode/skills/"
+cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -307,6 +323,10 @@ Use $claude-code to dispatch Claude Code for an independent diff review.
 Use $codex-cli to dispatch Codex CLI for a read-only repository research task.
 ```
 
+```text
+Use $opencode to dispatch OpenCode CLI for a scoped repository research task.
+```
+
 ### Claude Code
 
 Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
@@ -337,6 +357,10 @@ Explicit example:
 /codex-cli
 ```
 
+```text
+/opencode
+```
+
 ### OpenCode
 
 OpenCode discovers and loads matching skills on demand. Once installed in a supported directory, normal task prompts can trigger it.
@@ -349,7 +373,7 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; return to `dev` for implementation afterward.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
-- Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, or `codex-cli`.
+- Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, or `opencode`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
 ## External Agent Adapter Contract
@@ -363,6 +387,18 @@ Recommended delivery separates:
 3. Final recommendation and verification conclusion
 
 If the target agent, CLI, authentication, or required permission is unavailable, report the failure explicitly and obtain user approval before substituting another target or completing the work directly.
+
+### Internal Skill Routing In Target CLIs
+
+External CLI selection must be explicit; once the user or project policy selects `kimi-code`, `claude-code`, `codex-cli`, or `opencode`, the target CLI may automatically use the global/user and project/local non-adapter Skills it can discover.
+
+- Respect any Skill explicitly named by the user.
+- Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
+- Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
+- Prefer `clarify` for requirement or architecture interviews.
+- Prefer `acceptance` for independent go/no-go verification.
+- The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, or `opencode` unless the user explicitly authorizes multi-agent orchestration.
+- The target CLI output should state which Skills were used, or why none were used.
 
 ## Default Behavior
 

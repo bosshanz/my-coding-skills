@@ -1,4 +1,4 @@
 interface:
   display_name: "Kimi Code"
   short_description: "Delegate real work to Kimi Code CLI."
-  default_prompt: "Use $kimi-code to actually invoke Kimi Code CLI for this scoped task, preserve its output, then review and verify the result without simulating or silently substituting the target."
+  default_prompt: "Use $kimi-code to invoke Kimi Code CLI, let it auto-route matching global/project non-adapter Skills, preserve output, then review and verify."

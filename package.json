@@ -13,6 +13,7 @@
     "kimi-code",
     "claude-code",
     "codex-cli",
+    "opencode",
     "scripts/skills-doctor.sh",
     "bin/skills.mjs",
     "README.md",

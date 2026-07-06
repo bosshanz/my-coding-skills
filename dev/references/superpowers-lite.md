@@ -37,7 +37,7 @@ Do not load it for tiny copy edits, one-line config changes, or simple mechanica
 - Multi-hour autonomous execution without checkpoints.
 - Heavy branch finishing rituals.
 - Strict TDD punishment loops such as deleting all code written before a test.
-- Automatic external-agent dispatch; use `kimi-code`, `claude-code`, or `codex-cli` only when the user or project policy authorizes it.
+- Automatic external-agent dispatch; use `kimi-code`, `claude-code`, `codex-cli`, or `opencode` only when the user or project policy authorizes it.
 
 ## Lightweight Workflow
 

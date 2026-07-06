@@ -31,7 +31,18 @@ Follow this external-agent contract whenever Codex CLI is used from another agen
 
 ### Output Contract
 
-Ask Codex CLI to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+Ask Codex CLI to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+
+## Internal Skill Routing
+
+External CLI selection is explicit: use this adapter only after the user or project policy selects Codex CLI. After dispatch, let Codex CLI use its own discoverable global/user and project/local Skills automatically.
+
+- In the prompt, tell Codex to evaluate global/user and project/local Skills discoverable by Codex, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
+- Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
+- Respect any Skill explicitly named by the user.
+- Prefer `dev` for ordinary implementation or bug repair, `clarify` for requirement or architecture interviews, and `acceptance` for independent go/no-go verification when those Skills are available to Codex.
+- Do not ask Codex to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, or `opencode`) unless the user explicitly authorizes multi-agent delegation.
+- Ask Codex to report which Skills it used or why none were used.
 
 ## First Steps
 
@@ -61,7 +72,7 @@ codex exec \
   -C "$(pwd)" \
   --sandbox read-only \
   --json \
-  "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Do not edit files. Return evidence, assumptions, and unresolved risks."
+  "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Evaluate global/user and project/local Skills discoverable by Codex, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used, evidence, assumptions, and unresolved risks."
 ```
 
 Use workspace write access only for implementation:
@@ -71,7 +82,7 @@ codex exec \
   -C "$(pwd)" \
   --sandbox workspace-write \
   --json \
-  "Mode: implement. Fix the auth token expiry bug. Stay within src/auth and tests/auth unless evidence requires otherwise. Run the relevant tests. Return changed files, commands run, evidence, and remaining risks."
+  "Mode: implement. Fix the auth token expiry bug. Evaluate global/user and project/local Skills discoverable by Codex, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Stay within src/auth and tests/auth unless evidence requires otherwise. Run the relevant tests. Return Skills used, changed files, commands run, evidence, and remaining risks."
 ```
 
 Use schema-constrained final output for downstream automation:
@@ -89,11 +100,12 @@ codex exec \
 
 1. State the working directory, objective, and mode: `research-only`, `propose-only`, `review-only`, or `implement`.
 2. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may run.
-3. Request a concise result: changed files, commands run, evidence, assumptions, and unresolved risks.
-4. Use `--sandbox read-only` for research and review; use `workspace-write` only when implementation requires edits.
-5. Keep prompts bounded; avoid broad “fix everything” tasks.
-6. Inspect the diff and run verification after Codex completes.
-7. Treat Codex output as advisory until local files and tests confirm it.
+3. Include the internal Skill routing instruction from this Skill.
+4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
+5. Use `--sandbox read-only` for research and review; use `workspace-write` only when implementation requires edits.
+6. Keep prompts bounded; avoid broad “fix everything” tasks.
+7. Inspect the diff and run verification after Codex completes.
+8. Treat Codex output as advisory until local files and tests confirm it.
 
 ## Approval And Sandbox Safety
 

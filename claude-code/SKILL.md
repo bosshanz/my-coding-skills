@@ -31,7 +31,18 @@ Follow this external-agent contract whenever Claude Code is used from another ag
 
 ### Output Contract
 
-Ask Claude Code to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+Ask Claude Code to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+
+## Internal Skill Routing
+
+External CLI selection is explicit: use this adapter only after the user or project policy selects Claude Code. After dispatch, let Claude Code use its own discoverable global/user and project/local Skills automatically.
+
+- In the prompt, tell Claude Code to evaluate global/user and project/local Skills discoverable by Claude Code, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
+- Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
+- Respect any Skill explicitly named by the user.
+- Prefer `dev` for ordinary implementation or bug repair, `clarify` for requirement or architecture interviews, and `acceptance` for independent go/no-go verification when those Skills are available to Claude Code.
+- Do not ask Claude Code to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, or `opencode`) unless the user explicitly authorizes multi-agent delegation.
+- Ask Claude Code to report which Skills it used or why none were used.
 
 ## First Steps
 
@@ -57,7 +68,7 @@ Keep work in the calling agent when the task is tiny, requires sensitive credent
 Use print mode for bounded tasks:
 
 ```sh
-claude -p "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Do not edit files. Return evidence, assumptions, and unresolved risks." \
+claude -p "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Evaluate global/user and project/local Skills discoverable by Claude Code, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used, evidence, assumptions, and unresolved risks." \
   --permission-mode plan \
   --output-format json
 ```
@@ -65,7 +76,7 @@ claude -p "Mode: research-only. Inspect this repository and summarize the archit
 Pipe a diff for review:
 
 ```sh
-git diff --no-ext-diff | claude -p "Mode: review-only. Review this diff for correctness risks and missing tests. Do not edit files. Return only actionable findings with file paths and reasoning." \
+git diff --no-ext-diff | claude -p "Mode: review-only. Review this diff for correctness risks and missing tests. Evaluate global/user and project/local Skills discoverable by Claude Code, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used and only actionable findings with file paths and reasoning." \
   --output-format json
 ```
 
@@ -87,11 +98,12 @@ claude
 
 1. State the working directory, objective, and mode: `research-only`, `propose-only`, `review-only`, or `implement`.
 2. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may run.
-3. Request a concise result: changed files, commands run, evidence, assumptions, and unresolved risks.
-4. Prefer `--permission-mode plan` for research and review. Use broader permissions only when implementation requires them.
-5. Keep prompts bounded; avoid broad “fix everything” tasks.
-6. Inspect the diff and run verification after Claude Code completes.
-7. Treat Claude Code output as advisory until local files and tests confirm it.
+3. Include the internal Skill routing instruction from this Skill.
+4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
+5. Prefer `--permission-mode plan` for research and review. Use broader permissions only when implementation requires them.
+6. Keep prompts bounded; avoid broad “fix everything” tasks.
+7. Inspect the diff and run verification after Claude Code completes.
+8. Treat Claude Code output as advisory until local files and tests confirm it.
 
 ## Permission Safety
 

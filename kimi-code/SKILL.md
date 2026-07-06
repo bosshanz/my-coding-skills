@@ -31,7 +31,18 @@ Follow this external-agent contract whenever Kimi Code is used from another agen
 
 ### Output Contract
 
-Ask Kimi Code to return, when supported: `task_summary`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+Ask Kimi Code to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+
+## Internal Skill Routing
+
+External CLI selection is explicit: use this adapter only after the user or project policy selects Kimi Code. After dispatch, let Kimi Code use its own discoverable global/user and project/local Skills automatically.
+
+- In the prompt, tell Kimi to evaluate global/user and project/local Skills discoverable by Kimi, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
+- Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
+- Respect any Skill explicitly named by the user.
+- Prefer `dev` for ordinary implementation or bug repair, `clarify` for requirement or architecture interviews, and `acceptance` for independent go/no-go verification when those Skills are available to Kimi.
+- Do not ask Kimi to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, or `opencode`) unless the user explicitly authorizes multi-agent delegation.
+- Ask Kimi to report which Skills it used or why none were used.
 
 ## First Steps
 
@@ -94,27 +105,28 @@ When delegating to Kimi:
 1. State the exact working directory and objective in the prompt.
 2. Specify mode: `research-only`, `propose-only`, or `implement`.
 3. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may be run.
-4. Ask for a concise result: changed files, commands run, evidence, assumptions, and unresolved risks.
-5. Keep prompts bounded. Prefer one concrete task over broad "fix everything" prompts.
-6. After Kimi completes, inspect the diff and run verification yourself before claiming completion.
-7. Treat Kimi output as advisory until local files and tests confirm it.
+4. Include the internal Skill routing instruction from this Skill.
+5. Ask for a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
+6. Keep prompts bounded. Prefer one concrete task over broad "fix everything" prompts.
+7. After Kimi completes, inspect the diff and run verification yourself before claiming completion.
+8. Treat Kimi output as advisory until local files and tests confirm it.
 
 Research example:
 
 ```sh
-kimi -p "In this repository, inspect the failing auth tests, identify the root cause, and propose the smallest fix. Do not edit files. Return files inspected, likely fix, and commands to verify."
+kimi -p "In this repository, inspect the failing auth tests, identify the root cause, and propose the smallest fix. Evaluate global/user and project/local Skills discoverable by Kimi, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used, files inspected, likely fix, and commands to verify."
 ```
 
 Coding example:
 
 ```sh
-kimi -p "Mode: implement. Working directory: $(pwd). Task: add focused tests for the auth token expiry bug and implement the smallest fix. Stay within src/auth and tests/auth unless evidence requires otherwise. Run the relevant test command if discoverable. Return changed files, commands run, and any remaining risks."
+kimi -p "Mode: implement. Working directory: $(pwd). Task: add focused tests for the auth token expiry bug and implement the smallest fix. Evaluate global/user and project/local Skills discoverable by Kimi, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Stay within src/auth and tests/auth unless evidence requires otherwise. Run the relevant test command if discoverable. Return Skills used, changed files, commands run, and any remaining risks."
 ```
 
 Review example:
 
 ```sh
-kimi -p "Mode: research-only. Review the current git diff for correctness risks and missing tests. Do not edit files. Return only actionable findings with file paths and reasoning."
+kimi -p "Mode: research-only. Review the current git diff for correctness risks and missing tests. Evaluate global/user and project/local Skills discoverable by Kimi, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used and only actionable findings with file paths and reasoning."
 ```
 
 ## Recursion And Delegation Limits

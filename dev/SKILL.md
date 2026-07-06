@@ -37,7 +37,7 @@ Do not make the user explicitly invoke `$dev`.
 
 Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, or one-off terminal facts that do not need a development workflow.
 
-Use the matching adapter (`kimi-code`, `claude-code`, or `codex-cli`) only when the user explicitly asks another external agent to participate.
+Use the matching adapter (`kimi-code`, `claude-code`, `codex-cli`, or `opencode`) only when the user explicitly asks another external agent to participate.
 
 ## Select A Track
 

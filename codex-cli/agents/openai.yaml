@@ -1,4 +1,4 @@
 interface:
   display_name: "Codex CLI"
   short_description: "Delegate real work to Codex CLI."
-  default_prompt: "Use $codex-cli to actually invoke Codex CLI for this scoped task, preserve its output, then review and verify the result without simulating or silently substituting the target."
+  default_prompt: "Use $codex-cli to invoke Codex CLI, let it auto-route matching global/project non-adapter Skills, preserve output, then review and verify."

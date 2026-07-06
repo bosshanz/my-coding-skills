@@ -12,13 +12,14 @@ const availableSkills = [
   'kimi-code',
   'claude-code',
   'codex-cli',
+  'opencode',
 ];
 const groups = new Map([
   ['all', availableSkills],
   ['workflow', ['dev']],
   ['planning', ['clarify']],
-  ['delegation', ['kimi-code', 'claude-code', 'codex-cli']],
-  ['adapters', ['kimi-code', 'claude-code', 'codex-cli']],
+  ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode']],
+  ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode']],
 ]);
 
 function usage() {
@@ -37,7 +38,7 @@ Groups:
   workflow     Install dev only
   planning     Install clarify only
   delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, and codex-cli
+  adapters     Install kimi-code, claude-code, codex-cli, and opencode
 
 Targets:
   agents       ${join(homedir(), '.agents', 'skills')}

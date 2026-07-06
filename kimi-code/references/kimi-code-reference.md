@@ -56,6 +56,18 @@ kimi migrate
 - Do not combine `--prompt` with `--yolo`, `--auto`, or `--plan`.
 - Use `--output-format` only with `--prompt`.
 
+## Output Contract
+
+Ask Kimi to return:
+
+- Mode and objective handled.
+- Skills used, or reason no Skill was used.
+- Files inspected or changed.
+- Commands run and notable output.
+- Evidence supporting conclusions.
+- Assumptions and unresolved risks.
+- Suggested verification steps.
+
 ## Local Data And Skills
 
 - Default data root: `~/.kimi-code/`

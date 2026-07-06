@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenCode"
+  short_description: "Dispatch OpenCode CLI as an external agent."
+  default_prompt: "Use $opencode to invoke OpenCode CLI, let it auto-route matching global/project non-adapter Skills, preserve output, then review and verify."

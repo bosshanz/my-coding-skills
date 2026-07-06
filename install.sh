@@ -10,6 +10,7 @@ ALL_SKILLS=(
   kimi-code
   claude-code
   codex-cli
+  opencode
 )
 
 TARGET="all"
@@ -35,13 +36,14 @@ Skills:
   kimi-code
   claude-code
   codex-cli
+  opencode
 
 Groups:
   all          Install every Skill (default)
   workflow     Install dev
   planning     Install clarify
   delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, and codex-cli
+  adapters     Install kimi-code, claude-code, codex-cli, and opencode
 
 Options:
   --target TARGET   agents, codex, claude, gemini, opencode, or all
@@ -111,13 +113,15 @@ resolve_requests() {
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
+        append_unique opencode
         ;;
       adapters)
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
+        append_unique opencode
         ;;
-      clarify|dev|acceptance|kimi-code|claude-code|codex-cli)
+      clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
         append_unique "$request"
         ;;
       *)

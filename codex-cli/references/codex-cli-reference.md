@@ -58,6 +58,7 @@ codex login status
 Ask Codex to return:
 
 - Mode and objective handled.
+- Skills used, or reason no Skill was used.
 - Files inspected or changed.
 - Commands run and notable output.
 - Evidence supporting conclusions.
