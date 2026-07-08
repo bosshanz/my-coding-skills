@@ -16,6 +16,7 @@
     "codex-cli",
     "opencode",
     "scripts/skills-doctor.sh",
+    "scripts/test-install-safety.sh",
     "bin/skills.mjs",
     "README.md",
     "README.en.md",
@@ -23,7 +24,8 @@
   ],
   "scripts": {
     "doctor": "bash scripts/skills-doctor.sh",
-    "check:cli": "node bin/skills.mjs list"
+    "check:cli": "node bin/skills.mjs list",
+    "test": "bash scripts/test-install-safety.sh"
   },
   "keywords": [
     "codex",

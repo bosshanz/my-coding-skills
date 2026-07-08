@@ -51,7 +51,7 @@ Groups:
 Options:
   --target TARGET   agents, codex, claude, gemini, opencode, or all
                     (default: all)
-  --dest DIR        Install into a custom Skills directory
+  --dest DIR        Install into a custom Skills directory (must not be / or a system path)
   --force, -f       Replace an existing installed Skill
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
@@ -81,6 +81,38 @@ EOF
 fail() {
   printf 'install: %s\n' "$*" >&2
   exit 1
+}
+
+# Refuse to install into or remove a protected path. Physically resolves the
+# target (following symlinks and relative paths) when it exists, so the
+# filesystem root, system directories directly under / (e.g. /dev, /etc, /usr),
+# and symlinked roots that resolve there are all blocked regardless of how the
+# path was spelled. A Skill destination is always <root>/<skill>, so it must
+# never be / or a single-component path under /.
+assert_safe_target() {
+  local target="$1" resolved=""
+  while [[ "$target" != "/" && "$target" == */ ]]; do target="${target%/}"; done
+  # Resolve physically when possible so symlinks and relative paths cannot
+  # hide the filesystem root. cd INTO the target (not its parent) so a symlink
+  # root like /tmp/link -> / resolves to /, not to the link's lexical path.
+  if [[ -L "$target" || -d "$target" ]]; then
+    resolved="$( cd "$target" 2>/dev/null && pwd -P )" || resolved=""
+  fi
+  if [[ -z "$resolved" && -e "$target" ]]; then
+    local d dir
+    d="$(dirname "$target")"
+    dir="$( cd "$d" 2>/dev/null && pwd -P )"
+    dir="${dir%/}"
+    resolved="$dir/$(basename "$target")"
+  fi
+  [[ -n "$resolved" ]] || resolved="$target"
+  while [[ "$resolved" == *//* ]]; do resolved="${resolved/\/\//\/}"; done
+  if [[ "$resolved" == "/" ]]; then
+    fail "refusing to operate on filesystem root: $1"
+  fi
+  if [[ "$resolved" =~ ^/[^/]+$ ]]; then
+    fail "refusing to operate on a system path directly under /: $1 (use a skills directory like ~/.agents/skills or /tmp/skills)"
+  fi
 }
 
 append_unique() {
@@ -185,6 +217,9 @@ install_skill() {
   local destination_root="$2"
   local source="$ROOT/$skill"
   local destination="$destination_root/$skill"
+
+  assert_safe_target "$destination_root"
+  assert_safe_target "$destination"
 
   [[ -f "$source/SKILL.md" ]] || fail "missing source Skill: $source/SKILL.md"
 
