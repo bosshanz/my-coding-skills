@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Run a dedicated requirement or architecture interview before implementation, with repository-aware questions, one-question-at-a-time alignment, optional CONTEXT.md glossary updates, and sparse ADR capture. Use when the user explicitly invokes $clarify, asks to be grilled/interviewed on a plan, asks to clarify a feature or refactor before coding, or wants durable domain terms or architectural decisions recorded."
+description: "Run a dedicated requirement or architecture interview before implementation, with repository-aware questions, one-question-at-a-time alignment, optional loop workspace creation, optional CONTEXT.md glossary updates, and sparse ADR capture. Use when the user explicitly invokes $clarify, asks to be grilled/interviewed on a plan, asks to clarify a feature or refactor before coding, wants to decide whether to create a loop workspace, or wants durable domain terms or architectural decisions recorded."
 ---
 
 # Clarify
@@ -13,6 +13,7 @@ Use this Skill to turn a loose request into shared understanding before implemen
 - Ask one question at a time and wait for the answer.
 - Include your recommended answer with each question.
 - If a question can be answered from the repository, inspect the repository instead of asking.
+- Do not create a loop workspace unless the user explicitly says yes or directly asks for one.
 - Do not create issue-tracker workflows, PRDs, or agent briefs unless the user asks for them.
 - Hand off implementation to `$dev` after the design is clear.
 
@@ -21,6 +22,7 @@ Use this Skill to turn a loose request into shared understanding before implemen
 Before asking design questions, inspect the closest relevant context:
 
 - Existing `CONTEXT.md` or `CONTEXT-MAP.md`, if present.
+- Existing `loop/` workspace, if present.
 - Existing `docs/adr/` records near the affected area, if present.
 - Relevant code paths, tests, docs, and examples that can answer factual questions.
 - Existing product language, module names, and user-facing terminology.
@@ -40,6 +42,20 @@ If no repository context exists, proceed as a stateless interview and say so bri
 5. After the user answers, update the understanding and repeat.
 
 Prefer concrete scenarios over abstract categories. Stress-test edge cases, permissions, failure modes, lifecycle behavior, data ownership, migration impact, and rollback paths when relevant.
+
+## Optional Loop Workspace
+
+After the initial understanding is clear enough to name the work, ask whether to create a durable loop workspace when the task is multi-step, cross-file, high-risk, likely to span agents, or likely to need resumed context.
+
+Use this question:
+
+```text
+是否要为这件事创建 `loop/` 工作区来持续跟踪 `LOOP.md`、`STATE.md`、`ROADMAP.md`、`CONTEXT.md` 和 `loop-run-log.md`？我的建议：如果这是多轮、跨文件、需要验收或委托的任务，选 yes；小任务选 no。
+```
+
+If the user says no, continue the normal interview without creating files. If the user says yes or already asked for a loop, read `references/loop-workspace.md` and create or update the workspace before continuing the interview.
+
+Default to `loop/` at the repository root or nearest affected project root. If `loop/` already exists and appears to describe the same work, update it. If it appears to describe unrelated active work, ask whether to reuse it, archive it, or create a separate loop directory before writing.
 
 ## First-Principles Clarification
 
@@ -61,6 +77,8 @@ When domain terms matter, keep the vocabulary sharp:
 - When a term is resolved, update the nearest relevant `CONTEXT.md` immediately.
 
 `CONTEXT.md` is a glossary, not a spec. Keep it free of implementation details, plans, and transient notes.
+
+If a `loop/` workspace is active, use `loop/CONTEXT.md` for task-local repository facts, constraints, files, commands, and temporary context. Continue to use the nearest repo-level `CONTEXT.md` only for durable domain terms that should outlive the current loop.
 
 Use this compact format when adding terms:
 
@@ -111,6 +129,7 @@ The interview is complete when these are clear enough for implementation:
 - Affected modules or seams.
 - Data/API/state/lifecycle implications, if any.
 - Verification strategy.
+- Active `loop/` workspace has been created or updated if the user opted in.
 - Newly resolved domain terms or ADR-worthy decisions have been recorded.
 
 Close with a short design summary and the next recommended `$dev` step.

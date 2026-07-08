@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
   short_description: "Clarify requirements and architecture before implementation."
-  default_prompt: "Use $clarify to interview me one question at a time, inspect the repository when it can answer factual questions, apply first-principles clarification to hidden assumptions, and record resolved domain terms or durable ADRs only when useful."
+  default_prompt: "Use $clarify to interview me one question at a time, inspect the repository when it can answer factual questions, ask whether to create a loop workspace for durable multi-step work, and record resolved domain terms or ADRs only when useful."

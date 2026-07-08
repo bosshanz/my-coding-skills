@@ -57,6 +57,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 
 - Understand the user goal, main user flow, constraints, non-goals, and acceptance criteria.
 - Inspect the relevant repository structure and existing conventions before proposing architecture.
+- If an active `loop/` workspace exists, read `loop/LOOP.md`, `loop/STATE.md`, `loop/ROADMAP.md`, `loop/CONTEXT.md`, and `loop/loop-run-log.md` before planning.
 - Ask the minimum questions needed to remove material ambiguity, preferably one at a time.
 - Restate the confirmed requirement in plain language before implementation.
 
@@ -89,6 +90,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 - Run targeted tests first, then broader checks justified by the changed boundary.
 - Perform functional acceptance against each agreed criterion.
 - For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
+- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with material implementation progress, verification evidence, and next action.
 - State what passed, what was not verified, and whether the requirement is accepted.
 
 ## Track B: Bug Fix
@@ -96,6 +98,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 ### 1. Inspect And Reproduce
 
 - Capture expected behavior, actual behavior, environment, inputs, frequency, and impact.
+- If an active `loop/` workspace exists, read `loop/LOOP.md`, `loop/STATE.md`, `loop/ROADMAP.md`, `loop/CONTEXT.md`, and `loop/loop-run-log.md` before debugging.
 - Read the full error, stack trace, logs, failing test, or user evidence before editing.
 - Reproduce the issue with the smallest reliable case when possible.
 - If reproduction is unavailable, state the evidence gap and avoid presenting a hypothesis as fact.
@@ -129,6 +132,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 - Run the regression test and relevant nearby tests.
 - Check likely side effects and adjacent flows.
 - Run broader build, type, lint, integration, migration, or performance checks only when justified.
+- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with root cause, fix evidence, remaining risk, and next action.
 - State whether the Bug is accepted as fixed and identify any residual risk.
 
 ## Common Review Gate

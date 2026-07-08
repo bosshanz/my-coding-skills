@@ -20,6 +20,7 @@ Use this Skill to independently verify whether completed implementation work is 
 Inspect the closest available evidence before asking the user:
 
 - The clarified requirement, issue, PR description, task note, or conversation summary.
+- Active `loop/` workspace files when present: `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`.
 - Current diff, touched files, tests, docs, migrations, configuration, and generated artifacts.
 - Existing acceptance criteria, `CONTEXT.md`, `CONTEXT-MAP.md`, or ADRs when relevant.
 - Test output, CI status, manual verification notes, screenshots, logs, or reproduction evidence.
@@ -48,7 +49,8 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
    - `accepted`: criteria are met and verification evidence is adequate.
    - `accepted with risk`: criteria appear met but named residual risks remain.
    - `rejected`: criteria are not met, evidence is insufficient for a critical area, or a blocking regression exists.
-6. Report the result with file, test, and risk references.
+6. If using `loop/`, append the acceptance decision and evidence summary to `loop-run-log.md`, and update `STATE.md` with the final decision or next action.
+7. Report the result with file, test, and risk references.
 
 ## Review Focus
 

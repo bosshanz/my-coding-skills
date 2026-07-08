@@ -40,7 +40,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - In the prompt, tell Kimi to evaluate global/user and project/local Skills discoverable by Kimi, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
 - Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
 - Respect any Skill explicitly named by the user.
-- Prefer `dev` for ordinary implementation or bug repair, `clarify` for requirement or architecture interviews, and `acceptance` for independent go/no-go verification when those Skills are available to Kimi.
+- Prefer `loop-engineering` for agent methodology, feedback-loop, evaluation-loop, or multi-agent workflow design; `dev` for ordinary implementation or bug repair; `clarify` for requirement or architecture interviews; and `acceptance` for independent go/no-go verification when those Skills are available to Kimi.
 - Do not ask Kimi to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, or `opencode`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Kimi to report which Skills it used or why none were used.
 

@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-A portable collection of `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
+A portable collection of `loop-engineering`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
+The repository lets a caller agent design agent engineering feedback loops, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
 
 Core principles:
 
@@ -10,6 +10,7 @@ Core principles:
 - If the target is unavailable, fail explicitly; do not silently substitute.
 - Never simulate, impersonate, or fabricate the target agent's output.
 - Delegated results must remain auditable, reviewable, and verifiable.
+- Design agent engineering methodology through feedback loops instead of stacking prompts and process checklists.
 - Use first-principles decomposition before choosing solutions for complex requirements and architecture decisions.
 - Use adversarial review for non-trivial designs, fixes, and acceptance decisions by actively looking for counterexamples and weak assumptions.
 
@@ -17,7 +18,20 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes seven primary skills:
+The repository currently includes eight primary skills:
+
+### `loop-engineering`
+
+This is the top-level Agent Engineering Methodology Skill for designing, auditing, and improving AI coding-agent engineering loops:
+
+- Design feedback loops for clarification, solution design, implementation, debugging, evaluation, delegation, acceptance, release, and docs/memory updates
+- Define each loop's target, actor, input, action, signal, gate, escalation, and artifact
+- Build a verification ladder around red-capable signals that can fail before they pass, instead of relying on confidence language
+- Design multi-agent collaboration protocols: explicit authorization, bounded scope, invocation evidence, non-recursive delegation, caller review, and final accountability
+- Standardize the optional `loop/` workspace created from `clarify`: `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`
+- Audit whether skills, README files, installers, doctor scripts, and adapter contracts form a coherent methodology surface
+
+Trigger guidance: use it when the user explicitly invokes `$loop-engineering`, asks for Loop Engineering, Agent Engineering Methodology, feedback-loop design, evaluation loops, multi-agent workflow governance, or wants to upgrade a skill repository into a methodology system. Ordinary feature implementation and Bug repair should still use `dev`.
 
 ### `dev`
 
@@ -40,6 +54,8 @@ This is an opt-in requirement and architecture alignment Skill for conversations
 
 - Ask one high-value question at a time and include a recommended answer
 - Inspect repository docs or code for factual answers instead of asking the user
+- For multi-step, cross-file, high-risk, delegated, or acceptance-heavy work, ask whether to create a `loop/` workspace
+- When the user agrees, create `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`
 - Apply first-principles decomposition to solution-shaped requests by separating goals, facts, constraints, assumptions, and non-goals
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
@@ -113,6 +129,9 @@ Every Skill follows the directory format defined by the [Agent Skills specificat
 ## Repository Structure
 
 ```text
+loop-engineering/
+  SKILL.md
+  agents/openai.yaml
 dev/
   SKILL.md
   agents/openai.yaml
@@ -127,6 +146,8 @@ dev/
 clarify/
   SKILL.md
   agents/openai.yaml
+  references/
+    loop-workspace.md
 acceptance/
   SKILL.md
   agents/openai.yaml
@@ -166,6 +187,18 @@ README.en.md
 install.sh
 ```
 
+
+## Agent Engineering Methodology
+
+`loop-engineering` is the methodology layer in this repository. It does not replace coding, interviewing, or acceptance; it defines how those actions form verifiable engineering loops.
+
+- `loop-engineering` designs and audits loops: triggers, responsible actors, inputs, actions, evidence, gates, escalation paths, and durable artifacts.
+- `clarify` is the requirement and architecture clarification loop, and creates a `loop/` workspace when the user opts in.
+- `dev` is the implementation, debugging, testing, and lightweight acceptance loop; when `loop/` exists, it reads the context first and keeps state and logs current.
+- `acceptance` is the independent go/no-go verification loop; when `loop/` exists, it writes the decision back to state and log files.
+- External-agent adapters execute delegation loops and should only be used when the user or project policy explicitly authorizes them.
+
+The methodology goal is to make every agent action observable and falsifiable: bad assumptions should be disproved quickly by tests, logs, diff review, screenshots, CI, human acceptance, or independent acceptance.
 
 ## Dev Integration Direction
 
@@ -211,6 +244,9 @@ Common examples:
 # Default: install every Skill into all supported target directories
 ./install.sh
 
+# Install only the Agent Engineering Methodology layer
+./install.sh methodology --target agents --force
+
 # Install only the default workflow into the shared standards-oriented directory
 ./install.sh dev --target agents --force
 
@@ -241,11 +277,13 @@ Common examples:
 
 Supported skills and groups:
 
+- `loop-engineering`: Agent Engineering Methodology and feedback-loop design
 - `dev`: default development workflow integrating Superpowers Lite and Frontend Design
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `acceptance`: independent acceptance and go/no-go verification
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode`: external-agent adapters
 - `workflow`: install only `dev`
+- `methodology`: install only `loop-engineering`
 - `planning`: install only `clarify`
 - `delegation`: install all external-agent adapters
 - `adapters`: install the four adapters only
@@ -265,7 +303,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -275,15 +313,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
+cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
+cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
+cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -300,11 +338,19 @@ cp -R clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.co
 You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev` without requiring `$dev`:
 
 ```text
+Use $loop-engineering to design an agent engineering feedback-loop architecture for this repository, including routing between clarify, dev, acceptance, and external-agent adapters.
+```
+
+```text
 Use $dev to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
 ```text
 Use $clarify to clarify this refactor one question at a time before we implement it.
+```
+
+```text
+Use $clarify to interview me first and ask whether to create a loop workspace for this multi-step change.
 ```
 
 ```text
@@ -332,6 +378,10 @@ Use $opencode to dispatch OpenCode CLI for a scoped repository research task.
 Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
 
 Explicit example:
+
+```text
+/loop-engineering
+```
 
 ```text
 /dev
@@ -368,10 +418,11 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Automatic Trigger Guidance
 
+- Use `loop-engineering` when the work is about Agent Engineering Methodology, feedback-loop design, evaluation loops, or multi-agent workflow governance.
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; return to `dev` for implementation afterward.
+- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. For multi-step, cross-file, high-risk, delegated, or acceptance-heavy work, `clarify` should ask whether to create a `loop/` workspace, then return to `dev` for implementation afterward.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, or `opencode`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
@@ -394,6 +445,7 @@ External CLI selection must be explicit; once the user or project policy selects
 
 - Respect any Skill explicitly named by the user.
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
+- Prefer `loop-engineering` for agent methodology, feedback-loop, evaluation-loop, or multi-agent workflow design.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for requirement or architecture interviews.
 - Prefer `acceptance` for independent go/no-go verification.

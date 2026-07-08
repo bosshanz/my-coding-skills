@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ALL_SKILLS=(
+  loop-engineering
   clarify
   dev
   acceptance
@@ -29,6 +30,7 @@ Usage:
   ./uninstall.sh --list
 
 Skills:
+  loop-engineering
   clarify
   dev
   acceptance
@@ -39,6 +41,7 @@ Skills:
 
 Groups:
   all          Uninstall every Skill (default)
+  methodology  Uninstall loop-engineering
   workflow     Uninstall dev
   planning     Uninstall clarify
   delegation   Uninstall all external-agent adapters
@@ -54,6 +57,7 @@ Options:
 
 Examples:
   ./uninstall.sh
+  ./uninstall.sh methodology --target agents
   ./uninstall.sh dev --target agents
   ./uninstall.sh planning --target agents
   ./uninstall.sh acceptance --target agents
@@ -103,6 +107,9 @@ resolve_requests() {
       workflow)
         append_unique dev
         ;;
+      methodology)
+        append_unique loop-engineering
+        ;;
       planning)
         append_unique clarify
         ;;
@@ -118,7 +125,7 @@ resolve_requests() {
         append_unique codex-cli
         append_unique opencode
         ;;
-      clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
+      loop-engineering|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
         append_unique "$request"
         ;;
       *)
