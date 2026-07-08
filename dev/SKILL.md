@@ -142,6 +142,7 @@ Before claiming success on either track:
 - Compare the diff to the agreed requirement or root-cause repair.
 - Perform an adversarial pass: try to disprove the solution with edge inputs, missing permissions, stale state, concurrency, rollout order, rollback needs, and user-visible failure paths that apply.
 - Check edge cases, error paths, permissions, compatibility, and project conventions.
+- Keep the project maintainable as a consequence of the change: remove code this change made redundant, and update the docs, examples, contracts, and comments it invalidated. Scope this to what the change caused; do not widen into unrelated cleanup or refactors.
 - Confirm tests prove the behavior, not merely syntax or compilation.
 - Review docs, migration, rollout, rollback, monitoring, and support impact when applicable.
 - Treat warnings, skipped checks, flaky output, and partial verification as residual risk.
@@ -170,6 +171,8 @@ For a Bug fix:
 
 Keep code, commands, protocol names, and configuration keys in their original language.
 
+When the delivery must be a durable doc file rather than an in-chat response, use the template in `references/documentation.md`; its fields map to the sections above plus a Documentation Update field. The canonical field mapping and durable-vs-task-local context rules live in `../loop-engineering/references/context-model.md`.
+
 ## Reference Loading Policy
 
 Start with this `SKILL.md`, classify the task, and load the smallest reference set that can materially improve the work. Do not read every reference just because `dev` triggered.
@@ -185,6 +188,7 @@ If a task touches multiple boundaries, load the references for the boundaries th
 | `references/database-engineering.md` | Schema design, relational modeling, constraints, indexes, query plans, transactions, locks, isolation, migrations, backfills, replication, partitioning, database capacity, or database incidents. | Non-persistent state, simple CRUD wiring without schema/query risk, or storage-agnostic business logic. |
 | `references/stack.md` | Choosing language, framework, database, cache, queue, or integration technology. | The repository already has a clear standard and the task does not change it. |
 | `references/documentation.md` | The user asks for docs, the task changes durable behavior or architecture, or delivery needs a reusable note. | Routine small edits where final response is enough. |
+| `../loop-engineering/references/context-model.md` | A `loop/` workspace is active or being created, or you are deciding whether a fact, term, or decision belongs in `loop/` or at the repo level. | No loop workspace and no question about context placement. |
 
 ## Reference Guide
 
@@ -195,3 +199,4 @@ If a task touches multiple boundaries, load the references for the boundaries th
 - Read `references/design-and-research.md` for solution comparison, research, diagrams, and lightweight planning.
 - Read `references/stack.md` for language, framework, database, cache, queue, and integration choices.
 - Read `references/documentation.md` for documentation, review depth, verification, and acceptance reporting.
+- Read `../loop-engineering/references/context-model.md` for the canonical context tiers, artifact roles, and promotion rules when a `loop/` workspace is active or context placement is unclear.

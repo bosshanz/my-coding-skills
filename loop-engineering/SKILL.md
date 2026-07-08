@@ -43,13 +43,7 @@ loop/
   loop-run-log.md
 ```
 
-Use these files as the shared state surface across `clarify`, `dev`, `acceptance`, and authorized external agents:
-
-- `LOOP.md`: stable contract for target, scope, actors, feedback loops, gates, and escalation rules.
-- `STATE.md`: current status, latest decisions, blockers, open questions, and next action.
-- `ROADMAP.md`: milestones, tasks, acceptance criteria, and verification ladder.
-- `CONTEXT.md`: loop-local repository facts, domain terms, constraints, relevant files, and commands.
-- `loop-run-log.md`: append-only chronological evidence log for actions, user answers, commands, decisions, and handoffs.
+Use these files as the shared state surface across `clarify`, `dev`, `acceptance`, and authorized external agents. Their roles, the durable-vs-task-local tiers, and the promotion rules that move information between tiers are defined canonically in `references/context-model.md`; read it when deciding what belongs where. In short: `loop/` is task-local (Tier 2); repo `CONTEXT.md`, `docs/adr/`, and `docs/` are durable (Tier 1).
 
 Do not create this workspace silently. `clarify` should ask once after the work is clear enough to name. If `loop/` already exists and appears unrelated, ask whether to reuse it, archive it, or create a separate loop directory before writing.
 

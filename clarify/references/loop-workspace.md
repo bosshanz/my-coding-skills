@@ -19,11 +19,7 @@ Do not overwrite an unrelated active `loop/`. If `loop/` exists, inspect `loop/L
 
 ## File Roles
 
-- `LOOP.md`: stable loop contract. Capture the target, scope, actors, feedback loops, gates, and escalation rules.
-- `STATE.md`: current mutable state. Capture status, latest decisions, blockers, next action, and open questions.
-- `ROADMAP.md`: planned path. Capture milestones, tasks, acceptance criteria, and verification ladder.
-- `CONTEXT.md`: loop-local context. Capture repository facts, domain terms, constraints, relevant files, commands, and links. Do not replace the repo-level domain glossary unless domain terminology itself is being clarified.
-- `loop-run-log.md`: append-only chronological log. Capture actions, user answers, commands, evidence, decisions, and handoffs.
+File roles, the durable-vs-task-local tiers, and the promotion rules between them are defined canonically in `../../loop-engineering/references/context-model.md`. Read it when deciding what belongs in `loop/` versus the repo level. The templates below hold the concrete scaffolds for creating each file.
 
 ## Creation Rules
 
@@ -177,7 +173,7 @@ During `clarify`:
 
 - Update `STATE.md` after each material user answer or repository discovery.
 - Update `ROADMAP.md` when acceptance criteria, milestones, or verification strategy become clearer.
-- Update `CONTEXT.md` only with durable repository facts, domain terms, constraints, relevant files, and commands.
+- Update `loop/CONTEXT.md` with task-local repository facts, constraints, relevant files, and commands; promote durable domain terms to the repo-level `CONTEXT.md` per `../../loop-engineering/references/context-model.md`.
 - Append `loop-run-log.md` entries for file creation, user decisions, important repo evidence, handoffs, and unresolved risks.
 
 Before handing off to `$dev`, make sure `STATE.md` names the next action and `ROADMAP.md` contains enough acceptance criteria and verification strategy for implementation.

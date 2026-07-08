@@ -78,7 +78,7 @@ When domain terms matter, keep the vocabulary sharp:
 
 `CONTEXT.md` is a glossary, not a spec. Keep it free of implementation details, plans, and transient notes.
 
-If a `loop/` workspace is active, use `loop/CONTEXT.md` for task-local repository facts, constraints, files, commands, and temporary context. Continue to use the nearest repo-level `CONTEXT.md` only for durable domain terms that should outlive the current loop.
+If a `loop/` workspace is active, use `loop/CONTEXT.md` for task-local repository facts, constraints, files, commands, and temporary context. Continue to use the nearest repo-level `CONTEXT.md` only for durable domain terms that should outlive the current loop. The full tier model and promotion rules live in `loop-engineering`'s `references/context-model.md`; this is the short version.
 
 Use this compact format when adding terms:
 
