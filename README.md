@@ -11,6 +11,7 @@
 - 不模拟、不伪装、不编造目标 Agent 的输出。
 - 外部 Agent 的结果必须可审计、可复核、可验证。
 - 用反馈闭环设计 agent 工程方法论，而不是只堆叠提示词和流程清单。
+- Loop Engineering 的第一性原则是：不要相信 Agent，要相信验证器；优先级是验证阀门、权限边界、状态记忆、调度机制、Agent 能力。
 - 对复杂需求和架构选择先做第一性原理拆解，再选择方案。
 - 对非平凡设计、修复和验收结论做对抗式审查，主动寻找反例和薄弱假设。
 
@@ -26,7 +27,7 @@ English version: [README.en.md](./README.en.md)
 
 - 设计需求澄清、方案、实现、调试、评测、委托、验收、发布和文档/记忆更新的反馈闭环
 - 为每个 loop 定义 target、actor、input、action、signal、gate、escalation 和 artifact
-- 建立 verification ladder，优先使用能先红后绿的 red-capable signal，而不是信心表述
+- 建立 verification ladder，先定义硬验证、软验证、安全验证、成本验证和停止/结束规则，再谈 Agent 能力
 - 设计多 Agent 协作协议：显式授权、边界、调用证据、非递归委托、调用方复核和最终责任
 - 规范 `clarify` 中可选的 `loop/` 工作区：`LOOP.md`、`STATE.md`、`ROADMAP.md`、`CONTEXT.md`、`loop-run-log.md`
 - 审计现有 skill / README / install / doctor / adapter contract 是否形成一致的方法论表面
@@ -199,6 +200,8 @@ install.sh
 - 外部 Agent Adapter 是委托 loop 的执行器；只有用户或项目策略显式授权时才使用。
 
 方法论目标是让每一次 agent 行动都有可观察信号和失败条件：错误假设能被测试、日志、diff review、截图、CI、人工验收或独立 acceptance 及时反证。
+
+Loop Engineering 的第一性原则是：不要相信 Agent，要相信验证器。设计优先级固定为：1. 验证阀门；2. 权限边界；3. 状态记忆；4. 调度机制；5. Agent 能力。验证阀门至少按风险选择硬验证、软验证、安全验证、成本验证和停止/结束规则。
 
 长期非需求型 Loop 不应被强行套成“澄清 → 开发 → 验收”的一次性交付。对于 evaluation、质量治理、方法论演进、维护或学习型 loop，`loop-engineering` 定义 cadence、趋势信号、gate、checkpoint artifact，以及 continue / stop / pivot 条件；`dev` 只执行当前有边界的增量或实验；`acceptance` 只在 milestone、checkpoint 或明确 go/no-go gate 做独立判断。
 

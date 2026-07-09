@@ -7,6 +7,16 @@ description: "Design, audit, and improve agent engineering methodology: feedback
 
 Use this Skill to design and maintain the engineering system around AI coding agents. The output is a feedback-loop architecture: what agents do, what evidence they must produce, which checks can disprove bad work, where humans decide, and how the methodology evolves.
 
+## First Principles
+
+Do not trust the Agent; trust the verifier. Rank loop design priorities in this order:
+
+1. **Verification gates**: hard, soft, safety, cost, and stop/end-rule checks that can reject bad work.
+2. **Permission boundaries**: what the Agent may read, write, run, delegate, install, spend, or publish.
+3. **State and memory**: the durable facts, decisions, signals, and next actions the loop carries forward.
+4. **Scheduling mechanism**: when the loop runs, what triggers it, and what cadence or checkpoint governs long-running work.
+5. **Agent capability**: model, tool, adapter, or prompt strength, considered only after the verification and control surfaces are defined.
+
 ## Boundaries
 
 - Treat this as a methodology and operating-model Skill, not a replacement for `dev`.
@@ -123,11 +133,11 @@ Checkpoint artifact:
 
 Choose the smallest evidence ladder that can disprove wrong work:
 
-1. Static evidence: diff review, schema checks, lint, typecheck, parser validation.
-2. Unit or fixture evidence: focused tests, golden files, contract tests.
-3. Integration evidence: real service paths, CLI commands, API calls, database fixtures.
-4. UI or runtime evidence: browser checks, screenshots, logs, traces, manual acceptance.
-5. CI or release evidence: pipeline status, migration dry runs, rollout guards.
+1. Hard verification: deterministic checks such as tests, lint, typecheck, parser validation, schema checks, contract tests, and migration dry runs.
+2. Soft verification: review, screenshots, logs, traces, manual acceptance, UX judgment, and human-readable evidence for behavior hard checks cannot fully cover.
+3. Safety verification: permission, security, data integrity, rollback, idempotency, blast-radius, and recovery checks.
+4. Cost verification: runtime, token, API, compute, migration, storage, operational, and human-review cost boundaries.
+5. Stop and end rules: explicit conditions for stopping, rejecting, escalating, accepting with risk, continuing, or pivoting.
 6. Independent acceptance: separate go/no-go review for high-risk work.
 
 Do not require every rung for every task. Select rungs based on blast radius, reversibility, and cost of being wrong.
@@ -160,6 +170,8 @@ When changing this repository or a similar skill system, keep the surface consis
 Before delivery, verify:
 
 - The new loop has a clear target, trigger, owner, evidence, gate, and escalation.
+- Verification gates are designed before relying on Agent capability, and cover hard, soft, safety, cost, and stop/end-rule checks where relevant.
+- Permission boundaries, state/memory, and scheduling are explicit before adding delegation or stronger Agent capability.
 - Long-running non-requirement loops identify cadence, trend signal, and continue / stop / pivot criteria.
 - The loop does not duplicate an existing Skill's normal job.
 - The shortest feedback path got clearer or faster.
@@ -194,6 +206,8 @@ Residual risk:
 ## Review Checklist
 
 - Does each loop have evidence that can fail?
+- Are verifier, permission boundary, state/memory, scheduler, and Agent capability ordered in that priority?
+- Are hard, soft, safety, cost, and stop/end-rule verification covered at the smallest practical level?
 - If the loop is long-running, does it define cadence, checkpoint artifacts, and stop or pivot criteria?
 - Is the human checkpoint placed at the highest-leverage irreversible decision?
 - Are ordinary coding tasks still routed to `dev` instead of this Skill?

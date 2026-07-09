@@ -132,11 +132,12 @@ clarifying
 
 ## Verification Ladder
 
-- Static:
-- Unit or fixture:
-- Integration:
-- UI or runtime:
-- Acceptance:
+- Hard verification:
+- Soft verification:
+- Safety verification:
+- Cost verification:
+- Stop / end rules:
+- Independent acceptance:
 
 ## Long-Running Checkpoints
 

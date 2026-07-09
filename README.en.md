@@ -11,6 +11,7 @@ Core principles:
 - Never simulate, impersonate, or fabricate the target agent's output.
 - Delegated results must remain auditable, reviewable, and verifiable.
 - Design agent engineering methodology through feedback loops instead of stacking prompts and process checklists.
+- The first principle of Loop Engineering is: do not trust the Agent; trust the verifier. Prioritize verification gates, permission boundaries, state and memory, scheduling, then Agent capability.
 - Use first-principles decomposition before choosing solutions for complex requirements and architecture decisions.
 - Use adversarial review for non-trivial designs, fixes, and acceptance decisions by actively looking for counterexamples and weak assumptions.
 
@@ -26,7 +27,7 @@ This is the top-level Agent Engineering Methodology Skill for designing, auditin
 
 - Design feedback loops for clarification, solution design, implementation, debugging, evaluation, delegation, acceptance, release, and docs/memory updates
 - Define each loop's target, actor, input, action, signal, gate, escalation, and artifact
-- Build a verification ladder around red-capable signals that can fail before they pass, instead of relying on confidence language
+- Build a verification ladder that defines hard, soft, safety, cost, and stop/end-rule verification before relying on Agent capability
 - Design multi-agent collaboration protocols: explicit authorization, bounded scope, invocation evidence, non-recursive delegation, caller review, and final accountability
 - Standardize the optional `loop/` workspace created from `clarify`: `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`
 - Audit whether skills, README files, installers, doctor scripts, and adapter contracts form a coherent methodology surface
@@ -199,6 +200,8 @@ install.sh
 - External-agent adapters execute delegation loops and should only be used when the user or project policy explicitly authorizes them.
 
 The methodology goal is to make every agent action observable and falsifiable: bad assumptions should be disproved quickly by tests, logs, diff review, screenshots, CI, human acceptance, or independent acceptance.
+
+The first principle of Loop Engineering is: do not trust the Agent; trust the verifier. The fixed design priority is: 1. verification gates; 2. permission boundaries; 3. state and memory; 4. scheduling mechanism; 5. Agent capability. Choose verification gates from hard verification, soft verification, safety verification, cost verification, and stop/end rules based on risk.
 
 Long-running non-requirement loops should not be forced into a one-shot clarify -> develop -> accept delivery shape. For evaluation, quality governance, methodology evolution, maintenance, or learning loops, `loop-engineering` defines the cadence, trend signal, gate, checkpoint artifact, and continue / stop / pivot criteria; `dev` executes only the current bounded increment or experiment; `acceptance` is used only at milestones, checkpoints, or explicit go/no-go gates.
 
