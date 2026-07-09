@@ -1,4 +1,4 @@
 interface:
   display_name: "Loop Engineering"
-  short_description: "Design agent engineering feedback loops."
-  default_prompt: "Use $loop-engineering to design or audit an agent engineering feedback loop, define loop workspace artifacts, verification gates, and routing between clarify, dev, acceptance, and external agents."
+  short_description: "Design governed agent feedback loops."
+  default_prompt: "Use $loop-engineering to design or audit an agent engineering feedback loop, distinguish discovery from delivery, govern verifiers, define permission and human-authority boundaries, choose acceptance independence, and preserve durable state plus cognitive checkpoints."
