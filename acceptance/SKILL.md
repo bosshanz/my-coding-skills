@@ -7,12 +7,15 @@ description: "Independent acceptance and adversarial verification review after i
 
 Use this Skill to independently verify whether completed implementation work is acceptable. The output is an evidence-based acceptance decision, not more implementation.
 
+For long-running non-requirement loops, use this Skill at explicit checkpoints, milestones, or gates. Judge the evidence snapshot and next loop decision; do not require every iteration to look like a completed feature.
+
 ## Boundaries
 
 - Stay in review and verification mode by default.
 - Do not modify code, docs, migrations, or tests unless the user explicitly asks for fixes.
 - Do not replace `dev`'s internal lightweight acceptance gate; use this as a separate top-level pass when stronger separation is useful.
 - If the work is not ready, return a clear rejection or risk-qualified acceptance and recommend the next `$dev` step.
+- For long-running loops, return whether the checkpoint evidence supports `continue`, `stop`, or `pivot`, and recommend the next loop action.
 - Prefer repository evidence over claims: diff, tests, logs, screenshots, commands, CI, docs, and migration or rollout notes.
 
 ## Repository Context
@@ -49,8 +52,9 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
    - `accepted`: criteria are met and verification evidence is adequate.
    - `accepted with risk`: criteria appear met but named residual risks remain.
    - `rejected`: criteria are not met, evidence is insufficient for a critical area, or a blocking regression exists.
-6. If using `loop/`, append the acceptance decision and evidence summary to `loop-run-log.md`, and update `STATE.md` with the final decision or next action.
-7. Report the result with file, test, and risk references.
+6. For long-running non-requirement loops, also decide the loop direction: `continue`, `stop`, or `pivot`.
+7. If using `loop/`, append the acceptance decision and evidence summary to `loop-run-log.md`, and update `STATE.md` with the final decision or next action.
+8. Report the result with file, test, and risk references.
 
 ## Review Focus
 
@@ -74,6 +78,7 @@ Decision: accepted | accepted with risk | rejected
 Findings:
 Verification:
 Residual risk:
+Loop direction: continue | stop | pivot | not applicable
 Next step:
 ```
 

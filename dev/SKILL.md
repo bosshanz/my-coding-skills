@@ -14,6 +14,8 @@ Use one default Skill as a thin dispatcher for the user's real development loop:
 
 Keep the process conversational and proportional. The plan supports delivery; it is not a separate product unless the user asks for a durable design or plan document.
 
+When an active long-running loop exists, use `dev` for the current bounded increment: one fix, experiment, implementation slice, verification pass, or documentation update. Do not take ownership of the whole long-running loop inside `dev`; update the loop state and leave the next action clear.
+
 This Skill integrates:
 
 - **Superpowers Lite** for clarification, lightweight design, test-first changes, systematic debugging, review gates, and evidence-based completion.
@@ -45,6 +47,7 @@ At the start, classify the task:
 
 - Choose **New Requirement Track** when the desired behavior does not exist yet or the user asks to extend/change product behavior.
 - Choose **Bug Fix Track** when actual behavior differs from expected behavior, a test fails, an error occurs, or an existing flow regressed.
+- If the work is part of a long-running non-requirement loop, identify the current bounded increment, its signal, and its gate from `loop/` before choosing the closest track.
 - If unclear, ask one high-signal question: “这是新增行为，还是已有行为没有按预期工作？”
 
 Do not run both tracks mechanically. Share only the common review, verification, and delivery gates.
@@ -90,7 +93,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 - Run targeted tests first, then broader checks justified by the changed boundary.
 - Perform functional acceptance against each agreed criterion.
 - For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
-- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with material implementation progress, verification evidence, and next action.
+- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with material implementation progress, verification evidence, and next action. For long-running non-requirement loops, record the latest signal, whether the gate passed, and whether the loop should continue, stop, or pivot.
 - State what passed, what was not verified, and whether the requirement is accepted.
 
 ## Track B: Bug Fix
@@ -132,7 +135,7 @@ For tiny mechanical edits, skip formal track ceremony and perform the smallest d
 - Run the regression test and relevant nearby tests.
 - Check likely side effects and adjacent flows.
 - Run broader build, type, lint, integration, migration, or performance checks only when justified.
-- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with root cause, fix evidence, remaining risk, and next action.
+- If using `loop/`, update `STATE.md`, `ROADMAP.md`, and `loop-run-log.md` with root cause, fix evidence, remaining risk, and next action. For long-running non-requirement loops, record the latest signal, whether the gate passed, and whether the loop should continue, stop, or pivot.
 - State whether the Bug is accepted as fixed and identify any residual risk.
 
 ## Common Review Gate

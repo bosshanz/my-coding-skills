@@ -11,6 +11,8 @@ Use this Skill to design and maintain the engineering system around AI coding ag
 
 - Treat this as a methodology and operating-model Skill, not a replacement for `dev`.
 - Use `clarify` for a dedicated requirement or architecture interview, `dev` for ordinary implementation and bug repair, and `acceptance` for independent go/no-go review.
+- Do not force every loop into a requirement-delivery shape. Long-running improvement, evaluation, governance, maintenance, learning, and methodology loops need a cadence, signal, gate, and next experiment instead of a single final acceptance criterion.
+- For long-running non-requirement loops, `dev` executes bounded increments or experiments; `acceptance` reviews milestones, checkpoints, or explicit go/no-go gates.
 - Use external-agent adapters only when the user or project policy explicitly authorizes a target agent.
 - Do not add process for its own sake. Every loop, artifact, or gate must shorten feedback, reduce risk, preserve auditability, or improve repeatability.
 - Prefer repository-specific workflow changes over generic methodology prose when a repo is in scope.
@@ -19,6 +21,7 @@ Use this Skill to design and maintain the engineering system around AI coding ag
 
 A loop is useful only when it can change behavior. Define each loop with:
 
+- **Type**: delivery, debugging, evaluation, governance, learning, maintenance, or methodology.
 - **Target**: the behavior, decision, risk, or workflow the loop controls.
 - **Actor**: the agent, tool, CI job, human, or external system responsible for the next action.
 - **Input**: the prompt, issue, diff, trace, test, screenshot, log, or artifact consumed.
@@ -29,6 +32,13 @@ A loop is useful only when it can change behavior. Define each loop with:
 - **Artifact**: the durable note, skill, script, test, log, PR comment, ADR, or README update retained for later loops.
 
 Healthy loops have red-capable signals: they can fail before the work is correct and pass after the work is correct. A loop that only produces confidence language is not a verification loop.
+
+For a long-running loop, also define:
+
+- **Cadence**: when the loop runs or what event triggers another iteration.
+- **Trend signal**: what should improve, stabilize, or stay within bounds.
+- **Continue / stop / pivot criteria**: when to keep iterating, close the loop, or redesign it.
+- **Checkpoint artifact**: where milestone evidence is summarized without copying the whole chronological log.
 
 ## Durable Loop Workspace
 
@@ -47,6 +57,8 @@ Use these files as the shared state surface across `clarify`, `dev`, `acceptance
 
 Do not create this workspace silently. `clarify` should ask once after the work is clear enough to name. If `loop/` already exists and appears unrelated, ask whether to reuse it, archive it, or create a separate loop directory before writing.
 
+For a long-running non-requirement loop, use `loop/STATE.md` for the current hypothesis, latest signal, blocker, and next experiment; use `loop/ROADMAP.md` for cadence, checkpoints, and continue / stop / pivot criteria. Do not treat every iteration as a complete feature delivery.
+
 ## Workflow
 
 ### 1. Frame The Methodology Problem
@@ -58,8 +70,9 @@ Identify whether the user is asking to:
 - Upgrade a skill repository into a broader agent engineering methodology.
 - Add evaluation, acceptance, CI, observability, or delegation protocols.
 - Convert repeated agent failures into stronger loops, tests, docs, or skills.
+- Establish a long-running non-requirement loop for quality, evaluation, operations, governance, learning, or methodology evolution.
 
-State the methodology target and the non-goals before proposing structure.
+State the methodology target, loop type, time horizon, and non-goals before proposing structure.
 
 ### 2. Inventory Existing Loops
 
@@ -84,6 +97,7 @@ For every new or changed loop, define a compact contract:
 
 ```text
 Loop:
+Type:
 Trigger:
 Owner:
 Inputs:
@@ -95,6 +109,15 @@ Durable artifact:
 ```
 
 Keep contracts short enough to be used in real work. Put detailed rules inside a Skill only when they affect agent behavior at task time; put project explanation in README or docs.
+
+For long-running loops, extend the contract only as needed:
+
+```text
+Cadence:
+Trend signal:
+Continue / stop / pivot:
+Checkpoint artifact:
+```
 
 ### 4. Build The Verification Ladder
 
@@ -137,6 +160,7 @@ When changing this repository or a similar skill system, keep the surface consis
 Before delivery, verify:
 
 - The new loop has a clear target, trigger, owner, evidence, gate, and escalation.
+- Long-running non-requirement loops identify cadence, trend signal, and continue / stop / pivot criteria.
 - The loop does not duplicate an existing Skill's normal job.
 - The shortest feedback path got clearer or faster.
 - The methodology can be invoked by name and discovered through frontmatter.
@@ -170,6 +194,7 @@ Residual risk:
 ## Review Checklist
 
 - Does each loop have evidence that can fail?
+- If the loop is long-running, does it define cadence, checkpoint artifacts, and stop or pivot criteria?
 - Is the human checkpoint placed at the highest-leverage irreversible decision?
 - Are ordinary coding tasks still routed to `dev` instead of this Skill?
 - Are independent review and acceptance separate when risk justifies separation?

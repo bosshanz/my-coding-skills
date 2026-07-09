@@ -200,6 +200,8 @@ install.sh
 
 The methodology goal is to make every agent action observable and falsifiable: bad assumptions should be disproved quickly by tests, logs, diff review, screenshots, CI, human acceptance, or independent acceptance.
 
+Long-running non-requirement loops should not be forced into a one-shot clarify -> develop -> accept delivery shape. For evaluation, quality governance, methodology evolution, maintenance, or learning loops, `loop-engineering` defines the cadence, trend signal, gate, checkpoint artifact, and continue / stop / pivot criteria; `dev` executes only the current bounded increment or experiment; `acceptance` is used only at milestones, checkpoints, or explicit go/no-go gates.
+
 ## Dev Integration Direction
 
 `dev` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger thin dispatcher that combines:
@@ -421,9 +423,10 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use `loop-engineering` when the work is about Agent Engineering Methodology, feedback-loop design, evaluation loops, or multi-agent workflow governance.
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
+- Route long-running non-requirement loops through `loop-engineering` for the loop contract; hand each concrete increment to `dev` as a bounded change.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. For multi-step, cross-file, high-risk, delegated, or acceptance-heavy work, `clarify` should ask whether to create a `loop/` workspace, then return to `dev` for implementation afterward.
-- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
+- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision. In long-running loops, invoke it at milestones, checkpoints, or explicit gates; it does not continue implementation by default and should hand defects back to `dev`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, or `opencode`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 

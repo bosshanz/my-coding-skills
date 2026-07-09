@@ -34,6 +34,10 @@ Immediately append one entry to `loop-run-log.md` after creation. Include timest
 ```markdown
 # Loop
 
+## Type
+
+delivery | debugging | evaluation | governance | learning | maintenance | methodology
+
 ## Target
 
 What this loop is trying to deliver or decide.
@@ -59,6 +63,15 @@ What this loop is trying to deliver or decide.
 | Implementation | Accepted plan | Diff, tests, logs | Targeted verification passes | Re-plan or debug |
 | Acceptance | Claimed completion | Diff review, tests, manual evidence | accepted / accepted with risk / rejected | Return to Dev |
 
+## Long-Running Operation
+
+- Cadence:
+- Trend signal:
+- Continue criteria:
+- Stop criteria:
+- Pivot criteria:
+- Checkpoint artifact:
+
 ## Handoff Rules
 
 - Clarify updates `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md` before handing off.
@@ -80,6 +93,8 @@ clarifying
 - Goal:
 - Key constraints:
 - Non-goals:
+- Current hypothesis:
+- Latest signal:
 
 ## Decisions
 
@@ -122,6 +137,11 @@ clarifying
 - Integration:
 - UI or runtime:
 - Acceptance:
+
+## Long-Running Checkpoints
+
+- Cadence:
+- Continue / stop / pivot:
 ```
 
 ### CONTEXT.md
