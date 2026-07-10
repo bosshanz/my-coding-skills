@@ -50,7 +50,12 @@ for ref in superpowers-lite.md stack.md design-and-research.md documentation.md 
   check_file "dev/references/$ref"
 done
 
+for ref in context-model.md verifier-governance.md discovery-loop.md checkpoint-artifact.md acceptance-independence.md; do
+  check_file "loop-engineering/references/$ref"
+done
+
 check_file "clarify/references/loop-workspace.md"
+check_file "acceptance/references/independence.md"
 check_file "kimi-code/references/kimi-code-reference.md"
 check_file "claude-code/references/claude-code-reference.md"
 check_file "codex-cli/references/codex-cli-reference.md"

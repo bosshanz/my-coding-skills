@@ -4,7 +4,7 @@ Use this reference only after the user agrees to create a loop workspace or dire
 
 ## Location
 
-Create the workspace at `loop/` under the repository root or nearest affected project root:
+For one active task, create the workspace at `loop/` under the repository root or nearest affected project root:
 
 ```text
 loop/
@@ -12,18 +12,32 @@ loop/
   STATE.md
   ROADMAP.md
   CONTEXT.md
+  CHECKPOINT.md
   loop-run-log.md
 ```
 
-Do not overwrite an unrelated active `loop/`. If `loop/` exists, inspect `loop/LOOP.md` and `loop/STATE.md` first. Reuse it only when it matches the current work; otherwise ask whether to reuse it, archive it, or create a separate loop directory.
+For multiple concurrent or durable loops, prefer named directories:
+
+```text
+loops/
+  <loop-id>/
+    LOOP.md
+    STATE.md
+    ROADMAP.md
+    CONTEXT.md
+    CHECKPOINT.md
+    loop-run-log.md
+```
+
+Do not overwrite an unrelated active workspace. Inspect `LOOP.md` and `STATE.md` first. Reuse it only when it matches the current work; otherwise ask whether to reuse it, archive it, or create a separate named loop directory.
 
 ## File Roles
 
-File roles, the durable-vs-task-local tiers, and the promotion rules between them are defined canonically in `../../loop-engineering/references/context-model.md`. Read it when deciding what belongs in `loop/` versus the repo level. The templates below hold the concrete scaffolds for creating each file.
+File roles, durability tiers, and promotion rules are defined canonically in `../../loop-engineering/references/context-model.md`. The templates below provide concrete scaffolds.
 
 ## Creation Rules
 
-Create all five files together. Keep placeholders short and useful; do not fill with invented facts. Use `Unknown` or `To clarify` when evidence is missing.
+Create all six files together. Keep placeholders short and useful; do not fill with invented facts. Use `Unknown` or `To clarify` when evidence is missing.
 
 Immediately append one entry to `loop-run-log.md` after creation. Include timestamp if available from the environment, otherwise use the current conversation date.
 
@@ -34,49 +48,78 @@ Immediately append one entry to `loop-run-log.md` after creation. Include timest
 ```markdown
 # Loop
 
+## Identity
+
+- Loop ID:
+- Version: 1
+- Status: active
+- Owner:
+- Verifier owner:
+
 ## Type
 
-delivery | debugging | evaluation | governance | learning | maintenance | methodology
+discovery | delivery | debugging | evaluation | governance | learning | maintenance | methodology
 
 ## Target
 
-What this loop is trying to deliver or decide.
+What behavior, uncertainty, risk, or decision this loop controls.
 
 ## Scope
 
 - In:
 - Out:
 
+## Trigger And Cadence
+
+- Trigger:
+- Cadence:
+
 ## Actors
 
-- User:
+- User / constitutional authority:
 - Clarify:
 - Dev:
 - Acceptance:
 - External agents:
 
+## Permissions
+
+- Allowed actions:
+- Forbidden actions:
+- Budget:
+- Rollback boundary:
+
 ## Feedback Loops
 
-| Loop | Trigger | Signal | Gate | Escalation |
-| --- | --- | --- | --- | --- |
-| Clarification | Open requirement or design decision | User answer, repo evidence | Behavior and constraints are clear | Ask next focused question |
-| Implementation | Accepted plan | Diff, tests, logs | Targeted verification passes | Re-plan or debug |
-| Acceptance | Claimed completion | Diff review, tests, manual evidence | accepted / accepted with risk / rejected | Return to Dev |
+| Loop | Trigger | Signal | Verifier | Gate | Escalation |
+| --- | --- | --- | --- | --- | --- |
+| Discovery / Clarification | Open uncertainty or design decision | User answer, repo evidence, prototype result | Human or agreed rubric | Enough evidence for the next decision | Ask next focused question or pivot |
+| Implementation / Experiment | Accepted plan or hypothesis | Diff, tests, logs, benchmark | Tests, CI, evaluator, reviewer | Targeted gate passes | Re-plan, rollback, or debug |
+| Acceptance | Claimed completion or checkpoint | Diff review, tests, manual evidence | Selected independence level | accepted / accepted with risk / rejected | Return to Dev or escalate |
+| Verifier review | Scheduled review or suspicious result | Calibration set, false-pass examples, drift evidence | Verifier owner / domain owner | Verifier still represents the real target | Recalibrate or replace verifier |
+
+## Human Authority
+
+- Human-only decisions:
+- Irreversible decisions:
+- Non-negotiable constraints:
+- Metrics that must not be optimized in isolation:
+- Override policy:
 
 ## Long-Running Operation
 
-- Cadence:
 - Trend signal:
 - Continue criteria:
 - Stop criteria:
 - Pivot criteria:
-- Checkpoint artifact:
+- Checkpoint artifact: CHECKPOINT.md
+- Verifier review cadence:
 
 ## Handoff Rules
 
-- Clarify updates `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md` before handing off.
-- Dev reads the loop files before implementation and updates state/log after material changes.
-- Acceptance reads the loop files before judging completion and appends the final decision.
+- Clarify updates `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, `CHECKPOINT.md`, and `loop-run-log.md` before handing off.
+- Dev reads the loop files before implementation and updates state, evidence, and checkpoint after material changes.
+- Acceptance reads the loop files before judging completion and records the selected independence level.
 ```
 
 ### STATE.md
@@ -95,6 +138,8 @@ clarifying
 - Non-goals:
 - Current hypothesis:
 - Latest signal:
+- Current verifier:
+- Verifier version:
 
 ## Decisions
 
@@ -118,13 +163,24 @@ clarifying
 ```markdown
 # Roadmap
 
+## Phase
+
+discovery | delivery | evaluation | governance
+
 ## Milestones
 
-- [ ] Clarify target behavior, constraints, and acceptance criteria.
-- [ ] Agree on implementation approach.
+- [ ] Reduce material uncertainty or confirm target behavior.
+- [ ] Agree on implementation or experiment approach.
 - [ ] Implement the smallest complete slice.
 - [ ] Verify with the agreed evidence.
-- [ ] Run acceptance review.
+- [ ] Run the selected acceptance level.
+- [ ] Preserve a checkpoint and promote durable knowledge.
+
+## Discovery Exit Criteria
+
+- Facts, assumptions, constraints, and unknowns are separated.
+- The next hypothesis or behavior is specific enough to act on.
+- A meaningful verifier or human gate is defined.
 
 ## Acceptance Criteria
 
@@ -137,7 +193,16 @@ clarifying
 - Safety verification:
 - Cost verification:
 - Stop / end rules:
-- Independent acceptance:
+- Acceptance independence level:
+
+## Verifier Governance
+
+- Real target represented:
+- Verifier owner:
+- Isolation rule:
+- Known blind spots:
+- Calibration evidence:
+- Review cadence:
 
 ## Long-Running Checkpoints
 
@@ -169,6 +234,43 @@ clarifying
 ## Constraints
 
 - To clarify.
+
+## Evaluation Context
+
+- Metric or rubric:
+- Dataset / fixtures / scenarios:
+- Verifier version:
+- Known gaps:
+```
+
+### CHECKPOINT.md
+
+```markdown
+# Checkpoint
+
+## Current Target
+
+## What Changed
+
+## Why It Changed
+
+## Evidence
+
+## Rejected Alternatives
+
+## Not Verified
+
+## Current Risks
+
+## Verifier Version
+
+## Decision
+
+continue | stop | pivot | ready for delivery | accepted | rejected
+
+## Next Experiment Or Action
+
+## Rollback Path
 ```
 
 ### loop-run-log.md
@@ -185,7 +287,8 @@ Append entries in chronological order. Keep this file factual and concise.
 - Actor: Clarify
 - Event: Created loop workspace.
 - Evidence: User opted into loop tracking.
-- Next: Continue clarification.
+- Verifier: Not yet defined.
+- Next: Continue discovery or clarification.
 ```
 
 ## Update Rules
@@ -193,8 +296,14 @@ Append entries in chronological order. Keep this file factual and concise.
 During `clarify`:
 
 - Update `STATE.md` after each material user answer or repository discovery.
-- Update `ROADMAP.md` when acceptance criteria, milestones, or verification strategy become clearer.
-- Update `loop/CONTEXT.md` with task-local repository facts, constraints, relevant files, and commands; promote durable domain terms to the repo-level `CONTEXT.md` per `../../loop-engineering/references/context-model.md`.
-- Append `loop-run-log.md` entries for file creation, user decisions, important repo evidence, handoffs, and unresolved risks.
+- Update `ROADMAP.md` when phase, acceptance criteria, milestones, or verification strategy become clearer.
+- Update `CONTEXT.md` with task-local repository and evaluation facts; promote durable domain terms per `../../loop-engineering/references/context-model.md`.
+- Update `CHECKPOINT.md` when the target, evidence, rejected alternatives, verifier, or continue / stop / pivot decision materially changes.
+- Append `loop-run-log.md` entries for creation, user decisions, important repo evidence, verifier changes, handoffs, overrides, and unresolved risks.
 
-Before handing off to `$dev`, make sure `STATE.md` names the next action and `ROADMAP.md` contains enough acceptance criteria and verification strategy for implementation.
+Before handing off to `$dev`, make sure:
+
+- `STATE.md` names the next action.
+- `ROADMAP.md` shows whether the work is still discovery or ready for delivery.
+- The verification strategy can meaningfully fail.
+- Human-only decisions and forbidden actions are explicit where relevant.
