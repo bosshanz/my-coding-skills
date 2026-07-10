@@ -50,7 +50,7 @@ for ref in superpowers-lite.md stack.md design-and-research.md documentation.md 
   check_file "dev/references/$ref"
 done
 
-for ref in context-model.md verifier-governance.md discovery-loop.md checkpoint-artifact.md acceptance-independence.md; do
+for ref in context-model.md loop-admission.md verifier-governance.md discovery-loop.md checkpoint-artifact.md acceptance-independence.md; do
   check_file "loop-engineering/references/$ref"
 done
 

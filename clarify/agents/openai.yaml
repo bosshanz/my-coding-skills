@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
-  short_description: "Clarify requirements and architecture before implementation."
-  default_prompt: "Use $clarify to interview me one question at a time, inspect the repository when it can answer factual questions, ask whether to create a loop workspace for durable multi-step work, and record resolved domain terms or ADRs only when useful."
+  short_description: "Resolve material ambiguity before implementation."
+  default_prompt: "Use $clarify only for an explicit interview or material product, domain, architecture, lifecycle, migration, or safety ambiguity that ordinary dev questions cannot safely resolve. Ask one high-value question at a time, inspect repository evidence first, and propose a Loop workspace only when Loop admission criteria are met and I opt in."

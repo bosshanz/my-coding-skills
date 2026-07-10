@@ -2,69 +2,123 @@
 
 ## Principle
 
-A Loop is not the default container for every task.
+A Loop is not the default container for every task, and `clarify` is not a mandatory phase for every requirement.
 
-A Loop is a governance mechanism for work that needs persistent state, repeated feedback, explicit verification, or long-term evolution. Most ordinary requests should remain simple conversations or direct delivery tasks.
+Most work should use the shortest sufficient path:
 
-## Do Not Create A Loop For
+```text
+clear ordinary task -> dev -> proportionate verification
+```
+
+A Loop is an escalation mechanism for work whose feedback structure itself needs governance: persistent state, repeated experiments, verifier management, cross-run decisions, or long-term evolution.
+
+## Default Route
+
+Use direct delivery by default when the task can be understood, implemented, and verified within one bounded work session.
 
 Examples:
 
-- Small bug fixes with a clear reproduction and deterministic test.
-- Simple CRUD changes.
+- Small bug fixes with a clear reproduction and regression test.
+- Simple CRUD or field changes.
 - One-file refactors with obvious verification.
 - Documentation edits.
 - Formatting, renaming, or mechanical changes.
 - Small UI adjustments with clear acceptance criteria.
+- Multi-file work that is still bounded, well understood, and easy to verify.
 
-These should normally go directly through `dev`.
+These should normally go directly through `dev`. `dev` may ask a small number of targeted questions inside its normal workflow without invoking the top-level `clarify` Skill or creating a Loop workspace.
 
-## Consider A Loop When Multiple Conditions Exist
+## Clarify Admission
 
-Create a Loop when the work has one or more of these characteristics:
+Use the top-level `clarify` Skill only when at least one of these is true:
+
+- The user explicitly requests an interview, requirement challenge, or architecture discussion.
+- A material product, domain, architecture, lifecycle, or safety decision is unresolved.
+- The request is solution-shaped and may be solving the wrong problem.
+- Several plausible interpretations would lead to meaningfully different implementations.
+- The cost of implementing the wrong interpretation is high.
+- Durable domain language or an ADR-worthy decision must be established before delivery.
+
+Do not invoke `clarify` merely because a task is new, multi-step, or touches multiple files. Ordinary clarification remains part of `dev`.
+
+## Loop Admission
+
+Create or propose a Loop only when a strong condition exists or several moderate conditions combine.
 
 ### Persistent State
 
-The work spans multiple sessions, agents, or days and requires preserved context.
-
-### Uncertain Target
-
-The real problem, product direction, architecture, or solution space is unclear.
+The work spans sessions, agents, scheduled runs, or days and requires preserved state beyond normal task notes.
 
 ### Repeated Feedback
 
-The work requires multiple experiments, measurements, or optimization cycles.
+The work requires multiple meaningful experiments, measurements, optimization cycles, or recurrent checks.
 
-### Independent Verification
+### Verifier Governance
 
-The result needs stronger acceptance, evaluation, benchmarks, or governance.
+The evaluator, benchmark, rubric, metric, threshold, or judge is itself part of the engineering problem.
 
-### High Risk
+### Cross-Run Decisions
 
-The cost of being wrong is high due to migration, security, reliability, product impact, or irreversible decisions.
+Future iterations depend on understanding previous hypotheses, rejected alternatives, evidence, or human overrides.
 
-### Continuous Improvement
+### Continue / Stop / Pivot
 
-The goal is not a single delivery but maintaining quality, evaluation, operations, or methodology.
+The work needs explicit decisions about whether to keep investing, terminate, or change direction.
+
+### Continuous Operation
+
+The target is maintaining quality, evaluation, operations, learning, or methodology rather than completing one bounded delivery.
+
+### High-Risk Long-Running Work
+
+Risk is high and the work also requires persistent state, repeated verification, or staged checkpoints. High risk alone may justify stronger acceptance, but does not automatically require a Loop.
+
+## Non-Signals
+
+The following do not by themselves justify a Loop:
+
+- The task is called a project.
+- The task touches many files.
+- The task has several implementation steps.
+- The task needs tests.
+- The task needs a plan.
+- The task benefits from one round of clarification.
+- The task is important.
+
+These may justify careful `dev` work or independent `acceptance`, but not necessarily persistent Loop governance.
 
 ## Decision Rule
 
 Ask:
 
-1. Does this need memory beyond the current conversation?
-2. Does this need more than one meaningful iteration?
-3. Is the verifier itself part of the problem?
-4. Will future decisions depend on understanding why previous choices were made?
-5. Is there value in continue / stop / pivot decisions?
+1. Does this need state beyond the current bounded delivery?
+2. Does it need repeated independent iterations rather than ordinary implementation steps?
+3. Is the verifier itself changing, uncertain, or reusable?
+4. Will future decisions depend on preserved rationale and evidence?
+5. Does it need recurring continue / stop / pivot decisions?
+6. Will the Loop artifacts reduce more complexity than they introduce?
 
-If most answers are no, do not create a Loop.
+If the answers are mostly no, do not create a Loop.
 
-## Clarify Behavior
+If only clarification is needed, use lightweight questions inside `dev` or explicitly invoke `clarify` without creating a Loop workspace.
 
-`clarify` should not ask about Loop creation for every request.
+## Escalation Path
 
-Use normal clarification for ordinary work.
+Use progressive escalation:
 
-Introduce Loop workspace only when complexity, uncertainty, risk, or duration justifies the overhead.
+```text
+Direct dev
+  -> stronger in-task clarification
+  -> explicit clarify
+  -> independent acceptance
+  -> Loop workspace
+  -> long-running governed Loop
+```
 
-The goal is not to maximize Loop usage. The goal is to create a Loop only when the feedback structure itself becomes part of solving the problem.
+Start at the lowest level that can safely solve the problem. Escalate only when evidence shows the current level is insufficient.
+
+## Final Test
+
+A Loop is justified only when the feedback structure itself is part of the problem.
+
+The goal is not to maximize Loop or `clarify` usage. The goal is to preserve the shortest reliable feedback path.
