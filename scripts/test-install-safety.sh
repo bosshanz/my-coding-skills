@@ -84,6 +84,16 @@ if [ ! -f "$dest/dev/SKILL.md" ]; then
 else
   pass=$((pass+1)); printf 'ok (real install created SKILL.md)\n'
 fi
+for vendored_file in \
+  "$dest/dev/references/frontend-design.md" \
+  "$dest/dev/references/anthropic-frontend-design-LICENSE.txt"; do
+  if [ ! -f "$vendored_file" ]; then
+    printf 'FAIL: real install did not copy vendored frontend-design file: %s\n' "$vendored_file" >&2
+    fails=$((fails+1))
+  else
+    pass=$((pass+1)); printf 'ok (real install copied %s)\n' "${vendored_file#$dest/}"
+  fi
+done
 assert_allows "$UNINSTALL" dev --dest "$dest"
 if [ -e "$dest/dev" ]; then
   printf 'FAIL: real uninstall did not remove %s/dev\n' "$dest" >&2

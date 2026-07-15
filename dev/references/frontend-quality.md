@@ -1,8 +1,8 @@
-# Frontend Design And Quality
+# Frontend Engineering, Quality And Verification
 
 ## When To Use
 
-Use this reference for UI implementation, frontend design, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. This is the Frontend Design layer inside `dev`; load it before coding meaningful UI, not only at the final polish step.
+Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. For a new or visibly reshaped UI, load `frontend-design.md` first for the complete visual-design workflow, then use this companion reference for project-facing engineering and verification gates.
 
 ## Frontend Design Gate
 
@@ -88,9 +88,9 @@ Before delivery, use the smallest applicable set:
 
 ## Source Inspirations
 
-This reference is a high-level, localized extraction inspired by:
+This reference combines local engineering guidance with these sources:
 
-- Anthropic `frontend-design`: deliberate aesthetic direction, production-grade UI, and avoiding generic AI aesthetics. Source: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
+- Anthropic `frontend-design`: incorporated in full as `frontend-design.md`, pinned to upstream commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d`. It remains Apache-2.0; see `anthropic-frontend-design-LICENSE.txt`.
 - PeterHdd `engineering-frontend-developer`: frontend architecture, layout, accessibility, Core Web Vitals, typed API clients, and verification gates. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-frontend-developer
 
 ## Frontend Task Classification

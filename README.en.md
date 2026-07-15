@@ -41,7 +41,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - New requirements: clarify goals and acceptance criteria through conversation, agree on a solution, then implement, test, and accept it
 - Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
-- Frontend Design: purpose, aesthetic direction, interaction flow, complete states, accessibility, responsiveness, and visual acceptance
+- Frontend Design: the complete upstream workflow for purpose, aesthetic direction, typography, layout, copy, and self-critique, plus interaction flows, complete states, accessibility, responsiveness, and visual acceptance
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
@@ -141,7 +141,9 @@ dev/
     stack.md
     design-and-research.md
     documentation.md
+    frontend-design.md
     frontend-quality.md
+    anthropic-frontend-design-LICENSE.txt
     backend-architecture.md
     database-engineering.md
 clarify/
@@ -211,7 +213,7 @@ Long-running non-requirement loops should not be forced into a one-shot clarify 
 
 - Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
-- Frontend Design-inspired UI discipline: choose an aesthetic direction before coding, avoid generic AI-looking UI, and cover real states, interactions, accessibility, and performance.
+- The complete Anthropic `frontend-design` UI workflow: establish an aesthetic direction, tokens, layout, and signature; self-critique before coding; then apply the local engineering gates for real states, interactions, accessibility, and performance. The upstream body and an Apache-2.0 copy ship under `dev/references/` with `dev`.
 - Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
@@ -472,4 +474,4 @@ External CLI selection must be explicit; once the user or project policy selects
 
 ## License
 
-This repository is licensed under the [MIT License](./LICENSE).
+This repository's own content is licensed under the [MIT License](./LICENSE). The vendored third-party Apache-2.0 content in `dev/references/frontend-design.md` is accompanied by its full license at [dev/references/anthropic-frontend-design-LICENSE.txt](./dev/references/anthropic-frontend-design-LICENSE.txt).

@@ -46,7 +46,7 @@ for skill in loop-engineering clarify dev acceptance kimi-code claude-code codex
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-quality.md backend-architecture.md database-engineering.md; do
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-design.md frontend-quality.md backend-architecture.md database-engineering.md anthropic-frontend-design-LICENSE.txt; do
   check_file "dev/references/$ref"
 done
 

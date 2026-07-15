@@ -1,4 +1,4 @@
 interface:
   display_name: "Dev"
-  short_description: "Deliver new requirements and fix Bugs through focused, verified workflows."
-  default_prompt: "Use $dev as a thin dispatcher. Clarify and design from first principles when assumptions matter, adversarially review non-trivial designs and fixes, then implement, test, and accept with only the focused references that match the task."
+  short_description: "Build, fix, and design software through verified delivery."
+  default_prompt: "Use $dev to deliver a verified software change, applying its full frontend design workflow when the task reshapes a UI."

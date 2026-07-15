@@ -1,6 +1,6 @@
 ---
 name: dev
-description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance. When an active loop workspace exists, execute only the current bounded increment and update state, evidence, and cognitive checkpoint."
+description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance. When an active loop workspace exists, execute only the current bounded increment and update state, evidence, and cognitive checkpoint."
 ---
 
 # Dev
@@ -16,7 +16,7 @@ Keep the process conversational and proportional. A plan supports delivery; it i
 
 When an active long-running loop exists, use `dev` only for the current bounded increment: one fix, experiment, implementation slice, verification pass, or documentation update. Do not silently take ownership of the whole loop. Update the shared state, evidence, checkpoint, and next action.
 
-This Skill integrates lightweight design, TDD, systematic debugging, frontend quality, full-stack architecture, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
+This Skill integrates lightweight design, TDD, systematic debugging, full frontend design direction, frontend quality, full-stack architecture, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
 
 ## Automatic Trigger
 
@@ -25,6 +25,8 @@ Use this Skill automatically for ordinary software work in a repository. Do not 
 Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` or a Discovery Loop when the target or verifier is not ready.
 
 Use external-agent adapters only when the user explicitly asks another Agent to participate.
+
+For meaningful UI creation or a visible UI reshape, load `references/frontend-design.md` before coding to establish the design direction, then load `references/frontend-quality.md` for local engineering, accessibility, state, and verification gates. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, keep the normal `dev` clarification boundary rather than inventing a product requirement.
 
 ## Select A Track
 
@@ -79,7 +81,7 @@ After material work:
 - For non-trivial work, compare realistic approaches including the simplest viable option.
 - Recommend one approach with tradeoffs, risks, affected modules, interface/data impact, and verification strategy.
 - Adversarially test the recommendation: name the weakest assumption and evidence that would disprove it.
-- For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states.
+- For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states; use the full frontend-design reference for a new or visibly reshaped UI.
 - For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable.
 - Do not implement while a material product or architecture decision remains unresolved.
 
@@ -191,7 +193,8 @@ Load the smallest reference set that can materially improve the work.
 | --- | --- |
 | `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
-| `references/frontend-quality.md` | Meaningful UI, interaction states, accessibility, responsiveness, visual quality, or frontend performance. |
+| `references/frontend-design.md` | New UI or meaningful UI reshaping where the visual direction, typography, layout, signature element, copy, or design self-critique matters. Load before frontend-quality. |
+| `references/frontend-quality.md` | Frontend engineering, interaction states, accessibility, responsiveness, visual quality, or frontend performance. Load after frontend-design for meaningful UI. |
 | `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |
 | `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, or capacity. |
 | `references/stack.md` | Choosing language, framework, database, queue, cache, or integration technology. |
