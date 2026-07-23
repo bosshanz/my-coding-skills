@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-A portable collection of `loop-engineering`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
+A portable collection of `design`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent design agent engineering feedback loops, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
+The repository lets a caller agent design UI, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
 
 Core principles:
 
@@ -10,8 +10,6 @@ Core principles:
 - If the target is unavailable, fail explicitly; do not silently substitute.
 - Never simulate, impersonate, or fabricate the target agent's output.
 - Delegated results must remain auditable, reviewable, and verifiable.
-- Design agent engineering methodology through feedback loops instead of stacking prompts and process checklists.
-- The first principle of Loop Engineering is: do not trust the Agent; trust the verifier. Prioritize verification gates, permission boundaries, state and memory, scheduling, then Agent capability.
 - Use first-principles decomposition before choosing solutions for complex requirements and architecture decisions.
 - Use adversarial review for non-trivial designs, fixes, and acceptance decisions by actively looking for counterexamples and weak assumptions.
 
@@ -21,18 +19,16 @@ Core principles:
 
 The repository currently includes eight primary skills:
 
-### `loop-engineering`
+### `design`
 
-This is the top-level Agent Engineering Methodology Skill for designing, auditing, and improving AI coding-agent engineering loops:
+This is a standalone design Skill for UI work, invoked on demand by `dev` or directly:
 
-- Design feedback loops for clarification, solution design, implementation, debugging, evaluation, delegation, acceptance, release, and docs/memory updates
-- Define each loop's target, actor, input, action, signal, gate, escalation, and artifact
-- Build a verification ladder that defines hard, soft, safety, cost, and stop/end-rule verification before relying on Agent capability
-- Design multi-agent collaboration protocols: explicit authorization, bounded scope, invocation evidence, non-recursive delegation, caller review, and final accountability
-- Standardize the optional `loop/` workspace created from `clarify`: `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`
-- Audit whether skills, README files, installers, doctor scripts, and adapter contracts form a coherent methodology surface
+- New UI or visible reshape: commit to purpose, tone, palette, typography, layout, and a signature element before coding
+- Frontend engineering quality: interaction states, accessibility, responsiveness, performance, and verification gates
+- Motion methodology: concrete durations, easing curves, spring parameters, choreography rules, an animation audit checklist and vocabulary, plus where motion helps and where it does not
+- Incorporates the complete Anthropic `frontend-design` UI workflow (Apache-2.0) and distills the animation methodology from emilkowalski/skills (MIT)
 
-Trigger guidance: use it when the user explicitly invokes `$loop-engineering`, asks for Loop Engineering, Agent Engineering Methodology, feedback-loop design, evaluation loops, multi-agent workflow governance, or wants to upgrade a skill repository into a methodology system. Ordinary feature implementation and Bug repair should still use `dev`.
+Trigger guidance: use it when creating meaningful new UI, reshaping existing UI, or implementing or auditing animation and micro-interactions; `dev` invokes it automatically for UI tasks. Not needed for backend-only work or trivial CSS tweaks.
 
 ### `dev`
 
@@ -41,7 +37,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - New requirements: clarify goals and acceptance criteria through conversation, agree on a solution, then implement, test, and accept it
 - Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
-- Frontend Design: the complete upstream workflow for purpose, aesthetic direction, typography, layout, copy, and self-critique, plus interaction flows, complete states, accessibility, responsiveness, and visual acceptance
+- UI design: invoke the standalone `design` Skill on demand for meaningful UI creation or reshaping to get design direction, frontend quality, and motion methodology
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
@@ -55,8 +51,6 @@ This is an opt-in requirement and architecture alignment Skill for conversations
 
 - Ask one high-value question at a time and include a recommended answer
 - Inspect repository docs or code for factual answers instead of asking the user
-- For multi-step, cross-file, high-risk, delegated, or acceptance-heavy work, ask whether to create a `loop/` workspace
-- When the user agrees, create `LOOP.md`, `STATE.md`, `ROADMAP.md`, `CONTEXT.md`, and `loop-run-log.md`
 - Apply first-principles decomposition to solution-shaped requests by separating goals, facts, constraints, assumptions, and non-goals
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
@@ -130,9 +124,14 @@ Every Skill follows the directory format defined by the [Agent Skills specificat
 ## Repository Structure
 
 ```text
-loop-engineering/
+design/
   SKILL.md
   agents/openai.yaml
+  references/
+    design-direction.md
+    quality.md
+    animation.md
+    anthropic-frontend-design-LICENSE.txt
 dev/
   SKILL.md
   agents/openai.yaml
@@ -141,16 +140,11 @@ dev/
     stack.md
     design-and-research.md
     documentation.md
-    frontend-design.md
-    frontend-quality.md
-    anthropic-frontend-design-LICENSE.txt
     backend-architecture.md
     database-engineering.md
 clarify/
   SKILL.md
   agents/openai.yaml
-  references/
-    loop-workspace.md
 acceptance/
   SKILL.md
   agents/openai.yaml
@@ -191,29 +185,13 @@ install.sh
 ```
 
 
-## Agent Engineering Methodology
-
-`loop-engineering` is the methodology layer in this repository. It does not replace coding, interviewing, or acceptance; it defines how those actions form verifiable engineering loops.
-
-- `loop-engineering` designs and audits loops: triggers, responsible actors, inputs, actions, evidence, gates, escalation paths, and durable artifacts.
-- `clarify` is the requirement and architecture clarification loop, and creates a `loop/` workspace when the user opts in.
-- `dev` is the implementation, debugging, testing, and lightweight acceptance loop; when `loop/` exists, it reads the context first and keeps state and logs current.
-- `acceptance` is the independent go/no-go verification loop; when `loop/` exists, it writes the decision back to state and log files.
-- External-agent adapters execute delegation loops and should only be used when the user or project policy explicitly authorizes them.
-
-The methodology goal is to make every agent action observable and falsifiable: bad assumptions should be disproved quickly by tests, logs, diff review, screenshots, CI, human acceptance, or independent acceptance.
-
-The first principle of Loop Engineering is: do not trust the Agent; trust the verifier. The fixed design priority is: 1. verification gates; 2. permission boundaries; 3. state and memory; 4. scheduling mechanism; 5. Agent capability. Choose verification gates from hard verification, soft verification, safety verification, cost verification, and stop/end rules based on risk.
-
-Long-running non-requirement loops should not be forced into a one-shot clarify -> develop -> accept delivery shape. For evaluation, quality governance, methodology evolution, maintenance, or learning loops, `loop-engineering` defines the cadence, trend signal, gate, checkpoint artifact, and continue / stop / pivot criteria; `dev` executes only the current bounded increment or experiment; `acceptance` is used only at milestones, checkpoints, or explicit go/no-go gates.
-
 ## Dev Integration Direction
 
-`dev` is not a full Superpowers installer and not a standalone frontend design skill. It is the default-trigger thin dispatcher that combines:
+`dev` is not a full Superpowers installer. It is the default-trigger thin dispatcher that combines:
 
 - Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
-- The complete Anthropic `frontend-design` UI workflow: establish an aesthetic direction, tokens, layout, and signature; self-critique before coding; then apply the local engineering gates for real states, interactions, accessibility, and performance. The upstream body and an Apache-2.0 copy ship under `dev/references/` with `dev`.
+- UI design direction, frontend quality, and motion methodology provided by the standalone `design` Skill: the complete Anthropic `frontend-design` UI workflow (establish an aesthetic direction, tokens, layout, and signature; self-critique before coding) plus animation methodology distilled from emilkowalski/skills; `dev` invokes it on demand for meaningful UI work. The upstream Apache-2.0 body and license ship with `design`.
 - Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
@@ -251,8 +229,8 @@ Common examples:
 # Default: install every Skill into all supported target directories
 ./install.sh
 
-# Install only the Agent Engineering Methodology layer
-./install.sh methodology --target agents --force
+# Install only the UI design Skill
+./install.sh ui --target agents --force
 
 # Install only the default workflow into the shared standards-oriented directory
 ./install.sh dev --target agents --force
@@ -284,13 +262,13 @@ Common examples:
 
 Supported skills and groups:
 
-- `loop-engineering`: Agent Engineering Methodology and feedback-loop design
-- `dev`: default development workflow integrating Superpowers Lite and Frontend Design
+- `design`: UI design direction, frontend quality, and motion methodology
+- `dev`: default development workflow integrating Superpowers Lite; invokes `design` on demand for UI tasks
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `acceptance`: independent acceptance and go/no-go verification
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode`: external-agent adapters
 - `workflow`: install only `dev`
-- `methodology`: install only `loop-engineering`
+- `ui`: install only `design`
 - `planning`: install only `clarify`
 - `delegation`: install all external-agent adapters
 - `adapters`: install the four adapters only
@@ -310,7 +288,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -320,15 +298,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -345,19 +323,15 @@ cp -R loop-engineering clarify dev acceptance kimi-code claude-code codex-cli op
 You can invoke Skills explicitly; ordinary development tasks should also auto-match `dev` without requiring `$dev`:
 
 ```text
-Use $loop-engineering to design an agent engineering feedback-loop architecture for this repository, including routing between clarify, dev, acceptance, and external-agent adapters.
-```
-
-```text
 Use $dev to implement a new feature with a brief plan first, then verify it and update docs.
 ```
 
 ```text
-Use $clarify to clarify this refactor one question at a time before we implement it.
+Use $design to review and improve the animations on this page.
 ```
 
 ```text
-Use $clarify to interview me first and ask whether to create a loop workspace for this multi-step change.
+Use $clarify to clarify this refactor one question at a time before we implement it.
 ```
 
 ```text
@@ -387,7 +361,7 @@ Claude Code discovers and loads matching skills on demand. After installation, i
 Explicit example:
 
 ```text
-/loop-engineering
+/design
 ```
 
 ```text
@@ -425,13 +399,12 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Automatic Trigger Guidance
 
-- Use `loop-engineering` when the work is about Agent Engineering Methodology, feedback-loop design, evaluation loops, or multi-agent workflow governance.
+- Use `design` when creating meaningful new UI, reshaping existing UI, or implementing or auditing animation and micro-interactions; `dev` invokes it automatically for UI tasks.
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
-- Route long-running non-requirement loops through `loop-engineering` for the loop contract; hand each concrete increment to `dev` as a bounded change.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. For multi-step, cross-file, high-risk, delegated, or acceptance-heavy work, `clarify` should ask whether to create a `loop/` workspace, then return to `dev` for implementation afterward.
-- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision. In long-running loops, invoke it at milestones, checkpoints, or explicit gates; it does not continue implementation by default and should hand defects back to `dev`.
+- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture, then return to `dev` for implementation afterward.
+- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, or `opencode`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
@@ -453,7 +426,7 @@ External CLI selection must be explicit; once the user or project policy selects
 
 - Respect any Skill explicitly named by the user.
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
-- Prefer `loop-engineering` for agent methodology, feedback-loop, evaluation-loop, or multi-agent workflow design.
+- Prefer `design` for UI design direction, visual quality, or animation work.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for requirement or architecture interviews.
 - Prefer `acceptance` for independent go/no-go verification.
@@ -470,8 +443,8 @@ External CLI selection must be explicit; once the user or project policy selects
 - Test-first work for behavior changes and root-cause analysis for bug fixes when practical
 - Explicit verification steps, review conclusions, and plain-language acceptance conclusions before delivery
 - Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
-- Reference-based frontend quality, backend architecture, and database engineering checklists when needed, instead of turning external skills into a long default process
+- Reference-based or `design`-Skill-based frontend design, backend architecture, and database engineering checklists when needed, instead of turning external skills into a long default process
 
 ## License
 
-This repository's own content is licensed under the [MIT License](./LICENSE). The vendored third-party Apache-2.0 content in `dev/references/frontend-design.md` is accompanied by its full license at [dev/references/anthropic-frontend-design-LICENSE.txt](./dev/references/anthropic-frontend-design-LICENSE.txt).
+This repository's own content is licensed under the [MIT License](./LICENSE). The vendored third-party Apache-2.0 content in `design/references/design-direction.md` is accompanied by its full license at [design/references/anthropic-frontend-design-LICENSE.txt](./design/references/anthropic-frontend-design-LICENSE.txt); `design/references/animation.md` is distilled from the MIT-licensed [emilkowalski/skills](https://github.com/emilkowalski/skills).

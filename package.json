@@ -1,13 +1,13 @@
 {
   "name": "my-coding-skills",
   "version": "0.1.0",
-  "description": "Portable agent engineering methodology, development workflow, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, and OpenCode.",
+  "description": "Portable design, development workflow, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, and OpenCode.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
   },
   "files": [
-    "loop-engineering",
+    "design",
     "clarify",
     "dev",
     "acceptance",
@@ -32,9 +32,7 @@
     "claude-code",
     "opencode",
     "skills",
-    "agent-engineering",
-    "methodology",
-    "loop-engineering",
+    "design",
     "clarify",
     "dev",
     "acceptance"

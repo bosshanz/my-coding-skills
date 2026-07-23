@@ -1,4 +1,0 @@
-interface:
-  display_name: "Loop Engineering"
-  short_description: "Admit and design governed feedback loops."
-  default_prompt: "Use $loop-engineering to first decide whether a governed Loop is justified or ordinary dev/clarify/acceptance is sufficient. Only for admitted Loops, design feedback contracts, verifier governance, permission and human-authority boundaries, acceptance independence, durable state, and cognitive checkpoints."

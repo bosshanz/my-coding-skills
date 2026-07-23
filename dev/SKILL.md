@@ -1,6 +1,6 @@
 ---
 name: dev
-description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance. When an active loop workspace exists, execute only the current bounded increment and update state, evidence, and cognitive checkpoint."
+description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
 ---
 
 # Dev
@@ -14,19 +14,17 @@ Use one default Skill as a thin dispatcher for real development work:
 
 Keep the process conversational and proportional. A plan supports delivery; it is not a separate product unless the user asks for a durable document.
 
-When an active long-running loop exists, use `dev` only for the current bounded increment: one fix, experiment, implementation slice, verification pass, or documentation update. Do not silently take ownership of the whole loop. Update the shared state, evidence, checkpoint, and next action.
-
-This Skill integrates lightweight design, TDD, systematic debugging, full frontend design direction, frontend quality, full-stack architecture, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
+This Skill integrates lightweight design, TDD, systematic debugging, full-stack architecture, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
 
 ## Automatic Trigger
 
 Use this Skill automatically for ordinary software work in a repository. Do not require the user to invoke `$dev`.
 
-Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` or a Discovery Loop when the target or verifier is not ready.
+Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the target or verifier is not ready.
 
 Use external-agent adapters only when the user explicitly asks another Agent to participate.
 
-For meaningful UI creation or a visible UI reshape, load `references/frontend-design.md` before coding to establish the design direction, then load `references/frontend-quality.md` for local engineering, accessibility, state, and verification gates. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, keep the normal `dev` clarification boundary rather than inventing a product requirement.
+For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, keep the normal `dev` clarification boundary rather than inventing a product requirement.
 
 ## Select A Track
 
@@ -34,37 +32,10 @@ At the start, classify the task:
 
 - **New Requirement Track**: desired behavior does not exist yet or product behavior must change.
 - **Bug Fix Track**: actual behavior differs from expected behavior, a test fails, or an existing flow regressed.
-- **Bounded Loop Increment**: an active loop defines the current experiment, signal, verifier, and gate.
 
 If unclear, ask one high-signal question. Do not run both tracks mechanically.
 
 For tiny mechanical edits, perform the smallest direct change plus an appropriate verification check.
-
-## Active Loop Integration
-
-When `loop/` or `loops/<loop-id>/` is active, read before planning:
-
-- `LOOP.md`
-- `STATE.md`
-- `ROADMAP.md`
-- `CONTEXT.md`
-- `CHECKPOINT.md`
-- `loop-run-log.md`
-
-Confirm:
-
-- the current phase is ready for implementation rather than discovery;
-- the bounded increment and gate are explicit;
-- allowed and forbidden actions are respected;
-- the verifier cannot be silently weakened by the implementation;
-- the human-authority boundary is clear.
-
-After material work:
-
-- update `STATE.md` with the latest signal, verifier version, blocker, and next action;
-- update `ROADMAP.md` when milestones or verification strategy change;
-- update `CHECKPOINT.md` with what changed, why, evidence, rejected alternatives, unverified areas, risks, and rollback path;
-- append factual commands, results, decisions, and handoffs to `loop-run-log.md`.
 
 ## Track A: New Requirement
 
@@ -73,7 +44,7 @@ After material work:
 - Understand the user goal, main flow, constraints, non-goals, and acceptance criteria.
 - Inspect relevant repository structure and conventions before proposing architecture.
 - Ask the minimum questions needed to remove material ambiguity.
-- If the real problem or verifier remains unclear, return to `clarify` or Discovery Loop instead of guessing.
+- If the real problem or verifier remains unclear, return to `clarify` instead of guessing.
 - Restate the confirmed requirement before implementation.
 
 ### 2. Propose And Agree On A Solution
@@ -81,7 +52,7 @@ After material work:
 - For non-trivial work, compare realistic approaches including the simplest viable option.
 - Recommend one approach with tradeoffs, risks, affected modules, interface/data impact, and verification strategy.
 - Adversarially test the recommendation: name the weakest assumption and evidence that would disprove it.
-- For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states; use the full frontend-design reference for a new or visibly reshaped UI.
+- For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states; invoke the `design` skill for a new or visibly reshaped UI.
 - For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable.
 - Do not implement while a material product or architecture decision remains unresolved.
 
@@ -181,8 +152,6 @@ For a bug fix:
 - 回归测试与验收
 - 风险与未验证项
 
-When a loop workspace is active, also state the latest signal, verifier, gate result, checkpoint update, and next loop direction.
-
 Keep code, commands, protocol names, and configuration keys in their original language.
 
 ## Reference Loading Policy
@@ -191,14 +160,10 @@ Load the smallest reference set that can materially improve the work.
 
 | Reference | Load when |
 | --- | --- |
+| `design` skill (invoke, not a reference) | New UI, meaningful UI reshaping, motion/animation work, or visual-quality review. |
 | `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
-| `references/frontend-design.md` | New UI or meaningful UI reshaping where the visual direction, typography, layout, signature element, copy, or design self-critique matters. Load before frontend-quality. |
-| `references/frontend-quality.md` | Frontend engineering, interaction states, accessibility, responsiveness, visual quality, or frontend performance. Load after frontend-design for meaningful UI. |
 | `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |
 | `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, or capacity. |
 | `references/stack.md` | Choosing language, framework, database, queue, cache, or integration technology. |
 | `references/documentation.md` | Durable behavior, architecture, delivery notes, or reusable documentation. |
-| `../loop-engineering/references/context-model.md` | A loop workspace is active or context placement is unclear. |
-| `../loop-engineering/references/verifier-governance.md` | A reusable metric, benchmark, rubric, evaluator, or judge determines acceptance. |
-| `../loop-engineering/references/checkpoint-artifact.md` | A long-running loop or complex change needs an understandable checkpoint. |

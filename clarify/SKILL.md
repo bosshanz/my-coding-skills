@@ -1,6 +1,6 @@
 ---
 name: clarify
-description: "Run a dedicated requirement, discovery, or architecture interview before implementation. Use only when the user explicitly invokes $clarify or asks for an interview/challenge, or when a material product, domain, architecture, lifecycle, or safety decision cannot be resolved inside ordinary dev clarification. Supports repository-aware questions, one-question-at-a-time alignment, optional Loop admission, optional CONTEXT.md glossary updates, sparse ADR capture, and explicit transition from discovery to delivery. Do not use as a mandatory phase for every new requirement."
+description: "Run a dedicated requirement, discovery, or architecture interview before implementation. Use only when the user explicitly invokes $clarify or asks for an interview/challenge, or when a material product, domain, architecture, lifecycle, or safety decision cannot be resolved inside ordinary dev clarification. Supports repository-aware questions, one-question-at-a-time alignment, optional CONTEXT.md glossary updates, sparse ADR capture, and explicit transition from discovery to delivery. Do not use as a mandatory phase for every new requirement."
 ---
 
 # Clarify
@@ -30,7 +30,6 @@ If one or two focused questions inside `dev` can safely remove the ambiguity, ke
 - Ask one question at a time and wait for the answer.
 - Include a recommended answer with each question.
 - Inspect repository evidence instead of asking factual questions the repository can answer.
-- Do not create a Loop workspace unless Loop admission is justified and the user explicitly opts in or directly asks for one.
 - Do not create issue-tracker workflows, PRDs, or Agent briefs unless requested.
 - Do not push an ambiguous problem into delivery merely to create visible progress.
 - Do not treat clarification as permission to start coding unless the user explicitly asks to proceed.
@@ -41,7 +40,6 @@ If one or two focused questions inside `dev` can safely remove the ambiguity, ke
 Before asking design questions, inspect the closest relevant context:
 
 - Existing durable `CONTEXT.md` or `CONTEXT-MAP.md`.
-- Existing `loop/` or `loops/<loop-id>/` workspace, if one is already active.
 - Existing `docs/adr/` records near the affected area.
 - Relevant code paths, tests, docs, examples, evaluators, fixtures, and metrics.
 - Existing product language, module names, and user-facing terminology.
@@ -79,46 +77,6 @@ Discovery may:
 
 Discovery is complete when uncertainty is low enough to define a bounded implementation or experiment. Reducing uncertainty is a valid deliverable; do not present it as completed feature delivery.
 
-Read `../loop-engineering/references/discovery-loop.md` when the discovery-to-delivery boundary is unclear.
-
-## Loop Admission
-
-`clarify` does not imply a Loop, and a Discovery conversation does not automatically require a Loop workspace.
-
-Before proposing a workspace, read `../loop-engineering/references/loop-admission.md` and check whether the feedback structure itself needs governance.
-
-A Loop is usually justified only when the work needs one or more strong signals such as:
-
-- state preserved across sessions, Agents, scheduled runs, or days;
-- repeated independent experiments or optimization cycles;
-- verifier design, calibration, versioning, or drift management;
-- future decisions that depend on preserved hypotheses and rejected alternatives;
-- recurring continue / stop / pivot decisions;
-- continuous quality, evaluation, operations, learning, or methodology work.
-
-The following do not justify a Loop by themselves:
-
-- multiple files;
-- several implementation steps;
-- a plan;
-- tests;
-- one round of clarification;
-- high importance without persistence or repeated feedback.
-
-## Optional Loop Workspace
-
-Only after Loop admission is justified and the work is clear enough to name, ask once whether the user wants a durable workspace.
-
-Use a concise question such as:
-
-```text
-这项工作需要跨轮保存状态并持续做实验、评估或 continue / stop / pivot 决策。是否创建 Loop 工作区持续跟踪？我的建议：这种情况下选 yes；若本次可以在一个有边界的交付中完成，选 no。
-```
-
-If the user says no, continue clarification without creating files. If the user says yes or directly requested a Loop, read `references/loop-workspace.md` and create or update the workspace.
-
-Use `loop/` for one active governed Loop. Prefer `loops/<loop-id>/` for concurrent, independently scheduled, or durable Loops. If an existing workspace is unrelated, ask whether to reuse, archive, or create a separate named directory.
-
 ## First-Principles Clarification
 
 Use first-principles clarification when the request is ambiguous, solution-shaped, architecture-heavy, or likely to encode hidden assumptions:
@@ -139,7 +97,7 @@ Before delivery, clarify only the verification questions proportionate to the ta
 - What important behavior is not covered?
 - Which decision must remain human-only?
 
-For reusable or high-impact evaluators, additionally clarify owner, isolation, version, calibration, and drift review. Read `../loop-engineering/references/verifier-governance.md` only when that depth is warranted.
+For reusable or high-impact evaluators, additionally clarify owner, isolation, version, calibration, and drift review.
 
 Do not impose verifier-governance ceremony on ordinary deterministic tests.
 
@@ -152,9 +110,7 @@ When domain terms materially affect the design:
 - Surface contradictions between code and the stated domain model.
 - Update the nearest durable `CONTEXT.md` only when the term should outlive the current work.
 
-`CONTEXT.md` is a glossary, not a specification. Keep implementation details, plans, and transient notes out of it.
-
-If a Loop workspace is active, use its `CONTEXT.md` for task-local facts and evaluation context. Use repo-level `CONTEXT.md` only for durable domain terms.
+`CONTEXT.md` is a glossary, not a specification. Keep implementation details, plans, and transient notes out of it. Use repo-level `CONTEXT.md` only for durable domain terms.
 
 ## ADR Capture
 
@@ -179,11 +135,10 @@ Confirm the smallest relevant set:
 - Affected boundaries or modules, when needed.
 - Proportionate verification strategy.
 - Human-only or irreversible decisions, when relevant.
-- Whether the work should return to direct `dev`, remain in discovery, or enter a governed Loop.
+- Whether the work should return to direct `dev` or remain in discovery.
 - Durable terms or ADR-worthy decisions have been recorded only when justified.
-- If a Loop workspace exists, its state and checkpoint are current.
 
-Close with a short summary and the next recommended action. Prefer returning to `$dev`; recommend a Loop only when admission criteria are met.
+Close with a short summary and the next recommended action. Prefer returning to `$dev`.
 
 ## Source Inspiration
 

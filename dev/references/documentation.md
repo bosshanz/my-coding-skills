@@ -47,7 +47,7 @@ Use this structure for final delivery:
 - Risk: ...
 - Documentation Update: ...
 
-This durable-doc template aligns with `dev`'s in-chat delivery format (需求确认 / 方案与关键取舍 / 实现内容 / 测试与验收 / 风险与未验证项) plus a Documentation Update field. Use it only when writing a file that must outlive the conversation; use the in-chat format for the response. The canonical field mapping and durable-vs-task-local context rules are in `../../loop-engineering/references/context-model.md`.
+This durable-doc template aligns with `dev`'s in-chat delivery format (需求确认 / 方案与关键取舍 / 实现内容 / 测试与验收 / 风险与未验证项) plus a Documentation Update field. Use it only when writing a file that must outlive the conversation; use the in-chat format for the response.
 
 ## Verification Layers
 

@@ -2,7 +2,7 @@
 
 ## When To Use
 
-Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. For a new or visibly reshaped UI, load `frontend-design.md` first for the complete visual-design workflow, then use this companion reference for project-facing engineering and verification gates.
+Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. For a new or visibly reshaped UI, load `design-direction.md` first for the complete visual-design workflow, then use this companion reference for project-facing engineering and verification gates.
 
 ## Frontend Design Gate
 
@@ -90,7 +90,7 @@ Before delivery, use the smallest applicable set:
 
 This reference combines local engineering guidance with these sources:
 
-- Anthropic `frontend-design`: incorporated in full as `frontend-design.md`, pinned to upstream commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d`. It remains Apache-2.0; see `anthropic-frontend-design-LICENSE.txt`.
+- Anthropic `frontend-design`: incorporated in full as `design-direction.md`, pinned to upstream commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d`. It remains Apache-2.0; see `anthropic-frontend-design-LICENSE.txt`.
 - PeterHdd `engineering-frontend-developer`: frontend architecture, layout, accessibility, Core Web Vitals, typed API clients, and verification gates. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-frontend-developer
 
 ## Frontend Task Classification

@@ -6,7 +6,7 @@ import { homedir } from 'node:os';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const availableSkills = [
-  'loop-engineering',
+  'design',
   'clarify',
   'dev',
   'acceptance',
@@ -17,7 +17,7 @@ const availableSkills = [
 ];
 const groups = new Map([
   ['all', availableSkills],
-  ['methodology', ['loop-engineering']],
+  ['ui', ['design']],
   ['workflow', ['dev']],
   ['planning', ['clarify']],
   ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode']],
@@ -37,7 +37,7 @@ Skills:
 
 Groups:
   all          Install every skill
-  methodology  Install loop-engineering
+  ui           Install design only
   workflow     Install dev only
   planning     Install clarify only
   delegation   Install all external-agent adapters
@@ -52,7 +52,7 @@ Targets:
   all          Install to agents, claude, gemini, and opencode target directories
 
 Examples:
-  skills add methodology --target agents
+  skills add ui --target agents
   skills add dev --target agents
   skills add planning --target agents
   skills add acceptance --target agents

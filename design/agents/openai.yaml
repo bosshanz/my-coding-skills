@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design"
+  short_description: "Design direction, visual quality, and motion for UI work."
+  default_prompt: "Use $design for meaningful UI creation or reshaping and for animation work. Load design-direction.md first for new UI, quality.md during implementation, and animation.md for motion."

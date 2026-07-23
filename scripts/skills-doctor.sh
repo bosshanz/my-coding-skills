@@ -34,7 +34,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in loop-engineering clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -46,15 +46,14 @@ for skill in loop-engineering clarify dev acceptance kimi-code claude-code codex
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md frontend-design.md frontend-quality.md backend-architecture.md database-engineering.md anthropic-frontend-design-LICENSE.txt; do
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-architecture.md database-engineering.md; do
   check_file "dev/references/$ref"
 done
 
-for ref in context-model.md loop-admission.md verifier-governance.md discovery-loop.md checkpoint-artifact.md acceptance-independence.md; do
-  check_file "loop-engineering/references/$ref"
+for ref in design-direction.md quality.md animation.md anthropic-frontend-design-LICENSE.txt; do
+  check_file "design/references/$ref"
 done
 
-check_file "clarify/references/loop-workspace.md"
 check_file "acceptance/references/independence.md"
 check_file "kimi-code/references/kimi-code-reference.md"
 check_file "claude-code/references/claude-code-reference.md"
@@ -72,6 +71,7 @@ check_absent "design-interview"
 check_absent "andy-coding"
 check_absent "andy-dev"
 check_absent "codebase-improve"
+check_absent "loop-engineering"
 
 if grep -R "_SKILL_DIR" "$ROOT" --exclude-dir=.git --exclude=skills-doctor.sh >/tmp/skills-doctor-grep.$$ 2>/dev/null; then
   fail "undocumented *_SKILL_DIR reference found"

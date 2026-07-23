@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ALL_SKILLS=(
-  loop-engineering
+  design
   clarify
   dev
   acceptance
@@ -31,7 +31,7 @@ Usage:
   ./install.sh --list
 
 Skills:
-  loop-engineering
+  design
   clarify
   dev
   acceptance
@@ -42,7 +42,7 @@ Skills:
 
 Groups:
   all          Install every Skill (default)
-  methodology  Install loop-engineering
+  ui           Install design
   workflow     Install dev
   planning     Install clarify
   delegation   Install all external-agent adapters
@@ -59,7 +59,7 @@ Options:
 
 Examples:
   ./install.sh
-  ./install.sh methodology --target agents
+  ./install.sh ui --target agents
   ./install.sh dev --target agents
   ./install.sh planning --target agents
   ./install.sh acceptance --target agents
@@ -142,8 +142,8 @@ resolve_requests() {
       workflow)
         append_unique dev
         ;;
-      methodology)
-        append_unique loop-engineering
+      ui)
+        append_unique design
         ;;
       planning)
         append_unique clarify
@@ -160,7 +160,7 @@ resolve_requests() {
         append_unique codex-cli
         append_unique opencode
         ;;
-      loop-engineering|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
+      design|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
         append_unique "$request"
         ;;
       *)
