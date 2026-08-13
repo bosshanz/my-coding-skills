@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-A portable collection of `design`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and other Agent Skills-compatible coding agents.
+A portable collection of `design`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, Grok Build, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent design UI, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, or OpenCode CLI when needed.
+The repository lets a caller agent design UI, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, OpenCode CLI, or Grok Build CLI when needed.
 
 Core principles:
 
@@ -17,7 +17,7 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes eight primary skills:
+The repository currently includes nine primary skills:
 
 ### `design`
 
@@ -43,7 +43,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
-Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, OpenCode CLI, or another external agent to participate.
+Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, OpenCode CLI, Grok Build CLI, or another external agent to participate.
 
 ### `clarify`
 
@@ -106,6 +106,15 @@ This skill lets another agent dispatch OpenCode CLI, focused on:
 - Non-interactive `opencode run`, TUI interaction, session continuation, agent selection, file attachments, and JSON output
 - Invocation evidence plus calling-agent review after OpenCode completes
 - OpenCode setup, login, Skill / Rules directories, and command reference
+
+### `grok-build-cli`
+
+This skill lets another agent dispatch Grok Build CLI, focused on:
+
+- Repository research, independent review, scoped implementation, and terminal automation
+- Non-interactive `grok -p`, JSON / schema output, session continuation, and tool allowlists
+- Safe `--always-approve` / `--yolo` defaults and calling-agent review of results
+- Grok Build CLI setup, authentication, Skill / Rules directories, and command reference
 
 ## Compatibility
 
@@ -176,6 +185,13 @@ opencode/
     opencode-reference.md
   scripts/
     opencode-status.sh
+grok-build-cli/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    grok-build-cli-reference.md
+  scripts/
+    grok-build-cli-status.sh
 scripts/
   skills-doctor.sh
 LICENSE
@@ -266,12 +282,12 @@ Supported skills and groups:
 - `dev`: default development workflow integrating Superpowers Lite; invokes `design` on demand for UI tasks
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `acceptance`: independent acceptance and go/no-go verification
-- `kimi-code` / `claude-code` / `codex-cli` / `opencode`: external-agent adapters
+- `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`: external-agent adapters
 - `workflow`: install only `dev`
 - `ui`: install only `design`
 - `planning`: install only `clarify`
 - `delegation`: install all external-agent adapters
-- `adapters`: install the four adapters only
+- `adapters`: install the five adapters only
 - `all`: install every Skill; default when no Skill is named
 
 Installer options:
@@ -288,7 +304,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -298,15 +314,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -354,6 +370,10 @@ Use $codex-cli to dispatch Codex CLI for a read-only repository research task.
 Use $opencode to dispatch OpenCode CLI for a scoped repository research task.
 ```
 
+```text
+Use $grok-build-cli to dispatch Grok Build CLI for a scoped repository research task.
+```
+
 ### Claude Code
 
 Claude Code discovers and loads matching skills on demand. After installation, it can trigger automatically or be invoked explicitly.
@@ -392,6 +412,10 @@ Explicit example:
 /opencode
 ```
 
+```text
+/grok-build-cli
+```
+
 ### OpenCode
 
 OpenCode discovers and loads matching skills on demand. Once installed in a supported directory, normal task prompts can trigger it.
@@ -405,7 +429,7 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture, then return to `dev` for implementation afterward.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
-- Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, or `opencode`.
+- Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
 ## External Agent Adapter Contract
@@ -422,7 +446,7 @@ If the target agent, CLI, authentication, or required permission is unavailable,
 
 ### Internal Skill Routing In Target CLIs
 
-External CLI selection must be explicit; once the user or project policy selects `kimi-code`, `claude-code`, `codex-cli`, or `opencode`, the target CLI may automatically use the global/user and project/local non-adapter Skills it can discover.
+External CLI selection must be explicit; once the user or project policy selects `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`, the target CLI may automatically use the global/user and project/local non-adapter Skills it can discover.
 
 - Respect any Skill explicitly named by the user.
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
@@ -430,7 +454,7 @@ External CLI selection must be explicit; once the user or project policy selects
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for requirement or architecture interviews.
 - Prefer `acceptance` for independent go/no-go verification.
-- The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, or `opencode` unless the user explicitly authorizes multi-agent orchestration.
+- The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli` unless the user explicitly authorizes multi-agent orchestration.
 - The target CLI output should state which Skills were used, or why none were used.
 
 ## Default Behavior

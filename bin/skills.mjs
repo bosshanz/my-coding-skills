@@ -14,14 +14,15 @@ const availableSkills = [
   'claude-code',
   'codex-cli',
   'opencode',
+  'grok-build-cli',
 ];
 const groups = new Map([
   ['all', availableSkills],
   ['ui', ['design']],
   ['workflow', ['dev']],
   ['planning', ['clarify']],
-  ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode']],
-  ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode']],
+  ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
+  ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
 ]);
 
 function usage() {
@@ -41,7 +42,7 @@ Groups:
   workflow     Install dev only
   planning     Install clarify only
   delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, codex-cli, and opencode
+  adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
 Targets:
   agents       ${join(homedir(), '.agents', 'skills')}

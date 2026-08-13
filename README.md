@@ -2,7 +2,7 @@
 
 这是一个面向多 Agent 编码工作流的可移植 Skill 集合。
 
-它提供 `design`、`clarify`、`dev`、`acceptance` 和外部 Agent Adapter，让 Codex、Claude Code、Gemini CLI、OpenCode 及其他支持 Agent Skills 的调用方 Agent，可以共享同一套 Skill 内容，并在需要时显式调用 Kimi Code、Claude Code CLI、Codex CLI 或 OpenCode CLI。
+它提供 `design`、`clarify`、`dev`、`acceptance` 和外部 Agent Adapter，让 Codex、Claude Code、Gemini CLI、OpenCode、Grok Build 及其他支持 Agent Skills 的调用方 Agent，可以共享同一套 Skill 内容，并在需要时显式调用 Kimi Code、Claude Code CLI、Codex CLI、OpenCode CLI 或 Grok Build CLI。
 
 核心原则：
 
@@ -17,7 +17,7 @@ English version: [README.en.md](./README.en.md)
 
 ## 仓库内容
 
-当前包含 8 个主 Skill：
+当前包含 9 个主 Skill：
 
 ### `design`
 
@@ -43,7 +43,7 @@ English version: [README.en.md](./README.en.md)
 - 第一性原理设计和对抗式审查：从目标、事实、约束和假设推出方案，并主动寻找失败路径
 - 交付前对照需求或根因做 diff review，并明确测试、验收和未验证风险
 
-触发建议：新增需求和 Bug 修复都默认触发 `dev`，不需要用户显式写 `$dev`。`dev` 先作为薄调度器判断任务边界，再按矩阵加载相关 reference。只有用户明确要求 Kimi / Claude Code / Codex CLI / OpenCode CLI 等外部 Agent 参与时，才走对应 Adapter。
+触发建议：新增需求和 Bug 修复都默认触发 `dev`，不需要用户显式写 `$dev`。`dev` 先作为薄调度器判断任务边界，再按矩阵加载相关 reference。只有用户明确要求 Kimi / Claude Code / Codex CLI / OpenCode CLI / Grok Build CLI 等外部 Agent 参与时，才走对应 Adapter。
 
 ### `clarify`
 
@@ -106,6 +106,15 @@ English version: [README.en.md](./README.en.md)
 - 支持 `opencode run` 非交互调用、TUI 交互、session 续接、agent 选择、文件附件和 JSON 输出
 - 默认要求调用方 Agent 保留 OpenCode 调用证据，并在 OpenCode 完成后复核结果
 - 包含 OpenCode 安装、登录、Skill / Rules 目录和命令参考
+
+### `grok-build-cli`
+
+这是一个让其他 Agent 调度 Grok Build CLI 的 Skill，重点包括：
+
+- 支持仓库研究、独立 review、有边界的实现任务和终端自动化
+- 支持 `grok -p` 非交互调用、JSON / schema 输出、session 续接和工具白名单
+- 默认限制 `--always-approve` / `--yolo`，并要求调用方 Agent 复核结果
+- 包含 Grok Build CLI 安装、登录、Skill / Rules 目录和命令参考
 
 ## 兼容性
 
@@ -176,6 +185,13 @@ opencode/
     opencode-reference.md
   scripts/
     opencode-status.sh
+grok-build-cli/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    grok-build-cli-reference.md
+  scripts/
+    grok-build-cli-status.sh
 scripts/
   skills-doctor.sh
 LICENSE
@@ -266,12 +282,12 @@ cd my-coding-skills
 - `dev`：默认研发工作流，集成 Superpowers Lite，UI 任务按需调用 `design`
 - `clarify`：手动需求/架构访谈，支持领域词汇和 ADR 轻量沉淀
 - `acceptance`：独立验收与 go/no-go 复核
-- `kimi-code` / `claude-code` / `codex-cli` / `opencode`：外部 Agent Adapter
+- `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`：外部 Agent Adapter
 - `workflow`：只安装 `dev`
 - `ui`：只安装 `design`
 - `planning`：只安装 `clarify`
-- `delegation`：安装四个外部 Agent Adapter
-- `adapters`：只安装四个 Adapter
+- `delegation`：安装五个外部 Agent Adapter
+- `adapters`：只安装五个 Adapter
 - `all`：安装全部 Skill；未指定 Skill 时的默认值
 
 安装器支持：
@@ -288,7 +304,7 @@ cd my-coding-skills
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -298,15 +314,15 @@ done
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.claude/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.gemini/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode "$HOME/.config/opencode/skills/"
+cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## 推荐安装策略
@@ -354,6 +370,10 @@ Use $codex-cli to dispatch Codex CLI for a read-only repository research task.
 Use $opencode to dispatch OpenCode CLI for a scoped repository research task.
 ```
 
+```text
+Use $grok-build-cli to dispatch Grok Build CLI for a scoped repository research task.
+```
+
 ### Claude Code
 
 Claude Code 会按需发现并加载 Skill。安装后可以自动触发，也可以直接显式调用。
@@ -392,6 +412,10 @@ Claude Code 会按需发现并加载 Skill。安装后可以自动触发，也�
 /opencode
 ```
 
+```text
+/grok-build-cli
+```
+
 ### OpenCode
 
 OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以通过正常任务描述触发。
@@ -405,7 +429,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - `dev` 先判断任务类型和变更边界，只加载与当前任务相关的 reference；不要因为默认触发就读取所有 reference。
 - 专门要求“先拷问/访谈/沉淀领域词汇或 ADR”时使用 `clarify`，访谈结束后再切回 `dev` 实施。
 - 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现，发现问题后交回 `dev` 修复。
-- 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`。
+- 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli`。
 - 如果用户没有授权外部委托，不要因为“可能有帮助”就自动调度外部 Agent；先使用 `dev` 完成主流程。
 
 ## 外部 Agent Adapter 协议
@@ -422,7 +446,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 
 ### 目标 CLI 内部 Skill 路由
 
-外部 CLI 的选择必须显式；但一旦用户或项目策略选定了 `kimi-code`、`claude-code`、`codex-cli` 或 `opencode`，目标 CLI 内部可以根据任务自动使用它能发现的全局/用户级和项目/本地非 Adapter Skill。
+外部 CLI 的选择必须显式；但一旦用户或项目策略选定了 `kimi-code`、`claude-code`、`codex-cli`、`opencode` 或 `grok-build-cli`，目标 CLI 内部可以根据任务自动使用它能发现的全局/用户级和项目/本地非 Adapter Skill。
 
 - 用户明确指定某个 Skill 时，优先尊重用户指定。
 - 当全局 Skill 和项目本地 Skill 都匹配时，优先使用项目本地 Skill，因为它通常更贴近当前仓库的约束、命令和领域语义。
@@ -430,7 +454,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 普通实现或 Bug 修复优先让目标 CLI 使用可发现的 `dev`。
 - 需求/架构访谈优先使用 `clarify`。
 - 独立 go/no-go 验收优先使用 `acceptance`。
-- 子 CLI 不得自动再调用 `kimi-code`、`claude-code`、`codex-cli`、`opencode` 等外部 Agent Adapter，除非用户明确授权多 Agent 编排。
+- 子 CLI 不得自动再调用 `kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 等外部 Agent Adapter，除非用户明确授权多 Agent 编排。
 - 目标 CLI 的输出应说明实际使用了哪些 Skill；未使用时说明原因。
 
 ## 默认行为

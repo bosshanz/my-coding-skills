@@ -12,6 +12,7 @@ ALL_SKILLS=(
   claude-code
   codex-cli
   opencode
+  grok-build-cli
 )
 
 TARGET="all"
@@ -38,6 +39,7 @@ Skills:
   claude-code
   codex-cli
   opencode
+  grok-build-cli
 
 Groups:
   all          Uninstall every Skill (default)
@@ -45,7 +47,7 @@ Groups:
   workflow     Uninstall dev
   planning     Uninstall clarify
   delegation   Uninstall all external-agent adapters
-  adapters     Uninstall kimi-code, claude-code, codex-cli, and opencode
+  adapters     Uninstall kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
 Options:
   --target TARGET   agents, codex, claude, gemini, opencode, or all
@@ -151,14 +153,16 @@ resolve_requests() {
         append_unique claude-code
         append_unique codex-cli
         append_unique opencode
+        append_unique grok-build-cli
         ;;
       adapters)
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
         append_unique opencode
+        append_unique grok-build-cli
         ;;
-      design|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode)
+      design|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
         append_unique "$request"
         ;;
       *)

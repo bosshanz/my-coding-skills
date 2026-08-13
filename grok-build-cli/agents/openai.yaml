@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grok Build CLI"
+  short_description: "Dispatch Grok Build CLI as an external agent."
+  default_prompt: "Use $grok-build-cli to invoke Grok Build CLI, let it auto-route matching global/project non-adapter Skills, preserve output, then review and verify."

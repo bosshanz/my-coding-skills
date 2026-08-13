@@ -34,7 +34,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode; do
+for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -59,10 +59,12 @@ check_file "kimi-code/references/kimi-code-reference.md"
 check_file "claude-code/references/claude-code-reference.md"
 check_file "codex-cli/references/codex-cli-reference.md"
 check_file "opencode/references/opencode-reference.md"
+check_file "grok-build-cli/references/grok-build-cli-reference.md"
 check_executable "kimi-code/scripts/kimi-code-status.sh"
 check_executable "claude-code/scripts/claude-code-status.sh"
 check_executable "codex-cli/scripts/codex-cli-status.sh"
 check_executable "opencode/scripts/opencode-status.sh"
+check_executable "grok-build-cli/scripts/grok-build-cli-status.sh"
 check_executable "scripts/skills-doctor.sh"
 
 check_absent "agent-delegation"
@@ -93,6 +95,7 @@ check_command kimi
 check_command claude
 check_command codex
 check_command opencode
+check_command grok
 
 info "warnings=$WARN failures=$FAIL"
 if [ "$FAIL" -gt 0 ]; then

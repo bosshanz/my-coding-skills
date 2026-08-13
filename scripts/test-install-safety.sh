@@ -103,5 +103,36 @@ else
   pass=$((pass+1)); printf 'ok (real uninstall removed dev)\n'
 fi
 
+# Catalog parity: every packaged SKILL.md directory must be named by
+# `install.sh all` and accepted as an explicit skill argument.
+catalog_dest="$tmp_base/catalog"
+mkdir -p "$catalog_dest"
+all_out="$("$INSTALL" all --dest "$catalog_dest" --dry-run 2>&1)" || {
+  printf 'FAIL: install.sh all --dry-run failed\n  output: %s\n' "$all_out" >&2
+  fails=$((fails+1))
+  all_out=""
+}
+adapters_out="$("$INSTALL" adapters --dest "$catalog_dest" --dry-run 2>&1)" || {
+  printf 'FAIL: install.sh adapters --dry-run failed\n  output: %s\n' "$adapters_out" >&2
+  fails=$((fails+1))
+  adapters_out=""
+}
+for skill_md in "$ROOT"/*/SKILL.md; do
+  skill="$(basename "$(dirname "$skill_md")")"
+  if [[ -n "$all_out" ]] && grep -q "would install $skill ->" <<<"$all_out"; then
+    pass=$((pass+1)); printf 'ok (all dry-run includes %s)\n' "$skill"
+  else
+    printf 'FAIL: install.sh all --dry-run omitted %s\n' "$skill" >&2
+    fails=$((fails+1))
+  fi
+  assert_allows "$INSTALL" "$skill" --dest "$catalog_dest" --dry-run
+done
+if grep -q "would install grok-build-cli ->" <<<"$adapters_out"; then
+  pass=$((pass+1)); printf 'ok (adapters dry-run includes grok-build-cli)\n'
+else
+  printf 'FAIL: install.sh adapters --dry-run omitted grok-build-cli\n' >&2
+  fails=$((fails+1))
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fails"
 [ "$fails" -eq 0 ]
