@@ -4,6 +4,8 @@
 
 Use this reference when a task changes service boundaries, storage, cache, queue, consistency model, throughput, reliability, production migration risk, security boundary, or observability behavior.
 
+For handler, authz, tenancy, error mapping, testing, and process-lifecycle quality, also load `backend-quality.md`.
+
 ## Backend Architecture Gate
 
 - Clarify functional requirements and non-functional targets: latency, throughput, durability, consistency, availability, data retention, and traffic shape.

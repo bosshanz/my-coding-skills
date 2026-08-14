@@ -39,6 +39,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
 - UI design: invoke the standalone `design` Skill on demand for meaningful UI creation or reshaping to get design direction, frontend quality, and motion methodology
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
+- Backend quality: request authority, tenant isolation, error mapping, idempotency, timeouts, test layering, and process lifecycle
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
@@ -150,6 +151,7 @@ dev/
     design-and-research.md
     documentation.md
     backend-architecture.md
+    backend-quality.md
     database-engineering.md
 clarify/
   SKILL.md
@@ -209,6 +211,7 @@ install.sh
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
 - UI design direction, frontend quality, and motion methodology provided by the standalone `design` Skill: the complete Anthropic `frontend-design` UI workflow (establish an aesthetic direction, tokens, layout, and signature; self-critique before coding) plus animation methodology distilled from emilkowalski/skills; `dev` invokes it on demand for meaningful UI work. The upstream Apache-2.0 body and license ship with `design`.
 - Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
+- First-principles backend implementation quality: authority, truthful effects, bounded resources, retry-safe handlers, observability hygiene, and tests that can prove invariants.
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
@@ -467,7 +470,7 @@ External CLI selection must be explicit; once the user or project policy selects
 - Test-first work for behavior changes and root-cause analysis for bug fixes when practical
 - Explicit verification steps, review conclusions, and plain-language acceptance conclusions before delivery
 - Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
-- Reference-based or `design`-Skill-based frontend design, backend architecture, and database engineering checklists when needed, instead of turning external skills into a long default process
+- Reference-based or `design`-Skill-based frontend design, backend architecture, backend quality, and database engineering checklists when needed, instead of turning external skills into a long default process
 
 ## License
 

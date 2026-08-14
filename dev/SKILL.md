@@ -14,7 +14,7 @@ Use one default Skill as a thin dispatcher for real development work:
 
 Keep the process conversational and proportional. A plan supports delivery; it is not a separate product unless the user asks for a durable document.
 
-This Skill integrates lightweight design, TDD, systematic debugging, full-stack architecture, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
+This Skill integrates lightweight design, TDD, systematic debugging, full-stack architecture, backend quality, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
 
 ## Automatic Trigger
 
@@ -53,7 +53,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Recommend one approach with tradeoffs, risks, affected modules, interface/data impact, and verification strategy.
 - Adversarially test the recommendation: name the weakest assumption and evidence that would disprove it.
 - For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states; invoke the `design` skill for a new or visibly reshaped UI.
-- For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable.
+- For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable. Load `backend-quality.md` when implementing or reviewing handlers, authz, jobs, or error mapping.
 - Do not implement while a material product or architecture decision remains unresolved.
 
 ### 3. Plan The Change
@@ -164,6 +164,7 @@ Load the smallest reference set that can materially improve the work.
 | `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
 | `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |
-| `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, or capacity. |
+| `references/backend-quality.md` | Handlers, authz, tenancy, error mapping, idempotency, timeouts, backend tests, or process lifecycle. |
+| `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, capacity, destructive data operations, or production data access. |
 | `references/stack.md` | Choosing language, framework, database, queue, cache, or integration technology. |
 | `references/documentation.md` | Durable behavior, architecture, delivery notes, or reusable documentation. |

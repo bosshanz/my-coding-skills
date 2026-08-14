@@ -39,6 +39,7 @@ English version: [README.en.md](./README.en.md)
 - Superpowers Lite：轻量设计、TDD、系统化调试、review gate 和 evidence-based completion
 - UI 设计：有意义的 UI 创建或重塑时按需调用独立的 `design` Skill，获得设计方向、前端质量与动效方法论
 - 后端架构：API、服务边界、缓存、消息、失败模式、可观测性和可靠性
+- 后端质量：请求权威、租户隔离、错误映射、幂等、超时、测试分层和进程生命周期
 - 数据库工程：schema、约束、事务、索引、查询计划、迁移、回填、容量和生产安全
 - 第一性原理设计和对抗式审查：从目标、事实、约束和假设推出方案，并主动寻找失败路径
 - 交付前对照需求或根因做 diff review，并明确测试、验收和未验证风险
@@ -150,6 +151,7 @@ dev/
     design-and-research.md
     documentation.md
     backend-architecture.md
+    backend-quality.md
     database-engineering.md
 clarify/
   SKILL.md
@@ -209,6 +211,7 @@ install.sh
 - 从 Matt Pocock 的 Skills 吸收更硬的工程规则：red-capable 调试反馈环、tracer-bullet TDD、deep module / seam / interface 架构词汇。
 - UI 设计方向、前端质量与动效方法论由独立的 `design` Skill 提供：完整纳入 Anthropic `frontend-design` 的 UI 设计工作流（先确定审美方向、token、版式和 signature，再自我批评后编码），并蒸馏 emilkowalski/skills 的动画方法论；`dev` 在做有意义的 UI 时按需调用它。上游 Apache-2.0 正文与许可证随 `design` 分发。
 - 从资深数据库工程实践吸收数据建模、约束、事务、索引、查询计划、迁移、回填和生产数据库安全。
+- 从第一性原理约束后端实现质量：权威、真实效果、有界资源、重试环境、可观测性卫生和能证明不变量的测试。
 - 用第一性原理约束方案选择，用对抗式审查反证设计、修复和完成声明。
 - 按任务边界懒加载 reference，不把所有检查清单变成每个任务的默认上下文。
 - 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
@@ -467,7 +470,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 行为变更优先测试先行，Bug 修复优先根因定位
 - 交付前明确验证方式、review 结论和验收结论
 - 保持轻量，不默认引入强制 worktree、长篇 spec 或多 Agent 编排
-- 需要时按 reference 或 `design` Skill 加载前端设计、后端架构和数据库工程检查清单，而不是把外部 Skill 原样变成默认长流程
+- 需要时按 reference 或 `design` Skill 加载前端设计、后端架构、后端质量和数据库工程检查清单，而不是把外部 Skill 原样变成默认长流程
 
 ## 许可证
 

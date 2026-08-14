@@ -46,7 +46,7 @@ for skill in design clarify dev acceptance kimi-code claude-code codex-cli openc
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-architecture.md database-engineering.md; do
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-architecture.md backend-quality.md database-engineering.md; do
   check_file "dev/references/$ref"
 done
 
