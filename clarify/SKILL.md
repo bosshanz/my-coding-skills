@@ -33,7 +33,7 @@ If one or two focused questions inside `dev` can safely remove the ambiguity, ke
 - Do not create issue-tracker workflows, PRDs, or Agent briefs unless requested.
 - Do not push an ambiguous problem into delivery merely to create visible progress.
 - Do not treat clarification as permission to start coding unless the user explicitly asks to proceed.
-- Hand off implementation to `$dev` only after the behavior or next experiment is sufficiently defined.
+- Hand off to `$dev` for implementation, or to `$qa` when the next need is to protect an already understood user job, only after the behavior or next experiment is sufficiently defined.
 
 ## Repository Context
 
@@ -86,7 +86,7 @@ Use first-principles clarification when the request is ambiguous, solution-shape
 - Ask what must remain true if the current UI, API, storage model, framework, metric, or workflow were replaced.
 - Challenge inherited labels and abstractions when they obscure real domain behavior.
 - Distinguish the real goal from proxy metrics.
-- Convert resolved assumptions into acceptance criteria, verifier requirements, or domain terms before handing off to `$dev`.
+- Convert resolved assumptions into acceptance criteria, verifier requirements, or domain terms before handing off to `$dev` or `$qa`.
 
 ## Verifier Design
 
@@ -96,6 +96,7 @@ Before delivery, clarify only the verification questions proportionate to the ta
 - Is the evidence deterministic, subjective, or mixed?
 - What important behavior is not covered?
 - Which decision must remain human-only?
+- If the evidence should come from real usage or a business rule a user can feel, name `$qa` as the owner of that evidence.
 
 For reusable or high-impact evaluators, additionally clarify owner, isolation, version, calibration, and drift review.
 
@@ -135,10 +136,10 @@ Confirm the smallest relevant set:
 - Affected boundaries or modules, when needed.
 - Proportionate verification strategy.
 - Human-only or irreversible decisions, when relevant.
-- Whether the work should return to direct `dev` or remain in discovery.
+- Whether the work should go to `$dev`, `$qa`, or remain in discovery.
 - Durable terms or ADR-worthy decisions have been recorded only when justified.
 
-Close with a short summary and the next recommended action. Prefer returning to `$dev`.
+Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$qa` when the rules are clear and the next need is to protect how a user actually uses the product.
 
 ## Source Inspiration
 

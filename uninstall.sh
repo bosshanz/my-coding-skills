@@ -7,6 +7,7 @@ ALL_SKILLS=(
   design
   clarify
   dev
+  qa
   acceptance
   kimi-code
   claude-code
@@ -34,6 +35,7 @@ Skills:
   design
   clarify
   dev
+  qa
   acceptance
   kimi-code
   claude-code
@@ -46,6 +48,7 @@ Groups:
   ui           Uninstall design
   workflow     Uninstall dev
   planning     Uninstall clarify
+  quality      Uninstall qa and acceptance
   delegation   Uninstall all external-agent adapters
   adapters     Uninstall kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
@@ -62,6 +65,7 @@ Examples:
   ./uninstall.sh ui --target agents
   ./uninstall.sh dev --target agents
   ./uninstall.sh planning --target agents
+  ./uninstall.sh qa --target agents
   ./uninstall.sh acceptance --target agents
   ./uninstall.sh delegation --target claude
   ./uninstall.sh all --target all
@@ -148,6 +152,10 @@ resolve_requests() {
       planning)
         append_unique clarify
         ;;
+      quality)
+        append_unique qa
+        append_unique acceptance
+        ;;
       delegation)
         append_unique kimi-code
         append_unique claude-code
@@ -162,7 +170,7 @@ resolve_requests() {
         append_unique opencode
         append_unique grok-build-cli
         ;;
-      design|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
+      design|clarify|dev|qa|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
         append_unique "$request"
         ;;
       *)

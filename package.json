@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
   "version": "0.1.0",
-  "description": "Portable design, development workflow, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
+  "description": "Portable design, development workflow, QA, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
@@ -10,6 +10,7 @@
     "design",
     "clarify",
     "dev",
+    "qa",
     "acceptance",
     "kimi-code",
     "claude-code",
@@ -37,6 +38,7 @@
     "design",
     "clarify",
     "dev",
+    "qa",
     "acceptance"
   ],
   "license": "MIT",

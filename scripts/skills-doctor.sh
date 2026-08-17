@@ -34,7 +34,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
+for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then

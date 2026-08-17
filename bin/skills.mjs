@@ -9,6 +9,7 @@ const availableSkills = [
   'design',
   'clarify',
   'dev',
+  'qa',
   'acceptance',
   'kimi-code',
   'claude-code',
@@ -21,6 +22,7 @@ const groups = new Map([
   ['ui', ['design']],
   ['workflow', ['dev']],
   ['planning', ['clarify']],
+  ['quality', ['qa', 'acceptance']],
   ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
 ]);
@@ -41,6 +43,7 @@ Groups:
   ui           Install design only
   workflow     Install dev only
   planning     Install clarify only
+  quality      Install qa and acceptance
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
@@ -56,6 +59,7 @@ Examples:
   skills add ui --target agents
   skills add dev --target agents
   skills add planning --target agents
+  skills add qa --target agents
   skills add acceptance --target agents
   skills add all --target claude --force
   skills add delegation --target all --force

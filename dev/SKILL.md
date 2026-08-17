@@ -20,11 +20,13 @@ This Skill integrates lightweight design, TDD, systematic debugging, full-stack 
 
 Use this Skill automatically for ordinary software work in a repository. Do not require the user to invoke `$dev`.
 
-Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the target or verifier is not ready.
+Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the target or verifier is not ready. Use `qa` when the user wants business understanding, user-journey QA, or business-level coverage without a product change.
 
 Use external-agent adapters only when the user explicitly asks another Agent to participate.
 
 For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, keep the normal `dev` clarification boundary rather than inventing a product requirement.
+
+Do not auto-invoke `$qa` in the same turn. After work that encodes money, permission, lifecycle, quota, or a multi-step user job, recommend `$qa` as the next independent pass instead of claiming the business is protected. Keep developer tests in `dev`. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
 
 ## Select A Track
 
@@ -77,6 +79,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Perform functional acceptance against each criterion.
 - For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
 - Record what passed, what was not verified, verifier limitations, and whether the requirement is accepted.
+- This gate is implementer self-check, not business QA. If the change encodes a user job or business rule, name `$qa` as the next step.
 
 ## Track B: Bug Fix
 
@@ -117,6 +120,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Check likely side effects and adjacent flows.
 - Run broader checks only when justified.
 - State whether the bug is accepted as fixed and name residual risk.
+- If the bug sat on a user job or business rule, recommend `$qa` rather than treating developer regression as usage protection.
 
 ## Common Review Gate
 
@@ -127,6 +131,7 @@ Before claiming success:
 - Check compatibility, permissions, project conventions, and important failure paths.
 - Confirm tests prove behavior, not merely syntax or compilation.
 - Confirm the verifier still represents the real target and was not weakened to fit the implementation.
+- Do not weaken `qa` business or user-journey checks.
 - Update docs, examples, contracts, and comments made stale by this change.
 - Treat warnings, skipped checks, flaky output, stale evaluator data, and partial verification as residual risk.
 - Never say “done” or “fixed” without naming the evidence or explaining why it could not run.
@@ -141,6 +146,7 @@ For a new requirement:
 - 方案与关键取舍
 - 实现内容
 - 测试与验收
+- 建议下一步
 - 风险与未验证项
 
 For a bug fix:
@@ -150,6 +156,7 @@ For a bug fix:
 - 修复方案
 - 修改内容
 - 回归测试与验收
+- 建议下一步
 - 风险与未验证项
 
 Keep code, commands, protocol names, and configuration keys in their original language.

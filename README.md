@@ -2,7 +2,7 @@
 
 这是一个面向多 Agent 编码工作流的可移植 Skill 集合。
 
-它提供 `design`、`clarify`、`dev`、`acceptance` 和外部 Agent Adapter，让 Codex、Claude Code、Gemini CLI、OpenCode、Grok Build 及其他支持 Agent Skills 的调用方 Agent，可以共享同一套 Skill 内容，并在需要时显式调用 Kimi Code、Claude Code CLI、Codex CLI、OpenCode CLI 或 Grok Build CLI。
+它提供 `design`、`clarify`、`dev`、`qa`、`acceptance` 和外部 Agent Adapter，让 Codex、Claude Code、Gemini CLI、OpenCode、Grok Build 及其他支持 Agent Skills 的调用方 Agent，可以共享同一套 Skill 内容，并在需要时显式调用 Kimi Code、Claude Code CLI、Codex CLI、OpenCode CLI 或 Grok Build CLI。
 
 核心原则：
 
@@ -17,7 +17,7 @@ English version: [README.en.md](./README.en.md)
 
 ## 仓库内容
 
-当前包含 9 个主 Skill：
+当前包含 10 个主 Skill：
 
 ### `design`
 
@@ -46,6 +46,19 @@ English version: [README.en.md](./README.en.md)
 
 触发建议：新增需求和 Bug 修复都默认触发 `dev`，不需要用户显式写 `$dev`。`dev` 先作为薄调度器判断任务边界，再按矩阵加载相关 reference。只有用户明确要求 Kimi / Claude Code / Codex CLI / OpenCode CLI / Grok Build CLI 等外部 Agent 参与时，才走对应 Adapter。
 
+
+### `qa`
+
+这是面向业务理解、真实用法和 QA 思维的独立 Skill，不是测试脚本执行器：
+
+- 先用用户的语言说清：谁在用、来干什么、成功/失败长什么样、哪条业务规则不能静默坏掉
+- 按真实用法走一遍：第一次、回访、空态、被拒绝、中途离开、出错后怎么办、旁边哪件事还得能用
+- 再用 QA 视角攻击：产品怎样看起来是绿的，但对用户或业务已经在说谎
+- 然后才选择最便宜、会红灯的证据；自动化测试只是证据的一种，禁止从测试目录出发堆脚本
+- 默认可改测试、夹具和测试配置，不改产品代码，不做 go/no-go
+
+触发建议：用户明确写 `$qa`、要求业务测试、用户怎么用、QA、e2e、回归覆盖，或只要保护业务/用法、不要改产品时使用。普通实现和开发者测试仍走 `dev`；正式验收走 `acceptance`；业务本身还不清时回 `clarify`。`dev` 不要在同一轮自动调用 `qa`。
+
 ### `clarify`
 
 这是一个手动开启的需求/架构对齐 Skill，适合在编码前做一次有边界的访谈：
@@ -55,7 +68,7 @@ English version: [README.en.md](./README.en.md)
 - 对 solution-shaped 的请求做第一性原理拆解，分离目标、事实、约束、假设和非目标
 - 需要时维护 `CONTEXT.md` 里的领域词汇，但不把它变成实现方案或草稿
 - 只在决策难以逆转、未来读者会疑惑、且确有取舍时建议写 ADR
-- 访谈结束后把清晰的行为、非目标、边界和验证策略交给 `dev`
+- 访谈结束后把清晰的行为、非目标、边界和验证策略交给 `dev`；若下一步是保护已理解的用户用法，交给 `qa`
 
 触发建议：只有用户明确要求 `$clarify`、需求拷问、方案访谈、先聊清楚再写，或需要沉淀领域词汇/ADR 时使用；普通开发请求仍走 `dev`。
 
@@ -66,10 +79,10 @@ English version: [README.en.md](./README.en.md)
 - 对照澄清后的需求、验收标准、issue、PR 描述或任务记录
 - 审查当前 diff、测试证据、CI、手动验证、截图、日志、文档、迁移和回滚说明
 - 对验收结论做对抗式反证，检查边界输入、权限、并发、迁移、回滚和恢复路径
-- 默认只验收不改代码；发现问题时给出阻塞项、风险和下一步 `$dev` 修复建议
+- 默认只验收不改代码；缺真实用法/业务保护走 `$qa`，产品行为错走 `$dev`，目标不清走 `$clarify`
 - 输出 `accepted`、`accepted with risk` 或 `rejected`
 
-触发建议：用户明确写 `$acceptance`、要求最终验收、要求独立复核 `dev` 结果、需要上线前 go/no-go 判断，或希望把“澄清 → 开发 → 验收”拆成清晰三段时使用。
+触发建议：用户明确写 `$acceptance`、要求最终验收、要求独立复核 `dev` 结果、需要上线前 go/no-go 判断，或希望把“澄清 → 开发 → QA → 验收”拆开时使用。
 
 ### `kimi-code`
 
@@ -153,6 +166,9 @@ dev/
     backend-architecture.md
     backend-quality.md
     database-engineering.md
+qa/
+  SKILL.md
+  agents/openai.yaml
 clarify/
   SKILL.md
   agents/openai.yaml
@@ -215,6 +231,7 @@ install.sh
 - 用第一性原理约束方案选择，用对抗式审查反证设计、修复和完成声明。
 - 按任务边界懒加载 reference，不把所有检查清单变成每个任务的默认上下文。
 - 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
+- 顶层 `qa` 负责先理解业务和真实用法，再用 QA 思维保护这些行为；`dev` 保留开发者测试，并在业务/用法需要独立过一遍时建议 `$qa`，而不是宣称业务已被保护。
 - 顶层 `acceptance` 提供独立验收；`dev` 内部仍保留轻量验收 gate，避免小任务被迫拆流程。
 
 ## Comet 吸收方向
@@ -257,6 +274,9 @@ cd my-coding-skills
 # 只安装需求/架构访谈 Skill
 ./install.sh planning --target agents --force
 
+# 只安装业务/用法 QA Skill
+./install.sh qa --target agents --force
+
 # 只安装独立验收 Skill
 ./install.sh acceptance --target agents --force
 
@@ -283,12 +303,14 @@ cd my-coding-skills
 
 - `design`：UI 设计方向、前端质量与动效方法论
 - `dev`：默认研发工作流，集成 Superpowers Lite，UI 任务按需调用 `design`
+- `qa`：先理解业务和真实用法，再用 QA 思维保护，而不是堆测试脚本
 - `clarify`：手动需求/架构访谈，支持领域词汇和 ADR 轻量沉淀
 - `acceptance`：独立验收与 go/no-go 复核
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`：外部 Agent Adapter
 - `workflow`：只安装 `dev`
 - `ui`：只安装 `design`
 - `planning`：只安装 `clarify`
+- `quality`：安装 `qa` 和 `acceptance`
 - `delegation`：安装五个外部 Agent Adapter
 - `adapters`：只安装五个 Adapter
 - `all`：安装全部 Skill；未指定 Skill 时的默认值
@@ -307,7 +329,7 @@ cd my-coding-skills
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
+for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -317,15 +339,15 @@ done
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## 推荐安装策略
@@ -343,6 +365,10 @@ cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode gro
 
 ```text
 Use $dev to implement a new feature with a brief plan first, then verify it and update docs.
+```
+
+```text
+Use $qa to first understand the real business and how a user uses it, then protect those journeys. Do not start from test scripts.
 ```
 
 ```text
@@ -392,6 +418,10 @@ Claude Code 会按需发现并加载 Skill。安装后可以自动触发，也�
 ```
 
 ```text
+/qa
+```
+
+```text
 /clarify
 ```
 
@@ -430,8 +460,9 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 新需求默认使用 `dev` 的需求交付路径：聊天确认需求和验收标准、确认方案、编码、测试、验收。
 - Bug 默认使用 `dev` 的修复路径：审查与复现、定位根因、确认方案、最小修复、回归测试、验收。
 - `dev` 先判断任务类型和变更边界，只加载与当前任务相关的 reference；不要因为默认触发就读取所有 reference。
-- 专门要求“先拷问/访谈/沉淀领域词汇或 ADR”时使用 `clarify`，访谈结束后再切回 `dev` 实施。
-- 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现，发现问题后交回 `dev` 修复。
+- 专门要求“先拷问/访谈/沉淀领域词汇或 ADR”时使用 `clarify`；下一步可以是 `$dev` 实施，或 `$qa` 保护已理解的用法。
+- 专门要求理解业务、用户怎么用、QA 思维、业务测试或补覆盖时使用 `qa`；它先重述业务和真实用法，再选择会红灯的证据，不从测试目录堆脚本。
+- 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现。缺用法/业务保护交 `$qa`，产品缺陷交 `$dev`，目标不清交 `$clarify`。
 - 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli`。
 - 如果用户没有授权外部委托，不要因为“可能有帮助”就自动调度外部 Agent；先使用 `dev` 完成主流程。
 
@@ -456,6 +487,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - UI 设计方向、视觉质量或动效工作优先使用 `design`。
 - 普通实现或 Bug 修复优先让目标 CLI 使用可发现的 `dev`。
 - 需求/架构访谈优先使用 `clarify`。
+- 业务理解、真实用法和 QA 保护优先使用 `qa`。
 - 独立 go/no-go 验收优先使用 `acceptance`。
 - 子 CLI 不得自动再调用 `kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 等外部 Agent Adapter，除非用户明确授权多 Agent 编排。
 - 目标 CLI 的输出应说明实际使用了哪些 Skill；未使用时说明原因。

@@ -7,6 +7,7 @@ ALL_SKILLS=(
   design
   clarify
   dev
+  qa
   acceptance
   kimi-code
   claude-code
@@ -35,6 +36,7 @@ Skills:
   design
   clarify
   dev
+  qa
   acceptance
   kimi-code
   claude-code
@@ -47,6 +49,7 @@ Groups:
   ui           Install design
   workflow     Install dev
   planning     Install clarify
+  quality      Install qa and acceptance
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
@@ -64,6 +67,7 @@ Examples:
   ./install.sh ui --target agents
   ./install.sh dev --target agents
   ./install.sh planning --target agents
+  ./install.sh qa --target agents --force
   ./install.sh acceptance --target agents
   ./install.sh delegation --target claude --force
   ./install.sh all --target gemini --force
@@ -150,6 +154,10 @@ resolve_requests() {
       planning)
         append_unique clarify
         ;;
+      quality)
+        append_unique qa
+        append_unique acceptance
+        ;;
       delegation)
         append_unique kimi-code
         append_unique claude-code
@@ -164,7 +172,7 @@ resolve_requests() {
         append_unique opencode
         append_unique grok-build-cli
         ;;
-      design|clarify|dev|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
+      design|clarify|dev|qa|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
         append_unique "$request"
         ;;
       *)

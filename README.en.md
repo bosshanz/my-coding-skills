@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-A portable collection of `design`, `clarify`, `dev`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, Grok Build, and other Agent Skills-compatible coding agents.
+A portable collection of `design`, `clarify`, `dev`, `qa`, `acceptance`, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, Grok Build, and other Agent Skills-compatible coding agents.
 
-The repository lets a caller agent design UI, clarify work, deliver development tasks, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, OpenCode CLI, or Grok Build CLI when needed.
+The repository lets a caller agent design UI, clarify work, deliver development tasks, protect real user usage with QA thinking, independently accept completed work, and explicitly call external agents such as Kimi Code, Claude Code CLI, Codex CLI, OpenCode CLI, or Grok Build CLI when needed.
 
 Core principles:
 
@@ -17,7 +17,7 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes nine primary skills:
+The repository currently includes ten primary skills:
 
 ### `design`
 
@@ -46,6 +46,19 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 
 Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, OpenCode CLI, Grok Build CLI, or another external agent to participate.
 
+
+### `qa`
+
+This is a standalone Skill for business understanding, real usage, and QA thinking. It is not a test-script runner:
+
+- Restate in the user's language who is using the product, what they came to do, what success and failure look like, and which business rule must not break silently
+- Walk real usage: first time, returning, empty, blocked, mid-flow abandon, error recovery, and nearby jobs that must keep working
+- Attack from a QA lens: how the product can stay green while lying to the user or the business
+- Only then choose the cheapest evidence that would turn red; an automated test is one form of evidence, never start from the test directory
+- May edit tests, fixtures, and test configuration; does not change product code or issue go/no-go
+
+Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, user-journey review, QA thinking, e2e, regression coverage, or protection without a product change. Ordinary implementation and developer tests stay in `dev`; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke `qa` in the same turn.
+
 ### `clarify`
 
 This is an opt-in requirement and architecture alignment Skill for conversations before coding:
@@ -55,7 +68,7 @@ This is an opt-in requirement and architecture alignment Skill for conversations
 - Apply first-principles decomposition to solution-shaped requests by separating goals, facts, constraints, assumptions, and non-goals
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
-- Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`
+- Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`, or to `qa` when the next need is to protect an already understood user job
 
 Trigger guidance: use it when the user explicitly requests `$clarify`, a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
 
@@ -66,10 +79,10 @@ This is a top-level independent acceptance Skill for go/no-go review after imple
 - Compare against clarified requirements, acceptance criteria, issues, PR descriptions, or task notes
 - Review current diff, test evidence, CI, manual checks, screenshots, logs, docs, migrations, and rollback notes
 - Adversarially test the acceptance decision against edge inputs, permissions, concurrency, migrations, rollback, and recovery paths
-- Stay in verification mode by default; when issues are found, report blockers, risks, and the next `$dev` repair step
+- Stay in verification mode by default; when issues are found, send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`
 - Return `accepted`, `accepted with risk`, or `rejected`
 
-Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, needs a pre-launch go/no-go decision, or wants a clear clarify -> develop -> accept workflow.
+Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, needs a pre-launch go/no-go decision, or wants a clear clarify -> develop -> QA -> accept workflow.
 
 ### `kimi-code`
 
@@ -153,6 +166,9 @@ dev/
     backend-architecture.md
     backend-quality.md
     database-engineering.md
+qa/
+  SKILL.md
+  agents/openai.yaml
 clarify/
   SKILL.md
   agents/openai.yaml
@@ -215,6 +231,7 @@ install.sh
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
+- Top-level `qa` owns business understanding and real-usage protection; `dev` keeps developer tests and recommends `$qa` instead of claiming usage is protected.
 - Top-level `acceptance` provides independent acceptance; `dev` still keeps its lightweight internal acceptance gate so small tasks do not require a split workflow.
 
 ## Comet-Inspired Direction
@@ -257,6 +274,9 @@ Common examples:
 # Install only the requirement/architecture interview Skill
 ./install.sh planning --target agents --force
 
+# Install only the business/usage QA Skill
+./install.sh qa --target agents --force
+
 # Install only the independent acceptance Skill
 ./install.sh acceptance --target agents --force
 
@@ -283,12 +303,14 @@ Supported skills and groups:
 
 - `design`: UI design direction, frontend quality, and motion methodology
 - `dev`: default development workflow integrating Superpowers Lite; invokes `design` on demand for UI tasks
+- `qa`: understand the business and real usage, then protect them with QA thinking instead of piling on test scripts
 - `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
 - `acceptance`: independent acceptance and go/no-go verification
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`: external-agent adapters
 - `workflow`: install only `dev`
 - `ui`: install only `design`
 - `planning`: install only `clarify`
+- `quality`: install `qa` and `acceptance`
 - `delegation`: install all external-agent adapters
 - `adapters`: install the five adapters only
 - `all`: install every Skill; default when no Skill is named
@@ -307,7 +329,7 @@ Install into the shared directory first:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-for skill in design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
+for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
   cp -R "$skill" "$HOME/.agents/skills/"
 done
 ```
@@ -317,15 +339,15 @@ If the target tool does not scan `~/.agents/skills/`, copy the same directories 
 ```bash
 # Claude Code
 mkdir -p "$HOME/.claude/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.claude/skills/"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.gemini/skills/"
 
 # OpenCode
 mkdir -p "$HOME/.config/opencode/skills"
-cp -R design clarify dev acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
+cp -R design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli "$HOME/.config/opencode/skills/"
 ```
 
 ## Recommended Setup
@@ -343,6 +365,10 @@ You can invoke Skills explicitly; ordinary development tasks should also auto-ma
 
 ```text
 Use $dev to implement a new feature with a brief plan first, then verify it and update docs.
+```
+
+```text
+Use $qa to first understand the real business and how a user uses it, then protect those journeys. Do not start from test scripts.
 ```
 
 ```text
@@ -392,6 +418,10 @@ Explicit example:
 ```
 
 ```text
+/qa
+```
+
+```text
 /clarify
 ```
 
@@ -430,8 +460,9 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture, then return to `dev` for implementation afterward.
-- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and should hand defects back to `dev`.
+- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; next may be `$dev` for implementation or `$qa` to protect an understood user job.
+- Use `qa` when the user wants business understanding, real usage, QA thinking, business tests, or coverage. Restate the business and walk usage before choosing evidence; do not start from the test directory.
+- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default. Send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
@@ -456,6 +487,7 @@ External CLI selection must be explicit; once the user or project policy selects
 - Prefer `design` for UI design direction, visual quality, or animation work.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for requirement or architecture interviews.
+- Prefer `qa` for business understanding, real usage, and QA protection.
 - Prefer `acceptance` for independent go/no-go verification.
 - The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli` unless the user explicitly authorizes multi-agent orchestration.
 - The target CLI output should state which Skills were used, or why none were used.

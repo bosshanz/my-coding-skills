@@ -1,0 +1,4 @@
+interface:
+  display_name: "QA"
+  short_description: "Understand the business and protect real user usage."
+  default_prompt: "Use $qa to first understand the real business and how a user uses it, then protect those journeys with QA thinking. Do not start from mechanical test scripts."
