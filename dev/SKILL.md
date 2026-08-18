@@ -20,11 +20,11 @@ This Skill integrates lightweight design, TDD, systematic debugging, full-stack 
 
 Use this Skill automatically for ordinary software work in a repository. Do not require the user to invoke `$dev`.
 
-Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the target or verifier is not ready. Use `qa` when the user wants business understanding, user-journey QA, or business-level coverage without a product change.
+Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the product intent, target, or verifier is not ready. Use `qa` when the user wants business understanding, user-journey QA, or business-level coverage without a product change.
 
 Use external-agent adapters only when the user explicitly asks another Agent to participate.
 
-For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, keep the normal `dev` clarification boundary rather than inventing a product requirement.
+For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, return to `clarify` rather than inventing a product requirement.
 
 Do not auto-invoke `$qa` in the same turn. After work that encodes money, permission, lifecycle, quota, or a multi-step user job, recommend `$qa` as the next independent pass instead of claiming the business is protected. Keep developer tests in `dev`. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
 
@@ -46,7 +46,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Understand the user goal, main flow, constraints, non-goals, and acceptance criteria.
 - Inspect relevant repository structure and conventions before proposing architecture.
 - Ask the minimum questions needed to remove material ambiguity.
-- If the real problem or verifier remains unclear, return to `clarify` instead of guessing.
+- If the real problem, product intent, or verifier remains unclear, return to `clarify` instead of guessing.
 - Restate the confirmed requirement before implementation.
 
 ### 2. Propose And Agree On A Solution

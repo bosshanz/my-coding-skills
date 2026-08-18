@@ -62,16 +62,19 @@ Trigger guidance: use it when the user explicitly invokes `$qa` or asks for busi
 
 ### `clarify`
 
-This is an opt-in requirement and architecture alignment Skill for conversations before coding:
+This is the pre-implementation Skill for senior product judgment and architecture alignment. It applies a senior PM's judgment without taking on the full organizational scope of a PM, and owns whether to build, who it is for, the key tradeoffs, the first slice, and how success is measured:
 
-- Ask one high-value question at a time and include a recommended answer
+- For product-shaped work, recommend build, experiment, or stop, and name the target user, user job, priorities, and key tradeoffs
+- Ask one high-value question with a recommended answer only when the unknown could change the judgment; otherwise recommend directly
+- When confidence is too low for delivery, define a low-cost experiment and the next decision it should unlock
 - Inspect repository docs or code for factual answers instead of asking the user
 - Apply first-principles decomposition to solution-shaped requests by separating goals, facts, constraints, assumptions, and non-goals
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
-- Close by handing clarified behavior, non-goals, boundaries, and verification strategy to `dev`, or to `qa` when the next need is to protect an already understood user job
+- When explicitly requested and the judgment is clear, produce a lightweight product brief, decision memo, PRD, or experiment brief
+- Do not own ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or date commitments, and do not simulate having taken ownership. Even when `$clarify` is explicitly invoked, state the boundary briefly and stop; at most, suggest a bounded one-time decision or operating-model artifact as a separate next request and name the human owner or authorized system required for continued execution. Hand off to `dev` to implement, `design` for visual direction, or `qa` to protect an already understood user job
 
-Trigger guidance: use it when the user explicitly requests `$clarify`, a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
+Trigger guidance: use it when the user explicitly requests `$clarify`, product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
 
 ### `acceptance`
 
@@ -272,7 +275,7 @@ Common examples:
 # Install only the default workflow into the shared standards-oriented directory
 ./install.sh dev --target agents --force
 
-# Install only the requirement/architecture interview Skill
+# Install only the product-judgment / architecture-alignment Skill
 ./install.sh planning --target agents --force
 
 # Install only the business/usage QA Skill
@@ -305,12 +308,12 @@ Supported skills and groups:
 - `design`: UI design direction, frontend quality, and motion methodology
 - `dev`: default development workflow integrating Superpowers Lite; invokes `design` on demand for UI tasks
 - `qa`: understand the business and real usage, then protect them with QA thinking instead of piling on test scripts
-- `clarify`: opt-in requirement and architecture interview with lightweight domain-term and ADR capture
+- `clarify`: senior pre-implementation product judgment and architecture alignment, excluding ongoing PM operations and delivery management
 - `acceptance`: independent acceptance and go/no-go verification
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`: external-agent adapters
 - `workflow`: install only `dev`
 - `ui`: install only `design`
-- `planning`: install only `clarify`
+- `planning`: compatibility group name; install only `clarify` for product judgment / architecture alignment
 - `quality`: install `qa` and `acceptance`
 - `delegation`: install all external-agent adapters
 - `adapters`: install the five adapters only
@@ -378,6 +381,14 @@ Use $design to review and improve the animations on this page.
 
 ```text
 Use $clarify to clarify this refactor one question at a time before we implement it.
+```
+
+```text
+Use $clarify to decide whether we should build this, who it is for, and what the first slice is.
+```
+
+```text
+Use $clarify to prioritize these product opportunities, explain the key tradeoffs, and propose the cheapest experiment that could change the decision.
 ```
 
 ```text
@@ -461,7 +472,7 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for a grilling/interview session, pre-implementation clarification, or durable domain term / ADR capture; next may be `$dev` for implementation or `$qa` to protect an understood user job.
+- Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next may be `$dev` for implementation, `$design` for visual direction, or `$qa` to protect an understood user job.
 - Use `qa` when the user wants business understanding, real usage, QA thinking, business tests, or a look at how people use the product. Look/review stays on the diagnosis track and does not edit files. A bare add-e2e, regression, or add-tests request stays in `dev`.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default. Send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
@@ -487,7 +498,7 @@ External CLI selection must be explicit; once the user or project policy selects
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
 - Prefer `design` for UI design direction, visual quality, or animation work.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
-- Prefer `clarify` for requirement or architecture interviews.
+- Prefer `clarify` for senior product judgment, requirement, or architecture discovery; ongoing roadmaps, backlog or sprint management, stakeholder coordination, and delivery tracking remain out of scope.
 - Prefer `qa` for business understanding, real usage, and QA protection.
 - Prefer `acceptance` for independent go/no-go verification.
 - The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli` unless the user explicitly authorizes multi-agent orchestration.

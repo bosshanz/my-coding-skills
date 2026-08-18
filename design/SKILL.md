@@ -13,7 +13,7 @@ Use this Skill as the design authority for UI work:
 2. **Implementation quality**: apply frontend engineering, accessibility, and verification gates while building.
 3. **Motion**: design, implement, review, or improve animation and micro-interactions with concrete technique, not just taste.
 
-The product brief, existing design system, and explicit user constraints always take precedence over the guidance in this Skill.
+The product brief, existing design system, and explicit user constraints always take precedence over the guidance in this Skill. If the product intent is still being shaped, send the work to `$clarify` instead of inventing a product brief.
 
 ## When To Use
 

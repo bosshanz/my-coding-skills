@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
-  short_description: "Resolve material ambiguity before implementation."
-  default_prompt: "Use $clarify only for an explicit interview or material product, domain, architecture, lifecycle, migration, or safety ambiguity that ordinary dev questions cannot safely resolve. Ask one high-value question at a time and inspect repository evidence first."
+  short_description: "Apply senior PM judgment before implementation."
+  default_prompt: "Use $clarify to apply senior product-manager judgment to a high-leverage product or technical question, recommend whether and what to build, define the target user, tradeoffs, first slice, success signal, and next handoff, and avoid ongoing PM operations or delivery management."

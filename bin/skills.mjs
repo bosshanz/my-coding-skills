@@ -42,7 +42,7 @@ Groups:
   all          Install every skill
   ui           Install design only
   workflow     Install dev only
-  planning     Install clarify only
+  planning     Install clarify for product judgment / architecture alignment
   quality      Install qa and acceptance
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli

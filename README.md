@@ -62,16 +62,19 @@ English version: [README.en.md](./README.en.md)
 
 ### `clarify`
 
-这是一个手动开启的需求/架构对齐 Skill，适合在编码前做一次有边界的访谈：
+这是动手前的资深产品判断和架构对齐 Skill。它采用资深 PM 的判断方式，但不承接完整 PM 组织职责，负责该不该做、为谁做、关键取舍、第一期切多大、成功怎么算：
 
-- 一次只问一个高价值问题，并给出推荐答案
+- 产品向问题时给出判断（做、先试、停），明确目标用户、用户任务、优先级与关键取舍
+- 有可能改变判断的未知项时，一次只问一个高价值问题并给出推荐答案；证据充分时直接给建议
+- 信心不足时优先定义低成本实验，以及实验需要解锁的下一项决策
 - 能从仓库文档或代码查到的事实就先查，不把问题抛回给用户
 - 对 solution-shaped 的请求做第一性原理拆解，分离目标、事实、约束、假设和非目标
 - 需要时维护 `CONTEXT.md` 里的领域词汇，但不把它变成实现方案或草稿
 - 只在决策难以逆转、未来读者会疑惑、且确有取舍时建议写 ADR
-- 访谈结束后把清晰的行为、非目标、边界和验证策略交给 `dev`；若下一步是保护已理解的用户用法，交给 `qa`
+- 用户明确要求且判断已经清楚时，可以输出轻量产品方案、决策 memo、PRD 或实验 brief
+- 不承接持续 roadmap、backlog/sprint 管理、stakeholder 协调、交付跟踪或排期承诺，也不模拟已经接管；即使显式调用 `$clarify`，也应简短说明边界并停止，最多建议把一次性的决策或运营机制文档作为后续独立任务，并明确持续执行所需的人类负责人或授权系统。对齐后交给 `dev` 实施、`design` 定视觉，或交给 `qa` 保护已理解的用法
 
-触发建议：只有用户明确要求 `$clarify`、需求拷问、方案访谈、先聊清楚再写，或需要沉淀领域词汇/ADR 时使用；普通开发请求仍走 `dev`。
+触发建议：用户明确要求 `$clarify`、产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验、需求拷问、方案访谈，或需要沉淀领域词汇/ADR 时使用；普通开发请求仍走 `dev`。
 
 ### `acceptance`
 
@@ -272,7 +275,7 @@ cd my-coding-skills
 # 只安装默认研发工作流到开放标准目录
 ./install.sh dev --target agents --force
 
-# 只安装需求/架构访谈 Skill
+# 只安装产品判断 / 架构对齐 Skill
 ./install.sh planning --target agents --force
 
 # 只安装业务/用法 QA Skill
@@ -305,12 +308,12 @@ cd my-coding-skills
 - `design`：UI 设计方向、前端质量与动效方法论
 - `dev`：默认研发工作流，集成 Superpowers Lite，UI 任务按需调用 `design`
 - `qa`：先理解业务和真实用法，再用 QA 思维保护，而不是堆测试脚本
-- `clarify`：手动需求/架构访谈，支持领域词汇和 ADR 轻量沉淀
+- `clarify`：动手前的资深产品判断和架构对齐，不承接持续 PM 运营与交付管理
 - `acceptance`：独立验收与 go/no-go 复核
 - `kimi-code` / `claude-code` / `codex-cli` / `opencode` / `grok-build-cli`：外部 Agent Adapter
 - `workflow`：只安装 `dev`
 - `ui`：只安装 `design`
-- `planning`：只安装 `clarify`
+- `planning`：兼容分组名，只安装负责产品判断 / 架构对齐的 `clarify`
 - `quality`：安装 `qa` 和 `acceptance`
 - `delegation`：安装五个外部 Agent Adapter
 - `adapters`：只安装五个 Adapter
@@ -378,6 +381,14 @@ Use $design to review and improve the animations on this page.
 
 ```text
 Use $clarify to clarify this refactor one question at a time before we implement it.
+```
+
+```text
+Use $clarify to decide whether we should build this, who it is for, and what the first slice is.
+```
+
+```text
+Use $clarify to prioritize these product opportunities, explain the key tradeoffs, and propose the cheapest experiment that could change the decision.
 ```
 
 ```text
@@ -461,7 +472,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 新需求默认使用 `dev` 的需求交付路径：聊天确认需求和验收标准、确认方案、编码、测试、验收。
 - Bug 默认使用 `dev` 的修复路径：审查与复现、定位根因、确认方案、最小修复、回归测试、验收。
 - `dev` 先判断任务类型和变更边界，只加载与当前任务相关的 reference；不要因为默认触发就读取所有 reference。
-- 专门要求“先拷问/访谈/沉淀领域词汇或 ADR”时使用 `clarify`；下一步可以是 `$dev` 实施，或 `$qa` 保护已理解的用法。
+- 专门要求产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验，或先拷问/访谈/沉淀领域词汇或 ADR 时使用 `clarify`；它采用资深 PM 判断，但不负责持续 PM 运营，下一步可以是 `$dev` 实施、`$design` 定视觉，或 `$qa` 保护已理解的用法。
 - 专门要求理解业务、用户怎么用、QA 思维、业务测试、看一下用法时使用 `qa`。只看不改走诊断轨道；只说「补 e2e / 回归 / 补测试」仍走 `dev`。
 - 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现。缺用法/业务保护交 `$qa`，产品缺陷交 `$dev`，目标不清交 `$clarify`。
 - 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli`。
@@ -487,7 +498,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 当全局 Skill 和项目本地 Skill 都匹配时，优先使用项目本地 Skill，因为它通常更贴近当前仓库的约束、命令和领域语义。
 - UI 设计方向、视觉质量或动效工作优先使用 `design`。
 - 普通实现或 Bug 修复优先让目标 CLI 使用可发现的 `dev`。
-- 需求/架构访谈优先使用 `clarify`。
+- 资深产品判断、需求或架构发现优先使用 `clarify`；持续 roadmap、backlog/sprint 管理、stakeholder 协调与交付跟踪不属于它。
 - 业务理解、真实用法和 QA 保护优先使用 `qa`。
 - 独立 go/no-go 验收优先使用 `acceptance`。
 - 子 CLI 不得自动再调用 `kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 等外部 Agent Adapter，除非用户明确授权多 Agent 编排。

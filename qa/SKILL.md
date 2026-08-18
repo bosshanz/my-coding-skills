@@ -36,7 +36,7 @@ Do not use `qa` when:
 - The user only asked to run the existing suite.
 - The user only asked to add e2e, regression, 补测试, or tests, with no ask to understand the business or how users use it. That stays in `$dev`.
 - The task is a tiny mechanical edit, a pure refactor already guarded by existing behavior checks, or a go/no-go verdict (`$acceptance`).
-- The business itself is still ambiguous; escalate to `$clarify` instead of inventing rules.
+- The business itself is still being shaped or is ambiguous; escalate to `$clarify` instead of inventing rules.
 
 Do not invoke `qa` from inside the same `$dev` turn. Recommend `$qa` as the next step when the business or user journey needs an independent pass.
 
@@ -61,7 +61,7 @@ A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not sli
 - Do not invent business rules, copy, or acceptance criteria.
 - Do not issue `accepted` / `rejected`; that belongs to `$acceptance`.
 - Do not weaken an existing check to make the product look safe.
-- If a product behavior is wrong, stop and hand off to `$dev`. If the rule is unclear, hand off to `$clarify`.
+- If a product behavior is wrong, stop and hand off to `$dev`. If the rule is unclear or the product is still being shaped, hand off to `$clarify`.
 
 ## 1. Understand The Business
 

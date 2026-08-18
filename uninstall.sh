@@ -47,7 +47,7 @@ Groups:
   all          Uninstall every Skill (default)
   ui           Uninstall design
   workflow     Uninstall dev
-  planning     Uninstall clarify
+  planning     Uninstall clarify for product judgment / architecture alignment
   quality      Uninstall qa and acceptance
   delegation   Uninstall all external-agent adapters
   adapters     Uninstall kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
