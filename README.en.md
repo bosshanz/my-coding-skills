@@ -51,14 +51,15 @@ Trigger guidance: both new requirements and Bug fixes should trigger `dev` by de
 
 This is a standalone Skill for business understanding, real usage, and QA thinking. It is not a test-script runner:
 
-- Restate in the user's language who is using the product, what they came to do, what success and failure look like, and which business rule must not break silently
-- Walk real usage: first time, returning, empty, blocked, mid-flow abandon, error recovery, and nearby jobs that must keep working
-- Attack from a QA lens: how the product can stay green while lying to the user or the business
-- A look/review request stays on the diagnosis track: understand, walk usage, attack, and report; do not edit files
+- Answer the asked slice; do not walk every usage path for completeness
+- Restate that slice in the user's language: who is using the product, what they came to do, what success and failure look like, and which business rule must not break silently
+- Walk real usage only when reviewing an actual journey, and only for that slice: first time, returning, empty, blocked, mid-flow abandon, error recovery, and nearby jobs that must keep working
+- Attack that slice from a QA lens: how the product can stay green while lying to the user or the business
+- A look/review request stays on the diagnosis track: answer the asked slice, do not edit files, and default to stop; uncovered usage is residual risk, not a backlog
 - Only after the user asks to protect, choose the cheapest evidence that would turn red; an automated test is one form of evidence, never start from the test directory
 - Contract/coverage tracks may edit tests, fixtures, and test configuration; do not change product code or issue go/no-go
 
-Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, how users use it, QA thinking, a usage diagnosis, or protection of a business meaning. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke `qa` in the same turn.
+Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, how users use it, QA thinking, a usage diagnosis, or protection of a business meaning. Diagnosis answers the asked slice and defaults to stop. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke `qa` in the same turn.
 
 ### `clarify`
 
@@ -473,7 +474,7 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next may be `$dev` for implementation, `$design` for visual direction, or `$qa` to protect an understood user job.
-- Use `qa` when the user wants business understanding, real usage, QA thinking, business tests, or a look at how people use the product. Look/review stays on the diagnosis track and does not edit files. A bare add-e2e, regression, or add-tests request stays in `dev`.
+- Use `qa` when the user wants business understanding, real usage, QA thinking, business tests, or a look at how people use the product. Look/review stays on the diagnosis track, answers the asked slice, and defaults to stop. A bare add-e2e, regression, or add-tests request stays in `dev`.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default. Send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.

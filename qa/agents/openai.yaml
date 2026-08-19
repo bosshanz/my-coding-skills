@@ -1,4 +1,4 @@
 interface:
   display_name: "QA"
   short_description: "Understand the business and protect real user usage."
-  default_prompt: "Use $qa to first understand the real business and how a user uses it. If the user only asked to look or review, stay on the diagnosis track and do not edit files. Do not take a bare add-e2e or add-tests request, and do not start from mechanical test scripts."
+  default_prompt: "Use $qa to understand the real business and how a user uses it, scaled to the ask. If the user only asked to look or review, stay on diagnosis, answer the slice, and stop. Do not turn leftover usage into the next task. Do not take a bare add-e2e or add-tests request, and do not start from mechanical test scripts."
