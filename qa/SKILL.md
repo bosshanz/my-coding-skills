@@ -1,6 +1,6 @@
 ---
 name: qa
-description: "Understand the real business and how a user actually uses it, then protect those behaviors with QA thinking. Use when the user explicitly invokes $qa or /qa, asks for 业务测试, 用户怎么用, QA思维, user-journey review, or a diagnosis pass such as 看一下用法, 看下这个Skill, look at this usage, or review this journey. Do not use for ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests without asking to understand the business or how users use it."
+description: "Understand the real business and how a user actually uses it, then protect those behaviors with QA thinking. Use when the user explicitly invokes $qa or /qa, asks for 业务测试, 用户怎么用, QA思维, user-journey review, or a diagnosis pass such as 看一下用法, 看下这个Skill, look at this usage, or review this journey. Also use for an independent read-only Diagnosis pass received through an eligible dev self-check handoff. Do not use for ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests without asking to understand the business or how users use it."
 ---
 
 # QA
@@ -30,17 +30,18 @@ Use the top-level `qa` Skill when at least one is true:
 - The user asks for a diagnosis pass: 看一下, 看下这个, look at this skill or usage, review this journey, 审查用法 — without asking to add tests.
 - `clarify` produced a verification strategy that needs executable user/business evidence and handed the next step to `$qa`.
 - `acceptance` rejected or risk-qualified work because real usage is unprotected and sent it to `$qa`.
+- An independent task receives a structured `dev.self_check.completed` handoff with `self_check.status: passed`, a stable revision, a clear user job and business invariant, and a bounded QA scope.
 - The user wants to protect already understood usage without a product change.
 
 Do not use `qa` when:
 
-- The user asked to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`, which may recommend `$qa` afterward.
+- The user asked to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`; only a later eligible and independent post-self-check handoff enters `$qa`.
 - The user only asked to run the existing suite.
 - The user only asked to add e2e, regression, 补测试, or tests, with no ask to understand the business or how users use it. That stays in `$dev`.
 - The task is a tiny mechanical edit, a pure refactor already guarded by existing behavior checks, or a go/no-go verdict (`$acceptance`).
 - The business itself is still being shaped or is ambiguous; escalate to `$clarify` instead of inventing rules.
 
-Do not invoke `qa` from inside the same `$dev` turn. Recommend `$qa` as the next step when the business or user journey needs an independent pass.
+Do not run `qa` inline in the implementing agent's context. An automatic DEV handoff is valid only as a new independent task and only after implementer self-check passed. Treat an inline continuation, a missing revision, or a handoff without a clear user job and invariant as `human_gate`, not as QA evidence.
 
 If both `$dev` and `$qa` could apply, prefer `$dev` unless the user named `$qa` or asked to understand usage rather than change the product.
 
@@ -48,7 +49,7 @@ If both `$dev` and `$qa` could apply, prefer `$dev` unless the user named `$qa` 
 
 Pick one from the request. Do not ask the user to choose.
 
-- **Diagnosis**: the user asked to look at, review, 看, or inspect a skill, flow, or usage, and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
+- **Diagnosis**: the user asked to look at, review, 看, or inspect a skill, flow, or usage and did not ask to add protection, or this is an automatic DEV handoff. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
 - **Contract**: the rule is clear and the product is not yet safe, or the user asked to write business evidence first. After steps 1-3, add the smallest failing or pending check that names the user job, then hand to `$dev`.
 - **Coverage**: the product already exists and the user asked to protect usage or fill unprotected journeys. After steps 1-3, add or update evidence. If the product is wrong, do not patch around it; hand to `$dev`.
 
@@ -59,6 +60,7 @@ A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not sli
 - Restate the business and the user journey before writing or changing any test.
 - On Contract or Coverage only: may edit tests, fixtures, factories, page objects, test helpers, and test configuration that serve those journeys.
 - On Diagnosis: do not edit files.
+- On an automatic DEV handoff: remain on read-only Diagnosis even if uncovered usage could justify later Contract or Coverage work.
 - Do not change product code, architecture, or schema.
 - Do not invent business rules, copy, or acceptance criteria.
 - Do not issue `accepted` / `rejected`; that belongs to `$acceptance`.
@@ -68,6 +70,8 @@ A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not sli
 ## 1. Understand The Business
 
 Inspect the closest evidence first: `CONTEXT.md`, `CONTEXT-MAP.md`, user-facing copy, domain terms, primary screens or APIs as a person uses them, existing journeys, and the current change.
+
+For an automatic DEV handoff, first validate `task_id`, `revision`, `qa_policy`, pinned `qa_policy_version`, `risk_tags`, `user_job`, `business_invariant`, `qa_scope`, changed scope, self-check evidence, skipped checks, `critical_unverified`, verifier limits, residual risks, `idempotency_key`, and `qa_attempt`. If the revision cannot be identified, `self_check.status` is not `passed`, `critical_unverified` is non-empty, the business meaning is unclear, or this idempotency key was already evaluated, return `human_gate` or the recorded result instead of repeating the pass.
 
 Restate only as far as the ask requires. A narrow question may be 2-3 sentences. Use 4-6 bullets only when reviewing a real journey or before writing protection:
 
@@ -109,6 +113,14 @@ Look for ways this slice can lie while remaining green, when they belong to the 
 Name the weakest assumption in the slice. On Diagnosis, record it as residual risk and stop; do not convert it into assigned work. On Contract or Coverage, if current evidence does not cover it and the user asked to protect this slice, that is the next protection to add — not another happy-path script.
 
 On Diagnosis, stop here. Report, then `stop`. Do not continue to steps 4-5. Do not stay in `$qa`.
+
+For an automatic DEV handoff, return exactly one result to the caller after Diagnosis:
+
+- `no_material_issue_found`: no material issue was found in the named scope; this is not `accepted`.
+- `needs_dev`: observed product behavior conflicts with the named user job or invariant.
+- `human_gate`: the rule, revision, environment, or evidence is insufficient.
+
+Do not invoke DEV, repair product code, start another QA pass, merge, deploy, or issue an acceptance verdict. The caller owns any later policy decision, and a duplicate `idempotency_key` must not create another run.
 
 ## 4. Choose Evidence
 
@@ -152,6 +164,8 @@ QA 风险:
 ```
 
 On Diagnosis, prefer a short answer. You may omit empty fields. `保护了什么` is `本轮只诊断，未改文件`. `下一步` defaults to `stop`. `残留风险` names what is still unprotected; it is not a todo. Do not report coverage work as done.
+
+On an automatic DEV handoff, also report `触发来源: dev.self_check.completed`, `revision`, and `自动交接结果: no_material_issue_found | needs_dev | human_gate`. Return the result to the caller; `下一步` remains `stop` inside QA so the pass cannot create an implicit loop.
 
 On Contract or Coverage, fill the template. `下一步` is `stop` when the asked slice is protected.
 

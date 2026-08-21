@@ -26,7 +26,9 @@ Use external-agent adapters only when the user explicitly asks another Agent to 
 
 For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, return to `clarify` rather than inventing a product requirement.
 
-Do not auto-invoke `$qa` in the same turn. After work that encodes money, permission, lifecycle, quota, or a multi-step user job, recommend `$qa` as the next independent pass instead of claiming the business is protected. Keep developer tests in `dev`. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
+Keep developer tests in `dev`; its completion gate is still implementer self-check, not business QA. After self-check, evaluate the independent QA handoff policy in [references/qa-handoff.md](references/qa-handoff.md). The default policy is `risk`: automatically start one separate, read-only `$qa` Diagnosis pass for eligible work that encodes money, permission, lifecycle, quota, or a multi-step user job. A user or durable project instruction may set `qa_policy` to `off`, `risk`, or `always`.
+
+Never run `$qa` inline in the implementer's context or claim that the handoff makes `dev` itself independent. The QA pass must receive a stable revision or change fingerprint, the user job, business invariant, scoped evidence, skipped checks, and residual risks. If the gate is not eligible, the business meaning is unclear, self-check has not passed, or no independent task mechanism is available, report the reason and recommend the next pass instead of simulating it. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
 
 ## Select A Track
 
@@ -79,7 +81,8 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Perform functional acceptance against each criterion.
 - For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
 - Record what passed, what was not verified, verifier limitations, and whether the requirement is accepted.
-- This gate is implementer self-check, not business QA. If the change encodes a user job or business rule, name `$qa` as the next step.
+- Record the `dev.self_check.completed` handoff fields and evaluate `qa_policy` only after this gate passes.
+- This gate is implementer self-check, not business QA. For an eligible change, start the independent QA handoff and include its result separately; otherwise name the reason it was skipped or recommended.
 
 ## Track B: Bug Fix
 
@@ -120,7 +123,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - Check likely side effects and adjacent flows.
 - Run broader checks only when justified.
 - State whether the bug is accepted as fixed and name residual risk.
-- If the bug sat on a user job or business rule, recommend `$qa` rather than treating developer regression as usage protection.
+- If the bug sat on a user job or business rule, evaluate the independent QA handoff rather than treating developer regression as usage protection.
 
 ## Common Review Gate
 
@@ -146,6 +149,7 @@ For a new requirement:
 - 方案与关键取舍
 - 实现内容
 - 测试与验收
+- 独立 QA handoff
 - 建议下一步
 - 风险与未验证项
 
@@ -156,6 +160,7 @@ For a bug fix:
 - 修复方案
 - 修改内容
 - 回归测试与验收
+- 独立 QA handoff
 - 建议下一步
 - 风险与未验证项
 

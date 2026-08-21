@@ -84,6 +84,12 @@ if [ ! -f "$dest/dev/SKILL.md" ]; then
 else
   pass=$((pass+1)); printf 'ok (real install created SKILL.md)\n'
 fi
+if [ ! -f "$dest/dev/references/qa-handoff.md" ]; then
+  printf 'FAIL: real install did not copy %s/dev/references/qa-handoff.md\n' "$dest" >&2
+  fails=$((fails+1))
+else
+  pass=$((pass+1)); printf 'ok (real install copied dev/references/qa-handoff.md)\n'
+fi
 assert_allows "$INSTALL" design --dest "$dest"
 for vendored_file in \
   "$dest/design/references/design-direction.md" \

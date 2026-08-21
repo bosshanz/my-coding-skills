@@ -59,7 +59,7 @@ English version: [README.en.md](./README.en.md)
 - 用户明确要求保护之后，才选择最便宜、会红灯的证据；自动化测试只是证据的一种，禁止从测试目录出发堆脚本
 - 契约/覆盖轨道可改测试、夹具和测试配置，不改产品代码，不做 go/no-go
 
-触发建议：用户明确写 `$qa`、要求业务测试、用户怎么用、QA 思维、看一下用法，或只要诊断/保护业务含义时使用。诊断默认短答并 stop。只说「补 e2e / 回归 / 补测试」、实现功能、开发者测试仍走 `dev`；正式验收走 `acceptance`；业务本身还不清时回 `clarify`。`dev` 不要在同一轮自动调用 `qa`。
+触发建议：用户明确写 `$qa`、要求业务测试、用户怎么用、QA 思维、看一下用法，或只要诊断/保护业务含义时使用。诊断默认短答并 stop。只说「补 e2e / 回归 / 补测试」、实现功能、开发者测试仍走 `dev`；正式验收走 `acceptance`；业务本身还不清时回 `clarify`。DEV 自测通过后，默认 `qa_policy=risk`：money、permission、lifecycle、quota 或多步骤用户任务可通过结构化 handoff 自动创建一个新的独立、只读 QA Diagnosis；`off` 禁止自动触发，`always` 覆盖所有非平凡产品行为变更。不得在实现者上下文内联运行 QA；宿主不支持独立任务调度时，只能退化为建议显式 `$qa`。
 
 ### `clarify`
 
@@ -171,6 +171,7 @@ dev/
     backend-architecture.md
     backend-quality.md
     database-engineering.md
+    qa-handoff.md
 qa/
   SKILL.md
   agents/openai.yaml
@@ -236,7 +237,7 @@ install.sh
 - 用第一性原理约束方案选择，用对抗式审查反证设计、修复和完成声明。
 - 按任务边界懒加载 reference，不把所有检查清单变成每个任务的默认上下文。
 - 保留轻量边界：默认不强制 worktree、长 spec、每任务 subagent 或完整 Superpowers 安装。
-- 顶层 `qa` 负责先理解业务和真实用法，再用 QA 思维保护这些行为；`dev` 保留开发者测试，并在业务/用法需要独立过一遍时建议 `$qa`，而不是宣称业务已被保护。
+- 顶层 `qa` 负责先理解业务和真实用法，再用 QA 思维保护这些行为；`dev` 保留开发者测试，并在符合 `qa_policy` 的自测通过事件后，通过新任务自动交接一次只读 QA Diagnosis。该协议不把实现者自检变成独立 QA；宿主不能新建独立任务时仍只建议 `$qa`。
 - 顶层 `acceptance` 提供独立验收；`dev` 内部仍保留轻量验收 gate，避免小任务被迫拆流程。
 
 ## Comet 吸收方向

@@ -59,7 +59,7 @@ This is a standalone Skill for business understanding, real usage, and QA thinki
 - Only after the user asks to protect, choose the cheapest evidence that would turn red; an automated test is one form of evidence, never start from the test directory
 - Contract/coverage tracks may edit tests, fixtures, and test configuration; do not change product code or issue go/no-go
 
-Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, how users use it, QA thinking, a usage diagnosis, or protection of a business meaning. Diagnosis answers the asked slice and defaults to stop. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke `qa` in the same turn.
+Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, how users use it, QA thinking, a usage diagnosis, or protection of a business meaning. Diagnosis answers the asked slice and defaults to stop. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. After DEV self-check passes, the default `qa_policy=risk` may create one new independent, read-only QA Diagnosis through a structured handoff for money, permission, lifecycle, quota, or multi-step user-job changes. `off` disables automatic handoff; `always` covers every non-trivial product-behavior change. QA must not run inline in the implementer's context; when the host cannot schedule an independent task, fall back to recommending an explicit `$qa` pass.
 
 ### `clarify`
 
@@ -171,6 +171,7 @@ dev/
     backend-architecture.md
     backend-quality.md
     database-engineering.md
+    qa-handoff.md
 qa/
   SKILL.md
   agents/openai.yaml
@@ -236,7 +237,7 @@ install.sh
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
-- Top-level `qa` owns business understanding and real-usage protection; `dev` keeps developer tests and recommends `$qa` instead of claiming usage is protected.
+- Top-level `qa` owns business understanding and real-usage protection; `dev` keeps developer tests and, after an eligible self-check event under `qa_policy`, hands off one read-only QA Diagnosis in a new task. The protocol does not turn implementer self-check into independent QA; when the host cannot create an independent task, `dev` still only recommends `$qa`.
 - Top-level `acceptance` provides independent acceptance; `dev` still keeps its lightweight internal acceptance gate so small tasks do not require a split workflow.
 
 ## Comet-Inspired Direction
