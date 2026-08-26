@@ -1,4 +1,4 @@
 interface:
   display_name: "QA"
-  short_description: "Understand the business and protect real user usage."
-  default_prompt: "Use $qa to understand the real business and how a user uses it, scaled to the ask. If the user only asked to look or review, stay on diagnosis, answer the slice, and stop. Do not turn leftover usage into the next task. Do not take a bare add-e2e or add-tests request, and do not start from mechanical test scripts."
+  short_description: "Opt-in business and real-usage QA."
+  default_prompt: "Use $qa only for an explicitly requested business, user-journey, or real-usage pass, scaled to the ask. Generic look or review requests do not authorize QA. On diagnosis, answer the named slice and stop. Do not turn leftover usage into the next task. Do not take a bare add-e2e or add-tests request, and do not start from mechanical test scripts."

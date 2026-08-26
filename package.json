@@ -18,6 +18,7 @@
     "opencode",
     "grok-build-cli",
     "scripts/skills-doctor.sh",
+    "scripts/check-routing-policy.mjs",
     "scripts/test-install-safety.sh",
     "bin/skills.mjs",
     "README.md",
@@ -27,7 +28,8 @@
   "scripts": {
     "doctor": "bash scripts/skills-doctor.sh",
     "check:cli": "node bin/skills.mjs list",
-    "test": "bash scripts/test-install-safety.sh"
+    "check:policy": "node scripts/check-routing-policy.mjs",
+    "test": "node scripts/check-routing-policy.mjs && bash scripts/test-install-safety.sh"
   },
   "keywords": [
     "codex",

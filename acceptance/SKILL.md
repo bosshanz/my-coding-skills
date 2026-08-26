@@ -12,7 +12,7 @@ Use this Skill to independently verify whether completed implementation work is 
 - Stay in review and verification mode by default.
 - Do not modify code, docs, migrations, or tests unless the user explicitly asks for fixes.
 - Do not replace `dev`'s internal lightweight acceptance gate; use this as a separate top-level pass when stronger separation is useful.
-- If the work is not ready, return a clear rejection or risk-qualified acceptance and recommend the next step: `$qa` when real usage or business meaning is unprotected, `$dev` when product behavior is wrong, `$clarify` when the target is still unclear.
+- If the work is not ready, return a clear rejection or risk-qualified acceptance and name the concrete evidence gap. Recommend `$dev` when product behavior is wrong and `$clarify` when the target is still unclear. Name `$qa` only when the user explicitly requests a separate business or real-usage protection pass.
 - Prefer repository evidence over claims: diff, tests, logs, screenshots, commands, CI, docs, and migration or rollout notes.
 
 ## Independence Level
@@ -27,7 +27,7 @@ Inspect the closest available evidence before asking the user:
 - Current diff, touched files, tests, docs, migrations, configuration, and generated artifacts.
 - Existing acceptance criteria, `CONTEXT.md`, `CONTEXT-MAP.md`, or ADRs when relevant.
 - Test output, CI status, manual verification notes, screenshots, logs, or reproduction evidence.
-- QA notes that restate the business, user journeys, and what usage is still unprotected.
+- QA notes, when they already exist; they are evidence, not a prerequisite for acceptance.
 
 If the acceptance target or expected behavior is unclear and cannot be inferred from local evidence, ask one concise question before judging.
 
@@ -49,7 +49,7 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
 5. Verify evidence:
    - Prefer commands that were already run, then run targeted checks when needed and safe.
    - Confirm tests prove behavior, not only syntax or compilation.
-- Treat only-mechanical tests on a material user journey as residual risk or a reason to reject; the next step is `$qa`, not more product code.
+   - Treat only-mechanical tests on a material user journey as residual risk or a reason to reject. Judge the missing evidence directly; do not require a prior or follow-up `$qa` stage based on provenance alone.
    - Treat skipped, flaky, missing, or stale checks as residual risk.
 6. Review verifier quality when the conclusion depends on a metric, benchmark, rubric, or judge: name its version, owner, and important blind spots.
 7. Decide:
@@ -88,4 +88,4 @@ Residual risk:
 Next step:
 ```
 
-For rejected work, put blocking findings first and recommend the smallest follow-up: `$qa`, `$dev`, or `$clarify`. For accepted work, keep the summary short and name the strongest evidence.
+For rejected work, put blocking findings first and recommend the smallest follow-up. Use `$dev` for product defects, `$clarify` for an unclear target, and `$qa` only for an explicitly requested independent business or real-usage pass. For accepted work, keep the summary short and name the strongest evidence.

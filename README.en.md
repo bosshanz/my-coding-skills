@@ -49,17 +49,17 @@ Trigger guidance: both new requirements and Bug fixes should trigger `dev` by de
 
 ### `qa`
 
-This is a standalone Skill for business understanding, real usage, and QA thinking. It is not a test-script runner:
+This is an opt-in standalone Skill for business understanding, real usage, and QA thinking. It is not a test-script runner:
 
 - Answer the asked slice; do not walk every usage path for completeness
 - Restate that slice in the user's language: who is using the product, what they came to do, what success and failure look like, and which business rule must not break silently
 - Walk real usage only when reviewing an actual journey, and only for that slice: first time, returning, empty, blocked, mid-flow abandon, error recovery, and nearby jobs that must keep working
 - Attack that slice from a QA lens: how the product can stay green while lying to the user or the business
-- A look/review request stays on the diagnosis track: answer the asked slice, do not edit files, and default to stop; uncovered usage is residual risk, not a backlog
+- Enter the diagnosis track only when the user explicitly asks to diagnose a named real-usage question or user journey: answer that slice, do not edit files, and default to stop; uncovered usage is residual risk, not a backlog
 - Only after the user asks to protect, choose the cheapest evidence that would turn red; an automated test is one form of evidence, never start from the test directory
 - Contract/coverage tracks may edit tests, fixtures, and test configuration; do not change product code or issue go/no-go
 
-Trigger guidance: use it when the user explicitly invokes `$qa` or asks for business testing, how users use it, QA thinking, a usage diagnosis, or protection of a business meaning. Diagnosis answers the asked slice and defaults to stop. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke `qa` in the same turn.
+Trigger guidance: use it only when the user explicitly invokes `$qa` / `/qa`, or explicitly asks for business testing, QA thinking, diagnosis of a named user journey or real-usage question, or protection of a named business rule. Generic requests such as "look at this," "review this," or "inspect this Skill" do not trigger QA; another Skill's recommendation is not user authorization. A bare request to add e2e, regression, or tests stays in `dev`, as do ordinary implementation and developer tests; formal acceptance stays in `acceptance`; unclear business goes back to `clarify`. `dev` must not auto-invoke or routinely recommend `qa`.
 
 ### `clarify`
 
@@ -73,7 +73,7 @@ This is the pre-implementation Skill for senior product judgment and architectur
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
 - When explicitly requested and the judgment is clear, produce a lightweight product brief, decision memo, PRD, or experiment brief
-- Do not own ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or date commitments, and do not simulate having taken ownership. Even when `$clarify` is explicitly invoked, state the boundary briefly and stop; at most, suggest a bounded one-time decision or operating-model artifact as a separate next request and name the human owner or authorized system required for continued execution. Hand off to `dev` to implement, `design` for visual direction, or `qa` to protect an already understood user job
+- Do not own ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or date commitments, and do not simulate having taken ownership. Even when `$clarify` is explicitly invoked, state the boundary briefly and stop; at most, suggest a bounded one-time decision or operating-model artifact as a separate next request and name the human owner or authorized system required for continued execution. Hand off to `dev` to implement or `design` for visual direction by default; use `qa` only when the user explicitly requested an independent business or real-usage pass
 
 Trigger guidance: use it when the user explicitly requests `$clarify`, product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
 
@@ -84,10 +84,10 @@ This is a top-level independent acceptance Skill for go/no-go review after imple
 - Compare against clarified requirements, acceptance criteria, issues, PR descriptions, or task notes
 - Review current diff, test evidence, CI, manual checks, screenshots, logs, docs, migrations, and rollback notes
 - Adversarially test the acceptance decision against edge inputs, permissions, concurrency, migrations, rollback, and recovery paths
-- Stay in verification mode by default; when issues are found, send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`
+- Stay in verification mode by default; judge real-usage and business evidence directly and name concrete gaps, send product defects to `$dev`, and send an unclear target to `$clarify`; use `$qa` only when the user explicitly requests a separate business or real-usage protection pass
 - Return `accepted`, `accepted with risk`, or `rejected`
 
-Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, needs a pre-launch go/no-go decision, or wants a clear clarify -> develop -> QA -> accept workflow.
+Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, or needs a pre-launch go/no-go decision. Acceptance is evidence-based and does not require a prior QA stage.
 
 ### `kimi-code`
 
@@ -236,7 +236,7 @@ install.sh
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
 - Lazy reference loading by task boundary, so the checklists do not all become default context for every task.
 - Lightweight boundaries: no mandatory worktrees, long specs, per-task subagents, or full Superpowers installation by default.
-- Top-level `qa` owns business understanding and real-usage protection; `dev` keeps developer tests and recommends `$qa` instead of claiming usage is protected.
+- Top-level `qa` is an opt-in independent business and real-usage pass; `dev` keeps developer tests and proportionate business-risk verification, reports evidence gaps directly, and does not make `$qa` the default next stage.
 - Top-level `acceptance` provides independent acceptance; `dev` still keeps its lightweight internal acceptance gate so small tasks do not require a split workflow.
 
 ## Comet-Inspired Direction
@@ -473,9 +473,9 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next may be `$dev` for implementation, `$design` for visual direction, or `$qa` to protect an understood user job.
-- Use `qa` when the user wants business understanding, real usage, QA thinking, business tests, or a look at how people use the product. Look/review stays on the diagnosis track, answers the asked slice, and defaults to stop. A bare add-e2e, regression, or add-tests request stays in `dev`.
-- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default. Send unprotected usage to `$qa`, product defects to `$dev`, and an unclear target to `$clarify`.
+- Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next is normally `$dev` for implementation, `$design` for visual direction, or stop.
+- Use `qa` only when the user explicitly invokes `$qa` / `/qa`, or explicitly asks for business testing, QA thinking, diagnosis of a named user journey or real-usage question, or protection of a named business rule. Generic look/review requests do not trigger it; a bare add-e2e, regression, or add-tests request stays in `dev`.
+- Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and judges business and real-usage evidence directly. Send product defects to `$dev` and an unclear target to `$clarify`; use `$qa` only when the user explicitly requests that separate pass.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
 
@@ -500,7 +500,7 @@ External CLI selection must be explicit; once the user or project policy selects
 - Prefer `design` for UI design direction, visual quality, or animation work.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for senior product judgment, requirement, or architecture discovery; ongoing roadmaps, backlog or sprint management, stakeholder coordination, and delivery tracking remain out of scope.
-- Prefer `qa` for business understanding, real usage, and QA protection.
+- Use `qa` only when the user explicitly requests independent business understanding, real-usage diagnosis, or QA protection.
 - Prefer `acceptance` for independent go/no-go verification.
 - The child CLI must not automatically invoke external-agent adapters such as `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli` unless the user explicitly authorizes multi-agent orchestration.
 - The target CLI output should state which Skills were used, or why none were used.

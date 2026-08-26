@@ -66,6 +66,7 @@ check_executable "codex-cli/scripts/codex-cli-status.sh"
 check_executable "opencode/scripts/opencode-status.sh"
 check_executable "grok-build-cli/scripts/grok-build-cli-status.sh"
 check_executable "scripts/skills-doctor.sh"
+check_file "scripts/check-routing-policy.mjs"
 
 check_absent "agent-delegation"
 check_absent "dev-workflow"

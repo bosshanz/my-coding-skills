@@ -1,6 +1,6 @@
 ---
 name: qa
-description: "Understand the real business and how a user actually uses it, then protect those behaviors with QA thinking. Use when the user explicitly invokes $qa or /qa, asks for 业务测试, 用户怎么用, QA思维, user-journey review, or a diagnosis pass such as 看一下用法, 看下这个Skill, look at this usage, or review this journey. Do not use for ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests without asking to understand the business or how users use it."
+description: "Opt-in business and real-usage QA. Use only when the user explicitly invokes $qa or /qa, or explicitly asks for business testing, QA thinking, a user-journey or real-usage diagnosis, or protection of a named business rule without a product change. Do not use for generic reviews or inspections, ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests."
 ---
 
 # QA
@@ -23,32 +23,33 @@ Do not start from the test directory. Do not equate "the suite is green" with "t
 
 ## Admission
 
-Use the top-level `qa` Skill when at least one is true:
+Use the top-level `qa` Skill only when at least one is true:
 
 - The user explicitly requests `$qa` or `/qa`.
-- The user asks in business or usage language: 业务测试, 用户怎么用, QA思维, user-journey review, or evidence that a business rule still holds.
-- The user asks for a diagnosis pass: 看一下, 看下这个, look at this skill or usage, review this journey, 审查用法 — without asking to add tests.
-- `clarify` produced a verification strategy that needs executable user/business evidence and handed the next step to `$qa`.
-- `acceptance` rejected or risk-qualified work because real usage is unprotected and sent it to `$qa`.
+- The user explicitly asks for business testing, QA thinking, a user-journey or real-usage diagnosis, or evidence that a named business rule still holds.
 - The user wants to protect already understood usage without a product change.
+
+A recommendation or handoff from `clarify`, `dev`, or `acceptance` is context, not authorization. Enter `qa` only after the user explicitly asks for or agrees to that independent pass.
 
 Do not use `qa` when:
 
-- The user asked to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`, which may recommend `$qa` afterward.
+- The user made a generic review or inspection request such as 看一下, 看下这个, review this, or inspect this without explicitly asking about business meaning, real usage, or a user journey.
+- The user asked to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`.
 - The user only asked to run the existing suite.
 - The user only asked to add e2e, regression, 补测试, or tests, with no ask to understand the business or how users use it. That stays in `$dev`.
 - The task is a tiny mechanical edit, a pure refactor already guarded by existing behavior checks, or a go/no-go verdict (`$acceptance`).
 - The business itself is still being shaped or is ambiguous; escalate to `$clarify` instead of inventing rules.
+- Another Skill identified missing business or usage evidence, but the user did not ask for an independent QA pass. That Skill should report the concrete evidence gap directly.
 
-Do not invoke `qa` from inside the same `$dev` turn. Recommend `$qa` as the next step when the business or user journey needs an independent pass.
+Do not invoke `qa` from inside the same `$dev` turn. Do not turn a risk category or missing evidence into a routine `$qa` recommendation.
 
-If both `$dev` and `$qa` could apply, prefer `$dev` unless the user named `$qa` or asked to understand usage rather than change the product.
+If both `$dev` and `$qa` could apply, prefer `$dev` unless the user explicitly requested the independent business or real-usage pass.
 
 ## Select A Track
 
 Pick one from the request. Do not ask the user to choose.
 
-- **Diagnosis**: the user asked to look at, review, 看, or inspect a skill, flow, or usage, and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
+- **Diagnosis**: the user explicitly asked to diagnose a named business meaning, user journey, or real-usage question and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
 - **Contract**: the rule is clear and the product is not yet safe, or the user asked to write business evidence first. After steps 1-3, add the smallest failing or pending check that names the user job, then hand to `$dev`.
 - **Coverage**: the product already exists and the user asked to protect usage or fill unprotected journeys. After steps 1-3, add or update evidence. If the product is wrong, do not patch around it; hand to `$dev`.
 

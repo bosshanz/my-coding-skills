@@ -38,10 +38,10 @@ Do not admit a request whose primary job is ongoing product operations or delive
 - When asked to own those ongoing PM operations, respond briefly that `clarify` cannot take that responsibility. Do not provide a takeover cadence, simulate continued execution, or remain in discovery. Offer a separately scoped, one-time decision or operating-model artifact only as a possible next request, identify the human owner or authorized system needed for continued execution, and stop.
 - Do not invent visual direction; that belongs to `$design` after the slice is defined.
 - Do not invent then implement; that belongs to `$dev`.
-- Do not protect already understood usage; that belongs to `$qa`.
+- Do not implement protection for already understood usage. Put the rule into the verification strategy for `$dev`; use `$qa` only when the user explicitly requests an independent business or real-usage pass.
 - Do not push an ambiguous problem into delivery merely to create visible progress.
 - Do not treat clarification as permission to start coding unless the user explicitly asks to proceed.
-- Hand off to `$dev` for implementation, `$design` when the next need is visual direction, or `$qa` when the next need is to protect an already understood user job, only after the behavior or next experiment is sufficiently defined. Stopping is valid when the judgment is not to build.
+- Hand off to `$dev` for implementation or `$design` when the next need is visual direction. Hand off to `$qa` only when the user explicitly requested that independent pass and the behavior is sufficiently defined. Stopping is valid when the judgment is not to build.
 
 ## Senior Product Judgment
 
@@ -109,7 +109,7 @@ Use first-principles clarification when the request is ambiguous, solution-shape
 - Ask what must remain true if the current UI, API, storage model, framework, metric, or workflow were replaced.
 - Challenge inherited labels and abstractions when they obscure real domain behavior.
 - Distinguish the real goal from proxy metrics.
-- Convert resolved assumptions into a first slice, success signal, acceptance criteria, verifier requirements, or domain terms before handing off to `$dev`, `$qa`, or `$design`.
+- Convert resolved assumptions into a first slice, success signal, acceptance criteria, verifier requirements, or domain terms before handing off to `$dev` or `$design`; include `$qa` only for an explicitly requested independent pass.
 
 ## Verifier Design
 
@@ -119,7 +119,7 @@ Before delivery, clarify only the verification questions proportionate to the ta
 - Is the evidence deterministic, subjective, or mixed?
 - What important behavior is not covered?
 - Which decision must remain human-only?
-- If the evidence should come from real usage or a business rule a user can feel, name `$qa` as the owner of that evidence.
+- If the evidence should come from real usage or a business rule a user can feel, describe that evidence directly in the verification strategy. Do not route to `$qa` merely because of the evidence type.
 
 For reusable or high-impact evaluators, additionally clarify owner, isolation, version, calibration, and drift review.
 
@@ -162,10 +162,10 @@ Confirm the smallest relevant set:
 - Affected boundaries or modules, when needed.
 - Proportionate verification strategy.
 - Human-only or irreversible decisions, when relevant.
-- Whether the work should go to `$dev`, `$qa`, `$design`, remain in discovery, or stop.
+- Whether the work should go to `$dev`, `$design`, remain in discovery, or stop; include `$qa` only when the user explicitly requested it.
 - Durable terms or ADR-worthy decisions have been recorded only when justified.
 
-Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$design` when the slice is defined and the next need is visual direction. Prefer `$qa` when the rules are clear and the next need is to protect how a user actually uses the product. Prefer stop when the judgment is not to build.
+Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$design` when the slice is defined and the next need is visual direction. Use `$qa` only for an explicitly requested independent business or real-usage pass. Prefer stop when the judgment is not to build.
 
 When the work is product-shaped, the summary must name the product judgment, first slice, and success signal:
 
