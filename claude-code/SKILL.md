@@ -5,7 +5,8 @@ description: "Dispatch Claude Code CLI as an external coding, research, review, 
 
 # Claude Code
 
-Use Claude Code CLI as an external terminal agent. Claude Code can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+<!-- adapter-shared:head -->
+Use Claude Code as an external terminal agent. Claude Code can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
 
 ## Adapter Contract
 
@@ -19,7 +20,7 @@ Follow this external-agent contract whenever Claude Code is used from another ag
 ### Must Not Use When
 
 - The user explicitly asks the caller agent to solve the task directly without external delegation.
-- Claude Code CLI is unavailable, cannot authenticate, or cannot access the required context.
+- Claude Code is unavailable, cannot authenticate, or cannot access the required context.
 - Invoking the target would violate security, privacy, permission, or project policy.
 
 ### Invocation Integrity
@@ -43,6 +44,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to Claude Code.
 - Do not ask Claude Code to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Claude Code to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
 
 ## First Steps
 
@@ -62,6 +64,8 @@ Dispatch Claude Code for an independent research, coding, or review pass:
 - Produce structured output for downstream automation.
 
 Keep work in the calling agent when the task is tiny, requires sensitive credentials, depends on UI-only state, needs direct control over approvals, or the caller is already Claude Code and the user did not request an isolated second opinion.
+
+If the calling agent is itself Claude Code, treat “use Claude Code” as a request to the current agent and do the work directly. Spawn a subprocess only for an explicitly requested isolated pass (fresh context, no shared session state).
 
 ## Invocation
 
@@ -112,13 +116,14 @@ claude
 - Do not expose Claude Code execution to untrusted prompts, repositories, or public input without isolation.
 - Do not print tokens, API keys, credential files, or authentication output containing secrets.
 
+<!-- adapter-shared:recursion -->
 ## Recursion And Delegation Limits
 
-- If the calling agent is already Claude Code, treat “use Claude Code” as a request to the current agent and do the work directly. Spawn a subprocess only for an explicitly requested isolated pass (fresh context, no shared session state).
 - Do not recursively dispatch Claude Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
 
 ## Troubleshooting
 

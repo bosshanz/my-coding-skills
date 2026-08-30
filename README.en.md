@@ -217,13 +217,31 @@ grok-build-cli/
     grok-build-cli-reference.md
   scripts/
     grok-build-cli-status.sh
+adapters/
+  contract.md
+  adapters.yaml
+evals/
+  routing/
+    fixtures.yaml
+    runner.mjs
+    prompt.md
+  behavior/
+    fixtures.yaml
+    runner.mjs
+  e2e/
+    smoke.mjs
+  results/
+    README.md
 scripts/
   skills-doctor.sh
   check-routing-policy.mjs
   test-install-safety.sh
+  sync-adapters.mjs
 bin/
   skills.mjs
 package.json
+package-lock.json
+CHANGELOG.md
 LICENSE
 README.md
 README.en.md
@@ -486,6 +504,38 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and judges business and real-usage evidence directly. Send product defects to `$dev` and an unclear target to `$clarify`; use `$qa` only when the user explicitly requests that separate pass.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
 - If external delegation is not authorized, do not dispatch another agent merely because it may help; use `dev` as the main workflow.
+
+## Routing And Behavior Evals
+
+Routing discipline cannot rely on prose alone, so this repository turns it
+into a regression target with four layers:
+
+| Layer | What it checks | Command |
+| --- | --- | --- |
+| L0 | Structure: routing wording, directory-tree completeness, fixture schema | `npm test` |
+| L1 | Routing classification: fixtures judged only from name + description | `npm run eval:routing` |
+| L2 | Behavior: delivery-template conformance after loading a SKILL.md | `npm run eval:behavior` |
+| L3 | e2e smoke: real headless CLIs self-report which Skill they would invoke | `npm run eval:e2e` |
+
+- L1 is a proxy: it measures the discriminative power of the descriptions
+  (the only routing-visible surface), not any single harness's full trigger
+  chain; L3 covers the remaining gap.
+- L1 scores two levels: Haiku first pass, Opus re-check on disagreement; the
+  strong model is authoritative for strict fixtures. Without an API key, run
+  `npm run eval:routing -- --backend claude` to use an authenticated
+  `claude` CLI as the classifier.
+- **Fixture discipline**: when a real session mis-triggers, add the fixture
+  to `evals/routing/fixtures.yaml` in that same session (the `source` field
+  records the motivating commit) - the fixture file is the telemetry; no
+  logging infrastructure required.
+- The five adapters' shared sections render from `adapters/contract.md` +
+  `adapters/adapters.yaml` (tokens `{{display}}`/`{{short}}`/`{{aliases}}`);
+  after editing the contract run `npm run adapters:sync`. `npm test` verifies
+  sync with `--check`.
+- The nightly workflow (`.github/workflows/evals.yml`) runs L1/L2 and
+  uploads reports as artifacts; it needs the `ANTHROPIC_API_KEY` secret.
+- `--record` writes reports into `evals/results/`; see `CHANGELOG.md` for
+  versions and history.
 
 ## External Agent Adapter Contract
 

@@ -1,0 +1,125 @@
+# Behavior eval fixtures (L2).
+#
+# Each fixture loads one SKILL.md as the governing contract, then asserts on
+# the generated output. Assertions are mechanical (substring / regex) and aim
+# at the delivery templates, because output formats are followed more reliably
+# than behavioral prohibitions - that is exactly why the templates exist.
+#
+# Fields:
+#   id        unique slug
+#   skill     which SKILL.md to load
+#   scenario  simulated environment note shown to the model (no real files)
+#   user      the simulated user message
+#   must_contain     substrings that must appear
+#   must_not_contain substrings that must not appear
+#   must_match       regexes (case-insensitive) that must match
+
+- id: qa-diagnosis-stops
+  skill: qa
+  scenario: |
+    Simulated repo: an e-commerce checkout flow (cart -> coupon -> pay).
+    CONTEXT.md exists and describes the 下单 journey in Chinese. No files
+    have been changed and you have made no edits.
+  user: "$qa 诊断第一次下单这条真实用法，只回答被问的这一刀"
+  must_contain:
+    - "残留风险"
+  must_not_contain:
+    - "已新增"
+    - "已修改"
+    - "已保护"
+  must_match:
+    - "轨道[:：]\\s*Diagnosis"
+    - "下一步[:：]\\s*`?stop`?"
+
+- id: qa-coverage-stays-in-track
+  skill: qa
+  scenario: |
+    Simulated repo: inventory deduction lives in OrderService.deduct() and is
+    covered only by a mocked unit test. The business rule is clear: stock and
+    orders must never silently disagree. The user has now asked for protection.
+  user: "$qa 保护库存扣减这条业务规则"
+  must_contain: []
+  must_not_contain:
+    - "accepted"
+    - "rejected"
+  must_match:
+    - "轨道[:：]\\s*Coverage"
+    - "残留风险"
+
+- id: acceptance-verdict-enum
+  skill: acceptance
+  scenario: |
+    Simulated repo: yesterday's login fix touched src/auth/token.ts with a
+    unit test added and passing. No manual verification, no CI run recorded.
+  user: "对这次登录修复做最终验收，给出结论"
+  must_contain:
+    - "Acceptance target"
+    - "Independence achieved"
+    - "Residual risk"
+  must_not_contain: []
+  must_match:
+    - "Decision[:：]\\s*(accepted|accepted with risk|rejected)"
+
+- id: clarify-product-judgment-fields
+  skill: clarify
+  scenario: |
+    Simulated repo: an internal admin tool used by 12 support agents. The
+    request is to add AI-powered search over past tickets.
+  user: "$clarify 判断要不要做这个 AI 搜索功能"
+  must_contain:
+    - "成功信号"
+  must_not_contain:
+    - "sprint"
+    - "backlog 排期"
+  must_match:
+    - "产品判断[:：]\\s*(build|experiment|stop)"
+
+- id: adapter-claude-unavailable
+  skill: claude-code
+  scenario: |
+    Environment note: the `claude` executable is NOT installed on this
+    machine and no Claude Code session exists. You cannot invoke it.
+  user: "让 Claude Code 审一下当前 diff"
+  must_contain: []
+  must_not_contain:
+    - "task_summary"
+  must_match:
+    - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
+
+- id: adapter-kimi-unavailable
+  skill: kimi-code
+  scenario: |
+    Environment note: the `kimi` executable is NOT installed on this machine.
+    You cannot invoke Kimi Code.
+  user: "让 Kimi Code 研究一下这个仓库的架构"
+  must_contain: []
+  must_not_contain:
+    - "task_summary"
+  must_match:
+    - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
+
+- id: dev-no-routine-qa-recommendation
+  skill: dev
+  scenario: |
+    Simulated repo: a Node service with jest configured. The user asks for
+    e2e coverage of the checkout flow, which is ordinary implementation work.
+  user: "给下单流程补点 e2e 测试"
+  must_contain: []
+  must_not_contain:
+    - "$qa"
+    - "/qa"
+  must_match: []
+
+- id: dev-delivery-format
+  skill: dev
+  scenario: |
+    Simulated repo: the role-filter change on the user list API is already
+    implemented and its unit tests pass. Summarize the delivery; do not write
+    code.
+  user: "按你的交付格式总结这次改动：用户列表新增 role 筛选参数"
+  must_contain:
+    - "需求确认"
+    - "测试与验收"
+    - "风险与未验证项"
+  must_not_contain: []
+  must_match: []

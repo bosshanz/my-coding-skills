@@ -5,6 +5,7 @@ description: "Dispatch Grok Build CLI as an external coding, research, review, o
 
 # Grok Build CLI
 
+<!-- adapter-shared:head -->
 Use Grok Build CLI as an external terminal agent. Grok can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
 
 ## Adapter Contract
@@ -25,17 +26,17 @@ Follow this external-agent contract whenever Grok Build CLI is used from another
 ### Invocation Integrity
 
 - Actually invoke Grok Build CLI; do not simulate, impersonate, or fabricate its response.
-- Do not summarize what Grok might say without invoking it when invocation is required.
+- Do not summarize what Grok Build CLI might say without invoking it when invocation is required.
 - If invocation fails, report the failure and do not fabricate findings.
 - Do not silently substitute another agent.
 
 ### Output Contract
 
-Ask Grok to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+Ask Grok Build CLI to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
 
 ## Internal Skill Routing
 
-External CLI selection is explicit: use this adapter only after the user or project policy selects Grok Build CLI. After dispatch, let Grok use its own discoverable global/user and project/local Skills automatically.
+External CLI selection is explicit: use this adapter only after the user or project policy selects Grok Build CLI. After dispatch, let Grok Build CLI use its own discoverable global/user and project/local Skills automatically.
 
 - In the prompt, tell Grok to evaluate global/user and project/local Skills discoverable by Grok, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
 - Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
@@ -43,6 +44,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to Grok.
 - Do not ask Grok to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Grok to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
 
 ## First Steps
 
@@ -139,12 +141,14 @@ Use `--always-approve` / `--yolo` only for trusted workspaces after the user exp
 - Do not expose Grok execution to untrusted prompts, repositories, or public input without isolation.
 - Do not print tokens, API keys, `auth.json`, `mcp_credentials.json`, or other credential material.
 
+<!-- adapter-shared:recursion -->
 ## Recursion And Delegation Limits
 
 - Do not recursively dispatch Grok Build CLI without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
 
 ## Troubleshooting
 

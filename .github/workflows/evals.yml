@@ -1,0 +1,35 @@
+name: evals
+
+on:
+  schedule:
+    # 19:00 UTC = 03:00 CST nightly
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm test
+      - name: routing eval
+        run: node evals/routing/runner.mjs --record
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: behavior eval
+        run: node evals/behavior/runner.mjs --record
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-reports
+          path: evals/results/

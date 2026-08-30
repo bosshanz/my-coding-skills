@@ -1,6 +1,6 @@
 {
   "name": "my-coding-skills",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Portable design, development workflow, QA, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
   "type": "module",
   "bin": {
@@ -29,7 +29,11 @@
     "doctor": "bash scripts/skills-doctor.sh",
     "check:cli": "node bin/skills.mjs list",
     "check:policy": "node scripts/check-routing-policy.mjs",
-    "test": "node scripts/check-routing-policy.mjs && bash scripts/test-install-safety.sh"
+    "eval:routing": "node evals/routing/runner.mjs",
+    "eval:behavior": "node evals/behavior/runner.mjs",
+    "eval:e2e": "node evals/e2e/smoke.mjs",
+    "adapters:sync": "node scripts/sync-adapters.mjs --write",
+    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && bash scripts/test-install-safety.sh"
   },
   "keywords": [
     "codex",
@@ -46,5 +50,9 @@
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.122.0",
+    "yaml": "^2.9.0"
   }
 }

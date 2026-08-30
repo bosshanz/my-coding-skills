@@ -5,6 +5,7 @@ description: "Dispatch Codex CLI as an external coding, research, review, or ter
 
 # Codex CLI
 
+<!-- adapter-shared:head -->
 Use Codex CLI as an external terminal agent. Codex can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
 
 ## Adapter Contract
@@ -43,6 +44,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to Codex.
 - Do not ask Codex to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Codex to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
 
 ## First Steps
 
@@ -115,12 +117,14 @@ codex exec \
 - Do not expose Codex execution to untrusted prompts, repositories, or public input without isolation.
 - Do not print tokens, API keys, `auth.json`, or other credential material.
 
+<!-- adapter-shared:recursion -->
 ## Recursion And Delegation Limits
 
 - Do not recursively dispatch Codex CLI without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
 
 ## Troubleshooting
 

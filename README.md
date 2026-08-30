@@ -217,13 +217,31 @@ grok-build-cli/
     grok-build-cli-reference.md
   scripts/
     grok-build-cli-status.sh
+adapters/
+  contract.md
+  adapters.yaml
+evals/
+  routing/
+    fixtures.yaml
+    runner.mjs
+    prompt.md
+  behavior/
+    fixtures.yaml
+    runner.mjs
+  e2e/
+    smoke.mjs
+  results/
+    README.md
 scripts/
   skills-doctor.sh
   check-routing-policy.mjs
   test-install-safety.sh
+  sync-adapters.mjs
 bin/
   skills.mjs
 package.json
+package-lock.json
+CHANGELOG.md
 LICENSE
 README.md
 README.en.md
@@ -486,6 +504,24 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现，并直接判断业务与真实用法证据是否充分。产品缺陷交 `$dev`，目标不清交 `$clarify`；仅在用户明确要求时才把独立业务/用法保护交给 `$qa`。
 - 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli`。
 - 如果用户没有授权外部委托，不要因为“可能有帮助”就自动调度外部 Agent；先使用 `dev` 完成主流程。
+
+## 路由与行为评估（Evals）
+
+路由纪律不能只靠措辞自觉，本仓库用四层机制把路由变成可回归的对象：
+
+| 层 | 内容 | 命令 |
+| --- | --- | --- |
+| L0 | 结构检查：路由措辞、目录树完备性、fixture 模式 | `npm test` |
+| L1 | 路由分类 eval：fixture 只看 name + description 判断应触发的 Skill | `npm run eval:routing` |
+| L2 | 行为 eval：加载 SKILL.md 后断言交付模板字段与禁越权行为 | `npm run eval:behavior` |
+| L3 | e2e 冒烟：真实 headless CLI 自报会触发哪个 Skill | `npm run eval:e2e` |
+
+- L1 是 proxy：它测的是 description 的区分度（路由前唯一可见的信息），不测某个 harness 的完整触发链路；剩余缝隙由 L3 补。
+- L1 双级判分：Haiku 首跑，分歧的 fixture 用 Opus 复核，强模型结论对 strict fixture 有裁决权。没有 API key 时可 `npm run eval:routing -- --backend claude`，用已登录的 `claude` CLI 充当分类器。
+- **fixture 纪律**：真实会话里发现一次误触发，当次就把它加成 `evals/routing/fixtures.yaml` 里的一条（`source` 字段记录催生它的 commit）——fixture 文件就是遥测，不另建日志系统。
+- 五个 Adapter 的共享段落由 `adapters/contract.md` + `adapters/adapters.yaml` 渲染（`{{display}}`/`{{short}}`/`{{aliases}}` 三个 token）；改契约后跑 `npm run adapters:sync`，`npm test` 用 `--check` 校验同步。
+- nightly workflow（`.github/workflows/evals.yml`）跑 L1/L2 并把报告上传为 artifact，需要在仓库 secrets 配置 `ANTHROPIC_API_KEY`。
+- 加 `--record` 会把报告写进 `evals/results/`；版本与变更史见 `CHANGELOG.md`。
 
 ## 外部 Agent Adapter 协议
 

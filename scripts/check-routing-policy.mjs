@@ -178,6 +178,53 @@ for (const skill of fs.readdirSync(root)) {
   }
 }
 
+// --- eval fixture sanity (L0, dependency-free) ---
+
+const catalogSkillNames = fs
+  .readdirSync(root)
+  .filter((n) => fs.existsSync(path.join(root, n, 'SKILL.md')));
+
+const routingFixtures = fs.readFileSync(
+  path.join(root, 'evals/routing/fixtures.yaml'),
+  'utf8',
+);
+const behaviorFixtures = fs.readFileSync(
+  path.join(root, 'evals/behavior/fixtures.yaml'),
+  'utf8',
+);
+const fixtureIds = (text) =>
+  [...text.matchAll(/^- id: (\S+)$/gm)].map((m) => m[1]);
+
+const routingIds = fixtureIds(routingFixtures);
+check(routingIds.length >= 30, 'routing fixtures must number at least 30');
+check(
+  new Set(routingIds).size === routingIds.length,
+  'routing fixture ids must be unique',
+);
+for (const match of routingFixtures.matchAll(/expect: \[([^\]]+)\]/g)) {
+  for (const name of match[1]
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)) {
+    check(
+      name === 'none' || catalogSkillNames.includes(name),
+      `routing fixture expects unknown skill: ${name}`,
+    );
+  }
+}
+
+const behaviorIds = fixtureIds(behaviorFixtures);
+check(
+  new Set(behaviorIds).size === behaviorIds.length,
+  'behavior fixture ids must be unique',
+);
+for (const match of behaviorFixtures.matchAll(/^  skill: (\S+)$/gm)) {
+  check(
+    catalogSkillNames.includes(match[1]),
+    `behavior fixture loads unknown skill: ${match[1]}`,
+  );
+}
+
 if (failures.length > 0) {
   for (const failure of failures) console.error(`fail: ${failure}`);
   console.error(`${failures.length} failed, ${checks - failures.length} passed`);

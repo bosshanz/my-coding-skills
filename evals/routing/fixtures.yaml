@@ -1,0 +1,294 @@
+# Routing eval fixtures (L1).
+#
+# Each fixture simulates one user message and the skill(s) it must route to.
+# Discipline: a real mis-trigger becomes a fixture in the same session it was
+# noticed. `source` names the commit or design decision that motivated it.
+#
+# Fields:
+#   id         unique slug
+#   prompt     the simulated user message
+#   expect     expected skills; [none] means no skill should trigger
+#   strict     true  -> strong-model mismatch fails the run
+#              false -> strong-model mismatch is a warning only
+#   rationale  why this expectation holds
+#   source     motivating commit or "design"
+
+# --- dev: default dispatcher (CN + EN, feature + bug) ---
+
+- id: dev-feature-filter-cn
+  prompt: "帮我给用户列表加一个按角色筛选的功能"
+  expect: [dev]
+  strict: true
+  rationale: "Ordinary new requirement, default dispatcher."
+  source: design
+
+- id: dev-feature-pagination-en
+  prompt: "Add pagination to the orders API"
+  expect: [dev]
+  strict: true
+  rationale: "Ordinary new requirement in English."
+  source: design
+
+- id: dev-bug-500-cn
+  prompt: "修一下这个登录偶发 500 的 bug"
+  expect: [dev]
+  strict: true
+  rationale: "Bug fix track."
+  source: design
+
+- id: dev-bug-npe
+  prompt: "这里偶尔空指针，帮我排查修复"
+  expect: [dev]
+  strict: true
+  rationale: "Bug fix track with reproduction-first wording."
+  source: design
+
+- id: dev-bare-e2e
+  prompt: "给下单流程补点 e2e 测试"
+  expect: [dev]
+  strict: true
+  rationale: "Bare request to add e2e/regression/tests stays in dev."
+  source: 2947557
+
+- id: dev-refactor
+  prompt: "把这段重复代码提取成公共函数"
+  expect: [dev]
+  strict: true
+  rationale: "Ordinary implementation work."
+  source: design
+
+- id: dev-csv-export
+  prompt: "新需求：支持把账单导出成 CSV"
+  expect: [dev]
+  strict: true
+  rationale: "Explicit new requirement."
+  source: design
+
+- id: dev-money-feature
+  prompt: "帮我实现优惠券核销功能"
+  expect: [dev]
+  strict: true
+  rationale: "Money/business-relevant implementation still stays in dev."
+  source: 99a1cae
+
+- id: dev-trivial-css
+  prompt: "把这个按钮的边距调小一点"
+  expect: [dev]
+  strict: false
+  rationale: "Trivial tweak; dev handles it without the design skill."
+  source: design
+
+# --- none: generic looks, chat, methodology ---
+
+- id: none-weather
+  prompt: "今天上海天气怎么样"
+  expect: [none]
+  strict: true
+  rationale: "Not software work."
+  source: design
+
+- id: none-leave-email
+  prompt: "帮我写一封请假邮件"
+  expect: [none]
+  strict: true
+  rationale: "Not software work."
+  source: design
+
+- id: none-idempotency-q
+  prompt: "什么是幂等性？"
+  expect: [none]
+  strict: true
+  rationale: "Methodology question, not a delivery task."
+  source: design
+
+- id: none-look-at-skill
+  prompt: "看一下这个 skill 写得怎么样"
+  expect: [none]
+  strict: true
+  rationale: "Generic look request must not trigger qa."
+  source: 99a1cae
+
+- id: none-look-normal
+  prompt: "看下这个用法正常吗"
+  expect: [none]
+  strict: false
+  rationale: "Narrow is-this-normal look; qa must not trigger, dev may answer."
+  source: a20f32c
+
+- id: none-run-suite
+  prompt: "跑一遍现有的测试套件"
+  expect: [none]
+  strict: false
+  rationale: "Only running the existing suite is not a qa ask."
+  source: design
+
+- id: none-pr-review
+  prompt: "review 一下这个 PR"
+  expect: [none]
+  strict: false
+  rationale: "Generic review without business/acceptance framing."
+  source: 2947557
+
+- id: none-repo-what
+  prompt: "这个仓库是干嘛的"
+  expect: [none]
+  strict: false
+  rationale: "Orientation question, not delivery."
+  source: design
+
+# --- qa: opt-in business / real-usage pass ---
+
+- id: qa-explicit-dollar
+  prompt: "$qa 走一遍首次下单的真实用法，只诊断不改代码"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit invocation, diagnosis track."
+  source: baae915
+
+- id: qa-slash-diagnose
+  prompt: "/qa 诊断这条退款旅程哪里会坑用户"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit invocation, named journey."
+  source: 2947557
+
+- id: qa-thinking
+  prompt: "用 QA 思维检查一下优惠码这条业务规则会不会静默坏掉"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit QA-thinking ask on a named rule."
+  source: 2947557
+
+- id: qa-business-test
+  prompt: "业务测试一下购物车合并逻辑"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit business-testing ask."
+  source: baae915
+
+- id: qa-protect-rule
+  prompt: "保护一下库存扣减这条业务规则，别让它静默坏掉"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit protection ask on a named rule."
+  source: a20f32c
+
+- id: qa-journey-diagnosis
+  prompt: "诊断一下新用户从注册到首次使用的真实用法，看看哪里会坑人"
+  expect: [qa]
+  strict: true
+  rationale: "Explicit real-usage diagnosis."
+  source: a20f32c
+
+# --- acceptance: opt-in go/no-go ---
+
+- id: acc-explicit
+  prompt: "$acceptance 独立复核一下昨天的登录修复"
+  expect: [acceptance]
+  strict: true
+  rationale: "Explicit invocation."
+  source: design
+
+- id: acc-gonogo
+  prompt: "这个功能上线前做个最终验收，给个 go/no-go"
+  expect: [acceptance]
+  strict: true
+  rationale: "Final acceptance verdict ask."
+  source: design
+
+- id: acc-verify-criteria
+  prompt: "验证一下实现是否符合澄清过的需求，给出验收结论"
+  expect: [acceptance]
+  strict: true
+  rationale: "Verification pass against clarified criteria."
+  source: design
+
+# --- clarify: opt-in product judgment ---
+
+- id: clarify-whether-build
+  prompt: "$clarify 我们要不要做这个功能"
+  expect: [clarify]
+  strict: true
+  rationale: "Explicit invocation, build-or-not judgment."
+  source: 9ca698a
+
+- id: clarify-first-slice
+  prompt: "这个需求第一期该怎么切？目标用户是谁？"
+  expect: [clarify]
+  strict: true
+  rationale: "First slice and target users are clarify asks."
+  source: 9ca698a
+
+- id: clarify-prioritize
+  prompt: "这两个产品机会怎么排优先级，关键取舍是什么"
+  expect: [clarify]
+  strict: true
+  rationale: "Prioritization and tradeoffs."
+  source: 9ca698a
+
+- id: clarify-success-metric
+  prompt: "成功指标怎么定？先做低成本实验还是直接开发？"
+  expect: [clarify]
+  strict: true
+  rationale: "Success signal and low-cost experiment design."
+  source: 9ca698a
+
+- id: clarify-backlog-reject
+  prompt: "帮我把 backlog 整理一下排个 sprint 计划"
+  expect: [none]
+  strict: true
+  rationale: "Ongoing PM operations are explicitly out of clarify's scope."
+  source: 9ca698a
+
+# --- design: meaningful UI / motion ---
+
+- id: design-explicit
+  prompt: "$design 给这个落地页做一次视觉重塑"
+  expect: [design]
+  strict: true
+  rationale: "Explicit invocation, visible reshape."
+  source: design
+
+- id: design-animation-audit
+  prompt: "这个页面切换动画卡顿，审计一下微交互"
+  expect: [design]
+  strict: true
+  rationale: "Animation audit belongs to design."
+  source: design
+
+# --- adapters: explicit external agent only ---
+
+- id: adapter-kimi
+  prompt: "让 Kimi Code 帮我研究一下这个仓库的架构"
+  expect: [kimi-code]
+  strict: true
+  rationale: "Explicit external agent named."
+  source: design
+
+- id: adapter-claude
+  prompt: "use Claude Code to review this diff"
+  expect: [claude-code]
+  strict: true
+  rationale: "Explicit external agent named."
+  source: design
+
+- id: adapter-codex
+  prompt: "用 Codex CLI 做个只读的仓库调研"
+  expect: [codex-cli]
+  strict: true
+  rationale: "Explicit external agent named."
+  source: design
+
+- id: adapter-opencode
+  prompt: "ask OpenCode to investigate this build failure"
+  expect: [opencode]
+  strict: true
+  rationale: "Explicit external agent named."
+  source: design
+
+- id: adapter-grok
+  prompt: "grok 帮我看看为什么构建挂了"
+  expect: [grok-build-cli]
+  strict: true
+  rationale: "Explicit external agent named."
+  source: design

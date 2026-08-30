@@ -28,6 +28,8 @@ check_command() {
 
 info "Skills doctor"
 info "root=$ROOT"
+VERSION="$(sed -n 's/.*"version": "\(.*\)".*/\1/p' "$ROOT/package.json" | head -1)"
+[ -n "$VERSION" ] && info "version=$VERSION"
 
 check_file "install.sh"
 check_executable "install.sh"
@@ -67,7 +69,20 @@ check_executable "grok-build-cli/scripts/grok-build-cli-status.sh"
 check_executable "scripts/skills-doctor.sh"
 check_file "scripts/check-routing-policy.mjs"
 check_file "scripts/test-install-safety.sh"
+check_file "scripts/sync-adapters.mjs"
 check_file "bin/skills.mjs"
+check_file "package-lock.json"
+check_file "CHANGELOG.md"
+check_file "adapters/contract.md"
+check_file "adapters/adapters.yaml"
+check_file "evals/routing/fixtures.yaml"
+check_file "evals/routing/runner.mjs"
+check_file "evals/routing/prompt.md"
+check_file "evals/behavior/fixtures.yaml"
+check_file "evals/behavior/runner.mjs"
+check_file "evals/e2e/smoke.mjs"
+check_file "evals/results/README.md"
+check_file ".github/workflows/evals.yml"
 
 check_absent "agent-delegation"
 check_absent "dev-workflow"
@@ -77,7 +92,7 @@ check_absent "andy-dev"
 check_absent "codebase-improve"
 check_absent "loop-engineering"
 
-if grep -R "_SKILL_DIR" "$ROOT" --exclude-dir=.git --exclude=skills-doctor.sh >/tmp/skills-doctor-grep.$$ 2>/dev/null; then
+if grep -R "_SKILL_DIR" "$ROOT" --exclude-dir=.git --exclude-dir=node_modules --exclude=skills-doctor.sh >/tmp/skills-doctor-grep.$$ 2>/dev/null; then
   fail "undocumented *_SKILL_DIR reference found"
   sed 's/^/  /' /tmp/skills-doctor-grep.$$
 else
@@ -85,7 +100,7 @@ else
 fi
 rm -f /tmp/skills-doctor-grep.$$
 
-if grep -R "\[TODO\|TODO:\|FIXME\|XXX" "$ROOT" --exclude-dir=.git --exclude=skills-doctor.sh >/tmp/skills-doctor-todo.$$ 2>/dev/null; then
+if grep -R "\[TODO\|TODO:\|FIXME\|XXX" "$ROOT" --exclude-dir=.git --exclude-dir=node_modules --exclude=skills-doctor.sh >/tmp/skills-doctor-todo.$$ 2>/dev/null; then
   warn "TODO-style markers found"
   sed 's/^/  /' /tmp/skills-doctor-todo.$$
 else

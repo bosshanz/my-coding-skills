@@ -5,7 +5,8 @@ description: "Dispatch OpenCode CLI as an external coding, research, review, or 
 
 # OpenCode
 
-Use OpenCode CLI as an external terminal agent. OpenCode can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+<!-- adapter-shared:head -->
+Use OpenCode as an external terminal agent. OpenCode can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
 
 ## Adapter Contract
 
@@ -19,7 +20,7 @@ Follow this external-agent contract whenever OpenCode is used from another agent
 ### Must Not Use When
 
 - The user explicitly asks the caller agent to solve the task directly without external delegation.
-- OpenCode CLI is unavailable, cannot authenticate, or cannot access the required context.
+- OpenCode is unavailable, cannot authenticate, or cannot access the required context.
 - Invoking the target would violate security, privacy, permission, or project policy.
 
 ### Invocation Integrity
@@ -43,6 +44,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to OpenCode.
 - Do not ask OpenCode to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask OpenCode to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
 
 ## First Steps
 
@@ -132,10 +134,15 @@ Use `--auto` only for trusted workspaces after the user explicitly accepts the a
 - Do not expose OpenCode execution to untrusted prompts, repositories, or public input without isolation.
 - Do not print tokens, API keys, `auth.json`, environment files, or other credential material.
 - Avoid `--share` unless the user explicitly wants a shareable session transcript and understands what may be exposed.
+
+<!-- adapter-shared:recursion -->
+## Recursion And Delegation Limits
+
 - Do not recursively dispatch OpenCode without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
 
 ## OpenCode Skills And Rules
 

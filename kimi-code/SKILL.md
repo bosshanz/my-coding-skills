@@ -5,7 +5,8 @@ description: "Dispatch Kimi Code CLI as an external coding or research agent fro
 
 # Kimi Code
 
-Use Kimi Code CLI as an external terminal agent that another coding agent can dispatch for coding and research work. Kimi can inspect the repo, run commands, edit files, and report findings; the calling agent remains responsible for scoping the delegation, reviewing the result, and verifying before presenting work as complete.
+<!-- adapter-shared:head -->
+Use Kimi Code as an external terminal agent. Kimi can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
 
 ## Adapter Contract
 
@@ -19,7 +20,7 @@ Follow this external-agent contract whenever Kimi Code is used from another agen
 ### Must Not Use When
 
 - The user explicitly asks the caller agent to solve the task directly without external delegation.
-- Kimi Code CLI is unavailable, cannot authenticate, or cannot access the required context.
+- Kimi Code is unavailable, cannot authenticate, or cannot access the required context.
 - Invoking the target would violate security, privacy, permission, or project policy.
 
 ### Invocation Integrity
@@ -43,6 +44,7 @@ External CLI selection is explicit: use this adapter only after the user or proj
 - Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to Kimi.
 - Do not ask Kimi to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Kimi to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
 
 ## First Steps
 
@@ -129,12 +131,14 @@ Review example:
 kimi -p "Mode: research-only. Review the current git diff for correctness risks and missing tests. Evaluate global/user and project/local Skills discoverable by Kimi, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used and only actionable findings with file paths and reasoning."
 ```
 
+<!-- adapter-shared:recursion -->
 ## Recursion And Delegation Limits
 
 - Do not recursively dispatch Kimi Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.
 - Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
 
 ## Kimi Skills
 

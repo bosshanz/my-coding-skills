@@ -1,0 +1,66 @@
+# Adapter Contract Template
+
+Single source of truth for the sections shared by all five external-agent
+adapter SKILL.md files. `scripts/sync-adapters.mjs` renders this template with
+the per-CLI variables in `adapters.yaml` and writes the result between the
+matching markers in each `<skill>/SKILL.md`. Run `npm run adapters:sync` after
+editing here, or `node scripts/sync-adapters.mjs --check` to verify sync
+(it runs as part of `npm test`).
+
+Per-CLI sections (frontmatter description, First Steps, Dispatch Decision,
+Invocation, Delegation Pattern, permission notes, CLI-specific skill
+directories, Troubleshooting) stay hand-written in each SKILL.md, outside the
+markers.
+
+Tokens: `{{display}}` full CLI name, `{{short}}` prose name, `{{aliases}}`
+quoted alias list for the Must Use When bullet.
+
+<!-- adapter-shared:head -->
+Use {{display}} as an external terminal agent. {{short}} can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+
+## Adapter Contract
+
+Follow this external-agent contract whenever {{display}} is used from another agent.
+
+### Must Use When
+
+- The user explicitly asks to use {{display}}, including common wording such as {{aliases}}, or the matching Skill name.
+- An authorized project delegation policy selects {{display}}.
+
+### Must Not Use When
+
+- The user explicitly asks the caller agent to solve the task directly without external delegation.
+- {{display}} is unavailable, cannot authenticate, or cannot access the required context.
+- Invoking the target would violate security, privacy, permission, or project policy.
+
+### Invocation Integrity
+
+- Actually invoke {{display}}; do not simulate, impersonate, or fabricate its response.
+- Do not summarize what {{display}} might say without invoking it when invocation is required.
+- If invocation fails, report the failure and do not fabricate findings.
+- Do not silently substitute another agent.
+
+### Output Contract
+
+Ask {{display}} to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
+
+## Internal Skill Routing
+
+External CLI selection is explicit: use this adapter only after the user or project policy selects {{display}}. After dispatch, let {{display}} use its own discoverable global/user and project/local Skills automatically.
+
+- In the prompt, tell {{short}} to evaluate global/user and project/local Skills discoverable by {{short}}, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
+- Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
+- Respect any Skill explicitly named by the user.
+- Prefer `dev` for ordinary implementation or bug repair; `design` for UI design direction, visual quality, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to {{short}}.
+- Do not ask {{short}} to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
+- Ask {{short}} to report which Skills it used or why none were used.
+<!-- /adapter-shared:head -->
+
+<!-- adapter-shared:recursion -->
+## Recursion And Delegation Limits
+
+- Do not recursively dispatch {{display}} without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
+- Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
+- Keep delegation depth to one hop by default.
+- Do not start a duplicate external agent on the same scope when one is already active.
+<!-- /adapter-shared:recursion -->
