@@ -17,7 +17,15 @@ Use this Skill to independently verify whether completed implementation work is 
 
 ## Independence Level
 
-Read `references/independence.md` when the task requires a stronger separation between implementation and acceptance. Report the requested and achieved level; do not call a review independent unless the separation mechanism is real.
+Use the smallest sufficient review level, and report both the requested and achieved level:
+
+- L0: same-agent self-check.
+- L1: fresh-context review.
+- L2: independent Agent or model review.
+- L3: deterministic external verification.
+- L4: human or domain-owner approval.
+
+Do not call a review independent unless the separation mechanism is real and stated.
 
 ## Repository Context
 

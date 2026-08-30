@@ -1,6 +1,6 @@
 ---
 name: claude-code
-description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back. When the calling agent is itself Claude Code, do not spawn a subprocess for ordinary work; answer directly unless the user explicitly requests an isolated independent pass."
 ---
 
 # Claude Code
@@ -61,7 +61,7 @@ Dispatch Claude Code for an independent research, coding, or review pass:
 - Implement a small or medium task with explicit file and test boundaries.
 - Produce structured output for downstream automation.
 
-Keep work in the calling agent when the task is tiny, requires sensitive credentials, depends on UI-only state, or needs direct control over approvals.
+Keep work in the calling agent when the task is tiny, requires sensitive credentials, depends on UI-only state, needs direct control over approvals, or the caller is already Claude Code and the user did not request an isolated second opinion.
 
 ## Invocation
 
@@ -114,6 +114,7 @@ claude
 
 ## Recursion And Delegation Limits
 
+- If the calling agent is already Claude Code, treat “use Claude Code” as a request to the current agent and do the work directly. Spawn a subprocess only for an explicitly requested isolated pass (fresh context, no shared session state).
 - Do not recursively dispatch Claude Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
 - Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
 - Keep delegation depth to one hop by default.

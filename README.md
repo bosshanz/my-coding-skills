@@ -38,6 +38,7 @@ English version: [README.en.md](./README.en.md)
 - Bug 修复：审查问题、稳定复现、定位根因、确认修复方案，再实施最小修复、回归测试和验收
 - Superpowers Lite：轻量设计、TDD、系统化调试、review gate 和 evidence-based completion
 - UI 设计：有意义的 UI 创建或重塑时按需调用独立的 `design` Skill，获得设计方向、前端质量与动效方法论
+- 后端工程：服务端行为变更契约：调用方与权限、边界校验、幂等、错误与兼容
 - 后端架构：API、服务边界、缓存、消息、失败模式、可观测性和可靠性
 - 后端质量：请求权威、租户隔离、错误映射、幂等、超时、测试分层和进程生命周期
 - 数据库工程：schema、约束、事务、索引、查询计划、迁移、回填、容量和生产安全
@@ -168,6 +169,7 @@ dev/
     stack.md
     design-and-research.md
     documentation.md
+    backend-engineering.md
     backend-architecture.md
     backend-quality.md
     database-engineering.md
@@ -217,10 +219,16 @@ grok-build-cli/
     grok-build-cli-status.sh
 scripts/
   skills-doctor.sh
+  check-routing-policy.mjs
+  test-install-safety.sh
+bin/
+  skills.mjs
+package.json
 LICENSE
 README.md
 README.en.md
 install.sh
+uninstall.sh
 ```
 
 

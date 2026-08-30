@@ -120,6 +120,64 @@ excludes(
   'English README must not mechanically route evidence gaps to qa',
 );
 
+const treeBlock = (text, heading) => {
+  const start = text.indexOf(heading);
+  if (start === -1) return '';
+  const fenced = text.slice(start).match(/```text\n([\s\S]*?)```/);
+  return fenced ? fenced[1] : '';
+};
+
+const treeZh = treeBlock(files.readme, '## 目录结构');
+const treeEn = treeBlock(files.readmeEn, '## Repository Structure');
+check(treeZh.length > 0, 'Chinese README must contain a directory-structure tree');
+check(treeEn.length > 0, 'English README must contain a directory-structure tree');
+
+const treePaths = (tree) => {
+  const parents = [''];
+  const paths = [];
+  for (const line of tree.split('\n')) {
+    const match = line.match(/^(\s*)(\S.*)$/);
+    if (!match) continue;
+    const depth = match[1].length / 2;
+    const name = match[2];
+    if (name.endsWith('/')) {
+      parents[depth + 1] = parents[depth] + name;
+    } else {
+      paths.push(parents[depth] + name);
+    }
+  }
+  return paths;
+};
+
+for (const tree of [treeZh, treeEn]) {
+  for (const entry of treePaths(tree)) {
+    check(
+      fs.existsSync(path.join(root, entry)),
+      `README tree lists a missing file: ${entry}`,
+    );
+  }
+}
+
+for (const skill of fs.readdirSync(root)) {
+  const skillFile = path.join(root, skill, 'SKILL.md');
+  const refDir = path.join(root, skill, 'references');
+  if (!fs.existsSync(skillFile) || !fs.existsSync(refDir)) continue;
+  for (const ref of fs.readdirSync(refDir)) {
+    if (!ref.endsWith('.md')) continue;
+    const refPath = `${skill}/references/${ref}`;
+    check(
+      fs.readFileSync(skillFile, 'utf8').includes(ref),
+      `${refPath} must be referenced in ${skill}/SKILL.md`,
+    );
+    const listed = (tree) =>
+      tree.split('\n').some((line) => line.trim() === ref);
+    check(
+      listed(treeZh) && listed(treeEn),
+      `${refPath} must be listed in both README directory trees`,
+    );
+  }
+}
+
 if (failures.length > 0) {
   for (const failure of failures) console.error(`fail: ${failure}`);
   console.error(`${failures.length} failed, ${checks - failures.length} passed`);

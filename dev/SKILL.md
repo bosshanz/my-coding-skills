@@ -1,6 +1,6 @@
 ---
 name: dev
-description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
+description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping; matches Chinese or English asks such as 新需求, 新功能, 改一下, 修 bug, 修复问题. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
 ---
 
 # Dev
@@ -170,6 +170,7 @@ Load the smallest reference set that can materially improve the work.
 | `design` skill (invoke, not a reference) | New UI, meaningful UI reshaping, motion/animation work, or visual-quality review. |
 | `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
+| `references/backend-engineering.md` | Server-side behavior change: endpoint, webhook, worker, command, backend integration, authn/authz path, public or internal contract, or backend failure path. |
 | `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |
 | `references/backend-quality.md` | Handlers, authz, tenancy, error mapping, idempotency, timeouts, backend tests, or process lifecycle. |
 | `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, capacity, destructive data operations, or production data access. |

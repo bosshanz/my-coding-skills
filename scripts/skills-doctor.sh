@@ -46,7 +46,7 @@ for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli op
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-architecture.md backend-quality.md database-engineering.md; do
+for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-engineering.md backend-architecture.md backend-quality.md database-engineering.md; do
   check_file "dev/references/$ref"
 done
 
@@ -54,7 +54,6 @@ for ref in design-direction.md quality.md animation.md anthropic-frontend-design
   check_file "design/references/$ref"
 done
 
-check_file "acceptance/references/independence.md"
 check_file "kimi-code/references/kimi-code-reference.md"
 check_file "claude-code/references/claude-code-reference.md"
 check_file "codex-cli/references/codex-cli-reference.md"
@@ -67,6 +66,8 @@ check_executable "opencode/scripts/opencode-status.sh"
 check_executable "grok-build-cli/scripts/grok-build-cli-status.sh"
 check_executable "scripts/skills-doctor.sh"
 check_file "scripts/check-routing-policy.mjs"
+check_file "scripts/test-install-safety.sh"
+check_file "bin/skills.mjs"
 
 check_absent "agent-delegation"
 check_absent "dev-workflow"

@@ -38,6 +38,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
 - UI design: invoke the standalone `design` Skill on demand for meaningful UI creation or reshaping to get design direction, frontend quality, and motion methodology
+- Backend engineering: server-side change contract: caller and permissions, boundary validation, idempotency, errors, and compatibility
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
 - Backend quality: request authority, tenant isolation, error mapping, idempotency, timeouts, test layering, and process lifecycle
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
@@ -168,6 +169,7 @@ dev/
     stack.md
     design-and-research.md
     documentation.md
+    backend-engineering.md
     backend-architecture.md
     backend-quality.md
     database-engineering.md
@@ -217,10 +219,16 @@ grok-build-cli/
     grok-build-cli-status.sh
 scripts/
   skills-doctor.sh
+  check-routing-policy.mjs
+  test-install-safety.sh
+bin/
+  skills.mjs
+package.json
 LICENSE
 README.md
 README.en.md
 install.sh
+uninstall.sh
 ```
 
 
