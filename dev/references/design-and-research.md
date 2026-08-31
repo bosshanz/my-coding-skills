@@ -56,6 +56,7 @@ Prefer deep modules: small interfaces with meaningful behavior behind them. Use 
 - Produce interfaces that are intentional, not generic. Keep typography, spacing, color, and component emphasis coherent.
 - Cover loading, empty, error, success, hover, focus, and responsive states.
 - Add a flow diagram when the UI involves multi-step interaction, branching, or role-based paths.
+- For meaningful flow, usability, state-transition, recovery, or AI-native interaction work, invoke the `design` Skill and load its `references/interaction.md`; the bullets here only frame the implementation solution.
 
 ## UI And Interaction
 

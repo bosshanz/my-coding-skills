@@ -23,12 +23,14 @@ English version: [README.en.md](./README.en.md)
 
 这是面向 UI 工作的独立设计 Skill，由 `dev` 按需调用，也可以直接触发：
 
-- 新 UI 或可见重塑：编码前先确定目的、基调、配色、字体、版式和 signature element
+- 交互方向：先定义用户任务、对象与动作、主流程、状态转换、反馈与控制、中断恢复和输入模型
+- 新 UI 或可见重塑：在交互层清楚后确定目的、基调、配色、字体、版式和 signature element
 - 前端工程质量：交互状态、可访问性、响应式、性能与验收 gate
+- AI Native 交互：理解与澄清、proposal / approval / execution 分层、真实 Runtime 进度、steering、takeover、checkpoint 和 resume
 - 动效方法论：具体时长、easing 曲线、弹簧参数、编排规则、动画审计清单与术语表，以及“哪里该动、哪里不该动”的判断
 - 完整纳入 Anthropic `frontend-design` 的 UI 设计工作流（Apache-2.0），并蒸馏 emilkowalski/skills 的动画方法论（MIT）
 
-触发建议：创建有意义的新 UI、重塑现有 UI、实现或审计动画/微交互时使用；`dev` 在 UI 任务中会自动调用。纯后端工作或细碎 CSS 调整不需要它。
+触发建议：创建或重塑有意义的 UI，设计或改进用户流程、可用性、信息架构、状态转换、反馈恢复、AI Native 交互，或实现/审计动画与微交互时使用；`dev` 在 UI 或交互实现任务中会自动调用。纯后端工作、已定行为的细碎 CSS 调整、独立业务 QA 或最终验收不需要它。
 
 ### `dev`
 
@@ -37,7 +39,7 @@ English version: [README.en.md](./README.en.md)
 - 新需求：聊天澄清目标与验收标准，确认方案，再实施编码、测试和验收
 - Bug 修复：审查问题、稳定复现、定位根因、确认修复方案，再实施最小修复、回归测试和验收
 - Superpowers Lite：轻量设计、TDD、系统化调试、review gate 和 evidence-based completion
-- UI 设计：有意义的 UI 创建或重塑时按需调用独立的 `design` Skill，获得设计方向、前端质量与动效方法论
+- UI 设计：有意义的 UI 或交互流程创建、重塑时按需调用独立的 `design` Skill，获得交互方向、视觉方向、前端质量与动效方法论
 - 后端工程：服务端行为变更契约：调用方与权限、边界校验、幂等、错误与兼容
 - 后端架构：API、服务边界、缓存、消息、失败模式、可观测性和可靠性
 - 后端质量：请求权威、租户隔离、错误映射、幂等、超时、测试分层和进程生命周期
@@ -74,7 +76,7 @@ English version: [README.en.md](./README.en.md)
 - 需要时维护 `CONTEXT.md` 里的领域词汇，但不把它变成实现方案或草稿
 - 只在决策难以逆转、未来读者会疑惑、且确有取舍时建议写 ADR
 - 用户明确要求且判断已经清楚时，可以输出轻量产品方案、决策 memo、PRD 或实验 brief
-- 不承接持续 roadmap、backlog/sprint 管理、stakeholder 协调、交付跟踪或排期承诺，也不模拟已经接管；即使显式调用 `$clarify`，也应简短说明边界并停止，最多建议把一次性的决策或运营机制文档作为后续独立任务，并明确持续执行所需的人类负责人或授权系统。对齐后默认交给 `dev` 实施或 `design` 定视觉；只有用户明确要求独立业务/真实用法检查时才交给 `qa`
+- 不承接持续 roadmap、backlog/sprint 管理、stakeholder 协调、交付跟踪或排期承诺，也不模拟已经接管；即使显式调用 `$clarify`，也应简短说明边界并停止，最多建议把一次性的决策或运营机制文档作为后续独立任务，并明确持续执行所需的人类负责人或授权系统。对齐后默认交给 `dev` 实施或 `design` 定交互/视觉；只有用户明确要求独立业务/真实用法检查时才交给 `qa`
 
 触发建议：用户明确要求 `$clarify`、产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验、需求拷问、方案访谈，或需要沉淀领域词汇/ADR 时使用；普通开发请求仍走 `dev`。
 
@@ -157,6 +159,7 @@ design/
   SKILL.md
   agents/openai.yaml
   references/
+    interaction.md
     design-direction.md
     quality.md
     animation.md
@@ -256,7 +259,7 @@ uninstall.sh
 
 - 从 Superpowers 吸收轻量工程纪律：澄清、设计、计划、TDD、系统化调试、review gate、完成前验证和 evidence over claims。
 - 从 Matt Pocock 的 Skills 吸收更硬的工程规则：red-capable 调试反馈环、tracer-bullet TDD、deep module / seam / interface 架构词汇。
-- UI 设计方向、前端质量与动效方法论由独立的 `design` Skill 提供：完整纳入 Anthropic `frontend-design` 的 UI 设计工作流（先确定审美方向、token、版式和 signature，再自我批评后编码），并蒸馏 emilkowalski/skills 的动画方法论；`dev` 在做有意义的 UI 时按需调用它。上游 Apache-2.0 正文与许可证随 `design` 分发。
+- UI 交互方向、视觉方向、前端质量与动效方法论由独立的 `design` Skill 提供：产品型 UI 先定义用户任务、对象/动作、主流程、状态转换、反馈控制与恢复，再让视觉层强化交互层级；视觉重塑继续使用完整的 Anthropic `frontend-design` 工作流，并按需使用从 emilkowalski/skills 蒸馏的动画方法论。`dev` 在做有意义的 UI 或交互实现时按需调用它。上游 Apache-2.0 正文与许可证随 `design` 分发。
 - 从资深数据库工程实践吸收数据建模、约束、事务、索引、查询计划、迁移、回填和生产数据库安全。
 - 从第一性原理约束后端实现质量：权威、真实效果、有界资源、重试环境、可观测性卫生和能证明不变量的测试。
 - 用第一性原理约束方案选择，用对抗式审查反证设计、修复和完成声明。
@@ -332,7 +335,7 @@ cd my-coding-skills
 
 支持的 Skill / 分组：
 
-- `design`：UI 设计方向、前端质量与动效方法论
+- `design`：UI 交互方向、视觉方向、前端质量与动效方法论
 - `dev`：默认研发工作流，集成 Superpowers Lite，UI 任务按需调用 `design`
 - `qa`：先理解业务和真实用法，再用 QA 思维保护，而不是堆测试脚本
 - `clarify`：动手前的资深产品判断和架构对齐，不承接持续 PM 运营与交付管理
@@ -404,6 +407,10 @@ Use $qa to first understand the real business and how a user uses it, then prote
 
 ```text
 Use $design to review and improve the animations on this page.
+```
+
+```text
+Use $design to redesign this multi-step publish flow, including state transitions, cancellation, retry, and recovery before visual polish.
 ```
 
 ```text
@@ -495,11 +502,11 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 
 ## 自动触发建议
 
-- 创建有意义的新 UI、重塑现有 UI、实现或审计动画/微交互时使用 `design`；`dev` 在 UI 任务中会自动调用它。
+- 创建或重塑有意义的 UI，设计或改进用户流程、可用性、状态转换、反馈恢复、AI Native 交互，或实现/审计动画与微交互时使用 `design`；`dev` 在 UI 或交互实现任务中会自动调用它。
 - 新需求默认使用 `dev` 的需求交付路径：聊天确认需求和验收标准、确认方案、编码、测试、验收。
 - Bug 默认使用 `dev` 的修复路径：审查与复现、定位根因、确认方案、最小修复、回归测试、验收。
 - `dev` 先判断任务类型和变更边界，只加载与当前任务相关的 reference；不要因为默认触发就读取所有 reference。
-- 专门要求产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验，或先拷问/访谈/沉淀领域词汇或 ADR 时使用 `clarify`；它采用资深 PM 判断，但不负责持续 PM 运营，下一步默认是 `$dev` 实施、`$design` 定视觉或 stop。
+- 专门要求产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验，或先拷问/访谈/沉淀领域词汇或 ADR 时使用 `clarify`；它采用资深 PM 判断，但不负责持续 PM 运营，下一步默认是 `$dev` 实施、`$design` 定交互/视觉或 stop。
 - 只有用户明确调用 `$qa` / `/qa`，或明确要求业务测试、QA 思维、某条用户旅程/真实用法诊断、保护已命名业务规则时才使用 `qa`。一般的「看一下」「review」不触发；只说「补 e2e / 回归 / 补测试」仍走 `dev`。
 - 专门要求“最终验收/独立复核/go-no-go/验收结论”时使用 `acceptance`；它默认不继续实现，并直接判断业务与真实用法证据是否充分。产品缺陷交 `$dev`，目标不清交 `$clarify`；仅在用户明确要求时才把独立业务/用法保护交给 `$qa`。
 - 用户明确指定外部 Agent 时才使用具体 Adapter：`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli`。
@@ -541,7 +548,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 
 - 用户明确指定某个 Skill 时，优先尊重用户指定。
 - 当全局 Skill 和项目本地 Skill 都匹配时，优先使用项目本地 Skill，因为它通常更贴近当前仓库的约束、命令和领域语义。
-- UI 设计方向、视觉质量或动效工作优先使用 `design`。
+- UI 交互设计、视觉方向、可用性、AI Native 交互或动效工作优先使用 `design`。
 - 普通实现或 Bug 修复优先让目标 CLI 使用可发现的 `dev`。
 - 资深产品判断、需求或架构发现优先使用 `clarify`；持续 roadmap、backlog/sprint 管理、stakeholder 协调与交付跟踪不属于它。
 - 用户明确要求独立的业务理解、真实用法诊断或 QA 保护时才使用 `qa`。

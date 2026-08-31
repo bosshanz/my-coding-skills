@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
-  "version": "0.3.0",
-  "description": "Portable design, development workflow, QA, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
+  "version": "0.4.0",
+  "description": "Portable interaction and visual design, development workflow, QA, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"

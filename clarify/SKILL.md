@@ -36,12 +36,12 @@ Do not admit a request whose primary job is ongoing product operations or delive
 - Create a lightweight product brief, decision memo, PRD, or experiment brief only when the user explicitly asks for that artifact and the underlying judgment is sufficiently clear.
 - Do not take on ongoing roadmap maintenance, backlog grooming, sprint planning, stakeholder coordination, delivery tracking, status reporting, or date and resource commitments.
 - When asked to own those ongoing PM operations, respond briefly that `clarify` cannot take that responsibility. Do not provide a takeover cadence, simulate continued execution, or remain in discovery. Offer a separately scoped, one-time decision or operating-model artifact only as a possible next request, identify the human owner or authorized system needed for continued execution, and stop.
-- Do not invent visual direction; that belongs to `$design` after the slice is defined.
+- Do not invent interaction or visual direction; that belongs to `$design` after the slice is defined.
 - Do not invent then implement; that belongs to `$dev`.
 - Do not implement protection for already understood usage. Put the rule into the verification strategy for `$dev`; use `$qa` only when the user explicitly requests an independent business or real-usage pass.
 - Do not push an ambiguous problem into delivery merely to create visible progress.
 - Do not treat clarification as permission to start coding unless the user explicitly asks to proceed.
-- Hand off to `$dev` for implementation or `$design` when the next need is visual direction. Hand off to `$qa` only when the user explicitly requested that independent pass and the behavior is sufficiently defined. Stopping is valid when the judgment is not to build.
+- Hand off to `$dev` for implementation or `$design` when the next need is interaction or visual direction. Hand off to `$qa` only when the user explicitly requested that independent pass and the behavior is sufficiently defined. Stopping is valid when the judgment is not to build.
 
 ## Senior Product Judgment
 
@@ -165,7 +165,7 @@ Confirm the smallest relevant set:
 - Whether the work should go to `$dev`, `$design`, remain in discovery, or stop; include `$qa` only when the user explicitly requested it.
 - Durable terms or ADR-worthy decisions have been recorded only when justified.
 
-Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$design` when the slice is defined and the next need is visual direction. Use `$qa` only for an explicitly requested independent business or real-usage pass. Prefer stop when the judgment is not to build.
+Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$design` when the slice is defined and the next need is interaction or visual direction. Use `$qa` only for an explicitly requested independent business or real-usage pass. Prefer stop when the judgment is not to build.
 
 When the work is product-shaped, the summary must name the product judgment, first slice, and success signal:
 

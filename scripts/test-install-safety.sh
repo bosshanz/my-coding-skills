@@ -85,14 +85,15 @@ else
   pass=$((pass+1)); printf 'ok (real install created SKILL.md)\n'
 fi
 assert_allows "$INSTALL" design --dest "$dest"
-for vendored_file in \
+for design_file in \
+  "$dest/design/references/interaction.md" \
   "$dest/design/references/design-direction.md" \
   "$dest/design/references/anthropic-frontend-design-LICENSE.txt"; do
-  if [ ! -f "$vendored_file" ]; then
-    printf 'FAIL: real install did not copy vendored design file: %s\n' "$vendored_file" >&2
+  if [ ! -f "$design_file" ]; then
+    printf 'FAIL: real install did not copy design file: %s\n' "$design_file" >&2
     fails=$((fails+1))
   else
-    pass=$((pass+1)); printf 'ok (real install copied %s)\n' "${vendored_file#$dest/}"
+    pass=$((pass+1)); printf 'ok (real install copied %s)\n' "${design_file#$dest/}"
   fi
 done
 assert_allows "$UNINSTALL" dev --dest "$dest"

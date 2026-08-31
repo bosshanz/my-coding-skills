@@ -24,7 +24,7 @@ Do not use `dev` for non-software questions, tiny text rewrites outside a codeba
 
 Use external-agent adapters only when the user explicitly asks another Agent to participate.
 
-For meaningful UI creation or a visible UI reshape, invoke the `design` skill before coding to establish design direction, visual quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, return to `clarify` rather than inventing a product requirement.
+For meaningful UI creation, a visible reshape, or material interaction-flow work, invoke the `design` skill before coding to establish interaction direction, visual direction, frontend quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, return to `clarify` rather than inventing a product requirement.
 
 Do not auto-invoke or routinely recommend `$qa`. Keep developer tests and proportionate business-risk verification in `dev`, including work involving money, permission, lifecycle, quota, or multi-step user jobs. Report concrete unverified business or usage risks directly. Name `$qa` only when the user explicitly asks for an independent business or real-usage pass; a risk category alone is not enough. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
 
@@ -54,7 +54,7 @@ For tiny mechanical edits, perform the smallest direct change plus an appropriat
 - For non-trivial work, compare realistic approaches including the simplest viable option.
 - Recommend one approach with tradeoffs, risks, affected modules, interface/data impact, and verification strategy.
 - Adversarially test the recommendation: name the weakest assumption and evidence that would disprove it.
-- For frontend work, define purpose, visual direction, interaction flow, responsiveness, and important states; invoke the `design` skill for a new or visibly reshaped UI.
+- For frontend work, define purpose, interaction flow, state and recovery behavior, visual direction, responsiveness, and important states; invoke the `design` skill for a new or visibly reshaped UI or material interaction change.
 - For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable. Load `backend-quality.md` when implementing or reviewing handlers, authz, jobs, or error mapping.
 - Do not implement while a material product or architecture decision remains unresolved.
 
@@ -167,7 +167,7 @@ Load the smallest reference set that can materially improve the work.
 
 | Reference | Load when |
 | --- | --- |
-| `design` skill (invoke, not a reference) | New UI, meaningful UI reshaping, motion/animation work, or visual-quality review. |
+| `design` skill (invoke, not a reference) | New UI, meaningful UI or interaction reshaping, flow/usability work, AI-native interaction, motion/animation work, or visual-quality review. |
 | `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
 | `references/backend-engineering.md` | Server-side behavior change: endpoint, webhook, worker, command, backend integration, authn/authz path, public or internal contract, or backend failure path. |

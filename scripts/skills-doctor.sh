@@ -52,7 +52,7 @@ for ref in superpowers-lite.md stack.md design-and-research.md documentation.md 
   check_file "dev/references/$ref"
 done
 
-for ref in design-direction.md quality.md animation.md anthropic-frontend-design-LICENSE.txt; do
+for ref in interaction.md design-direction.md quality.md animation.md anthropic-frontend-design-LICENSE.txt; do
   check_file "design/references/$ref"
 done
 

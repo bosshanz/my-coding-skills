@@ -123,3 +123,19 @@
     - "风险与未验证项"
   must_not_contain: []
   must_match: []
+
+- id: design-interaction-delivery
+  skill: design
+  scenario: |
+    Simulated repo: an internal publishing tool has a bulk publish action.
+    The current UI jumps from selection to a generic spinner, cannot explain
+    partial failure, and loses the selection after retry. The user wants a
+    design proposal only, before implementation.
+  user: "$design 重新设计批量发布的交互，不要先做视觉稿"
+  must_contain: []
+  must_not_contain: []
+  must_match:
+    - "(Interaction direction|交互方向)"
+    - "(Main flow|主流程)"
+    - "(State and recovery|状态与恢复)"
+    - "(Verification|验证)"

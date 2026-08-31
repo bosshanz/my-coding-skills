@@ -3,6 +3,27 @@
 Notable changes to this skill collection. Dates are absolute; versions follow
 a coarse 0.x scheme tied to capability batches.
 
+## [0.4.0] - 2026-08-31
+
+### Added
+
+- `design/references/interaction.md`: interaction direction, object/action
+  modeling, task flow, state-transition contracts, async feedback and control,
+  recovery, input ergonomics, AI-native control loops, critique, and
+  evidence-based verification.
+- Routing and behavior fixtures for interaction redesign, AI-native flows,
+  visual-only proof boundaries, and proportional interaction delivery.
+
+### Changed
+
+- `design` now treats interaction direction as a first-class responsibility
+  before visual direction, frontend quality, and motion; product UI loads the
+  interaction reference before visual design, while primarily visual or
+  marketing work keeps a lighter path.
+- `dev`, `clarify`, adapter routing guidance, Codex UI metadata, bilingual
+  README documentation, doctor checks, and install safety checks now expose
+  the interaction-design capability and its workflow boundaries.
+
 ## [0.3.0] - 2026-08-30
 
 ### Added

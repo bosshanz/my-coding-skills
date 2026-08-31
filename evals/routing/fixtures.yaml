@@ -101,6 +101,13 @@
   rationale: "Methodology question, not a delivery task."
   source: design
 
+- id: none-interaction-methodology
+  prompt: "交互设计和动效设计有什么区别？"
+  expect: [none]
+  strict: true
+  rationale: "A conceptual question is not a request to design or change UI."
+  source: interaction-design
+
 - id: none-look-at-skill
   prompt: "看一下这个 skill 写得怎么样"
   expect: [none]
@@ -240,7 +247,7 @@
   rationale: "Ongoing PM operations are explicitly out of clarify's scope."
   source: 9ca698a
 
-# --- design: meaningful UI / motion ---
+# --- design: meaningful UI / interaction / motion ---
 
 - id: design-explicit
   prompt: "$design 给这个落地页做一次视觉重塑"
@@ -255,6 +262,20 @@
   strict: true
   rationale: "Animation audit belongs to design."
   source: design
+
+- id: design-interaction-redesign
+  prompt: "先不要实现，重新设计批量发布的交互流程：预览、确认、失败恢复和撤销应该怎么走"
+  expect: [design]
+  strict: true
+  rationale: "A design-only request for flow, state, control, and recovery belongs to design."
+  source: interaction-design
+
+- id: design-ai-native-flow
+  prompt: "这个 Agent 页面让用户看不懂它正在做什么，也不能暂停或恢复；请做一次 AI Native 交互设计"
+  expect: [design]
+  strict: true
+  rationale: "AI-native Runtime visibility and user control are interaction-design work."
+  source: interaction-design
 
 # --- adapters: explicit external agent only ---
 

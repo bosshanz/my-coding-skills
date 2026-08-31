@@ -7,6 +7,9 @@ const read = (relativePath) =>
   fs.readFileSync(path.join(root, relativePath), 'utf8');
 
 const files = {
+  design: read('design/SKILL.md'),
+  designAgent: read('design/agents/openai.yaml'),
+  interaction: read('design/references/interaction.md'),
   qa: read('qa/SKILL.md'),
   qaAgent: read('qa/agents/openai.yaml'),
   dev: read('dev/SKILL.md'),
@@ -31,6 +34,50 @@ function contains(text, expected, message) {
 function excludes(text, unexpected, message) {
   check(!text.includes(unexpected), message);
 }
+
+const designDescription =
+  files.design.split('\n').find((line) => line.startsWith('description: ')) ?? '';
+
+contains(
+  designDescription,
+  'UI interaction design',
+  'design frontmatter must expose interaction design before load',
+);
+contains(
+  designDescription,
+  'AI-native interactions',
+  'design frontmatter must route AI-native interaction work',
+);
+contains(
+  files.design,
+  '`references/interaction.md`',
+  'design must route interaction work to its focused reference',
+);
+contains(
+  files.designAgent,
+  'interaction.md',
+  'design agent prompt must expose the interaction reference',
+);
+contains(
+  files.interaction,
+  'User intent',
+  'interaction reference must distinguish user intent from system behavior',
+);
+contains(
+  files.interaction,
+  'Actual effect',
+  'interaction reference must bind visible state to real effects',
+);
+contains(
+  files.interaction,
+  'AI-Native Interaction',
+  'interaction reference must cover AI-native control loops',
+);
+contains(
+  files.interaction,
+  'beautiful screenshot is not interaction acceptance',
+  'interaction verification must reject visual-only proof',
+);
 
 const qaDescription =
   files.qa.split('\n').find((line) => line.startsWith('description: ')) ?? '';

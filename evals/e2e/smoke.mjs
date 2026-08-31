@@ -39,6 +39,7 @@ const FIXTURE_IDS = QUICK
       'qa-explicit-dollar',
       'acc-gonogo',
       'clarify-whether-build',
+      'design-interaction-redesign',
       'adapter-kimi',
     ];
 

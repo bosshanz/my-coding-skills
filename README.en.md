@@ -23,12 +23,14 @@ The repository currently includes ten primary skills:
 
 This is a standalone design Skill for UI work, invoked on demand by `dev` or directly:
 
-- New UI or visible reshape: commit to purpose, tone, palette, typography, layout, and a signature element before coding
+- Interaction direction: define the user job, objects and actions, main flow, state transitions, feedback and control, interruption recovery, and input model first
+- New UI or visible reshape: after the interaction is clear, commit to purpose, tone, palette, typography, layout, and a signature element before coding
 - Frontend engineering quality: interaction states, accessibility, responsiveness, performance, and verification gates
+- AI-native interaction: understanding and clarification, proposal / approval / execution separation, truthful Runtime progress, steering, takeover, checkpoints, and resume
 - Motion methodology: concrete durations, easing curves, spring parameters, choreography rules, an animation audit checklist and vocabulary, plus where motion helps and where it does not
 - Incorporates the complete Anthropic `frontend-design` UI workflow (Apache-2.0) and distills the animation methodology from emilkowalski/skills (MIT)
 
-Trigger guidance: use it when creating meaningful new UI, reshaping existing UI, or implementing or auditing animation and micro-interactions; `dev` invokes it automatically for UI tasks. Not needed for backend-only work or trivial CSS tweaks.
+Trigger guidance: use it when creating or reshaping meaningful UI; designing or improving user flows, usability, information architecture, state transitions, feedback and recovery, or AI-native interaction; or implementing or auditing animation and micro-interactions. `dev` invokes it automatically for UI or interaction implementation. It is not needed for backend-only work, settled trivial CSS tweaks, independent business QA, or final acceptance.
 
 ### `dev`
 
@@ -37,7 +39,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - New requirements: clarify goals and acceptance criteria through conversation, agree on a solution, then implement, test, and accept it
 - Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
-- UI design: invoke the standalone `design` Skill on demand for meaningful UI creation or reshaping to get design direction, frontend quality, and motion methodology
+- UI design: invoke the standalone `design` Skill on demand for meaningful UI or interaction-flow creation and reshaping to get interaction direction, visual direction, frontend quality, and motion methodology
 - Backend engineering: server-side change contract: caller and permissions, boundary validation, idempotency, errors, and compatibility
 - Backend architecture: APIs, service boundaries, cache, messaging, failure modes, observability, and reliability
 - Backend quality: request authority, tenant isolation, error mapping, idempotency, timeouts, test layering, and process lifecycle
@@ -74,7 +76,7 @@ This is the pre-implementation Skill for senior product judgment and architectur
 - Maintain domain terms in `CONTEXT.md` when useful without turning it into a spec or scratchpad
 - Suggest ADRs only for durable, surprising, tradeoff-heavy decisions
 - When explicitly requested and the judgment is clear, produce a lightweight product brief, decision memo, PRD, or experiment brief
-- Do not own ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or date commitments, and do not simulate having taken ownership. Even when `$clarify` is explicitly invoked, state the boundary briefly and stop; at most, suggest a bounded one-time decision or operating-model artifact as a separate next request and name the human owner or authorized system required for continued execution. Hand off to `dev` to implement or `design` for visual direction by default; use `qa` only when the user explicitly requested an independent business or real-usage pass
+- Do not own ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or date commitments, and do not simulate having taken ownership. Even when `$clarify` is explicitly invoked, state the boundary briefly and stop; at most, suggest a bounded one-time decision or operating-model artifact as a separate next request and name the human owner or authorized system required for continued execution. Hand off to `dev` to implement or `design` for interaction or visual direction by default; use `qa` only when the user explicitly requested an independent business or real-usage pass
 
 Trigger guidance: use it when the user explicitly requests `$clarify`, product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. Ordinary development requests should still use `dev`.
 
@@ -157,6 +159,7 @@ design/
   SKILL.md
   agents/openai.yaml
   references/
+    interaction.md
     design-direction.md
     quality.md
     animation.md
@@ -256,7 +259,7 @@ uninstall.sh
 
 - Superpowers-inspired lightweight engineering discipline: clarify, design, plan, use TDD when practical, debug systematically, review, verify, and prefer evidence over claims.
 - Matt Pocock Skills-inspired sharper engineering rules: red-capable debugging feedback loops, tracer-bullet TDD, and deep module / seam / interface architecture vocabulary.
-- UI design direction, frontend quality, and motion methodology provided by the standalone `design` Skill: the complete Anthropic `frontend-design` UI workflow (establish an aesthetic direction, tokens, layout, and signature; self-critique before coding) plus animation methodology distilled from emilkowalski/skills; `dev` invokes it on demand for meaningful UI work. The upstream Apache-2.0 body and license ship with `design`.
+- UI interaction direction, visual direction, frontend quality, and motion methodology provided by the standalone `design` Skill: product UI starts with the user job, objects/actions, main flow, state transitions, feedback, control, and recovery, then lets the visual layer reinforce that hierarchy. Visual reshaping still uses the complete Anthropic `frontend-design` workflow, with animation methodology distilled from emilkowalski/skills loaded only when useful. `dev` invokes it on demand for meaningful UI or interaction implementation. The upstream Apache-2.0 body and license ship with `design`.
 - Senior database engineering practice: data modeling, constraints, transactions, indexes, query plans, migrations, backfills, and production database safety.
 - First-principles backend implementation quality: authority, truthful effects, bounded resources, retry-safe handlers, observability hygiene, and tests that can prove invariants.
 - First-principles reasoning to constrain solution choices, and adversarial review to challenge designs, fixes, and completion claims.
@@ -332,7 +335,7 @@ Common examples:
 
 Supported skills and groups:
 
-- `design`: UI design direction, frontend quality, and motion methodology
+- `design`: UI interaction direction, visual direction, frontend quality, and motion methodology
 - `dev`: default development workflow integrating Superpowers Lite; invokes `design` on demand for UI tasks
 - `qa`: understand the business and real usage, then protect them with QA thinking instead of piling on test scripts
 - `clarify`: senior pre-implementation product judgment and architecture alignment, excluding ongoing PM operations and delivery management
@@ -404,6 +407,10 @@ Use $qa to first understand the real business and how a user uses it, then prote
 
 ```text
 Use $design to review and improve the animations on this page.
+```
+
+```text
+Use $design to redesign this multi-step publish flow, including state transitions, cancellation, retry, and recovery before visual polish.
 ```
 
 ```text
@@ -495,11 +502,11 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Automatic Trigger Guidance
 
-- Use `design` when creating meaningful new UI, reshaping existing UI, or implementing or auditing animation and micro-interactions; `dev` invokes it automatically for UI tasks.
+- Use `design` when creating or reshaping meaningful UI; designing or improving user flows, usability, state transitions, feedback and recovery, or AI-native interaction; or implementing or auditing animation and micro-interactions. `dev` invokes it automatically for UI or interaction implementation.
 - Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
 - Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
-- Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next is normally `$dev` for implementation, `$design` for visual direction, or stop.
+- Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next is normally `$dev` for implementation, `$design` for interaction or visual direction, or stop.
 - Use `qa` only when the user explicitly invokes `$qa` / `/qa`, or explicitly asks for business testing, QA thinking, diagnosis of a named user journey or real-usage question, or protection of a named business rule. Generic look/review requests do not trigger it; a bare add-e2e, regression, or add-tests request stays in `dev`.
 - Use `acceptance` when the user explicitly asks for final acceptance, independent verification, go/no-go review, or an acceptance decision; it does not continue implementation by default and judges business and real-usage evidence directly. Send product defects to `$dev` and an unclear target to `$clarify`; use `$qa` only when the user explicitly requests that separate pass.
 - Use a specific Adapter only when the user explicitly names an external agent: `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`.
@@ -555,7 +562,7 @@ External CLI selection must be explicit; once the user or project policy selects
 
 - Respect any Skill explicitly named by the user.
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
-- Prefer `design` for UI design direction, visual quality, or animation work.
+- Prefer `design` for UI interaction design, visual direction, usability, AI-native interaction, or animation work.
 - Prefer discoverable `dev` for ordinary implementation or Bug repair inside the target CLI.
 - Prefer `clarify` for senior product judgment, requirement, or architecture discovery; ongoing roadmaps, backlog or sprint management, stakeholder coordination, and delivery tracking remain out of scope.
 - Use `qa` only when the user explicitly requests independent business understanding, real-usage diagnosis, or QA protection.

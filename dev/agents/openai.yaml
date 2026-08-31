@@ -1,4 +1,4 @@
 interface:
   display_name: "Dev"
   short_description: "Build, fix, and design software through verified delivery."
-  default_prompt: "Use $dev to deliver a verified software change, delegating UI design direction to the $design skill when the task reshapes a UI."
+  default_prompt: "Use $dev to deliver a verified software change, invoking $design for interaction and visual direction when the task meaningfully reshapes a UI or user flow."
