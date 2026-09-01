@@ -11,6 +11,7 @@ const availableSkills = [
   'dev',
   'qa',
   'acceptance',
+  'reflect',
   'kimi-code',
   'claude-code',
   'codex-cli',
@@ -25,6 +26,7 @@ const groups = new Map([
   ['quality', ['qa', 'acceptance']],
   ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
+  ['meta', ['reflect']],
 ]);
 
 function usage() {
@@ -46,6 +48,7 @@ Groups:
   quality      Install qa and acceptance
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
+  meta         Install reflect (explicit taste loop)
 
 Targets:
   agents       ${join(homedir(), '.agents', 'skills')}

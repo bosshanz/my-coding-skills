@@ -17,7 +17,7 @@ Core principles:
 
 ## Included Skills
 
-The repository currently includes ten primary skills:
+The repository currently includes eleven primary skills:
 
 ### `design`
 
@@ -91,6 +91,15 @@ This is a top-level independent acceptance Skill for go/no-go review after imple
 - Return `accepted`, `accepted with risk`, or `rejected`
 
 Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks for final acceptance, wants an independent review of `dev` output, or needs a pre-launch go/no-go decision. Acceptance is evidence-based and does not require a prior QA stage.
+
+### `reflect`
+An explicit taste-loop skill: it captures durable corrections the user makes in conversation into the always-on layer, so the next session starts already knowing them.
+- Only durable corrections/preferences: explicit `$reflect`, or phrases like "from now on", "always", "stop doing"
+- One signal becomes one line: what to do, scope, source; no source, no entry
+- Every write is confirmed first; no guessing what the user "probably prefers", no silent writes
+- In this repo it writes the `## Taste` section of `CLAUDE.md`; in consumer projects it writes their existing always-on instruction file, or asks - it never creates config files unilaterally
+- If a correction exposes a wrong SKILL.md, it names the contradiction and proposes the fix - it does not edit beyond its pass
+Trigger advice: one-off task feedback ("rename this variable") does not trigger it; product/business rules go to `clarify` / `qa`; ordinary work goes to `dev`.
 
 ### `kimi-code`
 

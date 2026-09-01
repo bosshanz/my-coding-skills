@@ -313,3 +313,35 @@
   strict: true
   rationale: "Explicit external agent named."
   source: design
+
+# --- reflect: explicit taste loop (durable corrections only) ---
+- id: reflect-explicit-dollar
+  prompt: "$reflect 把刚才那条纠正记下来"
+  expect: [reflect]
+  strict: true
+  rationale: "Explicit invocation."
+  source: design
+- id: reflect-durable-correction-cn
+  prompt: "以后这个项目提交信息都用中文,别再用英文了"
+  expect: [reflect]
+  strict: true
+  rationale: "Durable correction about how the agent works; exactly the capture case."
+  source: design
+- id: reflect-durable-correction-en
+  prompt: "From now on always use pnpm instead of npm in this repo"
+  expect: [reflect]
+  strict: true
+  rationale: "Durable tooling preference stated by the user."
+  source: design
+- id: reflect-oneoff-feedback-goes-to-dev
+  prompt: "这个变量名改成 userId,顺便把日志级别调到 debug"
+  expect: [dev]
+  strict: false
+  rationale: "One-off task feedback is dev work, not a preference to capture."
+  source: design
+- id: reflect-business-rule-goes-to-clarify
+  prompt: "产品规则:所有金额字段一律用分存储,后续新表也照这个来"
+  expect: [clarify]
+  strict: false
+  rationale: "Product/business rule, not an agent-working-style preference. Boundary case: cheap+strong both say none (bare statement, no ask); kept non-strict warn to keep the reflect/clarify boundary visible."
+  source: design

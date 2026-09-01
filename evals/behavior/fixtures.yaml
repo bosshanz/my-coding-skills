@@ -139,3 +139,21 @@
     - "(Main flow|主流程)"
     - "(State and recovery|状态与恢复)"
     - "(Verification|验证)"
+
+- id: reflect-capture-confirms-before-write
+  skill: reflect
+  scenario: |
+    Simulated repo: a web app. CLAUDE.md exists and already has a short
+    ## Taste section with two lines. The agent just ran npm install for
+    what is a pnpm project, and the user corrected it.
+  user: "$reflect 以后这个项目都用 pnpm,不要用 npm"
+  must_contain:
+    - "pnpm"
+    - "提炼"
+  must_not_contain:
+    - "已写入"
+    - "已新增"
+  must_match:
+    - "状态[:：]\\s*pending-confirm"
+    - "落点[:：]\\s*.*CLAUDE\\.md"
+    - "下一步[:：]\\s*\`?stop\`?"

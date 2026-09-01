@@ -3,6 +3,22 @@
 Notable changes to this skill collection. Dates are absolute; versions follow
 a coarse 0.x scheme tied to capability batches.
 
+## [0.5.0] - 2026-09-01
+### Added
+- `CLAUDE.md`: always-on Rules layer for developing this repository (route
+discipline, adapter binding, evidence gate) plus the Rules / Skills / Taste
+layer map and an empty `## Taste` section.
+- `docs/three-layers.md`: three-layer audit of all 10 skills and the explicit
+taste-loop design (Observe -> Extract -> Learn -> Apply -> Verify).
+- `reflect/` (11th skill): explicit taste loop - captures durable user
+corrections into the always-on layer, one confirmed line at a time; wired
+into `bin/skills.mjs`, `install.sh`, the routing/behavior fixtures, and
+both READMEs.
+### Changed
+- All 10 `SKILL.md` frontmatter: trigger text moved verbatim into
+`when_to_use`, `argument-hint` added; `evals/routing` catalog now renders
+`description + when_to_use` to match how harness listings present skills.
+
 ## [0.4.0] - 2026-08-31
 
 ### Added

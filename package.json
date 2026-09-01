@@ -12,6 +12,7 @@
     "dev",
     "qa",
     "acceptance",
+    "reflect",
     "kimi-code",
     "claude-code",
     "codex-cli",

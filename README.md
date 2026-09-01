@@ -17,7 +17,7 @@ English version: [README.en.md](./README.en.md)
 
 ## 仓库内容
 
-当前包含 10 个主 Skill：
+当前包含 11 个主 Skill：
 
 ### `design`
 
@@ -91,6 +91,15 @@ English version: [README.en.md](./README.en.md)
 - 输出 `accepted`、`accepted with risk` 或 `rejected`
 
 触发建议：用户明确写 `$acceptance`、要求最终验收、要求独立复核 `dev` 结果或需要上线前 go/no-go 判断时使用。验收以证据为准，不要求先经过 QA。
+
+### `reflect`
+这是显式 taste 回路的独立 Skill,把用户在会话里给出的持久性纠正沉淀到 always-on 层,让下一个会话一开始就知道:
+- 只接「持久性纠正/偏好」:点名 `$reflect`,或用户说出「以后…」「别再…」「always / stop doing」这类可泛化的话
+- 一次信号只提炼一行:做什么、适用范围、来源;没有来源不入库
+- 落盘前必须逐条确认;绝不臆测用户「大概喜欢」,绝不静默写入
+- 本仓库写 `CLAUDE.md` 的 `## Taste` 区;消费方项目写其已有的 always-on 说明文件,没有就问,绝不擅自新建配置
+- 纠正暴露出某个 SKILL.md 本身教错了,只指认和提议,不越权改
+触发建议:一次性任务反馈(「这个变量改名」)不触发;产品/业务规则走 `clarify` / `qa`;普通需求走 `dev`。
 
 ### `kimi-code`
 

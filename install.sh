@@ -9,6 +9,7 @@ ALL_SKILLS=(
   dev
   qa
   acceptance
+  reflect
   kimi-code
   claude-code
   codex-cli
@@ -172,7 +173,10 @@ resolve_requests() {
         append_unique opencode
         append_unique grok-build-cli
         ;;
-      design|clarify|dev|qa|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
+        meta)
+            append_unique reflect
+        ;;
+      design|clarify|dev|qa|acceptance|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
         append_unique "$request"
         ;;
       *)
