@@ -1,6 +1,8 @@
 ---
 name: design
-description: "UI interaction design, visual direction, frontend quality, and motion guidance. Use when creating or reshaping meaningful UI; designing or improving user flows, usability, information architecture, state transitions, feedback, recovery, or AI-native interactions; or implementing and auditing animation and micro-interactions. Establishes how users understand and control the system before visual polish and coding. Do not use for backend-only work, trivial CSS tweaks, independent business QA, or final acceptance."
+description: "UI interaction design, visual direction, frontend quality, and motion guidance."
+when_to_use: "Use when creating or reshaping meaningful UI; designing or improving user flows, usability, information architecture, state transitions, feedback, recovery, or AI-native interactions; or implementing and auditing animation and micro-interactions. Establishes how users understand and control the system before visual polish and coding. Do not use for backend-only work, trivial CSS tweaks, independent business QA, or final acceptance."
+argument-hint: "[界面 / 流程 | UI or flow]"
 ---
 
 # Design

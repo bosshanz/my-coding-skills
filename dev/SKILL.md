@@ -1,6 +1,8 @@
 ---
 name: dev
-description: "Thin default dispatcher for delivering new requirements and fixing bugs. Use automatically for ordinary software work, including meaningful UI creation or reshaping; matches Chinese or English asks such as 新需求, 新功能, 改一下, 修 bug, 修复问题. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
+description: "Thin default dispatcher for delivering new requirements and fixing bugs."
+when_to_use: "Use automatically for ordinary software work, including meaningful UI creation or reshaping; matches Chinese or English asks such as 新需求, 新功能, 改一下, 修 bug, 修复问题. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
+argument-hint: "[新需求 / 修 bug | requirement or bug]"
 ---
 
 # Dev

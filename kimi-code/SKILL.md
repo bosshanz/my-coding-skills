@@ -1,6 +1,8 @@
 ---
 name: kimi-code
-description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent: ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting. Use especially when the user explicitly names Kimi Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent:"
+when_to_use: "ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting. Use especially when the user explicitly names Kimi Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+argument-hint: "[任务 | task]"
 ---
 
 # Kimi Code

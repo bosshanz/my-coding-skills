@@ -1,6 +1,8 @@
 ---
 name: acceptance
-description: "Independent acceptance and adversarial verification review after implementation. Use when the user explicitly invokes $acceptance, asks for final acceptance, wants a separate verification pass after $dev, needs go/no-go judgment, or wants implementation evidence checked against clarified requirements, tests, risks, rollout, rollback, docs, and unresolved gaps."
+description: "Independent acceptance and adversarial verification review after implementation."
+when_to_use: "Use when the user explicitly invokes $acceptance, asks for final acceptance, wants a separate verification pass after $dev, needs go/no-go judgment, or wants implementation evidence checked against clarified requirements, tests, risks, rollout, rollback, docs, and unresolved gaps."
+argument-hint: "[验收范围 | scope]"
 ---
 
 # Acceptance

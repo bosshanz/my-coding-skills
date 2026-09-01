@@ -1,6 +1,8 @@
 ---
 name: codex-cli
-description: "Dispatch Codex CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Codex CLI to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Codex CLI installation, authentication, non-interactive codex exec mode, sandboxing, approvals, sessions, structured output, configuration, or troubleshooting. Use especially when the user explicitly names Codex CLI; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch Codex CLI as an external coding, research, review, or terminal automation agent from another coding agent."
+when_to_use: "Use when asking Codex CLI to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Codex CLI installation, authentication, non-interactive codex exec mode, sandboxing, approvals, sessions, structured output, configuration, or troubleshooting. Use especially when the user explicitly names Codex CLI; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+argument-hint: "[任务 | task]"
 ---
 
 # Codex CLI

@@ -1,6 +1,8 @@
 ---
 name: opencode
-description: "Dispatch OpenCode CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking OpenCode to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling OpenCode installation, authentication, non-interactive opencode run mode, sessions, agents, skills, server attachment, or troubleshooting. Use especially when the user explicitly names OpenCode; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch OpenCode CLI as an external coding, research, review, or terminal automation agent from another coding agent."
+when_to_use: "Use when asking OpenCode to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling OpenCode installation, authentication, non-interactive opencode run mode, sessions, agents, skills, server attachment, or troubleshooting. Use especially when the user explicitly names OpenCode; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+argument-hint: "[任务 | task]"
 ---
 
 # OpenCode

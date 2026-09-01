@@ -1,6 +1,8 @@
 ---
 name: claude-code
-description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back. When the calling agent is itself Claude Code, do not spawn a subprocess for ordinary work; answer directly unless the user explicitly requests an isolated independent pass."
+description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent."
+when_to_use: "Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back. When the calling agent is itself Claude Code, do not spawn a subprocess for ordinary work; answer directly unless the user explicitly requests an isolated independent pass."
+argument-hint: "[任务 | task]"
 ---
 
 # Claude Code

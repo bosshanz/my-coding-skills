@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // L1 routing eval: does the skill catalog route user messages to the right
-// skill, judged only from name + description (what a harness sees pre-load)?
+// skill, judged only from name + description + when_to_use (what a harness sees pre-load)?
 //
 // This is a proxy, not a harness test: it measures the discriminative power of
 // the descriptions, which is the variable this repository controls. The
@@ -64,7 +64,8 @@ function loadCatalog() {
     .map((e) => {
       const text = fs.readFileSync(path.join(root, e.name, 'SKILL.md'), 'utf8');
       const m = text.match(/^description:\s*"([\s\S]*?)"\s*$/m);
-      return { name: e.name, description: m ? m[1] : '' };
+      const w = text.match(/^when_to_use:\s*"([\s\S]*?)"\s*$/m);
+return { name: e.name, description: m ? m[1] : '', whenToUse: w ? w[1] : '' };
     });
 }
 
@@ -73,7 +74,7 @@ const catalogNames = new Set(catalog.map((s) => s.name));
 
 function renderCatalog() {
   return catalog
-    .map((s) => `- ${s.name}: ${s.description}`)
+    .map((s) => `- ${s.name}: ${`${s.description} ${s.whenToUse}`.trim().slice(0, 1536)}`)
     .join('\n');
 }
 

@@ -1,6 +1,8 @@
 ---
 name: qa
-description: "Opt-in business and real-usage QA. Use only when the user explicitly invokes $qa or /qa, or explicitly asks for business testing, QA thinking, a user-journey or real-usage diagnosis, or protection of a named business rule without a product change. Do not use for generic reviews or inspections, ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests."
+description: "Opt-in business and real-usage QA."
+when_to_use: "Use only when the user explicitly invokes $qa or /qa, or explicitly asks for business testing, QA thinking, a user-journey or real-usage diagnosis, or protection of a named business rule without a product change. Do not use for generic reviews or inspections, ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests."
+argument-hint: "[业务问题 | business question]"
 ---
 
 # QA

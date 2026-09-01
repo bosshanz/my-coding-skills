@@ -36,7 +36,7 @@ function excludes(text, unexpected, message) {
 }
 
 const designDescription =
-  files.design.split('\n').find((line) => line.startsWith('description: ')) ?? '';
+  ['description: ', 'when_to_use: '].map((key) => files.design.split('\n').find((line) => line.startsWith(key)) ?? '').join(' ');
 
 contains(
   designDescription,
@@ -80,7 +80,7 @@ contains(
 );
 
 const qaDescription =
-  files.qa.split('\n').find((line) => line.startsWith('description: ')) ?? '';
+  ['description: ', 'when_to_use: '].map((key) => files.qa.split('\n').find((line) => line.startsWith(key)) ?? '').join(' ');
 
 contains(
   qaDescription,

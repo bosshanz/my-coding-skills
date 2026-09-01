@@ -1,6 +1,8 @@
 ---
 name: grok-build-cli
-description: "Dispatch Grok Build CLI as an external coding, research, review, or terminal automation agent from another coding agent. Use when asking Grok Build CLI, Grok CLI, or grok to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Grok installation, authentication, non-interactive grok -p mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Grok Build CLI; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch Grok Build CLI as an external coding, research, review, or terminal automation agent from another coding agent."
+when_to_use: "Use when asking Grok Build CLI, Grok CLI, or grok to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Grok installation, authentication, non-interactive grok -p mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Grok Build CLI; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+argument-hint: "[任务 | task]"
 ---
 
 # Grok Build CLI

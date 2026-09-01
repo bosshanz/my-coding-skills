@@ -1,6 +1,8 @@
 ---
 name: clarify
-description: "Apply senior product-manager judgment to ambiguous, high-leverage product or technical work before implementation. Use when the user explicitly invokes $clarify or asks for product analysis, whether or what to build, target users or jobs, prioritization and tradeoffs, first-slice scope, success measures, low-cost experiments, a requirements interview, or material product, domain, architecture, lifecycle, migration, or safety alignment that ordinary dev questions cannot resolve. Own product shaping and handoff, not ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or implementation. Do not use as a mandatory phase for ordinary requirements."
+description: "Apply senior product-manager judgment to ambiguous, high-leverage product or technical work before implementation."
+when_to_use: "Use when the user explicitly invokes $clarify or asks for product analysis, whether or what to build, target users or jobs, prioritization and tradeoffs, first-slice scope, success measures, low-cost experiments, a requirements interview, or material product, domain, architecture, lifecycle, migration, or safety alignment that ordinary dev questions cannot resolve. Own product shaping and handoff, not ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or implementation. Do not use as a mandatory phase for ordinary requirements."
+argument-hint: "[问题或机会 | problem or opportunity]"
 ---
 
 # Clarify
