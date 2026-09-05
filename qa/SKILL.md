@@ -1,6 +1,6 @@
 ---
 name: qa
-description: "Opt-in business and real-usage QA."
+description: "Opt-in business and real-usage QA. Use only when the user explicitly requests QA, a business rule check, or a real user-journey diagnosis; ordinary implementation stays in dev."
 when_to_use: "Use only when the user explicitly invokes $qa or /qa, or explicitly asks for business testing, QA thinking, a user-journey or real-usage diagnosis, or protection of a named business rule without a product change. Do not use for generic reviews or inspections, ordinary feature implementation, bug fixes, developer tests, go/no-go acceptance, running the existing suite, or a bare request to add e2e, regression, or tests."
 argument-hint: "[业务问题 | business question]"
 ---
@@ -36,14 +36,14 @@ A recommendation or handoff from `clarify`, `dev`, or `acceptance` is context, n
 Do not use `qa` when:
 
 - The user made a generic review or inspection request such as 看一下, 看下这个, review this, or inspect this without explicitly asking about business meaning, real usage, or a user journey.
-- The user asked to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`.
+- The user asked only to implement a feature or fix a bug, including money, permission, lifecycle, or multi-step product work. That stays in `$dev`. If the user also explicitly requested an independent QA pass, perform it after the implementation portion.
 - The user only asked to run the existing suite.
 - The user only asked to add e2e, regression, 补测试, or tests, with no ask to understand the business or how users use it. That stays in `$dev`.
 - The task is a tiny mechanical edit, a pure refactor already guarded by existing behavior checks, or a go/no-go verdict (`$acceptance`).
 - The business itself is still being shaped or is ambiguous; escalate to `$clarify` instead of inventing rules.
 - Another Skill identified missing business or usage evidence, but the user did not ask for an independent QA pass. That Skill should report the concrete evidence gap directly.
 
-Do not invoke `qa` from inside the same `$dev` turn. Do not turn a risk category or missing evidence into a routine `$qa` recommendation.
+Do not automatically enter `qa` from `dev`. If the user explicitly requested both implementation and an independent QA pass, complete both within the authorized task; they need not occupy separate conversation turns. Do not turn a risk category or missing evidence into a routine `$qa` recommendation.
 
 If both `$dev` and `$qa` could apply, prefer `$dev` unless the user explicitly requested the independent business or real-usage pass.
 
@@ -54,6 +54,8 @@ Pick one from the request. Do not ask the user to choose.
 - **Diagnosis**: the user explicitly asked to diagnose a named business meaning, user journey, or real-usage question and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
 - **Contract**: the rule is clear and the product is not yet safe, or the user asked to write business evidence first. After steps 1-3, add the smallest failing or pending check that names the user job, then hand to `$dev`.
 - **Coverage**: the product already exists and the user asked to protect usage or fill unprotected journeys. After steps 1-3, add or update evidence. If the product is wrong, do not patch around it; hand to `$dev`.
+
+Honor authorization already given in the conversation; a new user request can change the track without a second confirmation. Workflow advice does not override the user's explicit scope or higher-priority host instructions. If an instruction requires pausing, link its exact file and quote the relevant rule.
 
 A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not slide from Diagnosis into file edits in the same turn unless the user asked for protection. Do not recommend Coverage, Contract, `$clarify`, `$dev`, or `$acceptance` from Diagnosis unless the user asked for that next action or the asked slice cannot be answered without it.
 
@@ -66,7 +68,7 @@ A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not sli
 - Do not invent business rules, copy, or acceptance criteria.
 - Do not issue `accepted` / `rejected`; that belongs to `$acceptance`.
 - Do not weaken an existing check to make the product look safe.
-- If a product behavior is wrong, stop and hand off to `$dev`. If the rule is unclear or the product is still being shaped, hand off to `$clarify`.
+- If a product behavior is wrong, stop editing under QA. Continue through `$dev` in the same task only if repair was already authorized; otherwise report the defect without modifying product code. If the rule is unclear, consult `$clarify` only for that decision. A handoff changes the workflow, not the existing authorization.
 
 ## 1. Understand The Business
 
@@ -109,9 +111,9 @@ Look for ways this slice can lie while remaining green, when they belong to the 
 - Money, quota, inventory, or status that can disagree with what the user was shown.
 - The message or dead end that would send them to support.
 
-Name the weakest assumption in the slice. On Diagnosis, record it as residual risk and stop; do not convert it into assigned work. On Contract or Coverage, if current evidence does not cover it and the user asked to protect this slice, that is the next protection to add — not another happy-path script.
+Name the weakest assumption in the slice. On Diagnosis, record it as residual risk and end this QA portion; do not invent additional work. On Contract or Coverage, if current evidence does not cover it and the user asked to protect this slice, that is the next protection to add — not another happy-path script.
 
-On Diagnosis, stop here. Report, then `stop`. Do not continue to steps 4-5. Do not stay in `$qa`.
+On Diagnosis, the QA portion ends here. Report the findings; do not continue to steps 4-5 or edit under Diagnosis. If another part of the same user request already authorizes repair, continue through `$dev`; otherwise stop.
 
 ## 4. Choose Evidence
 
@@ -131,9 +133,9 @@ Only after the walk and the attack, and only on Contract or Coverage:
 
 Next step:
 
-- Diagnosis, or the asked slice is answered → `stop`
+- Diagnosis, or the asked slice is answered → end QA; stop the task unless another requested part remains
 - The user asked to protect this slice and more of it remains unprotected → stay in `$qa`
-- Product behavior is wrong → `$dev`
+- Product behavior is wrong → `$dev` if repair is authorized; otherwise report the defect
 - Business or user intent is still unclear → `$clarify`
 - The user wants a go/no-go decision → `$acceptance`
 
@@ -154,7 +156,7 @@ QA 风险:
 下一步: stop | $dev | $clarify | $acceptance | stay in $qa
 ```
 
-On Diagnosis, prefer a short answer. You may omit empty fields. `保护了什么` is `本轮只诊断，未改文件`. `下一步` defaults to `stop`. `残留风险` names what is still unprotected; it is not a todo. Do not report coverage work as done.
+On Diagnosis, prefer a short answer. You may omit empty fields. `保护了什么` describes the QA portion as `QA 阶段只诊断，未改文件`; report any separately authorized dev edits accurately. `下一步` defaults to `stop`. `残留风险` names what is still unprotected; it is not a todo. Do not report coverage work as done.
 
 On Contract or Coverage, fill the template. `下一步` is `stop` when the asked slice is protected.
 

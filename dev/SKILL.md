@@ -1,167 +1,38 @@
 ---
 name: dev
-description: "Thin default dispatcher for delivering new requirements and fixing bugs."
-when_to_use: "Use automatically for ordinary software work, including meaningful UI creation or reshaping; matches Chinese or English asks such as 新需求, 新功能, 改一下, 修 bug, 修复问题. For new requirements, clarify through conversation, agree on a solution, implement, test, and complete acceptance. For bugs, reproduce, identify the root cause, implement the smallest safe repair, add regression coverage, and verify acceptance."
+description: "Implement software requirements, fix bugs, and add developer tests. Use for ordinary repository changes; resolve routine choices and deliver verified work."
+when_to_use: "Default entry for implementation and repair requests, including 新需求, 新功能, 改一下, 修 bug, 修复问题 and test additions. Use design for meaningful UI work during delivery; consult clarify only for material decisions that repository evidence and ordinary development questions cannot resolve."
 argument-hint: "[新需求 / 修 bug | requirement or bug]"
 ---
 
 # Dev
 
-## Purpose
+Deliver the requested software change through one proportional loop: establish the target, implement, verify, and report. These are working decisions, not separate approval turns.
 
-Use one default Skill as a thin dispatcher for real development work:
+## Entry And Scope
 
-1. **New requirement**: confirm the behavior, agree on a solution, implement, test, and accept.
-2. **Bug fix**: reproduce, identify the root cause, agree on the repair, implement the smallest safe change, add regression coverage, and accept.
+- Use for ordinary implementation, bug fixes, refactors, and developer-test additions. For a review-only or plan-only request, keep that scope; do not infer permission to edit.
+- Follow higher-priority host instructions and the user's explicit scope over workflow advice. Reuse existing authorization and resolved decisions. Finish clear action requests without another plan approval.
+- Inspect repository facts before asking. Resolve routine reversible choices yourself. If a material product or architecture choice cannot be resolved in ordinary development discussion, consult `clarify` for that decision, then resume the already authorized implementation. Clarification is not a new task or a permission reset.
+- Use `design` for meaningful UI or interaction creation or reshaping. Preserve the brief and existing design system. Load only applicable guidance; a trivial CSS fix needs no design process.
+- Do not auto-invoke or routinely recommend `$qa`; a risk category alone is not enough. Verify relevant business meaning within this task and report concrete evidence gaps. Separate QA and acceptance passes require the user's request.
+- Use external-agent adapters only when the user selects that agent. Preserve others' edits; do not duplicate active work.
+- If an instruction actually blocks work, link its exact file, quote the rule, and explain the missing decision or permission. Continue independent authorized work. Prepare a reviewable result before requesting any still-needed external or irreversible action approval.
 
-Keep the process conversational and proportional. A plan supports delivery; it is not a separate product unless the user asks for a durable document.
+## Delivery Loop
 
-This Skill integrates lightweight design, TDD, systematic debugging, full-stack architecture, backend quality, database engineering, adversarial review, and evidence-based completion. Load focused references only when the task needs them.
+1. **Establish the target.** Read relevant code, tests, repository instructions, and the current diff. Identify intended behavior and the smallest useful verification. For bugs, distinguish evidence from hypotheses and reproduce when possible. Compare approaches only when the tradeoffs could change the outcome.
+2. **Implement.** Make the smallest complete change using existing patterns. Preserve compatibility and relevant failure/recovery behavior. Keep unrelated cleanup out. For unclear or resistant bugs, load `references/superpowers-lite.md` instead of guessing repeatedly.
+3. **Verify.** Check the requested behavior and likely regressions at the lowest reliable layer, then run required project checks. Review the diff for scope, counterexamples, and stale docs. Do not weaken tests or `qa` business/user-journey checks to fit the implementation. Add regression coverage when it meaningfully detects the failure; do not add tests that merely mirror wording or implementation for low-impact reversible edits. After checks pass, repeat or broaden only for new changes, failures, or unresolved concerns.
+4. **Finish.** Report the outcome, meaningful evidence, and concrete remaining limits. Distinguish implemented from verified. Never claim verified completion while an applicable required check is blocked; explaining the gap does not make it pass. Optional uncovered cases are concrete limitations, not automatic blockers. If blocked, name what is complete and the exact missing prerequisite; do not turn an evidence gap into an automatic new workflow.
 
-## Automatic Trigger
-
-Use this Skill automatically for ordinary software work in a repository. Do not require the user to invoke `$dev`.
-
-Do not use `dev` for non-software questions, tiny text rewrites outside a codebase, methodology design, or work that is still too ambiguous for delivery. Use `clarify` when the product intent, target, or verifier is not ready. Use `qa` only when the user explicitly requests an independent business, user-journey, or real-usage pass without a product change.
-
-Use external-agent adapters only when the user explicitly asks another Agent to participate.
-
-For meaningful UI creation, a visible reshape, or material interaction-flow work, invoke the `design` skill before coding to establish interaction direction, visual direction, frontend quality, and motion guidance. The product brief, existing design system, and explicit user constraints take precedence over the imported design direction. When the product intent itself is materially unclear, return to `clarify` rather than inventing a product requirement.
-
-Do not auto-invoke or routinely recommend `$qa`. Keep developer tests and proportionate business-risk verification in `dev`, including work involving money, permission, lifecycle, quota, or multi-step user jobs. Report concrete unverified business or usage risks directly. Name `$qa` only when the user explicitly asks for an independent business or real-usage pass; a risk category alone is not enough. Do not weaken existing `qa` or business-journey checks to make an implementation pass.
-
-## Select A Track
-
-At the start, classify the task:
-
-- **New Requirement Track**: desired behavior does not exist yet or product behavior must change.
-- **Bug Fix Track**: actual behavior differs from expected behavior, a test fails, or an existing flow regressed.
-
-If unclear, ask one high-signal question. Do not run both tracks mechanically.
-
-For tiny mechanical edits, perform the smallest direct change plus an appropriate verification check.
-
-## Track A: New Requirement
-
-### 1. Discuss And Confirm
-
-- Understand the user goal, main flow, constraints, non-goals, and acceptance criteria.
-- Inspect relevant repository structure and conventions before proposing architecture.
-- Ask the minimum questions needed to remove material ambiguity.
-- If the real problem, product intent, or verifier remains unclear, return to `clarify` instead of guessing.
-- Restate the confirmed requirement before implementation.
-
-### 2. Propose And Agree On A Solution
-
-- For non-trivial work, compare realistic approaches including the simplest viable option.
-- Recommend one approach with tradeoffs, risks, affected modules, interface/data impact, and verification strategy.
-- Adversarially test the recommendation: name the weakest assumption and evidence that would disprove it.
-- For frontend work, define purpose, interaction flow, state and recovery behavior, visual direction, responsiveness, and important states; invoke the `design` skill for a new or visibly reshaped UI or material interaction change.
-- For backend work, define boundaries, data flow, contracts, failures, migration, and observability as applicable. Load `backend-quality.md` when implementing or reviewing handlers, authz, jobs, or error mapping.
-- Do not implement while a material product or architecture decision remains unresolved.
-
-### 3. Plan The Change
-
-- Break work into small, reviewable steps.
-- Name relevant files or modules when known.
-- Define tests, verifier, and acceptance checks before editing.
-- Prefer RED-GREEN-REFACTOR for behavior changes when supported.
-
-### 4. Implement
-
-- Follow existing project patterns before adding abstractions or dependencies.
-- Implement the smallest complete slice that satisfies agreed criteria.
-- Keep behavioral changes separate from unrelated cleanup.
-- Cover user-visible states and failure paths, not only the happy path.
-- Do not weaken tests, benchmarks, thresholds, or evaluator rules to make the work pass unless the verifier itself is explicitly under review.
-
-### 5. Test And Accept
-
-- Run targeted checks first, then broader checks justified by the changed boundary.
-- Perform functional acceptance against each criterion.
-- For UI changes, check interaction, responsive behavior, keyboard/focus behavior, and important visual states.
-- Record what passed, what was not verified, verifier limitations, and whether the requirement is accepted.
-- This gate is the implementer's proportionate check of both acceptance criteria and user-visible business meaning. Report any concrete evidence gap as residual risk; do not require or routinely recommend a separate `$qa` stage.
-
-## Track B: Bug Fix
-
-### 1. Inspect And Reproduce
-
-- Capture expected behavior, actual behavior, environment, inputs, frequency, and impact.
-- Read the full error, stack trace, logs, failing test, or user evidence before editing.
-- Reproduce the issue with the smallest reliable case when possible.
-- If reproduction is unavailable, state the evidence gap and do not present a hypothesis as fact.
-
-### 2. Locate The Root Cause
-
-- Trace the failing path through callers, data, state, configuration, dependencies, and recent changes.
-- Compare with nearby working paths and project patterns.
-- Form one testable hypothesis at a time.
-- Distinguish root cause, trigger, and visible symptom.
-- After two failed guesses, stop editing and re-investigate assumptions or design.
-
-### 3. Propose The Repair
-
-- Explain the root cause and affected scope in plain language.
-- Compare alternatives when compatibility, data, architecture, or rollout tradeoffs matter.
-- Recommend the smallest safe fix that addresses the cause rather than hiding the symptom.
-- Identify how the bug could still reproduce and which check would expose that failure.
-- Define regression coverage before implementation.
-
-### 4. Implement The Fix
-
-- Add or identify a failing regression test first when practical.
-- Make the minimum behavior change needed to fix the root cause.
-- Avoid broad refactors unless necessary and agreed.
-- Preserve compatibility, data integrity, and operational safety where relevant.
-
-### 5. Verify The Fix
-
-- Confirm the original reproduction no longer fails.
-- Run the regression test and relevant nearby tests.
-- Check likely side effects and adjacent flows.
-- Run broader checks only when justified.
-- State whether the bug is accepted as fixed and name residual risk.
-- If the bug sat on a user job or business rule, verify that meaning proportionately and report any remaining evidence gap directly; do not treat `$qa` as a mandatory next stage.
-
-## Common Review Gate
-
-Before claiming success:
-
-- Compare the diff to the agreed requirement, experiment, or root-cause repair.
-- Try to disprove the solution with relevant edge inputs, stale state, concurrency, rollout order, rollback needs, and user-visible failures.
-- Check compatibility, permissions, project conventions, and important failure paths.
-- Confirm tests prove behavior, not merely syntax or compilation.
-- Confirm the verifier still represents the real target and was not weakened to fit the implementation.
-- Do not weaken `qa` business or user-journey checks.
-- Update docs, examples, contracts, and comments made stale by this change.
-- Treat warnings, skipped checks, flaky output, stale evaluator data, and partial verification as residual risk.
-- Never say “done” or “fixed” without naming the evidence or explaining why it could not run.
+A user correction steers this loop; preserve completed work and the original objective unless cancelled. A side question does not end the requested implementation. Small changes can complete the entire loop without a written plan or report template.
 
 ## Delivery Format
 
-Deliver in Chinese by default.
+Deliver in Chinese by default. Lead with the outcome and use short prose. Include commands/results only when they substantiate the conclusion; never invent them.
 
-For a new requirement:
-
-- 需求确认
-- 方案与关键取舍
-- 实现内容
-- 测试与验收
-- 建议下一步
-- 风险与未验证项
-
-For a bug fix:
-
-- 问题现象与复现
-- 根因
-- 修复方案
-- 修改内容
-- 回归测试与验收
-- 建议下一步
-- 风险与未验证项
-
-Keep code, commands, protocol names, and configuration keys in their original language.
+If the user requests a structured report, use relevant fields: 需求确认 (or 问题与根因), 实现内容, 测试与验收, 风险与未验证项. Add tradeoffs or next steps only when useful to an unresolved decision. Keep code and protocol names in their original language.
 
 ## Reference Loading Policy
 
@@ -170,7 +41,7 @@ Load the smallest reference set that can materially improve the work.
 | Reference | Load when |
 | --- | --- |
 | `design` skill (invoke, not a reference) | New UI, meaningful UI or interaction reshaping, flow/usability work, AI-native interaction, motion/animation work, or visual-quality review. |
-| `references/superpowers-lite.md` | Behavior, architecture, ambiguity, TDD, root-cause debugging, careful review, or unverified completion. |
+| `references/superpowers-lite.md` | A bug has an unclear cause, a repair failed, or the user explicitly requests systematic debugging or test-first guidance. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
 | `references/backend-engineering.md` | Server-side behavior change: endpoint, webhook, worker, command, backend integration, authn/authz path, public or internal contract, or backend failure path. |
 | `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |

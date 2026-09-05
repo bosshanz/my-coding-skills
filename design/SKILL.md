@@ -37,6 +37,8 @@ Load the smallest reference set that materially improves the work.
 
 ## Workflow
 
+Treat design commitments as working decisions, not automatic approval gates. For an implementation request, choose routine details from the brief and existing system and continue building. For a design-only request, deliver the requested proposal and stop. Ask only when a missing product choice materially changes the result; if an instruction requires a pause, identify its exact file and wording.
+
 ### Product UI Or Interaction Work
 
 1. Inspect the current behavior and repository constraints before proposing a new flow. A static screenshot does not prove how an interaction works.

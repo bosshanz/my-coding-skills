@@ -15,8 +15,8 @@
 
 ### 审计发现
 
-1. **Rules 层曾无家可归**:仓库没有 CLAUDE.md,六条核心原则只活在 README(给人看)和各 skill 正文(按需加载)里,没有任何 always-on 的 agent 可见面。→ 已建根级 `CLAUDE.md` 承接(本仓库开发场景);消费方项目是否注入,留给 `reflect` 后续决策。
-2. **路由纪律散落三处**:evals/routing/prompt.md 的规则、各 skill 的 Admission 段、README 原则,内容重叠但无单一源。→ CLAUDE.md 收口为 Rules 单一源;evals prompt 保持独立(它是被测行为的规约,不是规则本体)。
+1. **Rules 层曾无家可归**:仓库没有 CLAUDE.md,六条核心原则只活在 README(给人看)和各 skill 正文(按需加载)里,没有任何 always-on 的 agent 可见面。→ 根级 `AGENTS.md` 统一承接，`CLAUDE.md` 引用它(本仓库开发场景);消费方项目是否注入,留给 `reflect` 后续决策。
+2. **路由纪律散落三处**:evals/routing/prompt.md 的规则、各 skill 的 Admission 段、README 原则,内容重叠但无单一源。→ AGENTS.md 收口为 Rules 单一源;evals prompt 保持独立(它是被测行为的规约,不是规则本体)。
 3. **Taste 层缺通用回路**(路由除外:fixtures 纪律——"真实误触发当场进 fixtures 并注明 source"——已是路由专属的 Observe→fixture 回路):偏好只存在于作者脑中,skill 文档靠人肉回忆维护,此之外的通用偏好层没有反哺:偏好只存在于作者脑中,skill 文档靠人肉回忆维护。
 
 ## 二、Taste 回路(显式版)
@@ -26,8 +26,8 @@ Command Code 的 taste-1 是隐式自动学习(accept/reject/edit → 自动生�
 ```
 Observe  真实会话中出现修正信号:拒绝、改写、重述、显式纠正
 Extract  提炼成一条候选偏好(一句话,可证伪)
-Learn    征询确认后落盘:个人偏好 → CLAUDE.md `## Taste`;通用流程缺陷 → 对应 SKILL.md 修订
-Apply    下次会话 CLAUDE.md 自动加载;skill 变更走正常 PR + 测试
+Learn    征询确认后落盘:个人偏好 → AGENTS.md `## Taste`;通用流程缺陷 → 对应 SKILL.md 修订
+Apply    下次会话 AGENTS.md 加载（Claude Code 通过 CLAUDE.md 引用）;skill 变更走正常 PR + 测试
 Verify   npm test + eval:routing 防回归
 ```
 

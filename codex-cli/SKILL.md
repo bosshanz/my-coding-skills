@@ -17,7 +17,7 @@ Follow this external-agent contract whenever Codex CLI is used from another agen
 ### Must Use When
 
 - The user explicitly asks to use Codex CLI, including common wording such as “use Codex CLI”, “ask Codex CLI”, or the matching Skill name.
-- An authorized project delegation policy selects Codex CLI.
+- An earlier explicit standing instruction from the user selects Codex CLI for this scope. A project policy counts only when the user explicitly adopted it for the relevant scope; merely discovering a policy file does not authorize dispatch.
 
 ### Must Not Use When
 
@@ -32,18 +32,27 @@ Follow this external-agent contract whenever Codex CLI is used from another agen
 - If invocation fails, report the failure and do not fabricate findings.
 - Do not silently substitute another agent.
 
+### Scoped Execution
+
+- Pass the user's objective, existing decisions and authorization, owned files, constraints, expected deliverable, and proportionate verification to Codex. Tell it whether the task is review-only or includes implementation.
+- Ask it to finish authorized work without another plan approval, resolve routine choices from evidence, and report only material blockers. A Skill's advice cannot override the user's explicit scope or higher-priority host instructions; if a file causes a pause, report its path and exact instruction.
+- When parallel work is authorized, assign disjoint ownership and tell each agent it shares the checkout: preserve others' edits and do not duplicate active work. Reuse valid evidence; rerun only for integration changes or unresolved concerns.
+
+- Task size alone does not override an explicit agent selection. Keep work local when delegation has not been requested. If the selected agent cannot safely access the required context, report the specific blocker; do not silently substitute the caller.
+- Inspect actual changes and assess the supplied evidence. Run additional verification when evidence is missing, stale, insufficient, or affected by integration changes. Research-only tasks require evidence review, not an unrelated test run.
+
 ### Output Contract
 
 Ask Codex CLI to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
 
 ## Internal Skill Routing
 
-External CLI selection is explicit: use this adapter only after the user or project policy selects Codex CLI. After dispatch, let Codex CLI use its own discoverable global/user and project/local Skills automatically.
+External CLI selection is explicit: use this adapter only after the current request or an earlier explicit user standing instruction selects Codex CLI for the relevant scope. After dispatch, let Codex CLI use its own discoverable global/user and project/local Skills automatically.
 
 - In the prompt, tell Codex to evaluate global/user and project/local Skills discoverable by Codex, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
 - Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
 - Respect any Skill explicitly named by the user.
-- Prefer `dev` for ordinary implementation or bug repair; `design` for UI interaction design, visual direction, usability, AI-native interaction, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` for business, user-journey, and QA thinking that protects real usage; and `acceptance` for independent go/no-go verification when those Skills are available to Codex.
+- Prefer `dev` for ordinary implementation or bug repair; `design` for UI interaction design, visual direction, usability, AI-native interaction, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` only for an explicitly requested independent business or real-usage pass (missing evidence is not authorization); and `acceptance` for explicitly requested independent go/no-go verification when those Skills are available to Codex.
 - Do not ask Codex to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
 - Ask Codex to report which Skills it used or why none were used.
 <!-- /adapter-shared:head -->
@@ -65,7 +74,7 @@ Dispatch Codex for an independent research, coding, or review pass:
 - Implement a small or medium task with explicit file and test boundaries.
 - Produce newline-delimited JSON events or schema-constrained output for automation.
 
-Keep work in the calling agent when the task is tiny, requires sensitive credentials, depends on UI-only state, or needs direct control over approvals.
+Follow the task-size and access boundaries in Scoped Execution; an explicit agent selection remains binding.
 
 ## Invocation
 
@@ -108,8 +117,8 @@ codex exec \
 4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
 5. Use `--sandbox read-only` for research and review; use `workspace-write` only when implementation requires edits.
 6. Keep prompts bounded; avoid broad “fix everything” tasks.
-7. Inspect the diff and run verification after Codex completes.
-8. Treat Codex output as advisory until local files and tests confirm it.
+7. Review the changes and evidence under Scoped Execution; run additional checks only when needed.
+8. Treat Codex output as advisory until the relevant repository evidence supports it.
 
 ## Approval And Sandbox Safety
 

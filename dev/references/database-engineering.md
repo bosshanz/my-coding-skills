@@ -69,7 +69,7 @@ If using a tombstone, define how uniqueness, default queries, and foreign keys t
 Treat unknown, shared, staging-with-prod-data, and production databases as read-only until the user explicitly approves a write.
 
 - Default to `SELECT` or `EXPLAIN`. Do not default to `EXPLAIN ANALYZE` on production; it can execute and lock.
-- Before any `INSERT`, `UPDATE`, `DELETE`, or DDL, estimate affected rows, name the rollback or repair path, and wait for explicit user approval.
+- Before a write to these databases (`INSERT`, `UPDATE`, `DELETE`, or DDL), estimate affected rows and name the rollback or repair path. Require explicit approval for that target and operation; reuse it if already given and the scope is unchanged. This gate does not apply to editing migration files or running an authorized disposable local test database.
 - Do not use application credentials to "just fix one row."
 - Do not run migrate, seed, or truncate against a production `DATABASE_URL`.
 

@@ -1,22 +1,7 @@
 #!/usr/bin/env node
-// L1 routing eval: does the skill catalog route user messages to the right
-// skill, judged only from name + description + when_to_use (what a harness sees pre-load)?
-//
-// This is a proxy, not a harness test: it measures the discriminative power of
-// the descriptions, which is the variable this repository controls. The
-// remaining gap (real harness trigger chains) is covered by evals/e2e.
-//
-// Two-level scoring: every fixture runs on the cheap model first; mismatches
-// are re-run on the strong model, whose verdict is authoritative for strict
-// fixtures. Cheap-only mismatches are reported as soft (real harnesses run
-// strong models) and do not fail the run.
-//
-// Usage:
-//   node evals/routing/runner.mjs [--dry-run] [--filter substr] [--record]
-//   [--cheap-only]
-//
-// Credentials: the SDK resolves ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN /
-// `ant auth login` profiles automatically. No key is read or printed here.
+// Catalog routing proxy; not host discovery. Default: description-only,
+// first-pass scoring. --surface extended adds when_to_use explicitly.
+// --recheck adds a diagnostic strong-model attempt without replacing failures.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,6 +10,7 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import Anthropic from '@anthropic-ai/sdk';
+import { frontmatter, renderCatalog, parseVerdict, normalize } from '../lib/contracts.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -39,12 +25,14 @@ const value = (name) => {
 };
 const DRY_RUN = flag('dry-run');
 const RECORD = flag('record');
-const CHEAP_ONLY = flag('cheap-only');
+const RECHECK = flag('recheck') && !flag('cheap-only');
+const SURFACE = value('surface') ?? 'description';
 const FILTER = value('filter');
 // Backend "api" calls the Anthropic API (needs credentials). Backend "claude"
 // shells out to an authenticated `claude -p`, so a machine with only a Claude
 // Code login can still run the eval.
 const BACKEND = value('backend') ?? 'api';
+if (!['api', 'claude'].includes(BACKEND)) throw new Error('unknown backend');
 
 const CHEAP_MODEL = 'claude-haiku-4-5';
 const STRONG_MODEL = 'claude-opus-5';
@@ -63,20 +51,13 @@ function loadCatalog() {
     )
     .map((e) => {
       const text = fs.readFileSync(path.join(root, e.name, 'SKILL.md'), 'utf8');
-      const m = text.match(/^description:\s*"([\s\S]*?)"\s*$/m);
-      const w = text.match(/^when_to_use:\s*"([\s\S]*?)"\s*$/m);
-return { name: e.name, description: m ? m[1] : '', whenToUse: w ? w[1] : '' };
+      return frontmatter(text);
     });
 }
 
 const catalog = loadCatalog();
 const catalogNames = new Set(catalog.map((s) => s.name));
-
-function renderCatalog() {
-  return catalog
-    .map((s) => `- ${s.name}: ${`${s.description} ${s.whenToUse}`.trim().slice(0, 1536)}`)
-    .join('\n');
-}
+const catalogText = renderCatalog(catalog, SURFACE);
 
 // --- fixtures ------------------------------------------------------------
 
@@ -105,40 +86,19 @@ for (const f of fixtures) {
   }
 }
 
-const selected = FILTER
-  ? fixtures.filter((f) => f.id.includes(FILTER))
-  : fixtures;
+const selected = FILTER ? fixtures.filter((f) => f.id.includes(FILTER)) : fixtures;
+if (!selected.length) throw new Error('no fixtures selected');
+for (const f of selected) if (f.phase && !['intake', 'delivery'].includes(f.phase)) throw new Error('invalid fixture phase');
 
 // --- prompt --------------------------------------------------------------
 
 const template = fs.readFileSync(path.join(here, 'prompt.md'), 'utf8');
-const renderPrompt = (userMessage) =>
-  template
-    .replaceAll('{{catalog}}', renderCatalog())
-    .replaceAll('{{prompt}}', userMessage);
-
-function parseVerdict(text) {
-  const stripped = text.replace(/```(?:json)?/g, '');
-  const start = stripped.indexOf('{');
-  const end = stripped.lastIndexOf('}');
-  if (start === -1 || end === -1) return { triggers: [], none: true, raw: text };
-  try {
-    const parsed = JSON.parse(stripped.slice(start, end + 1));
-    const triggers = Array.isArray(parsed.triggers)
-      ? parsed.triggers.map((t) => String(t).trim().replace(/^[$/]/, ''))
-      : [];
-    const none = parsed.none === true || triggers.length === 0;
-    return { triggers, none, raw: text };
-  } catch {
-    return { triggers: [], none: true, raw: text, parseError: true };
-  }
-}
-
-const normalize = (result) =>
-  result.none || result.triggers.length === 0
-    ? 'none'
-    : [...new Set(result.triggers)].sort().join('+');
-
+const renderPrompt = (f) => template
+  .replaceAll('{{catalog}}', catalogText)
+  .replaceAll('{{surface}}', SURFACE)
+  .replaceAll('{{phase}}', f.phase ?? 'intake')
+  .replaceAll('{{context}}', f.context ?? 'New user request; no active delivery.')
+  .replaceAll('{{prompt}}', f.prompt);
 const expectedKey = (f) => [...new Set(f.expect)].sort().join('+');
 
 // --- api -----------------------------------------------------------------
@@ -167,7 +127,7 @@ async function classifyViaApi(userMessage, model) {
     .filter((b) => b.type === 'text')
     .map((b) => b.text)
     .join('');
-  return parseVerdict(text);
+  return parseVerdict(text, catalogNames);
 }
 
 async function classifyViaClaude(userMessage, model) {
@@ -181,7 +141,7 @@ async function classifyViaClaude(userMessage, model) {
     ['-p', argvPrompt, '--model', alias, '--output-format', 'text'],
     { timeout: 120_000 },
   );
-  return parseVerdict(stdout);
+  return parseVerdict(stdout, catalogNames);
 }
 
 const classify = (userMessage, model) =>
@@ -194,7 +154,7 @@ const classify = (userMessage, model) =>
 if (DRY_RUN) {
   console.log(`catalog: ${catalog.length} skills`);
   console.log(`fixtures: ${fixtures.length} (${selected.length} selected)`);
-  const sample = renderPrompt(selected[0].prompt);
+  const sample = renderPrompt(selected[0]);
   console.log(`rendered prompt: ${sample.length} chars`);
   console.log('--- sample head ---');
   console.log(sample.slice(0, 600));
@@ -204,47 +164,35 @@ if (DRY_RUN) {
 // --- run -----------------------------------------------------------------
 
 console.log(
-  `routing eval: ${selected.length} fixtures, backend=${BACKEND}, cheap=${CHEAP_MODEL}${CHEAP_ONLY ? '' : `, strong=${STRONG_MODEL} (re-check only)`}`,
+  `routing eval: ${selected.length} fixtures, backend=${BACKEND}, cheap=${CHEAP_MODEL}${RECHECK ? `, diagnostic=${STRONG_MODEL}` : ''}, surface=${SURFACE}`,
 );
 
 const rows = [];
 for (const f of selected) {
   let cheap;
   try {
-    cheap = await classify(f.prompt, CHEAP_MODEL);
+    cheap = await classify(f, CHEAP_MODEL);
   } catch (error) {
-    console.error(`fail: ${f.id}: cheap call failed: ${error.message}`);
-    if (error instanceof Anthropic.AuthenticationError) {
-      console.error(
-        'No usable credentials. Set ANTHROPIC_API_KEY or run `ant auth login`.',
-      );
-      process.exit(2);
-    }
-    throw error;
+    rows.push({ ...f, cheap: 'ERROR', strong: '-', verdict: 'ERROR', error: error.message });
+    console.error(`error ${f.id}: ${error.message}`);
+    continue;
   }
   const cheapKey = normalize(cheap);
   if (cheapKey === expectedKey(f)) {
-    rows.push({ ...f, cheap: cheapKey, strong: '-', verdict: 'PASS' });
+    rows.push({ ...f, cheap: cheapKey, strong: '-', verdict: 'PASS', raw: cheap.raw });
     console.log(`  pass ${f.id}`);
     continue;
   }
 
-  if (CHEAP_ONLY) {
-    rows.push({ ...f, cheap: cheapKey, strong: '-', verdict: 'MISMATCH' });
-    console.log(`  mismatch ${f.id}: cheap=${cheapKey} expected=${expectedKey(f)}`);
-    continue;
+  let strong = null;
+  if (RECHECK) {
+    try { strong = await classify(f, STRONG_MODEL); }
+    catch (error) { strong = { parseError: true, raw: `diagnostic error: ${error.message}` }; }
   }
-
-  const strong = await classify(f.prompt, STRONG_MODEL);
-  const strongKey = normalize(strong);
-  const ok = strongKey === expectedKey(f);
-  const verdict = ok
-    ? 'SOFT'
-    : f.strict === false
-      ? 'WARN'
-      : 'FAIL';
-  rows.push({ ...f, cheap: cheapKey, strong: strongKey, verdict });
-  console.log(`  ${verdict.toLowerCase()} ${f.id}: cheap=${cheapKey} strong=${strongKey} expected=${expectedKey(f)}`);
+  const strongKey = strong ? normalize(strong) : '-';
+  const verdict = f.strict === false ? 'WARN' : 'FAIL';
+  rows.push({ ...f, cheap: cheapKey, strong: strongKey, verdict, raw: cheap.raw, diagnosticRaw: strong?.raw });
+  console.log(`  ${verdict.toLowerCase()} ${f.id}: first=${cheapKey} diagnostic=${strongKey} expected=${expectedKey(f)}`);
 }
 
 // --- report --------------------------------------------------------------
@@ -255,19 +203,19 @@ const counts = rows.reduce((acc, r) => {
 }, {});
 
 console.log('\nsummary:');
-for (const verdict of ['PASS', 'SOFT', 'WARN', 'FAIL', 'MISMATCH']) {
+for (const verdict of ['PASS', 'WARN', 'FAIL', 'ERROR']) {
   if (counts[verdict]) console.log(`  ${verdict}: ${counts[verdict]}`);
 }
 
 if (RECORD) {
   const resultsDir = path.join(root, 'evals', 'results');
   fs.mkdirSync(resultsDir, { recursive: true });
-  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const file = path.join(resultsDir, `routing-${stamp}.md`);
   const lines = [
     `# Routing eval ${stamp}`,
     '',
-    `fixtures: ${rows.length} | cheap: ${CHEAP_MODEL} | strong: ${STRONG_MODEL}`,
+    `fixtures: ${rows.length} | backend: ${BACKEND} | surface: ${SURFACE} | first: ${CHEAP_MODEL} | diagnostic: ${RECHECK ? STRONG_MODEL : "disabled"}`,
     '',
     '| id | expect | cheap | strong | verdict |',
     '| --- | --- | --- | --- | --- |',
@@ -277,10 +225,11 @@ if (RECORD) {
     '',
   ];
   fs.writeFileSync(file, lines.join('\n'));
+  fs.writeFileSync(file.replace(/\.md$/, '.json'), JSON.stringify({ surface: SURFACE, backend: BACKEND, rows }, null, 2));
   console.log(`recorded: ${path.relative(root, file)}`);
 }
 
-const hardFailures = rows.filter((r) => r.verdict === 'FAIL' || r.verdict === 'MISMATCH');
+const hardFailures = rows.filter((r) => r.verdict === 'FAIL' || r.verdict === 'ERROR');
 if (hardFailures.length > 0) {
   console.error(
     `\n${hardFailures.length} hard failure(s): ${hardFailures.map((r) => r.id).join(', ')}`,

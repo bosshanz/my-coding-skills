@@ -54,7 +54,9 @@
   user: "对这次登录修复做最终验收，给出结论"
   must_contain:
     - "Acceptance target"
-    - "Independence achieved"
+    - "Reviewer separation"
+    - "Verification evidence"
+    - "Approval authority"
     - "Residual risk"
   must_not_contain: []
   must_match:
@@ -156,4 +158,64 @@
   must_match:
     - "状态[:：]\\s*pending-confirm"
     - "落点[:：]\\s*.*CLAUDE\\.md"
-    - "下一步[:：]\\s*\`?stop\`?"
+    - "下一步[:：]\\s*`?stop`?"
+
+# GPT-6 prompting regression scenarios. These text-only cases do not prove
+# tool execution, authorization enforcement, or live GPT-6 behavior.
+- id: dev-concise-delivery
+  skill: dev
+  scenario: |
+    A README typo was corrected as requested. The diff contains exactly that
+    correction and git diff --check passed. No behavior changed.
+  user: "总结一下，简单说就行"
+  must_contain: []
+  must_not_contain:
+    - "建议下一步"
+    - "$qa"
+    - "是否继续"
+  must_match:
+    - "(README|错别字|拼写)"
+
+- id: dev-existing-authorization
+  skill: dev
+  scenario: |
+    The user previously chose the role-filter implementation, asked you to
+    implement it, and approved its scope. No material decision remains.
+    Tools are unavailable in this simulated environment; do not claim edits.
+  user: "按刚才定的方案继续实现"
+  must_not_contain:
+    - "请确认方案"
+    - "是否开始实施"
+    - "是否继续"
+    - "已完成实现"
+  must_match:
+    - "(工具|无法|不能|不可用|tools|unavailable)"
+
+- id: clarify-resume-authorized-implementation
+  skill: clarify
+  scenario: |
+    The original request was to implement a role filter. You entered clarify
+    only to settle whether it allows multiple roles. The user has now chosen
+    single selection. All other criteria are defined. No edits have occurred.
+  user: "单选，其余按前面说的实现"
+  must_contain:
+    - "$dev"
+  must_not_contain:
+    - "是否开始"
+    - "请确认是否"
+    - "是否继续"
+    - "已实现"
+
+- id: dev-plan-only-scope
+  skill: dev
+  scenario: |
+    A role filter is proposed for a user-list API. The repository supports
+    an optional query parameter and a targeted handler test. No edits exist.
+  user: "只给最小实施方案，先别改文件"
+  must_not_contain:
+    - "已修改"
+    - "已实现"
+    - "测试通过"
+    - "$qa"
+  must_match:
+    - "(role|角色)"

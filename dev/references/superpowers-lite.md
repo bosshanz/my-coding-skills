@@ -1,151 +1,26 @@
-# Superpowers Lite
+# Focused Debugging And Test-First Guidance
 
-## Purpose
+Load only for an unclear or resistant bug, or an explicit request for systematic debugging / TDD. Ordinary delivery uses the loop in `dev`; this reference adds no plan, design, review, or approval stage. The historical filename is retained for installed references.
 
-Use this reference when `dev` needs stronger engineering discipline without installing or reenacting the full Superpowers methodology. It extracts the useful core: clarify before coding, lightweight design, executable plans, test-first behavior changes, systematic debugging, review gates, and verification before completion.
+## Diagnose Before Repeating Edits
 
-This is not a full Superpowers fork. Keep it lightweight and proportional to the task.
+- Read the full failure and trace the actual path through inputs, callers, state, and configuration. Compare a nearby working path and relevant recent changes.
+- Build the smallest feedback loop capable of exposing the reported symptom: an existing test, command, trace replay, or local probe. Confirm it can fail for the original defect before treating a pass as evidence of repair.
+- Form one falsifiable hypothesis and run one controlled experiment at a time. Distinguish root cause, triggering conditions, and visible symptom.
+- After two failed guesses, re-examine evidence and assumptions before editing again. This means investigate, not automatically ask the user for permission.
+- If reproduction is unavailable, state the uncertainty. Inspect existing logs and use reversible local instrumentation within scope; ask only for missing evidence or access that is necessary. Remove temporary diagnostics after use.
 
-## When To Load
+## Test-First When Useful
 
-Load this reference when any of these are true:
+- Prefer one observable behavior per cycle: demonstrate failure, make the smallest repair, then refactor if needed. Do not prewrite a large batch of imagined tests.
+- Use a public interface at the lowest reliable layer. A test should survive internal refactoring and fail when the user's behavior regresses.
+- Mock real external seams, not the invariant under test. Check important failure and recovery behavior when relevant.
+- If test-first is impractical, use the strongest available functional check and explain its limitation. Do not delete working code or add ceremony to enforce a sequence.
 
-- The task changes product behavior, architecture, data model, API contract, or deployment risk.
-- The task is ambiguous, multi-step, or likely to require tradeoffs.
-- The user asks for high confidence, TDD, root-cause debugging, review, or careful verification.
-- A bug has unclear cause or has already resisted one obvious fix.
-- The agent is about to claim completion for work that was not directly verified.
-
-Do not load it for tiny copy edits, one-line config changes, or simple mechanical formatting unless the user asks for stricter process.
-
-## Keep From Superpowers
-
-- Clarify intent before implementation.
-- Design enough before coding.
-- Prefer YAGNI and the simplest viable approach.
-- Make plans executable and reviewable.
-- Prefer RED-GREEN-REFACTOR for behavior changes and regressions, one behavior at a time.
-- Debug systematically by building a red-capable feedback loop before relying on hypotheses.
-- Review the diff before claiming success.
-- Verify with evidence, not confidence language.
-
-## Do Not Import By Default
-
-- Mandatory git worktrees for every task.
-- Long spec files for small or medium changes.
-- Subagent-per-task workflows.
-- Multi-hour autonomous execution without checkpoints.
-- Heavy branch finishing rituals.
-- Strict TDD punishment loops such as deleting all code written before a test.
-- Automatic external-agent dispatch; use `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli` only when the user or project policy authorizes it.
-
-## Lightweight Workflow
-
-Use this scaled workflow for non-trivial work:
-
-1. Clarify.
-   - Restate the target outcome.
-   - Ask one high-signal question if multiple implementations would be plausible.
-   - Identify constraints, non-goals, and success criteria.
-2. Tiny design.
-   - Compare 2-3 realistic options, including the simplest viable option.
-   - Recommend one option with tradeoffs and risks.
-   - Use first-principles reasoning for solution-shaped or architecture-heavy tasks: separate desired outcome, facts, constraints, assumptions, invariants, and non-goals before selecting a pattern.
-   - Run an adversarial design pass for non-trivial work: identify the weakest assumption, likely failure mode, and the check that would expose it.
-   - For architecture or workflow design, include a small Mermaid diagram when it improves clarity.
-3. Executable plan.
-   - Break work into small steps that are easy to review.
-   - Name files or modules when known.
-   - Include the verification plan before editing.
-4. Test-first when practical.
-   - For bug fixes, reproduce or identify a failing test before changing behavior.
-   - For new behavior, add the smallest useful behavior test first when the project supports it.
-   - Avoid horizontal TDD: do not write a large batch of imagined tests before implementation. Use vertical tracer bullets: one behavior test, the minimum code to pass it, then the next behavior.
-   - If test-first is impractical, explain why and use the strongest available verification.
-5. Implement in small steps.
-   - Keep behavior changes separate from mechanical refactors when possible.
-   - Prefer existing project patterns over novel abstractions.
-   - Stop before broad rewrites unless the task explicitly requires them.
-6. Debug systematically.
-   - Read the full error and build the tightest available feedback loop before changing code: failing test, `curl`/HTTP script, CLI fixture, browser script, captured trace replay, or a small harness.
-   - Confirm the loop is red-capable: it exercises the user's exact symptom and can fail before the fix and pass after the fix.
-   - Minimize the reproduction, compare to known-good paths, form one falsifiable hypothesis at a time, test it, and fix the root cause.
-   - After two failed guesses, pause and re-investigate assumptions instead of continuing random edits.
-7. Review gate.
-   - Compare the diff to the goal.
-   - Try to disprove the solution before delivery: edge inputs, permissions, stale state, concurrency, data volume, rollback, and adjacent flows where relevant.
-   - Check edge cases, compatibility, project conventions, docs impact, and security/reliability risk.
-   - Treat warnings, skipped checks, and flaky output as residual risk.
-8. Verification gate.
-   - Run targeted tests first; broaden only when justified.
-   - Verify behavior, not only syntax or type health.
-   - Never claim completion without naming what was verified or explicitly stating what remains unverified.
-9. Delivery.
-   - Separate what changed, why it is correct, what was tested, and what remains risky.
-   - Keep delivery notes in Chinese by default while preserving code, commands, and config keys in their original language.
-
-## Tiny Design Template
-
-Use this when the task is more than a trivial edit:
-
-```text
-Goal:
-Constraints / non-goals:
-Options:
-  1. ...
-  2. ...
-  3. ...
-Recommended option:
-Risks:
-Verification plan:
-```
-
-## Debugging Loop
-
-```text
-Symptom → Red-capable feedback loop → Reproduction → Minimal case → Evidence → Hypothesis → Experiment → Root cause → Fix → Regression coverage → Verification
-```
-
-Rules:
-
-- Do not patch symptoms before proving the cause.
-- Treat the feedback loop as the first deliverable. If no red-capable command can be built, state the evidence gap and ask for logs, traces, access, or permission to add temporary instrumentation.
-- Prefer one controlled experiment at a time.
-- Tag temporary diagnostic logs with a unique prefix and remove them before delivery.
-- Preserve diagnostic evidence in the final explanation when it matters.
-- Add regression coverage when practical; if not, document the manual or functional check used.
-
-## Test-First Rules
-
-- Test observable behavior through the highest useful public interface, not private implementation details.
-- Use vertical slices. Each cycle should add one behavior, make it pass, then reveal what the next behavior should be.
-- Prefer integration-style tests when they exercise the real user or system path without excessive setup.
-- Use mocks only at true external seams such as payment gateways, network providers, clocks, or nondeterministic dependencies.
-- During refactors, keep tests stable across internal reshaping. If tests fail only because a private helper changed, the test is too coupled.
-
-## Review Gate Checklist
-
-Before final delivery, answer:
-
-- Does the diff match the user's actual goal?
-- Did the implementation avoid unnecessary abstractions?
-- Are edge cases, errors, empty states, and permissions handled where relevant?
-- Did the change follow local project conventions?
-- Is there a test or check that would fail if the behavior regressed?
-- Did docs, examples, migrations, or operational notes need updates?
-- What was not verified?
-
-## Completion Rule
-
-Do not say “done”, “fixed”, or “complete” unless at least one of these is true:
-
-- A relevant automated test or check passed.
-- A meaningful manual verification was performed and described.
-- The final answer explicitly states that verification could not be run and explains the remaining risk.
+Return to `dev`'s verification and completion conditions after the cause is addressed. Do not rerun an entire workflow from this reference.
 
 ## Source Inspiration
 
-This reference is a localized, lightweight extraction inspired by:
-
-- Superpowers' published methodology: brainstorming/design before coding, explicit plans, TDD discipline, systematic debugging, code review, and verification before completion. Source: https://github.com/obra/superpowers
-- Matt Pocock's `diagnosing-bugs` and `tdd` skills: red-capable feedback loops, minimized reproductions, falsifiable hypotheses, and tracer-bullet TDD. Source: https://github.com/mattpocock/skills
+Focused adaptation of Superpowers' systematic debugging and Matt Pocock's diagnosing-bugs / TDD patterns:
+- https://github.com/obra/superpowers
+- https://github.com/mattpocock/skills

@@ -8,8 +8,8 @@
 #   id         unique slug
 #   prompt     the simulated user message
 #   expect     expected skills; [none] means no skill should trigger
-#   strict     true  -> strong-model mismatch fails the run
-#              false -> strong-model mismatch is a warning only
+#   strict     true  -> first-pass mismatch fails the run
+#              false -> first-pass mismatch is a warning only
 #   rationale  why this expectation holds
 #   source     motivating commit or "design"
 
@@ -345,3 +345,29 @@
   strict: false
   rationale: "Product/business rule, not an agent-working-style preference. Boundary case: cheap+strong both say none (bare statement, no ask); kept non-strict warn to keep the reflect/clarify boundary visible."
   source: design
+
+- id: dev-intake-material-choice
+  phase: intake
+  prompt: "实现订单归档功能，具体保留策略还没定"
+  expect: [dev]
+  strict: true
+  rationale: "Implementation enters dev; material decisions are resolved during delivery."
+  source: workflow-alignment
+
+- id: clarify-delivery-material-choice
+  phase: delivery
+  context: "dev is implementing order archival. Repository inspection and ordinary development questions cannot settle legally significant retention versus permanent deletion; the product owner must choose."
+  prompt: "现在需要确定永久删除还是保留归档这项产品决策。"
+  expect: [clarify]
+  strict: true
+  rationale: "Consult clarify for the unresolved decision within the authorized delivery."
+  source: workflow-alignment
+
+- id: dev-resume-after-clarify
+  phase: delivery
+  context: "Implementation was requested. clarify resolved the only material choice: archive, never permanently delete."
+  prompt: "按已定的归档方案继续实现"
+  expect: [dev]
+  strict: true
+  rationale: "Resume original delivery without another authorization gate."
+  source: workflow-alignment

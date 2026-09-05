@@ -36,8 +36,8 @@ English version: [README.en.md](./README.en.md)
 
 这是面向真实开发场景的默认 Skill，围绕“新需求交付”和“Bug 修复”两条完整闭环：
 
-- 新需求：聊天澄清目标与验收标准，确认方案，再实施编码、测试和验收
-- Bug 修复：审查问题、稳定复现、定位根因、确认修复方案，再实施最小修复、回归测试和验收
+- 新需求：从上下文确定目标与验收标准，仅澄清影响结果的未知项，直接实施并按风险验证
+- Bug 修复：审查证据、定位根因，实施最小完整修复并验证；已有授权不重复确认
 - Superpowers Lite：轻量设计、TDD、系统化调试、review gate 和 evidence-based completion
 - UI 设计：有意义的 UI 或交互流程创建、重塑时按需调用独立的 `design` Skill，获得交互方向、视觉方向、前端质量与动效方法论
 - 后端工程：服务端行为变更契约：调用方与权限、边界校验、幂等、错误与兼容
@@ -97,7 +97,7 @@ English version: [README.en.md](./README.en.md)
 - 只接「持久性纠正/偏好」:点名 `$reflect`,或用户说出「以后…」「别再…」「always / stop doing」这类可泛化的话
 - 一次信号只提炼一行:做什么、适用范围、来源;没有来源不入库
 - 落盘前必须逐条确认;绝不臆测用户「大概喜欢」,绝不静默写入
-- 本仓库写 `CLAUDE.md` 的 `## Taste` 区;消费方项目写其已有的 always-on 说明文件,没有就问,绝不擅自新建配置
+- 本仓库写 `AGENTS.md` 的 `## Taste` 区;消费方项目写其已有的 always-on 说明文件,没有就问,绝不擅自新建配置
 - 纠正暴露出某个 SKILL.md 本身教错了,只指认和提议,不越权改
 触发建议:一次性任务反馈(「这个变量改名」)不触发;产品/业务规则走 `clarify` / `qa`;普通需求走 `dev`。
 
@@ -512,8 +512,8 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 ## 自动触发建议
 
 - 创建或重塑有意义的 UI，设计或改进用户流程、可用性、状态转换、反馈恢复、AI Native 交互，或实现/审计动画与微交互时使用 `design`；`dev` 在 UI 或交互实现任务中会自动调用它。
-- 新需求默认使用 `dev` 的需求交付路径：聊天确认需求和验收标准、确认方案、编码、测试、验收。
-- Bug 默认使用 `dev` 的修复路径：审查与复现、定位根因、确认方案、最小修复、回归测试、验收。
+- 新需求默认使用 `dev` 的需求交付路径：确定目标和验收标准、选择兼容方案、编码、按风险测试和验收；流程步骤不要求逐轮确认。
+- Bug 默认使用 `dev` 的修复路径：审查与复现、定位根因、最小修复、相关回归验证和验收。
 - `dev` 先判断任务类型和变更边界，只加载与当前任务相关的 reference；不要因为默认触发就读取所有 reference。
 - 专门要求产品分析、要不要做/做什么、目标用户、优先级与取舍、第一期怎么切、成功怎么算、低成本实验，或先拷问/访谈/沉淀领域词汇或 ADR 时使用 `clarify`；它采用资深 PM 判断，但不负责持续 PM 运营，下一步默认是 `$dev` 实施、`$design` 定交互/视觉或 stop。
 - 只有用户明确调用 `$qa` / `/qa`，或明确要求业务测试、QA 思维、某条用户旅程/真实用法诊断、保护已命名业务规则时才使用 `qa`。一般的「看一下」「review」不触发；只说「补 e2e / 回归 / 补测试」仍走 `dev`。
@@ -523,21 +523,21 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 
 ## 路由与行为评估（Evals）
 
-路由纪律不能只靠措辞自觉，本仓库用四层机制把路由变成可回归的对象：
+整体流程见 [工作流程与评估](docs/workflow.md)。各类证据分开报告：
 
-| 层 | 内容 | 命令 |
+| 检查 | 范围 | 命令 |
 | --- | --- | --- |
-| L0 | 结构检查：路由措辞、目录树完备性、fixture 模式 | `npm test` |
-| L1 | 路由分类 eval：fixture 只看 name + description 判断应触发的 Skill | `npm run eval:routing` |
-| L2 | 行为 eval：加载 SKILL.md 后断言交付模板字段与禁越权行为 | `npm run eval:behavior` |
-| L3 | e2e 冒烟：真实 headless CLI 自报会触发哪个 Skill | `npm run eval:e2e` |
+| 静态 | 结构、fixture 加载、安装安全、评估器正反例 | `npm test` |
+| 路由代理 | 默认 description；可显式加入 when_to_use | `npm run eval:routing -- --surface description` |
+| 回答契约 | 文本输出字段、枚举和约束 | `npm run eval:behavior` |
+| 宿主自报 | 已授权 CLI 自报 Skill 选择，不证明实际执行 | `npm run eval:e2e -- --cli <目标>` |
+| 真实执行 | 临时项目的实现、只读范围、授权后继续 | `npm run eval:execution -- --prepare` |
 
-- L1 是 proxy：它测的是 description 的区分度（路由前唯一可见的信息），不测某个 harness 的完整触发链路；剩余缝隙由 L3 补。
-- L1 双级判分：Haiku 首跑，分歧的 fixture 用 Opus 复核，强模型结论对 strict fixture 有裁决权。没有 API key 时可 `npm run eval:routing -- --backend claude`，用已登录的 `claude` CLI 充当分类器。
-- **fixture 纪律**：真实会话里发现一次误触发，当次就把它加成 `evals/routing/fixtures.yaml` 里的一条（`source` 字段记录催生它的 commit）——fixture 文件就是遥测，不另建日志系统。
-- 五个 Adapter 的共享段落由 `adapters/contract.md` + `adapters/adapters.yaml` 渲染（`{{display}}`/`{{short}}`/`{{aliases}}` 三个 token）；改契约后跑 `npm run adapters:sync`，`npm test` 用 `--check` 校验同步。
-- nightly workflow（`.github/workflows/evals.yml`）跑 L1/L2 并把报告上传为 artifact，需要在仓库 secrets 配置 `ANTHROPIC_API_KEY`。
-- 加 `--record` 会把报告写进 `evals/results/`；版本与变更史见 `CHANGELOG.md`。
+首次失败不会被重试覆盖。路由 `--recheck` 只提供诊断；回答评估默认一次，`--attempts 2` 保留首次及后续结果。`--record` 保存 Markdown 和原始回答 JSON。两种 catalog 输入面分别报告，不能当成所有宿主的发现机制。
+
+真实执行需要调用方在已授权 Agent 中执行生成的任务、原样保存回复，再运行 `npm run eval:execution -- --verify <目录>`；文件快照与独立行为检查不依赖 Agent 自述。确认问题、暂时越界及复杂多轮行为需要检查真实运行记录。具体步骤和限制见工作流程文档。
+
+五个适配器共享内容由 `adapters/contract.md` 生成，改动后运行 `npm run adapters:sync`。nightly 仍运行路由和回答代理评估，需要 `ANTHROPIC_API_KEY`；不会自动启动真实执行 Agent。历史评估报告保持原样，不与新口径直接比较。
 
 ## 外部 Agent Adapter 协议
 
@@ -553,7 +553,7 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 
 ### 目标 CLI 内部 Skill 路由
 
-外部 CLI 的选择必须显式；但一旦用户或项目策略选定了 `kimi-code`、`claude-code`、`codex-cli`、`opencode` 或 `grok-build-cli`，目标 CLI 内部可以根据任务自动使用它能发现的全局/用户级和项目/本地非 Adapter Skill。
+外部 CLI 的选择必须显式；但一旦用户在当前请求或此前明确的持续指令中选定了 `kimi-code`、`claude-code`、`codex-cli`、`opencode` 或 `grok-build-cli`，目标 CLI 内部可以根据任务自动使用它能发现的全局/用户级和项目/本地非 Adapter Skill。项目策略只有在用户明确采纳且适用于当前范围时才算授权，发现策略文件本身不算授权。
 
 - 用户明确指定某个 Skill 时，优先尊重用户指定。
 - 当全局 Skill 和项目本地 Skill 都匹配时，优先使用项目本地 Skill，因为它通常更贴近当前仓库的约束、命令和领域语义。
@@ -580,3 +580,11 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 ## 许可证
 
 本仓库自有内容使用 [MIT License](./LICENSE)。`design/references/design-direction.md` 是随仓库分发的第三方 Apache-2.0 内容，其完整许可证位于 [design/references/anthropic-frontend-design-LICENSE.txt](./design/references/anthropic-frontend-design-LICENSE.txt)；`design/references/animation.md` 蒸馏自 MIT 许可的 [emilkowalski/skills](https://github.com/emilkowalski/skills)。
+
+## GPT-6 提示词适配
+
+依据 [GPT-6 Astra 官方提示词指导](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra#prompting-best-practices)（2026-09-05 核对），本库优化持续执行、指令冲突、输出详略、授权后的委派和适度验证。模型选择与 CLI 权限参数保持各适配器的原有约定。
+
+仓库规则统一放在 [AGENTS.md](AGENTS.md)，`CLAUDE.md` 引用它；安装 Skill 不会把本仓库规则写入消费项目。独立安装的 Skills 自带相关执行边界：清楚的实施请求直接完成，必要澄清只阻塞依赖该答案的工作，已有授权不重复索取。QA、仅评审请求、外部 Agent 调用和偏好持久化保留各自边界。
+
+`npm test` 与 `npm run doctor` 验证静态约束、适配器同步及安装安全；behavior fixtures 包含简短交付、复用授权、澄清后继续和仅计划场景。文本评估后端使用 Anthropic / Claude，dry-run 只检查场景加载；真实执行结果单独记录宿主、测试范围和限制，不以静态通过代替模型证据。

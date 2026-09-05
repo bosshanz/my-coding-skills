@@ -1,7 +1,7 @@
 ---
 name: clarify
-description: "Apply senior product-manager judgment to ambiguous, high-leverage product or technical work before implementation."
-when_to_use: "Use when the user explicitly invokes $clarify or asks for product analysis, whether or what to build, target users or jobs, prioritization and tradeoffs, first-slice scope, success measures, low-cost experiments, a requirements interview, or material product, domain, architecture, lifecycle, migration, or safety alignment that ordinary dev questions cannot resolve. Own product shaping and handoff, not ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or implementation. Do not use as a mandatory phase for ordinary requirements."
+description: "Clarify product or architecture decisions when explicitly requested; during dev, resolve material ambiguity beyond ordinary development questions, then return to delivery."
+when_to_use: "Use when the user explicitly invokes $clarify or asks for product analysis, whether or what to build, target users or jobs, prioritization and tradeoffs, first-slice scope, success measures, low-cost experiments, a requirements interview, or, during dev, material product, domain, architecture, lifecycle, migration, or safety alignment that ordinary dev questions cannot resolve. Own product shaping and handoff, not ongoing roadmaps, backlog or sprint management, stakeholder coordination, delivery tracking, or implementation. Do not use as a mandatory phase for ordinary requirements."
 argument-hint: "[问题或机会 | problem or opportunity]"
 ---
 
@@ -13,23 +13,17 @@ Use this Skill to turn a materially ambiguous or high-leverage request into a sh
 
 ## Admission
 
-Use the top-level `clarify` Skill only when at least one condition applies:
+**Direct entry:** use when the user explicitly invokes `$clarify`, requests product analysis, requirement challenge, architecture discussion, prioritization, first-slice scope, or an experiment / success-measure decision. A generic implementation request enters `dev` first.
 
-- The user explicitly requests `$clarify`, an interview, requirement challenge, architecture discussion, 产品分析, 要不要做, 做什么, 目标用户, 优先级或取舍, 第一期怎么切, 成功怎么算, 低成本实验, should we build, what to build, product prioritization, first slice, or how to measure success.
-- A material product, domain, architecture, lifecycle, migration, or safety decision is unresolved.
-- The request is solution-shaped and may be solving the wrong problem.
-- Who it is for, the first slice, or the success signal is still undefined and would change the work.
-- Several plausible interpretations would lead to meaningfully different implementations.
-- Implementing the wrong interpretation would have a high cost.
-- Durable domain language or an ADR-worthy decision must be established first.
+**During delivery:** `dev` may consult this Skill when a material product, domain, architecture, lifecycle, or migration decision remains unresolved after repository inspection and ordinary development questions. Examples include incompatible interpretations, an undefined target user or success signal that changes the implementation, or a costly domain choice. Work being new, important, or multi-file is not sufficient.
 
-Do not invoke `clarify` merely because work is new, multi-step, important, or touches multiple files.
+Resolve only that decision, preserve the original request and authorization, and return to `dev` when implementation was already requested. A standalone clarification request ends with a recommendation; it does not itself authorize implementation.
 
-If one or two focused questions inside `dev` can safely remove the ambiguity, keep the work in `dev`.
-
-Do not admit a request whose primary job is ongoing product operations or delivery management. Explicitly invoking `$clarify` does not expand this boundary.
+Do not admit ongoing product operations or delivery management. Explicit invocation does not expand this boundary.
 
 ## Boundaries
+
+Follow higher-priority host instructions and the user's explicit scope over workflow advice. Reuse repository facts and resolved decisions. If a rule requires pausing, link the exact file, quote the instruction, and name the unresolved decision; continue any independent authorized work.
 
 - Keep the session conversational and proportional.
 - Ask one question at a time only while a material unknown could change the judgment; when the evidence is sufficient, make the recommendation directly and invite challenge.
@@ -42,7 +36,7 @@ Do not admit a request whose primary job is ongoing product operations or delive
 - Do not invent then implement; that belongs to `$dev`.
 - Do not implement protection for already understood usage. Put the rule into the verification strategy for `$dev`; use `$qa` only when the user explicitly requests an independent business or real-usage pass.
 - Do not push an ambiguous problem into delivery merely to create visible progress.
-- Do not treat clarification as permission to start coding unless the user explicitly asks to proceed.
+- A clarification-only request does not authorize coding. If clarification was part of an already requested implementation, resume `$dev` when the material decision is resolved; do not ask for the same authorization again.
 - Hand off to `$dev` for implementation or `$design` when the next need is interaction or visual direction. Hand off to `$qa` only when the user explicitly requested that independent pass and the behavior is sufficiently defined. Stopping is valid when the judgment is not to build.
 
 ## Senior Product Judgment
@@ -152,7 +146,7 @@ Do not create ADRs for ordinary implementation choices.
 
 Clarification is complete when the next bounded action is safe and meaningful, not when every possible question has been answered.
 
-Confirm the smallest relevant set:
+Review the smallest relevant set against existing evidence; do not request confirmation for decisions already resolved:
 
 - Whether to build, experiment, or stop.
 - Target behavior or uncertainty to reduce.
@@ -167,7 +161,7 @@ Confirm the smallest relevant set:
 - Whether the work should go to `$dev`, `$design`, remain in discovery, or stop; include `$qa` only when the user explicitly requested it.
 - Durable terms or ADR-worthy decisions have been recorded only when justified.
 
-Close with a short summary and the next recommended action. Prefer `$dev` for implementation. Prefer `$design` when the slice is defined and the next need is interaction or visual direction. Use `$qa` only for an explicitly requested independent business or real-usage pass. Prefer stop when the judgment is not to build.
+For consultation during an authorized implementation, briefly summarize the resolved decision and resume delivery in the same task. Only standalone clarification ends with a recommendation: prefer `$dev` for implementation or `$design` for interaction or visual direction, and use `$qa` only for an explicitly requested independent pass. A recommendation not to build should be explained to the user; it does not silently cancel an explicit implementation request.
 
 When the work is product-shaped, the summary must name the product judgment, first slice, and success signal:
 

@@ -17,6 +17,7 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import Anthropic from '@anthropic-ai/sdk';
+import { firstPass } from '../lib/contracts.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -34,6 +35,10 @@ const RECORD = flag('record');
 const FILTER = value('filter');
 const BACKEND = value('backend') ?? 'api';
 const MODEL_ALIAS = value('model') ?? 'haiku';
+if (!['api', 'claude'].includes(BACKEND)) throw new Error('unknown backend');
+if (BACKEND === 'api' && !['haiku', 'opus'].includes(MODEL_ALIAS)) throw new Error('API model must be haiku or opus');
+const ATTEMPTS = Number(value('attempts') ?? 1);
+if (!Number.isInteger(ATTEMPTS) || ATTEMPTS < 1 || ATTEMPTS > 3) throw new Error('--attempts must be 1..3');
 
 const fixtures = YAML.parse(
   fs.readFileSync(path.join(here, 'fixtures.yaml'), 'utf8'),
@@ -106,6 +111,8 @@ async function generate(f) {
 }
 
 const selected = FILTER ? fixtures.filter((f) => f.id.includes(FILTER)) : fixtures;
+if (!selected.length) throw new Error('no fixtures selected');
+for (const f of selected) { loadSkill(f.skill); for (const re of f.must_match ?? []) new RegExp(re, 'i'); }
 
 if (DRY_RUN) {
   console.log(`fixtures: ${fixtures.length} (${selected.length} selected)`);
@@ -121,30 +128,25 @@ const rows = [];
 for (const f of selected) {
   let output;
   let failures = [];
-  // One retry: template conformance at the cheap tier is occasionally flaky,
-  // and a single regeneration absorbs it (mirrors the routing eval's
-  // strong-model re-check).
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  const attempts = [];
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
     try {
       output = await generate(f);
     } catch (error) {
-      console.error(`fail: ${f.id}: generation failed: ${error.message}`);
-      if (error instanceof Anthropic.AuthenticationError) {
-        console.error('No usable credentials. Set ANTHROPIC_API_KEY or use --backend claude.');
-        process.exit(2);
-      }
-      throw error;
+      attempts.push({ attempt, output: '', failures: [`generation failed: ${error.message}`] });
+      break;
     }
     failures = check(f, output);
+    attempts.push({ attempt, output, failures });
     if (failures.length === 0) break;
-    if (attempt === 1) console.log(`  retry ${f.id}`);
   }
-  rows.push({ ...f, verdict: failures.length === 0 ? 'PASS' : 'FAIL', failures });
+  failures = attempts[0].failures;
+  rows.push({ ...f, verdict: firstPass(attempts) ? 'PASS' : 'FAIL', failures, attempts });
   console.log(
     `  ${failures.length === 0 ? 'pass' : 'FAIL'} ${f.id}${failures.length ? `: ${failures.join('; ')}` : ''}`,
   );
   if (failures.length > 0) {
-    console.log(`    output head: ${output.slice(0, 500).replace(/\n/g, ' | ')}`);
+    console.log(`    output head: ${attempts[0].output.slice(0, 500).replace(/\n/g, ' | ')}`);
   }
 }
 
@@ -154,7 +156,7 @@ console.log(`\nsummary: ${rows.length - failed.length}/${rows.length} passed`);
 if (RECORD) {
   const resultsDir = path.join(root, 'evals', 'results');
   fs.mkdirSync(resultsDir, { recursive: true });
-  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const file = path.join(resultsDir, `behavior-${stamp}.md`);
   fs.writeFileSync(
     file,
@@ -167,6 +169,7 @@ if (RECORD) {
       '',
     ].join('\n'),
   );
+  fs.writeFileSync(file.replace(/\.md$/, '.json'), JSON.stringify({ backend: BACKEND, model: MODEL_ALIAS, rows }, null, 2));
   console.log(`recorded: ${path.relative(root, file)}`);
 }
 

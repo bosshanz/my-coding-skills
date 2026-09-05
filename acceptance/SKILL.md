@@ -1,6 +1,6 @@
 ---
 name: acceptance
-description: "Independent acceptance and adversarial verification review after implementation."
+description: "Review completed implementation when the user asks for final acceptance or a go/no-go verdict. Report reviewer separation, verification evidence, and approval authority separately."
 when_to_use: "Use when the user explicitly invokes $acceptance, asks for final acceptance, wants a separate verification pass after $dev, needs go/no-go judgment, or wants implementation evidence checked against clarified requirements, tests, risks, rollout, rollback, docs, and unresolved gaps."
 argument-hint: "[验收范围 | scope]"
 ---
@@ -17,17 +17,17 @@ Use this Skill to independently verify whether completed implementation work is 
 - If the work is not ready, return a clear rejection or risk-qualified acceptance and name the concrete evidence gap. Recommend `$dev` when product behavior is wrong and `$clarify` when the target is still unclear. Name `$qa` only when the user explicitly requests a separate business or real-usage protection pass.
 - Prefer repository evidence over claims: diff, tests, logs, screenshots, commands, CI, docs, and migration or rollout notes.
 
-## Independence Level
+Use the current, relevant evidence already available. Complete required checks, but rerun or broaden only when evidence is stale, incomplete, contradicted, or the user requests it. Verification thoroughness does not authorize new scope or a separate agent. If a workflow rule blocks the requested review, link its exact file and quote the instruction before asking for missing input.
 
-Use the smallest sufficient review level, and report both the requested and achieved level:
+## Review Basis
 
-- L0: same-agent self-check.
-- L1: fresh-context review.
-- L2: independent Agent or model review.
-- L3: deterministic external verification.
-- L4: human or domain-owner approval.
+Report three separate facts, without ranking them on one scale:
 
-Do not call a review independent unless the separation mechanism is real and stated.
+- **Reviewer separation:** same implementer, fresh context, separate agent/model, or human reviewer. Name the actual separation and any requested separation that was not achieved. Do not claim independence from the Skill name alone.
+- **Verification evidence:** commands, tests, manual observations, and their coverage/freshness/limits. Determinism does not imply independence; independent review does not imply sufficient coverage.
+- **Approval authority:** who can authorize the relevant release, merge, or business decision, and whether that approval exists, is pending, or is not required for this review. A technical acceptance verdict is not permission to publish or a substitute for owner approval. Do not invent an approval gate for a review-only task.
+
+Use existing evidence and authorized reviewers; these dimensions do not require spawning another agent or requesting human approval.
 
 ## Repository Context
 
@@ -48,7 +48,7 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
    - Claimed implementation scope.
    - Acceptance criteria or inferred criteria.
    - Important risks or unknowns.
-2. State the requested and achieved independence level.
+2. State reviewer separation, evidence quality, and applicable approval authority separately.
 3. Compare implementation to the target:
    - Review the diff against the requirement or root cause.
    - Check that behavior, edge cases, errors, permissions, data, API, UI, docs, migrations, and rollout notes are covered where relevant.
@@ -86,9 +86,9 @@ Use this compact structure:
 
 ```text
 Acceptance target:
-Independence requested:
-Independence achieved:
-Evidence reviewed:
+Reviewer separation:
+Verification evidence:
+Approval authority:
 Verifier assessment:
 Decision: accepted | accepted with risk | rejected
 Findings:

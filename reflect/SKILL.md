@@ -37,9 +37,9 @@ Not admission:
 
 1. Extract the preference as one line: what to do, scope, and source.
 2. Propose the exact entry text and destination. Write only after the user
-   confirms.
+   confirms. If the user already approved that exact text and destination, write it without asking again. Otherwise keep the entry pending, and identify this Skill and its confirmation rule when asking.
 3. Destinations, in order of what exists:
-   - This repository (`my-coding-skills`): `CLAUDE.md` under `## Taste`,
+   - This repository (`my-coding-skills`): `AGENTS.md` under `## Taste`,
      one line, newest last:
      `- [YYYY-MM-DD] <preference> (source: <correction>)`
    - A consumer project: its existing always-on instruction file

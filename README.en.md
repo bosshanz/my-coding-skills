@@ -36,8 +36,8 @@ Trigger guidance: use it when creating or reshaping meaningful UI; designing or 
 
 This is the default Skill for two real development scenarios: end-to-end new-requirement delivery and end-to-end Bug repair:
 
-- New requirements: clarify goals and acceptance criteria through conversation, agree on a solution, then implement, test, and accept it
-- Bug fixes: inspect and reproduce the issue, identify the root cause, agree on the repair, then implement the smallest fix, add regression coverage, and accept it
+- New requirements: infer goals and acceptance criteria from context, resolve material unknowns, then implement and verify proportionately
+- Bug fixes: inspect evidence, identify the root cause, implement the smallest complete repair, and verify it without renewing existing authorization
 - Superpowers Lite: lightweight design, TDD, systematic debugging, review gates, and evidence-based completion
 - UI design: invoke the standalone `design` Skill on demand for meaningful UI or interaction-flow creation and reshaping to get interaction direction, visual direction, frontend quality, and motion methodology
 - Backend engineering: server-side change contract: caller and permissions, boundary validation, idempotency, errors, and compatibility
@@ -97,7 +97,7 @@ An explicit taste-loop skill: it captures durable corrections the user makes in 
 - Only durable corrections/preferences: explicit `$reflect`, or phrases like "from now on", "always", "stop doing"
 - One signal becomes one line: what to do, scope, source; no source, no entry
 - Every write is confirmed first; no guessing what the user "probably prefers", no silent writes
-- In this repo it writes the `## Taste` section of `CLAUDE.md`; in consumer projects it writes their existing always-on instruction file, or asks - it never creates config files unilaterally
+- In this repo it writes the `## Taste` section of `AGENTS.md`; in consumer projects it writes their existing always-on instruction file, or asks - it never creates config files unilaterally
 - If a correction exposes a wrong SKILL.md, it names the contradiction and proposes the fix - it does not edit beyond its pass
 Trigger advice: one-off task feedback ("rename this variable") does not trigger it; product/business rules go to `clarify` / `qa`; ordinary work goes to `dev`.
 
@@ -512,8 +512,8 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 ## Automatic Trigger Guidance
 
 - Use `design` when creating or reshaping meaningful UI; designing or improving user flows, usability, state transitions, feedback and recovery, or AI-native interaction; or implementing or auditing animation and micro-interactions. `dev` invokes it automatically for UI or interaction implementation.
-- Use the new-requirement track in `dev` to discuss requirements and acceptance criteria, agree on a solution, implement, test, and accept the result.
-- Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, agree on the repair, implement the smallest fix, run regression tests, and accept the result.
+- Use the new-requirement track in `dev` to establish the target, select a compatible approach, implement, and verify proportionately; workflow steps are not separate approval turns.
+- Use the Bug-fix track in `dev` to inspect and reproduce the issue, identify the root cause, implement the smallest repair, and run relevant verification.
 - Let `dev` classify the task type and changed boundary first, then load only the references relevant to the current task; do not read every reference merely because `dev` triggered.
 - Use `clarify` when the user explicitly asks for product analysis, whether or what to build, target users, prioritization and tradeoffs, first-slice scoping, success measures, low-cost experiments, a grilling/interview session, or durable domain term / ADR capture. It applies senior PM judgment but does not own ongoing PM operations; next is normally `$dev` for implementation, `$design` for interaction or visual direction, or stop.
 - Use `qa` only when the user explicitly invokes `$qa` / `/qa`, or explicitly asks for business testing, QA thinking, diagnosis of a named user journey or real-usage question, or protection of a named business rule. Generic look/review requests do not trigger it; a bare add-e2e, regression, or add-tests request stays in `dev`.
@@ -523,35 +523,21 @@ OpenCode discovers and loads matching skills on demand. Once installed in a supp
 
 ## Routing And Behavior Evals
 
-Routing discipline cannot rely on prose alone, so this repository turns it
-into a regression target with four layers:
+See [workflow and evaluation](docs/workflow.md) for intake, delivery consultation, and completion boundaries. Report evidence types separately:
 
-| Layer | What it checks | Command |
+| Check | Scope | Command |
 | --- | --- | --- |
-| L0 | Structure: routing wording, directory-tree completeness, fixture schema | `npm test` |
-| L1 | Routing classification: fixtures judged only from name + description | `npm run eval:routing` |
-| L2 | Behavior: delivery-template conformance after loading a SKILL.md | `npm run eval:behavior` |
-| L3 | e2e smoke: real headless CLIs self-report which Skill they would invoke | `npm run eval:e2e` |
+| Static | Structure, fixture loading, installer safety, evaluator counterexamples | `npm test` |
+| Routing proxy | Description only by default; extended metadata is explicit | `npm run eval:routing -- --surface description` |
+| Response contract | Text fields, enums, and restrictions | `npm run eval:behavior` |
+| Host self-report | Authorized CLI reports a choice, not proven execution | `npm run eval:e2e -- --cli <target>` |
+| Execution | Temporary project implementation, read-only scope, authorized continuation | `npm run eval:execution -- --prepare` |
 
-- L1 is a proxy: it measures the discriminative power of the descriptions
-  (the only routing-visible surface), not any single harness's full trigger
-  chain; L3 covers the remaining gap.
-- L1 scores two levels: Haiku first pass, Opus re-check on disagreement; the
-  strong model is authoritative for strict fixtures. Without an API key, run
-  `npm run eval:routing -- --backend claude` to use an authenticated
-  `claude` CLI as the classifier.
-- **Fixture discipline**: when a real session mis-triggers, add the fixture
-  to `evals/routing/fixtures.yaml` in that same session (the `source` field
-  records the motivating commit) - the fixture file is the telemetry; no
-  logging infrastructure required.
-- The five adapters' shared sections render from `adapters/contract.md` +
-  `adapters/adapters.yaml` (tokens `{{display}}`/`{{short}}`/`{{aliases}}`);
-  after editing the contract run `npm run adapters:sync`. `npm test` verifies
-  sync with `--check`.
-- The nightly workflow (`.github/workflows/evals.yml`) runs L1/L2 and
-  uploads reports as artifacts; it needs the `ANTHROPIC_API_KEY` secret.
-- `--record` writes reports into `evals/results/`; see `CHANGELOG.md` for
-  versions and history.
+First-pass failures remain failures. Routing `--recheck` is diagnostic; response evaluation defaults to one attempt and `--attempts 2` preserves both attempts. `--record` saves Markdown and raw-response JSON. Description and extended surfaces are reported separately; neither claims universal host discovery fidelity.
+
+For execution evaluation, dispatch each generated task through an authorized agent, save its actual response, and run `npm run eval:execution -- --verify <directory>`. Independent file and behavior checks complement manual review of the actual trace for redundant confirmation or transient out-of-scope actions. See the workflow document for steps and limits.
+
+Shared adapter sections render from `adapters/contract.md`; run `npm run adapters:sync` after editing. Nightly still runs routing and response proxies using `ANTHROPIC_API_KEY`, without automatically dispatching execution agents. Historical reports retain their original scoring and are not directly comparable.
 
 ## External Agent Adapter Contract
 
@@ -567,7 +553,7 @@ If the target agent, CLI, authentication, or required permission is unavailable,
 
 ### Internal Skill Routing In Target CLIs
 
-External CLI selection must be explicit; once the user or project policy selects `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`, the target CLI may automatically use the global/user and project/local non-adapter Skills it can discover.
+External CLI selection must be explicit; once the current request or an earlier explicit user standing instruction selects `kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`, the target CLI may automatically use the global/user and project/local non-adapter Skills it can discover. A project policy counts only when the user explicitly adopted it for the relevant scope; discovering the file is not authorization.
 
 - Respect any Skill explicitly named by the user.
 - Prefer project-local Skills over global Skills when both apply, because project-local Skills usually better capture the current repository's constraints, commands, and domain language.
@@ -594,3 +580,11 @@ External CLI selection must be explicit; once the user or project policy selects
 ## License
 
 This repository's own content is licensed under the [MIT License](./LICENSE). The vendored third-party Apache-2.0 content in `design/references/design-direction.md` is accompanied by its full license at [design/references/anthropic-frontend-design-LICENSE.txt](./design/references/anthropic-frontend-design-LICENSE.txt); `design/references/animation.md` is distilled from the MIT-licensed [emilkowalski/skills](https://github.com/emilkowalski/skills).
+
+## GPT-6 Prompting Adaptation
+
+Based on [official GPT-6 Astra prompting guidance](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra#prompting-best-practices), checked on 2026-09-05, this library tunes follow-through, instruction conflicts, response length, authorized delegation, and proportional verification. Model selection and CLI permission parameters retain their adapter-specific contracts.
+
+[AGENTS.md](AGENTS.md) is the canonical repository rule file; `CLAUDE.md` loads it. Skill installation does not copy these repository rules into consumer projects. Standalone skills carry their relevant execution boundaries: finish clear implementation requests, block only work dependent on a material unanswered question, and reuse existing authorization. QA, review-only work, external-agent dispatch, and preference persistence retain their admission boundaries.
+
+`npm test` and `npm run doctor` check static contracts, adapter synchronization, and installer safety. Behavior fixtures cover concise delivery, existing authorization, continuation after clarification, and plan-only scope. The text runner uses Anthropic / Claude; dry-run checks fixture loading only. Real execution reports separately identify the host, scope, and limits, without treating static checks as model evidence.

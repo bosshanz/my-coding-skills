@@ -91,16 +91,19 @@ function normalize(output) {
 
 const rows = [];
 let mismatches = 0;
+let errors = 0;
 
 for (const cli of CLIS) {
   const invoker = INVOKERS[cli];
   if (!invoker) {
+    errors += 1;
     console.error(`skip: unknown cli "${cli}"`);
     continue;
   }
   try {
     await invoker.probe();
   } catch {
+    errors += 1;
     console.error(`skip: ${cli} not available on PATH`);
     continue;
   }
@@ -114,13 +117,14 @@ for (const cli of CLIS) {
       rows.push({ cli, id: f.id, expected, got, ok });
       console.log(`  ${ok ? 'ok  ' : 'MISS'} ${cli} ${f.id}: got="${got}" expected="${expected}"`);
     } catch (error) {
+      errors += 1;
       rows.push({ cli, id: f.id, expected, got: `error: ${error.message}`, ok: false });
       console.error(`  ERR  ${cli} ${f.id}: ${error.message}`);
     }
   }
 }
 
-console.log(`\ne2e smoke: ${rows.filter((r) => r.ok).length}/${rows.length} ok (${mismatches} mismatch)`);
-console.log('advisory by default; rerun with --strict to fail on mismatch');
+console.log(`\ne2e smoke: ${rows.filter((r) => r.ok).length}/${rows.length} ok (${mismatches} mismatch, ${errors} errors)`);
+console.log(STRICT ? 'strict: mismatches, invocation errors, and empty runs fail' : 'advisory: use --strict to fail on mismatches, errors, or empty runs');
 
-if (STRICT && mismatches > 0) process.exit(1);
+if (STRICT && (mismatches > 0 || errors > 0 || rows.length === 0)) process.exit(1);
