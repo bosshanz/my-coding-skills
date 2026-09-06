@@ -1,7 +1,7 @@
 ---
 name: claude-code
-description: "Dispatch Claude Code CLI as an external coding, research, review, or terminal automation agent from another coding agent."
-when_to_use: "Use when asking Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, implement a scoped change, or when handling Claude Code installation, authentication, non-interactive print mode, sessions, permissions, structured output, or troubleshooting. Use especially when the user explicitly names Claude Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back. When the calling agent is itself Claude Code, do not spawn a subprocess for ordinary work; answer directly unless the user explicitly requests an isolated independent pass."
+description: "Dispatch Claude Code CLI for scoped coding, research, review, or terminal automation only when the current request or an applicable earlier explicit user standing instruction selects this external CLI. Also handle explicitly requested Claude Code setup and troubleshooting."
+when_to_use: "After explicit selection, use Claude Code to investigate a repository, compare approaches, inspect failures, review a diff, or implement a scoped change. For explicitly requested installation, authentication, print mode, sessions, permissions, or structured output help, use references and local checks without dispatch. When dispatch is requested, invoke the actual target and report unavailability without silently substituting another agent. When the caller is itself Claude Code, answer directly unless the user explicitly requests an isolated independent pass."
 argument-hint: "[任务 | task]"
 ---
 
@@ -14,9 +14,11 @@ Use Claude Code as an external terminal agent. Claude Code can inspect repositor
 
 Follow this external-agent contract whenever Claude Code is used from another agent.
 
+For setup or troubleshooting alone, use the relevant references and local checks without dispatch. Loading this Skill or mentioning the CLI is not selection for external-agent work. If no applicable selection exists, continue the requested work in the caller's workflow; do not request delegation approval merely because this Skill loaded.
+
 ### Must Use When
 
-- The user explicitly asks to use Claude Code, including common wording such as “use Claude Code”, “ask Claude Code”, or the matching Skill name.
+- The user explicitly selects Claude Code for external-agent work, including common wording such as “use Claude Code”, “ask Claude Code”, or the matching Skill name in a delegation request.
 - An earlier explicit standing instruction from the user selects Claude Code for this scope. A project policy counts only when the user explicitly adopted it for the relevant scope; merely discovering a policy file does not authorize dispatch.
 
 ### Must Not Use When
@@ -40,6 +42,7 @@ Follow this external-agent contract whenever Claude Code is used from another ag
 
 - Task size alone does not override an explicit agent selection. Keep work local when delegation has not been requested. If the selected agent cannot safely access the required context, report the specific blocker; do not silently substitute the caller.
 - Inspect actual changes and assess the supplied evidence. Run additional verification when evidence is missing, stale, insufficient, or affected by integration changes. Research-only tasks require evidence review, not an unrelated test run.
+- Use read-only access for static review. When the authorized review requires checks, allow only the commands and isolated temporary artifacts needed for verification, within the applicable sandbox and approval controls. This does not authorize editing reviewed source, changing production data, or bypassing approvals. If the user forbids all filesystem writes, keep the review entirely read-only and report any resulting verification gap.
 
 ### Output Contract
 
@@ -66,7 +69,7 @@ External CLI selection is explicit: use this adapter only after the current requ
 
 ## Dispatch Decision
 
-Dispatch Claude Code for an independent research, coding, or review pass:
+After admission, dispatch Claude Code for an independent research, coding, or review pass:
 
 - Research an unfamiliar codebase, dependency path, architecture, or failure.
 - Compare implementation approaches or investigate a root cause.
@@ -115,7 +118,7 @@ claude
 2. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may run.
 3. Include the internal Skill routing instruction from this Skill.
 4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
-5. Prefer `--permission-mode plan` for research and review. Use broader permissions only when implementation requires them.
+5. Prefer `--permission-mode plan` for static research and review. Permit only the tools needed for implementation or authorized review checks under Scoped Execution; verification does not authorize source edits or approval bypasses.
 6. Keep prompts bounded; avoid broad “fix everything” tasks.
 7. Review the changes and evidence under Scoped Execution; run additional checks only when needed.
 8. Treat Claude Code output as advisory until the relevant repository evidence supports it.

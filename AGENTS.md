@@ -9,6 +9,7 @@ installing a skill does not install these repository rules into consumer project
 - Read the relevant skill and only the references needed for the task. When a file appears to require a pause, check its scope and existing authorization first. If it actually blocks work, link the exact file, quote the instruction, and explain the missing decision or permission. Do not invent approval gates from advice.
 - Treat action requests as work to complete. Inspect repository facts, resolve routine reversible choices, implement, and verify without requiring a separate plan approval. Ask only when missing information materially changes the outcome and cannot be inferred. Continue independent authorized work while waiting.
 - A follow-up correction steers the current task; preserve its objective and completed work unless the user cancels or replaces it. Answer side questions briefly, then continue. Reuse prior authorization unless scope or consequences change.
+- Ending a Skill portion does not end other already-authorized work. Pending clarification or persistence approval blocks only the actions that depend on it; continue independent authorized work.
 - For an external or irreversible action needing permission, first prepare the authorized work and a concrete reviewable result. Ask immediately before that action. Do not infer permission to publish, install globally, send messages, or change production data from a request to edit this library.
 
 ## Routing and delegation

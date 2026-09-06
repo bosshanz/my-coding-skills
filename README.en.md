@@ -58,7 +58,7 @@ This is an opt-in standalone Skill for business understanding, real usage, and Q
 - Restate that slice in the user's language: who is using the product, what they came to do, what success and failure look like, and which business rule must not break silently
 - Walk real usage only when reviewing an actual journey, and only for that slice: first time, returning, empty, blocked, mid-flow abandon, error recovery, and nearby jobs that must keep working
 - Attack that slice from a QA lens: how the product can stay green while lying to the user or the business
-- Enter the diagnosis track only when the user explicitly asks to diagnose a named real-usage question or user journey: answer that slice, do not edit files, and default to stop; uncovered usage is residual risk, not a backlog
+- Enter the diagnosis track only when the user explicitly asks to diagnose a named real-usage question or user journey: answer that slice without editing under Diagnosis, then continue other already-authorized work, including repair through `dev`; stop only when no requested work remains. Uncovered usage is residual risk, not a backlog
 - Only after the user asks to protect, choose the cheapest evidence that would turn red; an automated test is one form of evidence, never start from the test directory
 - Contract/coverage tracks may edit tests, fixtures, and test configuration; do not change product code or issue go/no-go
 
@@ -96,7 +96,7 @@ Trigger guidance: use it when the user explicitly invokes `$acceptance`, asks fo
 An explicit taste-loop skill: it captures durable corrections the user makes in conversation into the always-on layer, so the next session starts already knowing them.
 - Only durable corrections/preferences: explicit `$reflect`, or phrases like "from now on", "always", "stop doing"
 - One signal becomes one line: what to do, scope, source; no source, no entry
-- Every write is confirmed first; no guessing what the user "probably prefers", no silent writes
+- Every preference write is confirmed first; apply the current correction immediately and continue other authorized work while persistence is pending. No guessing what the user "probably prefers", no silent writes
 - In this repo it writes the `## Taste` section of `AGENTS.md`; in consumer projects it writes their existing always-on instruction file, or asks - it never creates config files unilaterally
 - If a correction exposes a wrong SKILL.md, it names the contradiction and proposes the fix - it does not edit beyond its pass
 Trigger advice: one-off task feedback ("rename this variable") does not trigger it; product/business rules go to `clarify` / `qa`; ordinary work goes to `dev`.
@@ -550,6 +550,8 @@ Recommended delivery separates:
 3. Final recommendation and verification conclusion
 
 If the target agent, CLI, authentication, or required permission is unavailable, report the failure explicitly and obtain user approval before substituting another target or completing the work directly.
+
+Setup or troubleshooting guidance uses relevant references and local checks without authorizing dispatch; loading an adapter alone is not a reason to ask for delegation approval. Static review defaults to read-only access. Necessary verification within an authorized review may use scoped commands and isolated temporary artifacts, without authorizing reviewed-source edits, production data changes, or approval bypasses. Honor an explicit ban on all filesystem writes and report any resulting verification gap.
 
 ### Internal Skill Routing In Target CLIs
 

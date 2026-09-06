@@ -1,7 +1,7 @@
 ---
 name: kimi-code
-description: "Dispatch Kimi Code CLI as an external coding or research agent from another coding agent:"
-when_to_use: "ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation, then have the calling agent review diffs and verify results. Also use for Kimi Code setup, login, sessions, custom Kimi Skill directories, and troubleshooting. Use especially when the user explicitly names Kimi Code; the caller must invoke the target, must not simulate its output, and must report unavailability instead of silently falling back."
+description: "Dispatch Kimi Code CLI for scoped coding, research, review, or terminal automation only when the current request or an applicable earlier explicit user standing instruction selects this external CLI. Also handle explicitly requested Kimi Code setup and troubleshooting."
+when_to_use: "After explicit selection, ask Kimi to investigate repositories, propose fixes, implement scoped changes, compare approaches, inspect failures, or run terminal automation. For explicitly requested setup, login, sessions, or custom Kimi Skill directories, use references and local checks without dispatch. When dispatch is requested, invoke the actual target and report unavailability without silently substituting another agent."
 argument-hint: "[任务 | task]"
 ---
 
@@ -14,9 +14,11 @@ Use Kimi Code as an external terminal agent. Kimi can inspect repositories, run 
 
 Follow this external-agent contract whenever Kimi Code is used from another agent.
 
+For setup or troubleshooting alone, use the relevant references and local checks without dispatch. Loading this Skill or mentioning the CLI is not selection for external-agent work. If no applicable selection exists, continue the requested work in the caller's workflow; do not request delegation approval merely because this Skill loaded.
+
 ### Must Use When
 
-- The user explicitly asks to use Kimi Code, including common wording such as “use Kimi Code”, “ask Kimi Code”, or the matching Skill name.
+- The user explicitly selects Kimi Code for external-agent work, including common wording such as “use Kimi Code”, “ask Kimi Code”, or the matching Skill name in a delegation request.
 - An earlier explicit standing instruction from the user selects Kimi Code for this scope. A project policy counts only when the user explicitly adopted it for the relevant scope; merely discovering a policy file does not authorize dispatch.
 
 ### Must Not Use When
@@ -40,6 +42,7 @@ Follow this external-agent contract whenever Kimi Code is used from another agen
 
 - Task size alone does not override an explicit agent selection. Keep work local when delegation has not been requested. If the selected agent cannot safely access the required context, report the specific blocker; do not silently substitute the caller.
 - Inspect actual changes and assess the supplied evidence. Run additional verification when evidence is missing, stale, insufficient, or affected by integration changes. Research-only tasks require evidence review, not an unrelated test run.
+- Use read-only access for static review. When the authorized review requires checks, allow only the commands and isolated temporary artifacts needed for verification, within the applicable sandbox and approval controls. This does not authorize editing reviewed source, changing production data, or bypassing approvals. If the user forbids all filesystem writes, keep the review entirely read-only and report any resulting verification gap.
 
 ### Output Contract
 
@@ -68,7 +71,7 @@ External CLI selection is explicit: use this adapter only after the current requ
 
 ## Dispatch Decision
 
-Dispatch Kimi when parallel or second-pass agent work is useful:
+After admission, dispatch Kimi for a scoped external pass:
 
 - Research: unfamiliar codebase exploration, architecture mapping, dependency tracing, failure root-cause analysis, or approach comparison.
 - Coding: small to medium scoped implementation, refactor, bug fix, test addition, or automation task.
@@ -121,7 +124,7 @@ When delegating to Kimi:
 4. Include the internal Skill routing instruction from this Skill.
 5. Ask for a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
 6. Keep prompts bounded. Prefer one concrete task over broad "fix everything" prompts.
-7. After Kimi completes, inspect the diff and run verification yourself before claiming completion.
+7. Review the changes and evidence under Scoped Execution; run additional checks only when needed.
 8. Treat Kimi output as advisory until the relevant repository evidence supports it.
 
 Research example:

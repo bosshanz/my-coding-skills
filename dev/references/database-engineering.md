@@ -71,7 +71,7 @@ Treat unknown, shared, staging-with-prod-data, and production databases as read-
 - Default to `SELECT` or `EXPLAIN`. Do not default to `EXPLAIN ANALYZE` on production; it can execute and lock.
 - Before a write to these databases (`INSERT`, `UPDATE`, `DELETE`, or DDL), estimate affected rows and name the rollback or repair path. Require explicit approval for that target and operation; reuse it if already given and the scope is unchanged. This gate does not apply to editing migration files or running an authorized disposable local test database.
 - Do not use application credentials to "just fix one row."
-- Do not run migrate, seed, or truncate against a production `DATABASE_URL`.
+- Do not run migrate, seed, or truncate against a production `DATABASE_URL`. This operation prohibition is separate from the write-approval gate; general write approval does not waive it. Preparing migration files and testing an authorized disposable local database remain allowed.
 
 ## Query And Index Review
 

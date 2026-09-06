@@ -11,7 +11,7 @@ Use this Skill to understand what the product is for, how a real person uses it,
 
 You are not a test runner. If you cannot explain the business in the user's language, you are not ready to add coverage.
 
-Keep the pass proportional to the ask. A yes/no, "is this normal", or single-behavior look is not a journey audit. Do not walk every usage category or fill every report field for completeness. Diagnosis answers the asked slice and stops. Uncovered usage is residual risk, not a backlog. Do not open the next Skill or the next protection unless the user asked.
+Keep the pass proportional to the ask. A yes/no, "is this normal", or single-behavior look is not a journey audit. Do not walk every usage category or fill every report field for completeness. Diagnosis answers the asked slice and ends that QA portion; continue other already-authorized work. Uncovered usage is residual risk, not a backlog. Do not start an unrequested next Skill or protection task.
 
 ## Mindset
 
@@ -51,13 +51,13 @@ If both `$dev` and `$qa` could apply, prefer `$dev` unless the user explicitly r
 
 Pick one from the request. Do not ask the user to choose.
 
-- **Diagnosis**: the user explicitly asked to diagnose a named business meaning, user journey, or real-usage question and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files. Default next step is `stop`.
+- **Diagnosis**: the user explicitly asked to diagnose a named business meaning, user journey, or real-usage question and did not ask to add protection. Do steps 1-3 only, scaled to the ask. Do not edit files under Diagnosis. Stop the task only when no other requested work remains.
 - **Contract**: the rule is clear and the product is not yet safe, or the user asked to write business evidence first. After steps 1-3, add the smallest failing or pending check that names the user job, then hand to `$dev`.
 - **Coverage**: the product already exists and the user asked to protect usage or fill unprotected journeys. After steps 1-3, add or update evidence. If the product is wrong, do not patch around it; hand to `$dev`.
 
 Honor authorization already given in the conversation; a new user request can change the track without a second confirmation. Workflow advice does not override the user's explicit scope or higher-priority host instructions. If an instruction requires pausing, link its exact file and quote the relevant rule.
 
-A later "go protect it" after Diagnosis becomes Coverage or Contract. Do not slide from Diagnosis into file edits in the same turn unless the user asked for protection. Do not recommend Coverage, Contract, `$clarify`, `$dev`, or `$acceptance` from Diagnosis unless the user asked for that next action or the asked slice cannot be answered without it.
+A later "go protect it" after Diagnosis becomes Coverage or Contract. End Diagnosis without editing under that track. Continue already-authorized repair through `$dev` or protection through Contract/Coverage in the same task; these are distinct permissions, and repair does not require a separate protection request. Do not recommend another workflow unless the user asked for that next action or the asked slice cannot be answered without it.
 
 ## Boundaries
 
@@ -113,7 +113,7 @@ Look for ways this slice can lie while remaining green, when they belong to the 
 
 Name the weakest assumption in the slice. On Diagnosis, record it as residual risk and end this QA portion; do not invent additional work. On Contract or Coverage, if current evidence does not cover it and the user asked to protect this slice, that is the next protection to add — not another happy-path script.
 
-On Diagnosis, the QA portion ends here. Report the findings; do not continue to steps 4-5 or edit under Diagnosis. If another part of the same user request already authorizes repair, continue through `$dev`; otherwise stop.
+On Diagnosis, the QA portion ends here. Report the findings; do not continue to steps 4-5 or edit under Diagnosis. Continue any already-authorized remaining work, using `$dev` for repair; otherwise stop.
 
 ## 4. Choose Evidence
 
@@ -156,8 +156,8 @@ QA 风险:
 下一步: stop | $dev | $clarify | $acceptance | stay in $qa
 ```
 
-On Diagnosis, prefer a short answer. You may omit empty fields. `保护了什么` describes the QA portion as `QA 阶段只诊断，未改文件`; report any separately authorized dev edits accurately. `下一步` defaults to `stop`. `残留风险` names what is still unprotected; it is not a todo. Do not report coverage work as done.
+On Diagnosis, prefer a short answer. You may omit empty fields. `保护了什么` describes the QA portion as `QA 阶段只诊断，未改文件`; report any separately authorized dev edits accurately. `下一步` is `stop` only when no other requested work remains. `残留风险` names what is still unprotected; it is not a todo. Do not report coverage work as done.
 
-On Contract or Coverage, fill the template. `下一步` is `stop` when the asked slice is protected.
+On Contract or Coverage, fill the template. `下一步` is `stop` when the asked slice is protected and no other requested work remains.
 
 If you did not understand the business well enough to fill `业务理解` and `用户怎么用`, do not report coverage work as done.

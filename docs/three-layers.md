@@ -28,7 +28,7 @@ Observe  真实会话中出现修正信号:拒绝、改写、重述、显式纠�
 Extract  提炼成一条候选偏好(一句话,可证伪)
 Learn    征询确认后落盘:个人偏好 → AGENTS.md `## Taste`;通用流程缺陷 → 对应 SKILL.md 修订
 Apply    下次会话 AGENTS.md 加载（Claude Code 通过 CLAUDE.md 引用）;skill 变更走正常 PR + 测试
-Verify   npm test + eval:routing 防回归
+Verify   按 AGENTS.md 运行适用的必需检查；真实模型路由或行为评估仅在已有适用授权时运行并单独报告
 ```
 
 落点:第 11 个 skill `reflect` 已落地——触发显式(点名,或用户说出持久性纠正),每条信号提炼一行、确认后入库;与 taste-1 的差异是刻意的,写入由人逐条把关,库本身是版本化的文本。

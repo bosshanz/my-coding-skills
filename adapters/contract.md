@@ -22,9 +22,11 @@ Use {{display}} as an external terminal agent. {{short}} can inspect repositorie
 
 Follow this external-agent contract whenever {{display}} is used from another agent.
 
+For setup or troubleshooting alone, use the relevant references and local checks without dispatch. Loading this Skill or mentioning the CLI is not selection for external-agent work. If no applicable selection exists, continue the requested work in the caller's workflow; do not request delegation approval merely because this Skill loaded.
+
 ### Must Use When
 
-- The user explicitly asks to use {{display}}, including common wording such as {{aliases}}, or the matching Skill name.
+- The user explicitly selects {{display}} for external-agent work, including common wording such as {{aliases}}, or the matching Skill name in a delegation request.
 - An earlier explicit standing instruction from the user selects {{display}} for this scope. A project policy counts only when the user explicitly adopted it for the relevant scope; merely discovering a policy file does not authorize dispatch.
 
 ### Must Not Use When
@@ -48,6 +50,7 @@ Follow this external-agent contract whenever {{display}} is used from another ag
 
 - Task size alone does not override an explicit agent selection. Keep work local when delegation has not been requested. If the selected agent cannot safely access the required context, report the specific blocker; do not silently substitute the caller.
 - Inspect actual changes and assess the supplied evidence. Run additional verification when evidence is missing, stale, insufficient, or affected by integration changes. Research-only tasks require evidence review, not an unrelated test run.
+- Use read-only access for static review. When the authorized review requires checks, allow only the commands and isolated temporary artifacts needed for verification, within the applicable sandbox and approval controls. This does not authorize editing reviewed source, changing production data, or bypassing approvals. If the user forbids all filesystem writes, keep the review entirely read-only and report any resulting verification gap.
 
 ### Output Contract
 

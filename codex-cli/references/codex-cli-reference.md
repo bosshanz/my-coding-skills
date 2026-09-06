@@ -40,8 +40,8 @@ codex login status
 
 ## Sandbox And Approvals
 
-- `--sandbox read-only` is the default choice for research and review.
-- `--sandbox workspace-write` allows edits inside the workspace for implementation.
+- `--sandbox read-only` is the default choice for static research and review.
+- `--sandbox workspace-write` supports implementation or authorized review checks that need temporary writes in an isolated disposable copy. Follow the Skill's Scoped Execution rules; review does not authorize source edits.
 - `--sandbox danger-full-access` should be rare and explicitly justified.
 - `--ask-for-approval never` is appropriate for non-interactive runs only when the sandbox and environment provide sufficient safety.
 - Avoid `--dangerously-bypass-approvals-and-sandbox` / `--yolo` unless the user explicitly accepts the risk and the environment is externally hardened.

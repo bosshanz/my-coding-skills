@@ -33,6 +33,8 @@ Not admission:
 
 ## Select A Track
 
+Apply the user's explicit correction to current authorized work immediately. Reflect's confirmation gate applies only to persisting the proposed preference: keep that entry pending while continuing independent authorized work. Ending this Reflect portion does not end the original task.
+
 ### Track A: Capture (default)
 
 1. Extract the preference as one line: what to do, scope, and source.
@@ -46,7 +48,7 @@ Not admission:
      (`CLAUDE.md` / `AGENTS.md`), appended inside a short `## Taste`
      section. If none exists or editing it is not clearly acceptable,
      ask where to record. Never create new config files unilaterally.
-4. Report the exact line and file written. Default next step: `stop`.
+4. Report the exact line and file written, or the pending entry. Resume any already-authorized work; stop the task only when no requested work remains.
 
 ### Track B: Skill defect
 
@@ -61,8 +63,8 @@ edit skill files inside this pass unless the user explicitly asked.
 - Every entry is dated and sourced; without a source it does not go in.
 - A duplicate of an existing line updates that line in place, never appends
   a second copy.
-- Reflect never triggers other skills on its own; `下一步` is `stop` unless
-  the user asked for more.
+- Reflect does not start unrequested work. Resuming the original authorized
+  task is continuation, not a new task or a permission reset.
 
 ## Delivery Format
 
@@ -71,7 +73,7 @@ edit skill files inside this pass unless the user explicitly asked.
 提炼: <the entry proposed or written, one line>
 落点: <file + section, or 待确认>
 状态: written | pending-confirm | defect-proposed | already-recorded
-下一步: stop | $dev (only for a confirmed, user-asked skill defect)
+下一步: stop | resume authorized task | $dev (for an explicitly requested skill defect)
 ```
 
-Keep it short. When nothing durable was said, say so in one line and `stop`.
+Keep it short. When nothing durable was said, capture nothing and resume the active task. For a standalone Reflect request with no remaining work, say so in one line and `stop`.
