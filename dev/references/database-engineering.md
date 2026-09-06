@@ -130,7 +130,7 @@ Treat unknown, shared, staging-with-prod-data, and production databases as read-
 
 Use the smallest applicable set:
 
-- Unit or integration test for constraints, idempotency, state transitions, and transaction conflict behavior.
+- Exercise storage constraints, persisted idempotency, and transaction conflicts against the relevant database semantics under `dev`'s shared evidence rules. Pure domain logic can be verified separately without storage.
 - Query plan review for hot or large-table queries.
 - Bounded-delete or tombstone review for any path that removes or retires durable rows.
 - Constrained-update or append-only review for balance and ledger paths.
@@ -140,6 +140,8 @@ Use the smallest applicable set:
 - Manual database inspection only as supporting evidence, not the sole proof for repeatable behavior.
 
 ## Database Decision Template
+
+Optional outline for a requested or project-required database decision artifact. Select relevant fields under `dev`'s shared artifact rules; this is not the default final reply.
 
 ```text
 Access patterns:

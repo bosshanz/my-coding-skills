@@ -28,6 +28,16 @@ Deliver the requested software change through one proportional loop: establish t
 
 A user correction steers this loop; preserve completed work and the original objective unless cancelled. A side question does not end the requested implementation. Small changes can complete the entire loop without a written plan or report template.
 
+## Shared Decision And Evidence Rules
+
+These rules apply to all references below. References supply technical detail; their checklists are internal prompts for the affected behavior, not mandatory report sections or additional workflow stages.
+
+- Compare alternatives when an unresolved tradeoff could change the implementation, or the user asks for a comparison. Task size alone does not require multiple proposals; reuse settled decisions.
+- Use a written plan when coordination or dependencies make it useful. Add a diagram when it clarifies a boundary, sequence, or data flow that prose would obscure, or when requested. Neither is an approval gate by default.
+- Choose evidence by the mechanism enforcing the invariant. Pure validation, error mapping, and state-transition logic can use unit tests; persistence constraints, isolation, atomicity, and query scoping need checks exercising the actual storage behavior. Use the project's database or a demonstrably equivalent engine for those semantics. A mock that removes the invariant is not evidence for it.
+- Prefer tests through stable behavior-facing interfaces. Use controllable external dependencies without mocking away the behavior being checked. Reuse sufficient existing coverage; add regression tests when they can detect the defect. Reproduction unavailable or test-first impractical calls for the strongest available check and a precise limitation, not invented evidence.
+- Final replies follow the delivery format below. Reference templates are optional outlines for a requested artifact or an existing project documentation requirement; include only applicable fields. Update stale documentation under `references/documentation.md` without creating a new report by default.
+
 ## Delivery Format
 
 Deliver in Chinese by default. Lead with the outcome and use short prose. Include commands/results only when they substantiate the conclusion; never invent them.
@@ -43,9 +53,9 @@ Load the smallest reference set that can materially improve the work.
 | `design` skill (invoke, not a reference) | New UI, meaningful UI or interaction reshaping, flow/usability work, AI-native interaction, motion/animation work, or visual-quality review. |
 | `references/superpowers-lite.md` | A bug has an unclear cause, a repair failed, or the user explicitly requests systematic debugging or test-first guidance. |
 | `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
-| `references/backend-engineering.md` | Server-side behavior change: endpoint, webhook, worker, command, backend integration, authn/authz path, public or internal contract, or backend failure path. |
-| `references/backend-architecture.md` | Service boundaries, interfaces, storage, cache, queue, consistency, migrations, observability, reliability, or rollout risk. |
+| `references/backend-engineering.md` | Backend change whose affected responsibility is unclear; use its routing table, then load only the applicable owner below. Skip when the owner is already clear. |
+| `references/backend-architecture.md` | Component/service boundaries, cache or queue topology, cross-component consistency, reliability targets, observability strategy, or rollout. |
 | `references/backend-quality.md` | Handlers, authz, tenancy, error mapping, idempotency, timeouts, backend tests, or process lifecycle. |
 | `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, capacity, destructive data operations, or production data access. |
 | `references/stack.md` | Choosing language, framework, database, queue, cache, or integration technology. |
-| `references/documentation.md` | Durable behavior, architecture, delivery notes, or reusable documentation. |
+| `references/documentation.md` | A change makes existing documentation stale, or a durable artifact is requested or required by the project. |

@@ -8,7 +8,7 @@ Use this reference when implementing, reviewing, or repairing backend behavior i
 - Authn, authz, tenancy, error mapping, timeouts, cancellation, and request-level idempotency.
 - Backend tests, log/metric hygiene, compatibility of existing contracts, or process lifecycle.
 
-Do not load it to choose stores, split services, add a cache or queue, or change schema, migrations, or destructive data operations. Load `backend-architecture.md` or `database-engineering.md` for those.
+This file owns implementation inside existing boundaries. Load `backend-architecture.md` only for a changed component or cross-component strategy, and `database-engineering.md` only for changed storage semantics or operations. Calling an unchanged dependency does not require loading its reference.
 
 Skip it for tiny mechanical edits that cannot change authority, effects, bounds, or failure behavior.
 
@@ -88,7 +88,7 @@ Follow the project's existing module shape first. Do not introduce a hexagonal o
 - Ordinary user edits use optimistic concurrency. A zero-row update is a conflict, not success.
 - Job handlers are safe to run twice. Detect duplicates with the same key the write path uses.
 - Poison messages go to a dead-letter path after a bounded retry. Infinite retry is not resilience.
-- Webhooks verify authenticity first, then apply the same idempotency rule as any other write.
+- Webhooks verify signatures or the provider's authenticity mechanism, timestamp tolerance and replay protection as applicable, then apply the write path's idempotency rule.
 
 ## Observability Hygiene
 
@@ -104,8 +104,7 @@ Follow the project's existing module shape first. Do not introduce a hexagonal o
 ## Test Gate
 
 - Prove each invariant at the lowest layer that still contains it.
-- Authz, tenancy, uniqueness, state transitions, and idempotency need an integration test against a real database or an equivalent engine. A mock repository cannot certify them.
-- Mocks belong at true network seams: payment providers, email, foreign HTTP APIs.
+- For authz and tenancy, exercise the enforcement point: pure policy logic may use unit tests, while query scoping needs storage integration evidence. For uniqueness, atomic writes, and persisted idempotency, exercise the relevant database semantics. Pure state transitions do not require a database just because they represent domain behavior. Follow `dev`'s shared evidence rules.
 - Cover the paths that change meaning: happy path, unauthenticated, wrong tenant, invalid input, duplicate or conflict, dependency timeout.
 - Time, randomness, and ID generation are injectable or fixed in tests when they affect the invariant.
 - Do not weaken a test to match a sloppy handler.
@@ -132,15 +131,7 @@ Use the smallest applicable set:
 - Timeouts, page or batch limits, and body size limits are present on new IO.
 - Client errors do not leak internals; operational failures are distinguishable in metrics or logs.
 - Logs carry a correlation ID and do not contain secrets or raw payloads.
-- The core invariant has an integration test, not only a mocked unit test.
+- Evidence exercises the mechanism enforcing the changed invariant; mocks do not stand in for storage guarantees.
 - Readiness or shutdown behavior is checked only when process lifecycle changed.
 
-## Delivery Template
-
-```text
-Authority:
-Effect and idempotency:
-Bounds:
-Failure mapping:
-Verification:
-```
+Final delivery follows `dev`; the gates above are internal checks for the changed behavior, not a report template.

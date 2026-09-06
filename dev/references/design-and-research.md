@@ -4,7 +4,7 @@
 
 - Start from the user's goal, success criteria, constraints, and the smallest useful deliverable.
 - Ask only enough questions to remove material ambiguity; prefer one clear question at a time.
-- For non-trivial work, propose 2-3 approaches with tradeoffs, then recommend one.
+- Compare realistic approaches only when an unresolved tradeoff could change the result or the user asks; recommend one without reopening settled choices.
 - Scale the design to the task: a few bullets for small work, a short structured design for larger work, and a diagram only when it clarifies boundaries or flow.
 - Avoid mandatory long design docs unless the user asks or the decision needs durable review.
 
@@ -49,21 +49,9 @@ Use this vocabulary when discussing module shape or refactoring:
 
 Prefer deep modules: small interfaces with meaningful behavior behind them. Use the deletion test: if deleting a module makes complexity disappear, it was probably pass-through; if deleting it spreads complexity across callers, it was earning its place.
 
-## Frontend Design
+## UI Guidance
 
-- Start from user goal, main task flow, and the information hierarchy.
-- Define the key screens, states, edge states, and transitions before polishing visuals.
-- Produce interfaces that are intentional, not generic. Keep typography, spacing, color, and component emphasis coherent.
-- Cover loading, empty, error, success, hover, focus, and responsive states.
-- Add a flow diagram when the UI involves multi-step interaction, branching, or role-based paths.
-- For meaningful flow, usability, state-transition, recovery, or AI-native interaction work, invoke the `design` Skill and load its `references/interaction.md`; the bullets here only frame the implementation solution.
-
-## UI And Interaction
-
-- Prefer simple flows with clear actions and minimal ambiguity.
-- Reduce user effort: fewer steps, stronger defaults, obvious feedback.
-- Make destructive or irreversible actions explicit.
-- Align interaction details with the product's existing design language when one exists.
+For meaningful UI or interaction work, use the `design` Skill through `dev`'s loading policy. Keep visual, state, and interaction guidance there rather than maintaining a second frontend checklist here.
 
 ## Backend Research
 
@@ -73,7 +61,7 @@ Prefer deep modules: small interfaces with meaningful behavior behind them. Use 
 
 ## Research Output Template
 
-Use this structure for technical research:
+For a requested research artifact, use applicable parts of this optional outline; ordinary research feeds the implementation decision and `dev` delivery:
 
 - Background
 - Options
@@ -88,9 +76,7 @@ Use this structure for technical research:
 - Design for operability: logging, metrics, tracing, error surfacing, and rollback path.
 - Favor evolvable structures over premature platform complexity.
 - Avoid speculative seams. One adapter means a seam is only hypothetical; two real adapters or a concrete testing/operational need make it worth considering.
-- For architecture design, include at least one component or service relationship diagram.
-- For process design, include at least one flowchart or sequence diagram.
-- When data movement is central to the design, include a lightweight data flow diagram.
+- Follow `dev`'s diagram trigger: use a component, sequence, or data-flow view only when it clarifies the decision or is requested.
 
 ## Source Inspiration
 
