@@ -15,6 +15,19 @@ Core principles:
 
 中文主版本: [README.md](./README.md)
 
+## Portable Agent Instructions
+
+[templates/AGENTS.md](./templates/AGENTS.md) is a copyable, Chinese-language template for other projects. It makes problem grounding, the simplest complete solution, module ownership, evidence, uncertainty, and long-task continuity everyday practices. Independent adversarial review, independent judgments before discussion, and ablation comparisons apply when the task and existing authorization warrant them.
+
+Merge it into the target project's existing `AGENTS.md` or the rules file its host actually loads, preserving project constraints and verification commands. Ordinary Skill installation does not change rules; global adoption uses a separate opt-in command. See [docs/workflow.md](./docs/workflow.md) for defaults and on-demand methods.
+
+```bash
+./install.sh --global-rules --target codex --dry-run
+./install.sh --global-rules --target codex
+```
+
+Global installation currently supports Codex and requires Node.js 18+. It writes to `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, replaces only this library's marked block, preserves other content, and saves an `AGENTS.md.bak.*` sibling before changes. Identical content is a no-op. Use `--dest DIR` for a custom rules directory or testing; do not combine this mode with Skills/groups or `--force`. An active `AGENTS.override.md` causes an explicit refusal because it would shadow the installed file. To restore, copy the chosen backup to the original path. Start a new session after adoption; see [official Codex discovery guidance](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+
 ## Included Skills
 
 The repository currently includes eleven primary skills:
@@ -45,6 +58,7 @@ This is the default Skill for two real development scenarios: end-to-end new-req
 - Backend quality: request authority, tenant isolation, error mapping, idempotency, timeouts, test layering, and process lifecycle
 - Database engineering: schema, constraints, transactions, indexes, query plans, migrations, backfills, capacity, and production safety
 - First-principles design and adversarial review: derive solutions from goals, facts, constraints, and assumptions, then actively search for failure paths
+- Preserve goals, authorization, evidence, and remaining actions across long work; compare repair evidence under matching conditions and load ablation guidance only when a decision needs an optional element's measured contribution
 - Final diff review against the requirement or root cause, with explicit testing, acceptance, and unverified risks
 
 Trigger guidance: both new requirements and Bug fixes should trigger `dev` by default without requiring `$dev`. `dev` first acts as a thin dispatcher that classifies the task boundary, then loads only the relevant references. Use an Adapter only when the user explicitly asks Kimi, Claude Code, Codex CLI, OpenCode CLI, Grok Build CLI, or another external agent to participate.
@@ -180,6 +194,7 @@ dev/
     superpowers-lite.md
     stack.md
     design-and-research.md
+    ablation.md
     documentation.md
     backend-engineering.md
     backend-architecture.md
@@ -232,6 +247,8 @@ grok-build-cli/
 adapters/
   contract.md
   adapters.yaml
+templates/
+  AGENTS.md
 evals/
   routing/
     fixtures.yaml
@@ -294,7 +311,7 @@ scripts/skills-doctor.sh
 
 ### Option A: Use `install.sh` (recommended)
 
-The repository includes a dependency-free Shell installer. By default it installs every Skill into all supported target directories (`~/.agents/skills/`, `~/.claude/skills/`, `~/.gemini/skills/`, and `~/.config/opencode/skills/`):
+The repository includes a Shell installer. Skill copying needs no additional runtime; explicit global rules installation requires Node.js 18+. By default it installs every Skill into all supported target directories (`~/.agents/skills/`, `~/.claude/skills/`, `~/.gemini/skills/`, and `~/.config/opencode/skills/`):
 
 ```bash
 git clone <your-repository-url>

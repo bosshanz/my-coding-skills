@@ -15,6 +15,19 @@
 
 English version: [README.en.md](./README.en.md)
 
+## 通用 Agent 约定
+
+[templates/AGENTS.md](./templates/AGENTS.md) 是可复制到其他项目的通用模板。它把第一性原理、最小完整方案、模块职责、证据检查、不确定项和长任务续接写成默认工作方式；独立对抗审查、先独立判断再交流、消融实验按任务需要与已有授权启用。
+
+采用时可合并到目标项目已有的 `AGENTS.md` 或宿主实际加载的规则文件，保留项目约束与验证命令。普通 Skill 安装不修改规则；全局安装使用下方独立入口。规则与按需方法的分工见 [docs/workflow.md](./docs/workflow.md)。
+
+```bash
+./install.sh --global-rules --target codex --dry-run
+./install.sh --global-rules --target codex
+```
+
+全局规则安装目前支持 Codex，需要 Node.js 18+，默认写入 `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`。只替换本库标记区块，保留其他内容；修改已有文件前生成同目录 `AGENTS.md.bak.*` 备份，内容一致时不重复写入。`--dest DIR` 可指定规则目录用于预览或测试，不能与 Skill 名称、分组或 `--force` 混用。已有非空 `AGENTS.override.md` 时明确拒绝，以免安装结果被覆盖。恢复时可将所选备份复制回原文件；采用后启动新会话加载，路径与加载规则见 [Codex 官方说明](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。
+
 ## 仓库内容
 
 当前包含 11 个主 Skill：
@@ -45,6 +58,7 @@ English version: [README.en.md](./README.en.md)
 - 后端质量：请求权威、租户隔离、错误映射、幂等、超时、测试分层和进程生命周期
 - 数据库工程：schema、约束、事务、索引、查询计划、迁移、回填、容量和生产安全
 - 第一性原理设计和对抗式审查：从目标、事实、约束和假设推出方案，并主动寻找失败路径
+- 长任务保留目标、授权、证据与剩余动作；修复对照相同条件下的前后结果，需要判断可选元素贡献时才加载消融实验方法
 - 交付前对照需求或根因做 diff review，并明确测试、验收和未验证风险
 
 触发建议：新增需求和 Bug 修复都默认触发 `dev`，不需要用户显式写 `$dev`。`dev` 先作为薄调度器判断任务边界，再按矩阵加载相关 reference。只有用户明确要求 Kimi / Claude Code / Codex CLI / OpenCode CLI / Grok Build CLI 等外部 Agent 参与时，才走对应 Adapter。
@@ -180,6 +194,7 @@ dev/
     superpowers-lite.md
     stack.md
     design-and-research.md
+    ablation.md
     documentation.md
     backend-engineering.md
     backend-architecture.md
@@ -232,6 +247,8 @@ grok-build-cli/
 adapters/
   contract.md
   adapters.yaml
+templates/
+  AGENTS.md
 evals/
   routing/
     fixtures.yaml
@@ -294,7 +311,7 @@ scripts/skills-doctor.sh
 
 ### 方式 A：使用 `install.sh`（推荐）
 
-仓库根目录提供零依赖 Shell 安装器。默认命令会把全部 Skill 安装到所有支持的目标目录（`~/.agents/skills/`、`~/.claude/skills/`、`~/.gemini/skills/`、`~/.config/opencode/skills/`）：
+仓库根目录提供 Shell 安装器，Skill 复制模式无需额外运行时；显式全局规则模式需要 Node.js 18+。默认命令会把全部 Skill 安装到所有支持的目标目录（`~/.agents/skills/`、`~/.claude/skills/`、`~/.gemini/skills/`、`~/.config/opencode/skills/`）：
 
 ```bash
 git clone <your-repository-url>

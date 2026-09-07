@@ -103,6 +103,8 @@ Prefer named concrete scenarios over abstract categories. A scenario that cannot
 
 Attack only the asked slice. Do not scan every failure category for leftover work.
 
+Form an initial judgment from the user job and raw product evidence before adopting an implementer's explanation or other review conclusions. When an independent pass is requested, state the actual reviewer separation and any inherited-context limit; this Skill does not itself authorize another agent. Reviewers who are already authorized should compare their initial findings afterward, using evidence to resolve disagreements.
+
 Look for ways this slice can lie while remaining green, when they belong to the ask:
 
 - Wrong person, missing permission, or leaked existence.
@@ -112,6 +114,8 @@ Look for ways this slice can lie while remaining green, when they belong to the 
 - The message or dead end that would send them to support.
 
 Name the weakest assumption in the slice. On Diagnosis, record it as residual risk and end this QA portion; do not invent additional work. On Contract or Coverage, if current evidence does not cover it and the user asked to protect this slice, that is the next protection to add — not another happy-path script.
+
+For each material finding, give the concrete trigger, expected versus observed behavior, user impact, and reproducible evidence or a precise evidence gap. Distinguish confirmed defects from hypotheses and say what would overturn a disputed judgment. No finding is a valid outcome; agreement among reviewers does not replace evidence.
 
 On Diagnosis, the QA portion ends here. Report the findings; do not continue to steps 4-5 or edit under Diagnosis. Continue any already-authorized remaining work, using `$dev` for repair; otherwise stop.
 

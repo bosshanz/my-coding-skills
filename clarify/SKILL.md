@@ -49,6 +49,7 @@ For product-shaped work, own the smallest useful set:
 - Prioritize outcomes and tradeoffs, then define the smallest coherent first slice and explicit non-goals.
 - Define a success signal that reflects user or business value rather than an easy proxy metric.
 - Prefer a low-cost experiment when confidence is too low for delivery, and define the decision the experiment should unlock.
+- Prefer a script, prototype, or existing workflow when it can test the complete first slice under the actual constraints; additional architecture needs a current reason. If the question is whether an optional element contributes, propose a controlled comparison with and without it, holding other conditions steady and defining the verifier and meaningful difference first. This is experiment design, not authorization to run or apply it.
 
 Keep product artifacts decision-oriented. Do not manufacture exhaustive ceremony, invented research, fake certainty, or delivery commitments merely because the user asks for a PM-shaped output.
 
@@ -101,6 +102,7 @@ Discovery is complete when uncertainty is low enough to define a bounded impleme
 Use first-principles clarification when the request is ambiguous, solution-shaped, architecture-heavy, or likely to encode hidden assumptions:
 
 - Separate the desired outcome from the proposed implementation.
+- Check that the motivating problem has observable support and an executable success scenario. Distinguish a reproduced failure, a reported symptom, and a new opportunity; do not require an existing defect for new work or turn an unconfirmed cause into a requirement.
 - Identify facts, constraints, assumptions, invariants, unknowns, and non-goals before debating solutions.
 - Ask what must remain true if the current UI, API, storage model, framework, metric, or workflow were replaced.
 - Challenge inherited labels and abstractions when they obscure real domain behavior.

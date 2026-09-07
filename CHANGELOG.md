@@ -3,6 +3,30 @@
 Notable changes to this skill collection. Dates are absolute; versions follow
 a coarse 0.x scheme tied to capability batches.
 
+## [Unreleased]
+
+### Added
+
+- Opt-in `install.sh --global-rules --target codex`: preview, backed-up managed
+  block updates, idempotent installs, custom rules directory, and refusal of
+  shadowing overrides or unsafe destinations; covered by installer tests.
+- Copyable `templates/AGENTS.md` with evidence-based problem framing,
+  task continuity, simple complete solutions, module ownership, explicit
+  uncertainty, and conditional independent review and ablation guidance.
+- `dev/references/ablation.md` for controlled baseline/removal comparisons,
+  repeated nondeterministic runs, confounders, and bounded conclusions.
+
+### Changed
+
+- `dev`, `clarify`, `qa`, and `acceptance` now make before/after evidence,
+  falsifiable judgments, and relevant uncertainty more explicit. Independent
+  reviewers form initial findings before seeing other verdicts; the shared
+  adapter contract carries the same review discipline without changing dispatch
+  authorization or Skill admission.
+- Bilingual entry docs, workflow mapping, package contents, and doctor checks
+  expose the template and optional experiment reference. Ordinary Skill installs
+  do not apply project rules; global rule installation is explicit.
+
 ## [0.5.0] - 2026-09-01
 ### Added
 - `CLAUDE.md`: always-on Rules layer for developing this repository (route

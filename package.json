@@ -18,6 +18,9 @@
     "codex-cli",
     "opencode",
     "grok-build-cli",
+    "templates",
+    "install.sh",
+    "scripts/install-global-rules.mjs",
     "scripts/skills-doctor.sh",
     "scripts/check-routing-policy.mjs",
     "scripts/test-install-safety.sh",
@@ -34,7 +37,7 @@
     "eval:behavior": "node evals/behavior/runner.mjs",
     "eval:e2e": "node evals/e2e/smoke.mjs",
     "adapters:sync": "node scripts/sync-adapters.mjs --write",
-    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs && bash scripts/test-install-safety.sh",
+    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs && bash scripts/test-install-safety.sh",
     "eval:execution": "node evals/execution/runner.mjs"
   },
   "keywords": [

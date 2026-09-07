@@ -48,7 +48,7 @@ for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli op
   fi
 done
 
-for ref in superpowers-lite.md stack.md design-and-research.md documentation.md backend-engineering.md backend-architecture.md backend-quality.md database-engineering.md; do
+for ref in superpowers-lite.md stack.md design-and-research.md ablation.md documentation.md backend-engineering.md backend-architecture.md backend-quality.md database-engineering.md; do
   check_file "dev/references/$ref"
 done
 
@@ -86,6 +86,8 @@ check_file "evals/execution/harness.mjs"
 check_file "evals/execution/runner.mjs"
 check_file "evals/execution/harness.test.mjs"
 check_file "AGENTS.md"
+check_file "templates/AGENTS.md"
+check_file "scripts/install-global-rules.mjs"
 check_file "docs/workflow.md"
 check_file "evals/results/README.md"
 check_file ".github/workflows/evals.yml"

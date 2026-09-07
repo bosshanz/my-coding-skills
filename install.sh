@@ -23,6 +23,7 @@ DEST=""
 FORCE=0
 DRY_RUN=0
 LIST_ONLY=0
+GLOBAL_RULES=0
 REQUESTED=()
 
 usage() {
@@ -32,6 +33,7 @@ Install this repository's coding-agent Skills.
 Usage:
   ./install.sh [skill|group ...] [options]
   ./install.sh --list
+  ./install.sh --global-rules [--target codex] [--dry-run]
 
 Skills:
   design
@@ -55,9 +57,12 @@ Groups:
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
 
 Options:
+  --global-rules    Install/update the template in Codex global AGENTS.md only
+                    (requires Node.js 18+; preserves other content and backs up changes)
   --target TARGET   agents, codex, claude, gemini, opencode, or all
                     (default: all)
-  --dest DIR        Install into a custom Skills directory (must not be / or a system path)
+  --dest DIR        Custom Skills directory, or rules directory in --global-rules mode
+                    (must not be / or a system path)
   --force, -f       Replace an existing installed Skill
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
@@ -74,6 +79,8 @@ Examples:
   ./install.sh all --target gemini --force
   ./install.sh all --target all --force
   ./install.sh dev --dest /tmp/skills --dry-run
+  ./install.sh --global-rules --target codex
+  ./install.sh --global-rules --dest /tmp/codex-rules --dry-run
 
 Targets:
   agents    $HOME/.agents/skills (recommended shared location; Codex-supported)
@@ -277,6 +284,10 @@ while [[ "$#" -gt 0 ]]; do
       DRY_RUN=1
       shift
       ;;
+    --global-rules)
+      GLOBAL_RULES=1
+      shift
+      ;;
     --list)
       LIST_ONLY=1
       shift
@@ -298,6 +309,13 @@ done
 if [[ "$LIST_ONLY" -eq 1 ]]; then
   usage
   exit 0
+fi
+
+if [[ "$GLOBAL_RULES" -eq 1 ]]; then
+  [[ "${#REQUESTED[@]}" -eq 0 && "$FORCE" -eq 0 ]] || fail "--global-rules cannot be combined with Skills/groups or --force"
+  [[ "$TARGET_WAS_SET" -eq 0 || "$TARGET" == "codex" ]] || fail "--global-rules currently supports --target codex only"
+  command -v node >/dev/null 2>&1 || fail "--global-rules requires Node.js 18+"
+  exec node "$ROOT/scripts/install-global-rules.mjs" "${DEST:-${CODEX_HOME:-$HOME/.codex}}" "$DRY_RUN"
 fi
 
 resolve_requests

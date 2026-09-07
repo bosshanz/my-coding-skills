@@ -6,7 +6,8 @@ Load only for an unclear or resistant bug, or an explicit request for systematic
 
 - Read the full failure and trace the actual path through inputs, callers, state, and configuration. Compare a nearby working path and relevant recent changes.
 - Build the smallest feedback loop capable of exposing the reported symptom: an existing test, command, trace replay, or local probe. Confirm it can fail for the original defect before treating a pass as evidence of repair.
-- Form a falsifiable hypothesis and isolate variables in experiments so results can distinguish causes. Independent read-only investigations can run together; avoid overlapping changes that obscure attribution.
+- Form a falsifiable hypothesis, state the observation that would contradict it, and isolate variables so results can distinguish causes. Independent read-only investigations can run together when delegation is authorized; avoid overlapping changes that obscure attribution.
+- Compare the original and repaired behavior with the same reproducer and relevant conditions. Preserve enough input, environment, and result evidence to tell a root-cause repair from a symptom that merely disappeared. Use an isolated baseline when needed; do not revert others' work or weaken the check to manufacture a pass.
 - When a repair fails or evidence contradicts the hypothesis, re-examine assumptions before repeating edits. Investigate rather than introducing an automatic permission pause.
 - If reproduction is unavailable, state the uncertainty. Inspect existing logs and use reversible local instrumentation within scope; ask only for missing evidence or access that is necessary. Remove temporary diagnostics after use.
 

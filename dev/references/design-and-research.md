@@ -16,6 +16,7 @@ Use this when a task is solution-shaped, architecture-heavy, expensive to revers
 - Derive the simplest viable solution from those primitives before choosing a familiar pattern, framework feature, cache, queue, service split, or abstraction.
 - Ask what would change if the current implementation detail disappeared: UI, API, datastore, provider, framework, or deployment shape.
 - Keep only abstractions that protect a real invariant, hide meaningful complexity, or preserve locality under likely change.
+- Validate the simplest complete path first, including an existing component or a script when sufficient. Simplicity must still meet the real compatibility, data, and recovery constraints; fewer lines alone do not establish it.
 
 ## Adversarial Design Review
 
@@ -48,6 +49,8 @@ Use this vocabulary when discussing module shape or refactoring:
 - **Locality**: the maintainer benefit from concentrating change, bugs, and verification in one place.
 
 Prefer deep modules: small interfaces with meaningful behavior behind them. Use the deletion test: if deleting a module makes complexity disappear, it was probably pass-through; if deleting it spreads complexity across callers, it was earning its place.
+
+Keep logic that changes for the same reason together, with explicit ownership of state and invariants. Make inputs, outputs, errors, and relevant ordering part of the contract so a change can be understood and verified near its owner. Splitting files or adding forwarding layers alone does not create cohesion or reduce coupling. The deletion test is a design heuristic, not measured evidence; use `ablation.md` when the decision needs a controlled comparison.
 
 ## UI Guidance
 

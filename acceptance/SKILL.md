@@ -29,6 +29,8 @@ Report three separate facts, without ranking them on one scale:
 
 Use existing evidence and authorized reviewers; these dimensions do not require spawning another agent or requesting human approval.
 
+When a separate reviewer is requested and authorized, use someone who did not implement the change. Provide the original goal, criteria, constraints, reviewed revision, and raw evidence; have the reviewer form an initial judgment before seeing the implementer's verdict or other reviewers' conclusions. Then compare findings and consult necessary rationale. Preserve required context, disclose any prior exposure, and never claim blindness or independence that the actual session lacks. Resolve disagreements through a discriminating check, not majority vote or forced agreement.
+
 ## Repository Context
 
 Inspect the closest available evidence before asking the user:
@@ -56,11 +58,13 @@ If the acceptance target or expected behavior is unclear and cannot be inferred 
 4. Run an adversarial review:
    - Try to disprove acceptance with realistic failure cases: edge inputs, missing permissions, stale state, concurrency, data volume, migration order, rollback, dependency failure, and user-visible recovery paths when applicable.
    - Identify the weakest assumption and whether current evidence actually covers it.
+   - For each material finding, state the trigger, expected versus observed behavior, impact, and checkable evidence. Separate confirmed defects from suspicions and identify what could overturn the judgment. Do not manufacture findings to satisfy an adversarial role.
 5. Verify evidence:
    - Prefer commands that were already run, then run targeted checks when needed and safe.
    - Confirm tests prove behavior, not only syntax or compilation.
    - Treat only-mechanical tests on a material user journey as residual risk or a reason to reject. Judge the missing evidence directly; do not require a prior or follow-up `$qa` stage based on provenance alone.
    - Treat skipped, flaky, missing, or stale checks as residual risk.
+   - For repairs, check whether the before/after evidence addresses the same original symptom and conditions. A plausible explanation or passing build does not establish the root cause.
 6. Review verifier quality when the conclusion depends on a metric, benchmark, rubric, or judge: name its version, owner, and important blind spots.
 7. Decide:
    - `accepted`: criteria are met and verification evidence is adequate.
