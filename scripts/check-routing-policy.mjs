@@ -1,281 +1,133 @@
+#!/usr/bin/env node
+// Static catalog, reference, and fixture validation. Wording and routing
+// behavior belong to evals; these checks do not claim model compliance.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import YAML from 'yaml';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const read = (relativePath) =>
-  fs.readFileSync(path.join(root, relativePath), 'utf8');
+export function validateRepository(root) {
+  const failures = [];
+  let checks = 0;
+  const check = (condition, message) => {
+    checks += 1;
+    if (!condition) failures.push(message);
+    return condition;
+  };
+  const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+  const parse = (text, label) => {
+    try { return YAML.parse(text); }
+    catch (error) { check(false, `${label}: ${error.message}`); return null; }
+  };
+  const nonempty = value => typeof value === 'string' && value.trim().length > 0;
+  const skills = fs.readdirSync(root).filter(name => fs.existsSync(path.join(root, name, 'SKILL.md')));
 
-const files = {
-  design: read('design/SKILL.md'),
-  designAgent: read('design/agents/openai.yaml'),
-  interaction: read('design/references/interaction.md'),
-  qa: read('qa/SKILL.md'),
-  qaAgent: read('qa/agents/openai.yaml'),
-  dev: read('dev/SKILL.md'),
-  clarify: read('clarify/SKILL.md'),
-  acceptance: read('acceptance/SKILL.md'),
-  readme: read('README.md'),
-  readmeEn: read('README.en.md'),
-};
-
-const failures = [];
-let checks = 0;
-
-function check(condition, message) {
-  checks += 1;
-  if (!condition) failures.push(message);
-}
-
-function contains(text, expected, message) {
-  check(text.includes(expected), message);
-}
-
-function excludes(text, unexpected, message) {
-  check(!text.includes(unexpected), message);
-}
-
-const designDescription =
-  ['description: ', 'when_to_use: '].map((key) => files.design.split('\n').find((line) => line.startsWith(key)) ?? '').join(' ');
-
-contains(
-  designDescription,
-  'UI interaction design',
-  'design frontmatter must expose interaction design before load',
-);
-contains(
-  designDescription,
-  'AI-native interactions',
-  'design frontmatter must route AI-native interaction work',
-);
-contains(
-  files.design,
-  '`references/interaction.md`',
-  'design must route interaction work to its focused reference',
-);
-contains(
-  files.designAgent,
-  'interaction.md',
-  'design agent prompt must expose the interaction reference',
-);
-contains(
-  files.interaction,
-  'User intent',
-  'interaction reference must distinguish user intent from system behavior',
-);
-contains(
-  files.interaction,
-  'Actual effect',
-  'interaction reference must bind visible state to real effects',
-);
-contains(
-  files.interaction,
-  'AI-Native Interaction',
-  'interaction reference must cover AI-native control loops',
-);
-contains(
-  files.interaction,
-  'beautiful screenshot is not interaction acceptance',
-  'interaction verification must reject visual-only proof',
-);
-
-const qaDescription =
-  ['description: ', 'when_to_use: '].map((key) => files.qa.split('\n').find((line) => line.startsWith(key)) ?? '').join(' ');
-
-contains(
-  qaDescription,
-  'Use only when the user explicitly',
-  'qa frontmatter must make admission explicitly opt-in',
-);
-check(
-  !/(看一下|看下这个|look at this skill|look at this usage|a look at how)/i.test(
-    qaDescription,
-  ),
-  'qa frontmatter must not contain broad look/review trigger phrases',
-);
-contains(
-  files.qa,
-  'context, not authorization',
-  'cross-Skill recommendations must not authorize qa',
-);
-contains(
-  files.qaAgent,
-  'Generic look or review requests do not authorize QA',
-  'qa agent prompt must reject generic review admission',
-);
-
-contains(
-  files.dev,
-  'Do not auto-invoke or routinely recommend `$qa`',
-  'dev must not auto-invoke or routinely recommend qa',
-);
-contains(
-  files.dev,
-  'a risk category alone is not enough',
-  'dev must not route to qa from a risk category alone',
-);
-excludes(
-  files.dev,
-  'If the change encodes a user job or business rule, name `$qa` as the next step',
-  'dev acceptance must not mechanically name qa',
-);
-excludes(
-  files.dev,
-  'If the bug sat on a user job or business rule, recommend `$qa`',
-  'dev bug verification must not mechanically recommend qa',
-);
-
-contains(
-  files.clarify,
-  'Do not route to `$qa` merely because of the evidence type',
-  'clarify must describe evidence directly instead of routing by type',
-);
-contains(
-  files.acceptance,
-  'Judge the missing evidence directly',
-  'acceptance must judge evidence gaps directly',
-);
-excludes(
-  files.acceptance,
-  'the next step is `$qa`',
-  'acceptance must not make qa the automatic next step',
-);
-
-contains(
-  files.readme,
-  '其他 Skill 的建议也不等于用户授权',
-  'Chinese README must document opt-in authorization',
-);
-contains(
-  files.readmeEn,
-  "another Skill's recommendation is not user authorization",
-  'English README must document opt-in authorization',
-);
-excludes(
-  files.readme,
-  '澄清 → 开发 → QA → 验收',
-  'Chinese README must not present qa as a standard pipeline stage',
-);
-excludes(
-  files.readmeEn,
-  'clarify -> develop -> QA -> accept',
-  'English README must not present qa as a standard pipeline stage',
-);
-excludes(
-  files.readmeEn,
-  'Send unprotected usage to `$qa`',
-  'English README must not mechanically route evidence gaps to qa',
-);
-
-const treeBlock = (text, heading) => {
-  const start = text.indexOf(heading);
-  if (start === -1) return '';
-  const fenced = text.slice(start).match(/```text\n([\s\S]*?)```/);
-  return fenced ? fenced[1] : '';
-};
-
-const treeZh = treeBlock(files.readme, '## 目录结构');
-const treeEn = treeBlock(files.readmeEn, '## Repository Structure');
-check(treeZh.length > 0, 'Chinese README must contain a directory-structure tree');
-check(treeEn.length > 0, 'English README must contain a directory-structure tree');
-
-const treePaths = (tree) => {
-  const parents = [''];
-  const paths = [];
-  for (const line of tree.split('\n')) {
-    const match = line.match(/^(\s*)(\S.*)$/);
-    if (!match) continue;
-    const depth = match[1].length / 2;
-    const name = match[2];
-    if (name.endsWith('/')) {
-      parents[depth + 1] = parents[depth] + name;
-    } else {
-      paths.push(parents[depth] + name);
+  check(skills.length > 0, 'catalog must contain skills');
+  for (const skill of skills) {
+    const text = read(`${skill}/SKILL.md`);
+    const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+    if (check(Boolean(fm), `${skill}: missing frontmatter`)) {
+      const data = parse(fm[1], skill);
+      check(data?.name === skill, `${skill}: frontmatter name must match directory`);
+      check(nonempty(data?.description), `${skill}: description must be nonempty`);
+      if (data?.when_to_use !== undefined) check(nonempty(data.when_to_use), `${skill}: invalid when_to_use`);
+    }
+    // Validate referenced paths without tying prose to particular sentences.
+    for (const match of text.matchAll(/references\/([\w./-]+\.md)/g)) {
+      const target = path.resolve(root, skill, 'references', match[1]);
+      check(target.startsWith(path.resolve(root, skill) + path.sep) && fs.existsSync(target),
+        `${skill}: missing or out-of-scope reference ${match[0]}`);
+    }
+    const agentFile = `${skill}/agents/openai.yaml`;
+    if (fs.existsSync(path.join(root, agentFile))) {
+      const agent = parse(read(agentFile), agentFile);
+      for (const key of ['display_name', 'short_description', 'default_prompt']) {
+        check(nonempty(agent?.interface?.[key]), `${agentFile}: missing interface.${key}`);
+      }
     }
   }
-  return paths;
-};
 
-for (const tree of [treeZh, treeEn]) {
-  for (const entry of treePaths(tree)) {
-    check(
-      fs.existsSync(path.join(root, entry)),
-      `README tree lists a missing file: ${entry}`,
-    );
+  const treePaths = (text, heading) => {
+    const start = text.indexOf(heading);
+    const tree = start < 0 ? null : text.slice(start).match(/\x60\x60\x60text\n([\s\S]*?)\x60\x60\x60/);
+    if (!check(Boolean(tree), `missing README tree: ${heading}`)) return new Set();
+    const parents = [''];
+    const paths = new Set();
+    for (const line of tree[1].split('\n')) {
+      if (!line.trim()) continue;
+      const [, indent, name] = line.match(/^(\s*)(\S.*)$/);
+      const depth = indent.length / 2;
+      if (!check(Number.isInteger(depth) && parents[depth] !== undefined, `invalid README indentation: ${line}`)) continue;
+      const entry = parents[depth] + name;
+      parents.length = depth + 1;
+      if (name.endsWith('/')) parents[depth + 1] = entry;
+      else paths.add(entry);
+      const target = path.resolve(root, entry);
+      check(target.startsWith(path.resolve(root) + path.sep) && fs.existsSync(target), `README lists a missing or out-of-scope path: ${entry}`);
+    }
+    return paths;
+  };
+  const trees = [
+    ['README.md', '## 目录结构'],
+    ['README.en.md', '## Repository Structure'],
+  ].map(([file, heading]) => {
+    if (!check(fs.existsSync(path.join(root, file)), `missing ${file}`)) return new Set();
+    return treePaths(read(file), heading);
+  });
+
+  for (const skill of skills) {
+    const dir = path.join(root, skill, 'references');
+    if (!fs.existsSync(dir)) continue;
+    for (const ref of fs.readdirSync(dir).filter(name => name.endsWith('.md'))) {
+      const entry = `${skill}/references/${ref}`;
+      check(read(`${skill}/SKILL.md`).includes(`references/${ref}`), `${entry}: unreachable from Skill entry`);
+      check(trees.every(tree => tree.has(entry)), `${entry}: missing from a README tree`);
+    }
   }
-}
 
-for (const skill of fs.readdirSync(root)) {
-  const skillFile = path.join(root, skill, 'SKILL.md');
-  const refDir = path.join(root, skill, 'references');
-  if (!fs.existsSync(skillFile) || !fs.existsSync(refDir)) continue;
-  for (const ref of fs.readdirSync(refDir)) {
-    if (!ref.endsWith('.md')) continue;
-    const refPath = `${skill}/references/${ref}`;
-    check(
-      fs.readFileSync(skillFile, 'utf8').includes(ref),
-      `${refPath} must be referenced in ${skill}/SKILL.md`,
-    );
-    const listed = (tree) =>
-      tree.split('\n').some((line) => line.trim() === ref);
-    check(
-      listed(treeZh) && listed(treeEn),
-      `${refPath} must be listed in both README directory trees`,
-    );
+  for (const kind of ['routing', 'behavior']) {
+    const file = `evals/${kind}/fixtures.yaml`;
+    if (!check(fs.existsSync(path.join(root, file)), `missing ${file}`)) continue;
+    const fixtures = parse(read(file), file);
+    if (!check(Array.isArray(fixtures) && fixtures.length > 0, `${file}: fixtures must be a nonempty list`)) continue;
+    const ids = new Set();
+    for (const fixture of fixtures) {
+      if (!check(fixture && typeof fixture === 'object' && !Array.isArray(fixture), `${file}: fixture must be an object`)) continue;
+      const id = `${kind}/${fixture.id}`;
+      check(nonempty(fixture.id) && !ids.has(fixture.id), `${id}: missing or duplicate fixture id`);
+      ids.add(fixture.id);
+      if (kind === 'routing') {
+        check(nonempty(fixture.prompt), `${id}: missing prompt`);
+        check(typeof fixture.strict === 'boolean', `${id}: strict must be boolean`);
+        if (check(Array.isArray(fixture.expect) && fixture.expect.length > 0, `${id}: expect must be a nonempty list`)) {
+          check(new Set(fixture.expect).size === fixture.expect.length, `${id}: duplicate expected skill`);
+          check(fixture.expect.every(name => name === 'none' || skills.includes(name)), `${id}: unknown expected skill`);
+          check(!fixture.expect.includes('none') || fixture.expect.length === 1, `${id}: none cannot be combined with skills`);
+        }
+      } else {
+        check(skills.includes(fixture.skill), `${id}: unknown skill`);
+        check(nonempty(fixture.scenario) && nonempty(fixture.user), `${id}: missing scenario or user request`);
+        let assertions = 0;
+        for (const key of ['must_contain', 'must_not_contain', 'must_match']) {
+          const values = fixture[key] ?? [];
+          if (!check(Array.isArray(values) && values.every(nonempty), `${id}: invalid ${key}`)) continue;
+          assertions += values.length;
+          if (key === 'must_match') for (const value of values) {
+            try { new RegExp(value, 'i'); }
+            catch { check(false, `${id}: invalid regex ${value}`); }
+          }
+        }
+        check(assertions > 0, `${id}: fixture has no assertions`);
+      }
+    }
   }
+  return { checks, failures };
 }
 
-// --- eval fixture sanity (L0, dependency-free) ---
-
-const catalogSkillNames = fs
-  .readdirSync(root)
-  .filter((n) => fs.existsSync(path.join(root, n, 'SKILL.md')));
-
-const routingFixtures = fs.readFileSync(
-  path.join(root, 'evals/routing/fixtures.yaml'),
-  'utf8',
-);
-const behaviorFixtures = fs.readFileSync(
-  path.join(root, 'evals/behavior/fixtures.yaml'),
-  'utf8',
-);
-const fixtureIds = (text) =>
-  [...text.matchAll(/^- id: (\S+)$/gm)].map((m) => m[1]);
-
-const routingIds = fixtureIds(routingFixtures);
-check(routingIds.length >= 30, 'routing fixtures must number at least 30');
-check(
-  new Set(routingIds).size === routingIds.length,
-  'routing fixture ids must be unique',
-);
-for (const match of routingFixtures.matchAll(/expect: \[([^\]]+)\]/g)) {
-  for (const name of match[1]
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)) {
-    check(
-      name === 'none' || catalogSkillNames.includes(name),
-      `routing fixture expects unknown skill: ${name}`,
-    );
-  }
-}
-
-const behaviorIds = fixtureIds(behaviorFixtures);
-check(
-  new Set(behaviorIds).size === behaviorIds.length,
-  'behavior fixture ids must be unique',
-);
-for (const match of behaviorFixtures.matchAll(/^  skill: (\S+)$/gm)) {
-  check(
-    catalogSkillNames.includes(match[1]),
-    `behavior fixture loads unknown skill: ${match[1]}`,
-  );
-}
-
-if (failures.length > 0) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const { checks, failures } = validateRepository(root);
   for (const failure of failures) console.error(`fail: ${failure}`);
-  console.error(`${failures.length} failed, ${checks - failures.length} passed`);
-  process.exit(1);
+  console.log(`${checks - failures.length}/${checks} static catalog/reference/fixture checks passed`);
+  if (failures.length) process.exitCode = 1;
 }
-
-console.log(`${checks} routing policy checks passed`);

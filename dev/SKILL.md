@@ -7,61 +7,37 @@ argument-hint: "[新需求 / 修 bug | requirement or bug]"
 
 # Dev
 
-Deliver the requested software change through one proportional loop: establish the target, implement, verify, and report. These are working decisions, not separate approval turns.
+Deliver the requested change: establish the target, implement, verify, and report. Follow host instructions and the user's scope; review-only or plan-only requests do not authorize edits. Reuse existing authorization and preserve others' work.
 
-## Entry And Scope
+## Work Loop
 
-- Use for ordinary implementation, bug fixes, refactors, and developer-test additions. For a review-only or plan-only request, keep that scope; do not infer permission to edit.
-- Follow higher-priority host instructions and the user's explicit scope over workflow advice. Reuse existing authorization and resolved decisions. Finish clear action requests without another plan approval.
-- Inspect repository facts before asking. Resolve routine reversible choices yourself. If a material product or architecture choice cannot be resolved in ordinary development discussion, consult `clarify` for that decision, then resume the already authorized implementation. Clarification is not a new task or a permission reset.
-- Use `design` for meaningful UI or interaction creation or reshaping. Preserve the brief and existing design system. Load only applicable guidance; a trivial CSS fix needs no design process.
-- Do not auto-invoke or routinely recommend `$qa`; a risk category alone is not enough. Verify relevant business meaning within this task and report concrete evidence gaps. Separate QA and acceptance passes require the user's request.
-- Use external-agent adapters only when the user selects that agent. Preserve others' edits; do not duplicate active work.
-- If an instruction actually blocks work, link its exact file, quote the rule, and explain the missing decision or permission. Continue independent authorized work. Prepare a reviewable result before requesting any still-needed external or irreversible action approval.
+1. Inspect the relevant code, tests, instructions, and current diff. For a bug, establish inputs, conditions, expected versus observed behavior, and reproduce when possible. Distinguish a suspected cause from an established one. For new work, define an observable success scenario. Resolve routine reversible choices from evidence; ask only about material uncertainty.
+2. Make the smallest complete change using existing patterns and technology. A script or existing component is enough when it meets the constraints. Give related rules and state a clear owner and interface; preserve compatibility and failure recovery. Keep unrelated cleanup out. For an unclear or resistant bug, load `references/superpowers-lite.md` before guessing again.
+3. Verify the requested behavior and likely regressions at the lowest reliable layer, then complete required project checks. For repairs, compare before and after under the same relevant conditions when feasible. Review the diff for counterexamples and stale documentation. Do not weaken tests to accommodate the implementation. Add coverage only when it can meaningfully detect a failure; repeat checks for new changes, failures, or unresolved risks.
+4. Report the outcome, meaningful evidence, and consequential limits in concise Chinese by default. Distinguish implemented from verified: a blocked required check cannot count as passed, while optional uncovered cases are limitations, not automatic blockers. Use a report template only when useful or requested.
 
-## Delivery Loop
+User corrections update decisions; side questions do not replace the task. For long work or handoff, retain a compact checkpoint in the existing task record: goal, completion criteria, authorization, evidence, rejected hypotheses, and remaining actions. Reconcile it with current state on resume.
 
-1. **Establish the target.** Read relevant code, tests, repository instructions, and the current diff. Identify intended behavior and the smallest useful verification. For bugs, record the input, conditions, expected versus observed behavior, and reproduce when possible; separate a suspected cause from an established one. For new work, define an observable success scenario rather than inventing a defect. Compare approaches only when the tradeoffs could change the outcome.
-2. **Implement.** Make the smallest complete change using existing patterns. Prefer a working script or existing component when it meets the actual constraints; add architecture only for a current need. Preserve compatibility and relevant failure/recovery behavior. Keep related rules and state with a clear owner behind an explicit interface, and keep unrelated cleanup out. For unclear or resistant bugs, load `references/superpowers-lite.md` instead of guessing repeatedly.
-3. **Verify.** Check the requested behavior and likely regressions at the lowest reliable layer, then run required project checks. Review the diff for scope, counterexamples, and stale docs. Do not weaken tests or `qa` business/user-journey checks to fit the implementation. Add regression coverage when it meaningfully detects the failure; do not add tests that merely mirror wording or implementation for low-impact reversible edits. After checks pass, repeat or broaden only for new changes, failures, or unresolved concerns.
-4. **Finish.** Report the outcome, meaningful evidence, and concrete remaining limits. Distinguish implemented from verified. Never claim verified completion while an applicable required check is blocked; explaining the gap does not make it pass. Optional uncovered cases are concrete limitations, not automatic blockers. If blocked, name what is complete and the exact missing prerequisite; do not turn an evidence gap into an automatic new workflow.
+## Decisions And Evidence
 
-A user correction steers this loop; preserve completed work and the original objective unless cancelled. A side question does not end the requested implementation. Small changes can complete the entire loop without a written plan or report template.
+- Consult `clarify` only for a material product or architecture decision that repository inspection and ordinary development questions cannot resolve; resume authorized implementation afterward. Use `design` for meaningful UI or interaction work, preserving the brief and existing design system. Trivial styling fixes need no separate process.
+- Separate QA or final acceptance requires the user's request. A risk category or evidence gap alone does not trigger `$qa`; verify the affected business meaning within this task. External-agent adapters require explicit user selection for the scope, and native delegation requires applicable authorization.
+- Choose evidence by the mechanism enforcing the invariant. Unit tests can prove pure validation and state transitions; persistence, isolation, atomicity, and query scoping require the actual storage semantics or a demonstrably equivalent engine. A mock that removes the invariant cannot prove it. Prefer stable behavior-facing interfaces and reuse sufficient coverage.
+- Tie material claims to observations, separate inference from fact, and identify what could overturn the judgment. An improved result alone does not confirm a root cause. Name material untested scenarios and the smallest useful check or missing prerequisite; omit speculative risk inventories.
+- Look for counterexamples during self-review without claiming independence. If independent reviewers are requested and authorized, give them the original target, constraints, revision, and raw evidence before others' verdicts; compare findings afterward and disclose shared-context limits. Resolve disagreements with evidence, not consensus.
+- Compare alternatives, write plans, or draw diagrams only when they clarify a consequential decision or dependency. A Skill reference adds technical guidance, not a new approval gate. If an applicable rule truly blocks work, cite its file and instruction, explain what is missing, and continue independent authorized work.
 
-For long work, compaction, or handoff, keep a compact checkpoint in the existing task record or host continuation mechanism: original goal, completion criteria, constraints and authorization, completed work with evidence, disproved hypotheses, and remaining actions. On resume, reconcile it with the latest user instructions and current repository/runtime state. Do not create a permanent rules entry or a new plan file for every small task.
+## References
 
-## Shared Decision And Evidence Rules
-
-These rules apply to all references below. References supply technical detail; their checklists are internal prompts for the affected behavior, not mandatory report sections or additional workflow stages.
-
-- Compare alternatives when an unresolved tradeoff could change the implementation, or the user asks for a comparison. Task size alone does not require multiple proposals; reuse settled decisions.
-- Use a written plan when coordination or dependencies make it useful. Add a diagram when it clarifies a boundary, sequence, or data flow that prose would obscure, or when requested. Neither is an approval gate by default.
-- Choose evidence by the mechanism enforcing the invariant. Pure validation, error mapping, and state-transition logic can use unit tests; persistence constraints, isolation, atomicity, and query scoping need checks exercising the actual storage behavior. Use the project's database or a demonstrably equivalent engine for those semantics. A mock that removes the invariant is not evidence for it.
-- Prefer tests through stable behavior-facing interfaces. Use controllable external dependencies without mocking away the behavior being checked. Reuse sufficient existing coverage; add regression tests when they can detect the defect. Reproduction unavailable or test-first impractical calls for the strongest available check and a precise limitation, not invented evidence.
-- For a repair, compare before and after using the same symptom, inputs, and relevant conditions when feasible. A passing check supports the repair only to the extent that it could expose the original defect; do not label a cause confirmed from improvement alone.
-- Tie material conclusions to observations, distinguish inference from fact, and identify evidence that could overturn the judgment. Report consequential untested scenarios and unsupported assumptions with their impact and the smallest useful check or missing prerequisite; omit speculative risk inventories.
-- Self-review looks for counterexamples and omissions; it is not independent review. When separate reviewers are requested and delegation is authorized, provide the target, constraints, revision, and raw evidence before others' conclusions. Compare their initial findings afterward and resolve disagreements with evidence, not consensus or reviewer count. State any lack of separation; do not manufacture another agent or route automatically to QA.
-- Final replies follow the delivery format below. Reference templates are optional outlines for a requested artifact or an existing project documentation requirement; include only applicable fields. Update stale documentation under `references/documentation.md` without creating a new report by default.
-
-## Delivery Format
-
-Deliver in Chinese by default. Lead with the outcome and use short prose. Include commands/results only when they substantiate the conclusion; never invent them.
-
-If the user requests a structured report, use relevant fields: 需求确认 (or 问题与根因), 实现内容, 测试与验收, 风险与未验证项. Add tradeoffs or next steps only when useful to an unresolved decision. Keep code and protocol names in their original language.
-
-## Reference Loading Policy
-
-Load the smallest reference set that can materially improve the work.
+Load only the reference needed for the affected behavior. Checklists are thinking aids, not mandatory report sections.
 
 | Reference | Load when |
 | --- | --- |
-| `design` skill (invoke, not a reference) | New UI, meaningful UI or interaction reshaping, flow/usability work, AI-native interaction, motion/animation work, or visual-quality review. |
-| `references/superpowers-lite.md` | A bug has an unclear cause, a repair failed, or the user explicitly requests systematic debugging or test-first guidance. |
-| `references/design-and-research.md` | Solution comparison, workflow design, diagrams, research, or a multi-step plan. |
-| `references/ablation.md` | A decision depends on whether an optional rule, tool, prompt section, or component contributes enough to retain, or the user requests an ablation. Not a routine step for every change. |
-| `references/backend-engineering.md` | Backend change whose affected responsibility is unclear; use its routing table, then load only the applicable owner below. Skip when the owner is already clear. |
-| `references/backend-architecture.md` | Component/service boundaries, cache or queue topology, cross-component consistency, reliability targets, observability strategy, or rollout. |
-| `references/backend-quality.md` | Handlers, authz, tenancy, error mapping, idempotency, timeouts, backend tests, or process lifecycle. |
-| `references/database-engineering.md` | Schema, constraints, indexes, transactions, query plans, migrations, backfills, replication, capacity, destructive data operations, or production data access. |
-| `references/stack.md` | Choosing language, framework, database, queue, cache, or integration technology. |
-| `references/documentation.md` | A change makes existing documentation stale, or a durable artifact is requested or required by the project. |
+| `references/superpowers-lite.md` | Unclear root cause, failed repair, or requested systematic debugging/test-first guidance. |
+| `references/design-and-research.md` | Consequential solution comparison, workflow design, research, diagrams, or dependent work planning. |
+| `references/ablation.md` | Deciding whether an optional rule, tool, prompt section, or component contributes enough to retain. |
+| `references/backend-engineering.md` | The affected backend responsibility is unclear; use its router, then load the relevant owner. |
+| `references/backend-architecture.md` | Service boundaries, cache/queue topology, consistency, reliability, observability, or rollout. |
+| `references/backend-quality.md` | Handlers, authorization, tenancy, errors, idempotency, timeouts, backend tests, or process lifecycle. |
+| `references/database-engineering.md` | Schema, indexes, transactions, queries, migrations, backfills, replication, capacity, or live data operations. |
+| `references/documentation.md` | Existing documentation becomes stale, or a durable artifact is requested or required by the project. |

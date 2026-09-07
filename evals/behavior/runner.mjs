@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // L2 behavior eval: load one SKILL.md as the governing contract and assert on
 // the generated output. Assertions are mechanical (substring / regex) over the
-// delivery templates - the parts of a skill that are designed to be checkable.
+// evidence and scope signals. They are heuristics, not semantic or execution proof.
 //
 // Usage:
 //   node evals/behavior/runner.mjs [--dry-run] [--filter substr] [--record]

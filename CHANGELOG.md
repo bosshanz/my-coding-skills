@@ -18,6 +18,15 @@ a coarse 0.x scheme tied to capability batches.
 
 ### Changed
 
+- Condensed the global template, four workflow Skills, and shared adapter
+  instructions; removed fixed delivery report templates and repeated routing
+  prose while retaining admission, authorization, and evidence boundaries.
+- Removed portable language and middleware preferences from `stack.md`;
+  technology choices now follow the existing project and concrete constraints.
+- Static validation checks metadata, references, and fixture structure rather
+  than exact instruction sentences. Response fixtures screen for scope and
+  evidence signals without requiring report headings; these remain heuristics,
+  not proof of live model behavior.
 - `dev`, `clarify`, `qa`, and `acceptance` now make before/after evidence,
   falsifiable judgments, and relevant uncertainty more explicit. Independent
   reviewers form initial findings before seeing other verdicts; the shared

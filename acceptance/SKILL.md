@@ -7,99 +7,30 @@ argument-hint: "[验收范围 | scope]"
 
 # Acceptance
 
-Use this Skill to independently verify whether completed implementation work is acceptable. The output is an evidence-based acceptance decision, not more implementation.
+Judge completed implementation against the agreed criteria. Follow host instructions and the user's scope: review and verification do not authorize editing code, tests, or docs, spawning another agent, or publishing. Continue fixes only when already authorized. This is an explicitly requested pass, not a required stage after ordinary `dev` verification.
 
-## Boundaries
+## Basis
 
-- Stay in review and verification mode by default.
-- Do not modify code, docs, migrations, or tests unless the user explicitly asks for fixes.
-- Do not replace `dev`'s internal lightweight acceptance gate; use this as a separate top-level pass when stronger separation is useful.
-- If the work is not ready, return a clear rejection or risk-qualified acceptance and name the concrete evidence gap. Recommend `$dev` when product behavior is wrong and `$clarify` when the target is still unclear. Name `$qa` only when the user explicitly requests a separate business or real-usage protection pass.
-- Prefer repository evidence over claims: diff, tests, logs, screenshots, commands, CI, docs, and migration or rollout notes.
+Keep three facts distinct without requiring three report sections:
 
-Use the current, relevant evidence already available. Complete required checks, but rerun or broaden only when evidence is stale, incomplete, contradicted, or the user requests it. Verification thoroughness does not authorize new scope or a separate agent. If a workflow rule blocks the requested review, link its exact file and quote the instruction before asking for missing input.
+- **Reviewer separation:** same implementer, fresh context, separate agent/model, or human. State the actual separation and any requested separation not achieved; the Skill name does not establish independence.
+- **Verification evidence:** what was checked, on which revision or conditions, and the coverage, freshness, and limits. Independent review and sufficient evidence do not imply one another.
+- **Approval authority:** identify it when a release, merge, or business decision is in scope. Technical acceptance does not authorize that action; do not invent an approval gate for a review-only task.
 
-## Review Basis
+If an independent reviewer is requested and delegation is authorized, use someone who did not implement the change. Provide the original goal, criteria, constraints, revision, and raw evidence; obtain an initial judgment before sharing other verdicts. Preserve needed context and disclose prior exposure. Resolve disagreements with a discriminating check, not a vote.
 
-Report three separate facts, without ranking them on one scale:
+## Review
 
-- **Reviewer separation:** same implementer, fresh context, separate agent/model, or human reviewer. Name the actual separation and any requested separation that was not achieved. Do not claim independence from the Skill name alone.
-- **Verification evidence:** commands, tests, manual observations, and their coverage/freshness/limits. Determinism does not imply independence; independent review does not imply sufficient coverage.
-- **Approval authority:** who can authorize the relevant release, merge, or business decision, and whether that approval exists, is pending, or is not required for this review. A technical acceptance verdict is not permission to publish or a substitute for owner approval. Do not invent an approval gate for a review-only task.
+1. Establish the target from the request, current diff, relevant code/docs, existing criteria, and available test or runtime evidence. Ask one focused question only if a material criterion cannot be inferred. Separate unrelated changes from the acceptance scope.
+2. Compare the implementation with the intended behavior. Challenge the weakest assumption using realistic counterexamples: edge inputs, permissions, stale state, concurrency, migration order, dependency failure, or recovery, as relevant. Meaningful UI work needs interaction and state evidence; a screenshot alone cannot prove it.
+3. Reuse current, relevant evidence and complete required checks. Add targeted verification when evidence is stale, incomplete, contradicted, or affected by changes. Tests should be able to expose the wrong behavior. For repairs, compare the original symptom under corresponding before/after conditions; passing compilation does not establish a root cause.
+4. For material findings, state the trigger, expected versus observed result, impact, and checkable evidence. Separate suspected from confirmed defects and identify what could overturn a disputed judgment. A review may find no defects; do not manufacture defects to sound adversarial.
+5. Judge evidence gaps by their impact. Skipped, flaky, or missing checks are not passes. If a metric, benchmark, or judge drives the verdict, check its relevant version and blind spots. Existing QA notes can help but are not a prerequisite; missing business evidence does not authorize a new QA pass.
 
-Use existing evidence and authorized reviewers; these dimensions do not require spawning another agent or requesting human approval.
+## Verdict
 
-When a separate reviewer is requested and authorized, use someone who did not implement the change. Provide the original goal, criteria, constraints, reviewed revision, and raw evidence; have the reviewer form an initial judgment before seeing the implementer's verdict or other reviewers' conclusions. Then compare findings and consult necessary rationale. Preserve required context, disclose any prior exposure, and never claim blindness or independence that the actual session lacks. Resolve disagreements through a discriminating check, not majority vote or forced agreement.
+- `accepted`: criteria are met with adequate evidence.
+- `accepted with risk`: no blocking criterion or required check is outstanding, but named nonblocking risks remain.
+- `rejected`: a criterion fails, critical evidence or a required check is missing, or a blocking regression exists.
 
-## Repository Context
-
-Inspect the closest available evidence before asking the user:
-
-- The clarified requirement, issue, PR description, task note, or conversation summary.
-- Current diff, touched files, tests, docs, migrations, configuration, and generated artifacts.
-- Existing acceptance criteria, `CONTEXT.md`, `CONTEXT-MAP.md`, or ADRs when relevant.
-- Test output, CI status, manual verification notes, screenshots, logs, or reproduction evidence.
-- QA notes, when they already exist; they are evidence, not a prerequisite for acceptance.
-
-If the acceptance target or expected behavior is unclear and cannot be inferred from local evidence, ask one concise question before judging.
-
-## Acceptance Workflow
-
-1. State the acceptance target in 2-4 bullets:
-   - Intended behavior or fix.
-   - Claimed implementation scope.
-   - Acceptance criteria or inferred criteria.
-   - Important risks or unknowns.
-2. State reviewer separation, evidence quality, and applicable approval authority separately.
-3. Compare implementation to the target:
-   - Review the diff against the requirement or root cause.
-   - Check that behavior, edge cases, errors, permissions, data, API, UI, docs, migrations, and rollout notes are covered where relevant.
-   - Confirm unrelated changes are not mixed into the acceptance surface.
-4. Run an adversarial review:
-   - Try to disprove acceptance with realistic failure cases: edge inputs, missing permissions, stale state, concurrency, data volume, migration order, rollback, dependency failure, and user-visible recovery paths when applicable.
-   - Identify the weakest assumption and whether current evidence actually covers it.
-   - For each material finding, state the trigger, expected versus observed behavior, impact, and checkable evidence. Separate confirmed defects from suspicions and identify what could overturn the judgment. Do not manufacture findings to satisfy an adversarial role.
-5. Verify evidence:
-   - Prefer commands that were already run, then run targeted checks when needed and safe.
-   - Confirm tests prove behavior, not only syntax or compilation.
-   - Treat only-mechanical tests on a material user journey as residual risk or a reason to reject. Judge the missing evidence directly; do not require a prior or follow-up `$qa` stage based on provenance alone.
-   - Treat skipped, flaky, missing, or stale checks as residual risk.
-   - For repairs, check whether the before/after evidence addresses the same original symptom and conditions. A plausible explanation or passing build does not establish the root cause.
-6. Review verifier quality when the conclusion depends on a metric, benchmark, rubric, or judge: name its version, owner, and important blind spots.
-7. Decide:
-   - `accepted`: criteria are met and verification evidence is adequate.
-   - `accepted with risk`: criteria appear met but named residual risks remain.
-   - `rejected`: criteria are not met, evidence is insufficient for a critical area, or a blocking regression exists.
-8. Report the result with file, test, and risk references.
-
-## Review Focus
-
-Check the smallest applicable set:
-
-- Requirement fit: implemented behavior matches the clarified goal and non-goals.
-- Regression risk: important adjacent flows, compatibility, permissions, and error paths still hold.
-- Test quality: there is a check that would fail if the accepted behavior or user-visible business meaning regressed.
-- Verifier quality: the verifier represents the intended target and its limitations are explicit.
-- Data and migration safety: schema, backfill, rollback, idempotency, and observability are accounted for when relevant.
-- UI acceptance: loading, empty, error, success, focus, responsive, and visual states are covered for meaningful UI changes.
-- Documentation: user-facing docs, examples, changelog, ADR, checkpoint, or runbook notes are updated when the change makes them stale.
-
-## Output Format
-
-Use this compact structure:
-
-```text
-Acceptance target:
-Reviewer separation:
-Verification evidence:
-Approval authority:
-Verifier assessment:
-Decision: accepted | accepted with risk | rejected
-Findings:
-Verification:
-Understanding preserved:
-Residual risk:
-Next step:
-```
-
-For rejected work, put blocking findings first and recommend the smallest follow-up. Use `$dev` for product defects, `$clarify` for an unclear target, and `$qa` only for an explicitly requested independent business or real-usage pass. For accepted work, keep the summary short and name the strongest evidence.
+Lead with the verdict in concise Chinese by default, then the strongest evidence and material findings or gaps. State reviewer separation honestly and approval status only where applicable; no fixed report template is required. Put blocking findings first and identify the smallest remedy or missing prerequisite. If a workflow instruction truly blocks review, cite its exact file and rule. Do not turn the conclusion into an unrequested workflow or permission request.

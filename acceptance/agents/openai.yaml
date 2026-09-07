@@ -1,4 +1,4 @@
 interface:
   display_name: "Acceptance"
-  short_description: "Independently verify development work."
-  default_prompt: "Use $acceptance to independently and adversarially verify whether the implemented change satisfies the agreed criteria, review evidence and risks, and return accepted, rejected, or accepted with risk."
+  short_description: "Judge completed work against evidence."
+  default_prompt: "Use $acceptance to judge the completed change against its criteria and evidence, state actual reviewer separation, and return accepted, accepted with risk, or rejected."

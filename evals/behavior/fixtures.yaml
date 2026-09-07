@@ -1,9 +1,9 @@
 # Behavior eval fixtures (L2).
 #
 # Each fixture loads one SKILL.md as the governing contract, then asserts on
-# the generated output. Assertions are mechanical (substring / regex) and aim
-# at the delivery templates, because output formats are followed more reliably
-# than behavioral prohibitions - that is exactly why the templates exist.
+# the generated output. Substring / regex assertions screen for evidence and
+# scope signals without requiring report headings. They can misclassify an
+# answer; passing does not prove semantic correctness or tool behavior.
 #
 # Fields:
 #   id        unique slug
@@ -22,14 +22,13 @@
     have been changed and you have made no edits.
   user: "$qa 诊断第一次下单这条真实用法，只回答被问的这一刀"
   must_contain:
-    - "残留风险"
+    - "下单"
   must_not_contain:
     - "已新增"
     - "已修改"
     - "已保护"
   must_match:
-    - "轨道[:：]\\s*Diagnosis"
-    - "下一步[:：]\\s*`?stop`?"
+    - "(证据|未验证|无法|不能|缺少)"
 
 - id: qa-coverage-stays-in-track
   skill: qa
@@ -43,8 +42,9 @@
     - "accepted"
     - "rejected"
   must_match:
-    - "轨道[:：]\\s*Coverage"
-    - "残留风险"
+    - "(库存|stock)"
+    - "(mock|模拟|真实存储|数据库|集成)"
+    - "(无法|未.*(验证|执行|运行)|缺.*(证据|工具)|不能)"
 
 - id: acceptance-verdict-enum
   skill: acceptance
@@ -52,29 +52,26 @@
     Simulated repo: yesterday's login fix touched src/auth/token.ts with a
     unit test added and passing. No manual verification, no CI run recorded.
   user: "对这次登录修复做最终验收，给出结论"
-  must_contain:
-    - "Acceptance target"
-    - "Reviewer separation"
-    - "Verification evidence"
-    - "Approval authority"
-    - "Residual risk"
+  must_contain: []
   must_not_contain: []
   must_match:
-    - "Decision[:：]\\s*(accepted|accepted with risk|rejected)"
+    - "\\b(accepted with risk|accepted|rejected)\\b"
+    - "(单元测试|unit.*test)"
+    - "(未|缺|无).*(CI|手工|人工|端到端|证据|验证)"
 
-- id: clarify-product-judgment-fields
+- id: clarify-product-judgment
   skill: clarify
   scenario: |
     Simulated repo: an internal admin tool used by 12 support agents. The
     request is to add AI-powered search over past tickets.
   user: "$clarify 判断要不要做这个 AI 搜索功能"
-  must_contain:
-    - "成功信号"
+  must_contain: []
   must_not_contain:
     - "sprint"
     - "backlog 排期"
   must_match:
-    - "产品判断[:：]\\s*(build|experiment|stop)"
+    - "(build|experiment|stop|试点|实验|暂缓|不做)"
+    - "(成功|节省|耗时|解决率|准确率|命中率)"
 
 - id: adapter-claude-unavailable
   skill: claude-code
@@ -84,7 +81,7 @@
   user: "让 Claude Code 审一下当前 diff"
   must_contain: []
   must_not_contain:
-    - "task_summary"
+    - "Claude Code 已完成审查"
   must_match:
     - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
 
@@ -96,7 +93,7 @@
   user: "让 Kimi Code 研究一下这个仓库的架构"
   must_contain: []
   must_not_contain:
-    - "task_summary"
+    - "Kimi Code 已完成研究"
   must_match:
     - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
 
@@ -112,19 +109,18 @@
     - "/qa"
   must_match: []
 
-- id: dev-delivery-format
+- id: dev-delivery-evidence
   skill: dev
   scenario: |
     Simulated repo: the role-filter change on the user list API is already
     implemented and its unit tests pass. Summarize the delivery; do not write
     code.
-  user: "按你的交付格式总结这次改动：用户列表新增 role 筛选参数"
+  user: "总结这次改动：用户列表新增 role 筛选参数"
   must_contain:
-    - "需求确认"
-    - "测试与验收"
-    - "风险与未验证项"
+    - "role"
   must_not_contain: []
-  must_match: []
+  must_match:
+    - "(单元测试|unit.*test)"
 
 - id: design-interaction-delivery
   skill: design
@@ -137,10 +133,9 @@
   must_contain: []
   must_not_contain: []
   must_match:
-    - "(Interaction direction|交互方向)"
-    - "(Main flow|主流程)"
-    - "(State and recovery|状态与恢复)"
-    - "(Verification|验证)"
+    - "(部分失败|partial failure|失败项)"
+    - "(保留|保持|恢复).*(选择|选中|勾选)"
+    - "(重试|retry)"
 
 - id: reflect-capture-confirms-before-write
   skill: reflect
@@ -151,14 +146,12 @@
   user: "$reflect 以后这个项目都用 pnpm,不要用 npm"
   must_contain:
     - "pnpm"
-    - "提炼"
+    - "CLAUDE.md"
   must_not_contain:
     - "已写入"
     - "已新增"
   must_match:
-    - "状态[:：]\\s*pending-confirm"
-    - "落点[:：]\\s*.*CLAUDE\\.md"
-    - "下一步[:：]\\s*`?stop`?"
+    - "(确认|同意|批准)"
 
 # GPT-6 prompting regression scenarios. These text-only cases do not prove
 # tool execution, authorization enforcement, or live GPT-6 behavior.

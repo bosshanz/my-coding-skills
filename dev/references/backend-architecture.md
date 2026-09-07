@@ -4,7 +4,7 @@
 
 Use when the task changes component/service boundaries, cache or queue topology, cross-component consistency, reliability targets, observability strategy, or rollout behavior. An ordinary handler repair or isolated query change does not require this reference.
 
-This file owns component decisions and operational strategy. `backend-quality.md` owns implementation within existing boundaries; `database-engineering.md` owns schemas, query plans, transactions, migrations, and live data operations. Load either only when that responsibility also changes. `stack.md` owns technology preferences when selecting a new technology.
+This file owns component decisions and operational strategy. `backend-quality.md` owns implementation within existing boundaries; `database-engineering.md` owns schemas, query plans, transactions, migrations, and live data operations. Load either only when that responsibility also changes. Prefer the existing stack; select new technology from access patterns, consistency, failure recovery, and operational constraints.
 
 ## Component Decisions
 
@@ -24,7 +24,7 @@ This file owns component decisions and operational strategy. `backend-quality.md
 
 ## Queue And Cross-Component Consistency
 
-- Use the project's existing queue when it meets the requirement; consult `stack.md` only for a technology choice.
+- Use the project's existing queue when it meets the requirement; choose an alternative only for a concrete capability or operational need.
 - Define producer/consumer ownership, message contract and version, delivery and ordering guarantees, retry budget, and dead-letter or equivalent terminal-failure handling.
 - When a database write and event publication cannot diverge, use an outbox or an equivalent transactional publishing mechanism. Account for duplicate delivery and recovery across the boundary; implementation of duplicate-safe writes belongs to the affected quality/database guidance.
 - Monitor producer rate, consumer throughput, oldest backlog age, retries, and terminal failures when those determine operational health.

@@ -19,6 +19,8 @@ Core principles:
 
 [templates/AGENTS.md](./templates/AGENTS.md) is a copyable, Chinese-language template for other projects. It makes problem grounding, the simplest complete solution, module ownership, evidence, uncertainty, and long-task continuity everyday practices. Independent adversarial review, independent judgments before discussion, and ablation comparisons apply when the task and existing authorization warrant them.
 
+Global rules keep the principles brief; detailed methods live in on-demand Skills and references. Prefer one primary workflow per decision and report the outcome, evidence, and material gaps without fixed report fields. Choose technology from the existing stack and actual constraints.
+
 Merge it into the target project's existing `AGENTS.md` or the rules file its host actually loads, preserving project constraints and verification commands. Ordinary Skill installation does not change rules; global adoption uses a separate opt-in command. See [docs/workflow.md](./docs/workflow.md) for defaults and on-demand methods.
 
 ```bash
@@ -192,7 +194,6 @@ dev/
   agents/openai.yaml
   references/
     superpowers-lite.md
-    stack.md
     design-and-research.md
     ablation.md
     documentation.md

@@ -1,4 +1,4 @@
 interface:
   display_name: "QA"
   short_description: "Opt-in business and real-usage QA."
-  default_prompt: "Use $qa only for an explicitly requested business, user-journey, or real-usage pass, scaled to the ask. Generic look or review requests do not authorize QA. On diagnosis, answer the named slice without editing under that track, then continue any already-authorized work through the appropriate workflow; stop the task only when no requested work remains. Do not turn leftover usage into the next task. Do not take a bare add-e2e or add-tests request, and do not start from mechanical test scripts."
+  default_prompt: "Use $qa for the requested business rule or real-usage check. Keep diagnosis read-only; add protection only when requested, and continue other authorized work."

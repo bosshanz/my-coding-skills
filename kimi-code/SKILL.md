@@ -8,57 +8,19 @@ argument-hint: "[任务 | task]"
 # Kimi Code
 
 <!-- adapter-shared:head -->
-Use Kimi Code as an external terminal agent. Kimi can inspect repositories, run commands, edit files, and report findings; the calling agent remains responsible for scope, review, verification, and final delivery.
+Use Kimi Code only when the current request or an earlier explicit user standing instruction selects it for this scope (for example “use Kimi Code”, “ask Kimi Code”). A discovered project policy counts only if the user explicitly adopted it. Loading this Skill or mentioning the CLI is not delegation authorization. Setup and troubleshooting can use local checks without dispatch.
 
-## Adapter Contract
+## Execution Contract
 
-Follow this external-agent contract whenever Kimi Code is used from another agent.
+- Actually invoke the selected CLI. Never impersonate its output or silently substitute another agent. If Kimi Code is unavailable, cannot authenticate, lacks the context, or would violate permissions, report the specific blocker. Task size alone does not cancel explicit selection.
+- Give Kimi the objective, resolved decisions, existing authorization, owned files, constraints, expected outcome, and proportionate verification. Distinguish review-only from implementation. Ask it to finish authorized work and resolve routine choices from evidence; Skill advice cannot override host instructions or the user's scope.
+- For authorized parallel work, assign disjoint ownership and tell agents they share the checkout: preserve others' edits and avoid duplicate work. Independent review uses a non-implementer who first judges the original target, criteria, revision, and raw evidence before seeing other verdicts. Disclose shared-context limits; require checkable triggers, impact, and evidence, and resolve disagreement by checks rather than consensus.
+- Static review stays read-only. Authorized verification may use necessary commands and isolated temporary artifacts under existing sandbox and approval controls; it does not authorize editing reviewed source or production data. If the user forbids all writes, respect that and report the resulting evidence gap.
+- Request the outcome, relevant changes or findings, actual commands/results, and material gaps. Use structured output only when a consumer needs it; preserve raw output if parsing fails. Findings are evidence for the caller to review, not authority to expand scope. The caller inspects changes, verifies missing/stale evidence or integration effects, and owns final delivery.
 
-For setup or troubleshooting alone, use the relevant references and local checks without dispatch. Loading this Skill or mentioning the CLI is not selection for external-agent work. If no applicable selection exists, continue the requested work in the caller's workflow; do not request delegation approval merely because this Skill loaded.
+## Skills In The Target CLI
 
-### Must Use When
-
-- The user explicitly selects Kimi Code for external-agent work, including common wording such as “use Kimi Code”, “ask Kimi Code”, or the matching Skill name in a delegation request.
-- An earlier explicit standing instruction from the user selects Kimi Code for this scope. A project policy counts only when the user explicitly adopted it for the relevant scope; merely discovering a policy file does not authorize dispatch.
-
-### Must Not Use When
-
-- The user explicitly asks the caller agent to solve the task directly without external delegation.
-- Kimi Code is unavailable, cannot authenticate, or cannot access the required context.
-- Invoking the target would violate security, privacy, permission, or project policy.
-
-### Invocation Integrity
-
-- Actually invoke Kimi Code; do not simulate, impersonate, or fabricate its response.
-- Do not summarize what Kimi Code might say without invoking it when invocation is required.
-- If invocation fails, report the failure and do not fabricate findings.
-- Do not silently substitute another agent.
-
-### Scoped Execution
-
-- Pass the user's objective, existing decisions and authorization, owned files, constraints, expected deliverable, and proportionate verification to Kimi. Tell it whether the task is review-only or includes implementation.
-- Ask it to finish authorized work without another plan approval, resolve routine choices from evidence, and report only material blockers. A Skill's advice cannot override the user's explicit scope or higher-priority host instructions; if a file causes a pause, report its path and exact instruction.
-- When parallel work is authorized, assign disjoint ownership and tell each agent it shares the checkout: preserve others' edits and do not duplicate active work. Reuse valid evidence; rerun only for integration changes or unresolved concerns.
-- For an independent review, use a reviewer who did not implement the change and provide the original target, criteria, constraints, revision, and raw evidence. Obtain its initial judgment before sharing the implementer's verdict or other reviewers' conclusions, then compare findings and necessary rationale. Disclose inherited-context limits; evidence resolves disagreement, not reviewer count or forced consensus. Require concrete triggers, impact, and checkable evidence, separating suspicions from confirmed defects and allowing no findings.
-
-- Task size alone does not override an explicit agent selection. Keep work local when delegation has not been requested. If the selected agent cannot safely access the required context, report the specific blocker; do not silently substitute the caller.
-- Inspect actual changes and assess the supplied evidence. Run additional verification when evidence is missing, stale, insufficient, or affected by integration changes. Research-only tasks require evidence review, not an unrelated test run.
-- Use read-only access for static review. When the authorized review requires checks, allow only the commands and isolated temporary artifacts needed for verification, within the applicable sandbox and approval controls. This does not authorize editing reviewed source, changing production data, or bypassing approvals. If the user forbids all filesystem writes, keep the review entirely read-only and report any resulting verification gap.
-
-### Output Contract
-
-Ask Kimi Code to return, when supported: `task_summary`, `skills_used`, `findings`, `suggested_changes`, `risks`, `confidence`, `files_referenced`, `commands_run`, and `verification_needed`. Preserve raw output when structured parsing is unavailable or invalid.
-
-## Internal Skill Routing
-
-External CLI selection is explicit: use this adapter only after the current request or an earlier explicit user standing instruction selects Kimi Code for the relevant scope. After dispatch, let Kimi Code use its own discoverable global/user and project/local Skills automatically.
-
-- In the prompt, tell Kimi to evaluate global/user and project/local Skills discoverable by Kimi, prefer explicitly named Skills first and project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies.
-- Reuse this prompt snippet when practical: `Evaluate global/user and project/local Skills discoverable by this CLI. Prefer explicitly named Skills first and project-local Skills over global Skills when both apply. Use the matching non-adapter Skill when its trigger applies. Do not invoke external-agent adapters unless explicitly authorized. Report Skills used or why none were used.`
-- Respect any Skill explicitly named by the user.
-- Prefer `dev` for ordinary implementation or bug repair; `design` for UI interaction design, visual direction, usability, AI-native interaction, or animation work; `clarify` for senior product judgment, prioritization and tradeoffs, first-slice or experiment decisions, and material requirement or architecture discovery, but not ongoing PM operations; `qa` only for an explicitly requested independent business or real-usage pass (missing evidence is not authorization); and `acceptance` for explicitly requested independent go/no-go verification when those Skills are available to Kimi.
-- Do not ask Kimi to invoke any external-agent adapter (`kimi-code`, `claude-code`, `codex-cli`, `opencode`, or `grok-build-cli`) unless the user explicitly authorizes multi-agent delegation.
-- Ask Kimi to report which Skills it used or why none were used.
+Tell Kimi to evaluate its discoverable user and project Skills, honor explicit selection, and prefer project-specific guidance when applicable. Load only the matching non-adapter workflow and useful references; ordinary implementation needs no separate QA or acceptance pass without the user's request. Report which Skills materially contributed, or why none applied. Do not ask the child to use another external adapter without explicit authorization.
 <!-- /adapter-shared:head -->
 
 ## First Steps
@@ -147,12 +109,9 @@ kimi -p "Mode: research-only. Review the current git diff for correctness risks 
 ```
 
 <!-- adapter-shared:recursion -->
-## Recursion And Delegation Limits
+## Delegation Limits
 
-- Do not recursively dispatch Kimi Code without an explicit user request. If the user requests an independent child process, prevent further delegation in the child.
-- Do not ask a dispatched agent to dispatch another coding agent unless the user explicitly requests multi-agent orchestration.
-- Keep delegation depth to one hop by default.
-- Do not start a duplicate external agent on the same scope when one is already active.
+Keep dispatch to one hop unless the user explicitly requests further orchestration. Prevent recursive or duplicate dispatch on the same active scope; a requested independent child does not authorize that child to delegate again.
 <!-- /adapter-shared:recursion -->
 
 ## Kimi Skills

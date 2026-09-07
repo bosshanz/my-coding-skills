@@ -1,4 +1,4 @@
 interface:
   display_name: "Clarify"
   short_description: "Apply senior PM judgment before implementation."
-  default_prompt: "Use $clarify to apply senior product-manager judgment to a high-leverage product or technical question, recommend whether and what to build, define the target user, tradeoffs, first slice, success signal, and next handoff, and avoid ongoing PM operations or delivery management."
+  default_prompt: "Use $clarify to resolve the material product or architecture decision and recommend the next bounded action. Resume implementation if already requested."

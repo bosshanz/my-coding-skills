@@ -1,7 +1,7 @@
 # Per-CLI variables for the shared adapter contract in contract.md.
 # display: full CLI name used in formal statements
 # short:   prose name used inside sentences
-# aliases: quoted alias list for the Must Use When bullet
+# aliases: examples of explicit user selection
 
 kimi-code:
   display: Kimi Code

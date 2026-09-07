@@ -19,6 +19,8 @@ English version: [README.en.md](./README.en.md)
 
 [templates/AGENTS.md](./templates/AGENTS.md) 是可复制到其他项目的通用模板。它把第一性原理、最小完整方案、模块职责、证据检查、不确定项和长任务续接写成默认工作方式；独立对抗审查、先独立判断再交流、消融实验按任务需要与已有授权启用。
 
+全局规则只保留简短原则，详细方法留在按需加载的 Skill 与 reference 中。同一决策优先使用一个主工作流；交付按结果、证据和实质缺口表达，无需固定报告字段。技术选型从现有栈与真实约束出发。
+
 采用时可合并到目标项目已有的 `AGENTS.md` 或宿主实际加载的规则文件，保留项目约束与验证命令。普通 Skill 安装不修改规则；全局安装使用下方独立入口。规则与按需方法的分工见 [docs/workflow.md](./docs/workflow.md)。
 
 ```bash
@@ -192,7 +194,6 @@ dev/
   agents/openai.yaml
   references/
     superpowers-lite.md
-    stack.md
     design-and-research.md
     ablation.md
     documentation.md
