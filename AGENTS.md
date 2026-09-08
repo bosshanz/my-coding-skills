@@ -27,6 +27,13 @@ installing a skill does not install these repository rules into consumer project
 - Routing and behavior evals are separate from static checks. Dry runs validate fixture loading, not model behavior. Never claim GPT-6 behavior was verified by a static check or another model's result. Do not invoke an external model or agent without applicable authorization.
 - Deliver in Chinese by default. Lead with the outcome, then changed behavior, meaningful evidence, and concrete remaining limits. Prefer short paragraphs; use lists or templates only when they help or the user requests them. Omit empty sections, stock phrases, and routine next-step offers. Distinguish implementation status from verification status. Claim verified completion only when the applicable completion criteria are met. If a required check is blocked, report the completed work and exact verification gap; disclosing the gap does not make the check pass. Optional uncovered cases do not automatically block completion.
 
+## Marketplace release maintenance
+
+- This repository is the source of truth for My Coding Skills. The same owner's distribution repository is `https://github.com/bosshanz/andy-agent-marketplace`; its bundled `plugins/my-coding-skills/skills/` is generated content, not a second editing location.
+- When the owner requests a My Coding Skills release/publication, include syncing, verifying, committing, and pushing its marketplace package in that release unless explicitly excluded. An ordinary edit or source-only commit/push request is not a release request. Follow the maintenance steps in `README.md` under `维护与市场同步`.
+- Sync only the explicit, tested source commit after it is committed and pushed. Update the source package version for a release; the marketplace manifest inherits it. Use the marketplace's `scripts/sync_coding_skills.py`, preserve unrelated work in both repositories, update version notes, and run its `scripts/verify.py` before publishing. Report source SHA, marketplace SHA, and verification status separately; a source push alone does not complete a requested release.
+- Locate the marketplace checkout by its Git remote rather than assuming a machine-specific path. If absent, clone it into a suitable workspace directory. Never overwrite hand-edited package files to force a sync; resolve the divergence first. Updating the marketplace does not update standalone Skill installs or authorize installing plugins globally.
+
 ## Layers
 
 - **Rules**: this file is canonical. `CLAUDE.md` loads it for Claude Code.

@@ -597,6 +597,27 @@ OpenCode 会按需发现并加载 Skill。只要目录安装正确，就可以�
 - 保持轻量，不默认引入强制 worktree、长篇 spec 或多 Agent 编排
 - 需要时按 reference 或 `design` Skill 加载前端设计、后端架构、后端质量和数据库工程检查清单，而不是把外部 Skill 原样变成默认长流程
 
+## 维护与市场同步
+
+本仓库是 My Coding Skills 的唯一编辑来源；[Andy’s Agent Marketplace](https://github.com/bosshanz/andy-agent-marketplace) 负责分发固定版本。市场里的 `plugins/my-coding-skills/skills/` 是生成副本，不直接修改。当前采用明确的发布动作，不自动跟随本仓库的每次提交。
+
+仓库所有者要求“发布 My Coding Skills”时，默认包含两个仓库的发布：源仓库测试、提交和推送，以及市场同步、验证、提交和推送；明确要求只处理源仓库时遵从该范围。普通修改或仅提交/推送源仓库，不隐含发布到市场。
+
+1. 在本仓库修改 Skill，正式发布时更新 `package.json` 和相应 lockfile 的版本。运行 `npm test`、`npm run doctor` 和 `git diff --check`；catalog/CLI 变更还需 `npm run check:cli`。检查差异后提交并推送，记录 `git rev-parse HEAD` 返回的完整 SHA。
+2. 找到 remote 为 `https://github.com/bosshanz/andy-agent-marketplace.git`（或对应 SSH URL）的市场工作副本；没有时克隆该仓库。检查两个仓库的工作区并保留无关修改。进入市场根目录，用已发布的完整 SHA 同步：
+
+   ```sh
+   python3 scripts/sync_coding_skills.py /path/to/my-coding-skills FULL_COMMIT_SHA
+   python3 scripts/verify.py
+   git diff --check
+   ```
+
+3. 同步脚本读取指定提交中的 Skill 和资源，更新插件版本、`sources.lock.json` 中的 SHA 与文件摘要。未提交的内容不会同步；检测到市场生成文件被手动修改时会拒绝覆盖。出现冲突先处理来源，不能强行覆盖。
+4. 更新市场 README 和 `catalog/my-coding-skills.md` 的版本说明，复核同步差异并对变更能力做相称验证。仅暂存本次发布文件，提交、推送市场并检查 CI。交付时分别报告源仓库 SHA、市场 SHA 和验证范围；静态检查不等于模型行为验证。
+5. 使用端按安装方式更新：Git 来源先刷新市场，再安装更新后的插件；本地来源使用同步后的本地市场重新安装。安装后新建任务。独立 Skill 安装仍使用本仓库原有安装流程，市场同步不会更新它；同一套 Skill 尽量只保留一种安装方式。
+
+可以直接向维护 Agent 提出：“把 my-coding-skills 最新已提交版本同步到市场，验证后提交并推送。”仅修改文档或 Skill 时，不需要为了这条维护约定立即发布。
+
 ## 许可证
 
 本仓库自有内容使用 [MIT License](./LICENSE)。`design/references/design-direction.md` 是随仓库分发的第三方 Apache-2.0 内容，其完整许可证位于 [design/references/anthropic-frontend-design-LICENSE.txt](./design/references/anthropic-frontend-design-LICENSE.txt)；`design/references/animation.md` 蒸馏自 MIT 许可的 [emilkowalski/skills](https://github.com/emilkowalski/skills)。

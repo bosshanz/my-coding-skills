@@ -597,6 +597,27 @@ External CLI selection must be explicit; once the current request or an earlier 
 - Lightweight process by default, without mandatory worktrees, long specs, or multi-agent orchestration
 - Reference-based or `design`-Skill-based frontend design, backend architecture, backend quality, and database engineering checklists when needed, instead of turning external skills into a long default process
 
+## Maintenance and Marketplace Sync
+
+This repository is the source of truth. [Andy’s Agent Marketplace](https://github.com/bosshanz/andy-agent-marketplace) distributes a pinned package; do not edit its generated `plugins/my-coding-skills/skills/` files directly. Sync is an explicit release step, not an automatic response to every source commit.
+
+When the owner requests a My Coding Skills release, include both repositories: test, commit and push the source, then sync, verify, commit and push the marketplace package, unless explicitly excluded. Ordinary edits or source-only commit/push requests do not imply a marketplace release.
+
+1. Edit skills here. For a release, update the package version and associated lockfile. Run `npm test`, `npm run doctor`, and `git diff --check`; also run `npm run check:cli` for catalog/CLI changes. Review, commit and push, then record the full SHA from `git rev-parse HEAD`.
+2. Locate the marketplace checkout by its HTTPS or SSH Git remote, or clone it into a suitable workspace. Preserve unrelated changes in both repositories. From the marketplace root, run:
+
+   ```sh
+   python3 scripts/sync_coding_skills.py /path/to/my-coding-skills FULL_COMMIT_SHA
+   python3 scripts/verify.py
+   git diff --check
+   ```
+
+3. The script copies skills and resources from that explicit commit and updates the plugin version, source SHA and file hashes in `sources.lock.json`. Uncommitted source edits are excluded. Modified generated files cause sync to fail rather than being silently overwritten; resolve divergence before retrying.
+4. Update the marketplace README and `catalog/my-coding-skills.md` version notes. Review the diff and verify changed capabilities proportionally. Stage only release files, commit, push and check CI. Report source SHA, marketplace SHA and verification scope separately; static checks do not establish model behavior.
+5. Consumers using a Git-backed marketplace refresh it before installing the updated plugin. Consumers using a local marketplace reinstall from the synced local source. Start a new task after installation. Standalone Skill installs still use this repository's existing installation flow; marketplace sync does not update them. Prefer one installation method per skill set.
+
+A direct maintenance request is: “Sync the latest committed my-coding-skills version to the marketplace, verify it, then commit and push.” Documentation or skill edits alone do not require an immediate release.
+
 ## License
 
 This repository's own content is licensed under the [MIT License](./LICENSE). The vendored third-party Apache-2.0 content in `design/references/design-direction.md` is accompanied by its full license at [design/references/anthropic-frontend-design-LICENSE.txt](./design/references/anthropic-frontend-design-LICENSE.txt); `design/references/animation.md` is distilled from the MIT-licensed [emilkowalski/skills](https://github.com/emilkowalski/skills).
