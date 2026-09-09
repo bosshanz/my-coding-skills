@@ -1,4 +1,0 @@
-interface:
-  display_name: "Acceptance"
-  short_description: "Judge completed work against evidence."
-  default_prompt: "Use $acceptance to judge the completed change against its criteria and evidence, state actual reviewer separation, and return accepted, accepted with risk, or rejected."

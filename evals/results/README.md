@@ -26,3 +26,8 @@ agent dispatch, then `--verify <run-dir>`. Keep raw responses and append-only
 `attempts.jsonl` with the run. A curated execution summary should identify the
 host/model knowledge, skill hash, artifact outcomes, manual conversation
 observations, and limitations. See `docs/workflow.md`.
+
+The current execution fixture does not inject a library Skill. Archived
+2026-09-05 results used dev instructions and remain historical evidence for
+that snapshot. No result is a with/without comparison unless both variants,
+their host context, and all attempts were actually recorded.

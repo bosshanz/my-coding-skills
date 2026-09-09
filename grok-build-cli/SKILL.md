@@ -18,9 +18,9 @@ Use Grok Build CLI only when the current request or an earlier explicit user sta
 - Static review stays read-only. Authorized verification may use necessary commands and isolated temporary artifacts under existing sandbox and approval controls; it does not authorize editing reviewed source or production data. If the user forbids all writes, respect that and report the resulting evidence gap.
 - Request the outcome, relevant changes or findings, actual commands/results, and material gaps. Use structured output only when a consumer needs it; preserve raw output if parsing fails. Findings are evidence for the caller to review, not authority to expand scope. The caller inspects changes, verifies missing/stale evidence or integration effects, and owns final delivery.
 
-## Skills In The Target CLI
+## Target Context
 
-Tell Grok to evaluate its discoverable user and project Skills, honor explicit selection, and prefer project-specific guidance when applicable. Load only the matching non-adapter workflow and useful references; ordinary implementation needs no separate QA or acceptance pass without the user's request. Report which Skills materially contributed, or why none applied. Do not ask the child to use another external adapter without explicit authorization.
+Respect the target's host rules, project instructions, and the user's Skill selection or prohibition. Ordinary implementation, clarification, and tests run directly; no extra workflow is required. Optional Skills or references may be used only when relevant and permitted. Preserve the user's chosen scope throughout the handoff.
 <!-- /adapter-shared:head -->
 
 ## First Steps
@@ -42,14 +42,14 @@ After admission, dispatch Grok for an independent research, coding, or review pa
 - Implement a small or medium task with explicit file and test boundaries.
 - Produce JSON or schema-constrained output for downstream automation.
 
-Follow the task-size and access boundaries in Scoped Execution; an explicit agent selection remains binding.
+Follow the task-size and access boundaries in the execution contract; an explicit agent selection remains binding.
 
 ## Invocation
 
 Use print mode for bounded, non-interactive tasks:
 
 ```sh
-grok -p "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Evaluate global/user and project/local Skills discoverable by Grok, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used, evidence, assumptions, and unresolved risks." \
+grok -p "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Follow the user's scope and the target's host and project instructions. Do not edit files. Return evidence, assumptions, and unresolved risks." \
   --cwd "$(pwd)" \
   --tools "read_file,grep,list_dir" \
   --output-format json \
@@ -64,7 +64,7 @@ grok -p "Mode: review-only. Review this diff for correctness risks and missing t
 
 $(git diff --no-ext-diff)
 
-Evaluate global/user and project/local Skills discoverable by Grok, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used and only actionable findings with file paths and reasoning." \
+Follow the user's scope and the target's host and project instructions. Do not edit files. Return only actionable findings with file paths and reasoning." \
   --cwd "$(pwd)" \
   --tools "read_file,grep,list_dir" \
   --output-format json \
@@ -103,12 +103,12 @@ Use `--always-approve` / `--yolo` only for trusted workspaces after the user exp
 
 1. State the working directory, objective, and mode: `research-only`, `propose-only`, `review-only`, or `implement`.
 2. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may run.
-3. Include the internal Skill routing instruction from this Skill.
-4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
-5. Prefer `--tools "read_file,grep,list_dir"` for static research and review. For authorized review checks, add only the necessary shell tools and isolate temporary outputs under Scoped Execution; source-edit tools remain excluded. Allow source-edit tools only when implementation requires them.
+3. Pass the user's context, authorization, and any Skill selection or prohibition to the target.
+4. Request a concise result: changed files, commands run, evidence, assumptions, and unresolved risks.
+5. Prefer `--tools "read_file,grep,list_dir"` for static research and review. For authorized review checks, add only the necessary shell tools and isolate temporary outputs within the authorized scope; source-edit tools remain excluded. Allow source-edit tools only when implementation requires them.
 6. Set `--max-turns` and `--no-subagents` on non-interactive runs. Keep prompts bounded; avoid broad “fix everything” tasks.
 7. When using `--json-schema`, parse `structuredOutput` from the JSON envelope.
-8. Review the changes and evidence under Scoped Execution; run additional checks only when needed.
+8. Review the changes and evidence within the authorized scope; run additional checks only when needed.
 9. Treat Grok output as advisory until the relevant repository evidence supports it.
 
 ## Permission Safety

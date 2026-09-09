@@ -5,10 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ALL_SKILLS=(
   design
-  clarify
-  dev
-  qa
-  acceptance
+  verify
   reflect
   kimi-code
   claude-code
@@ -17,7 +14,7 @@ ALL_SKILLS=(
   grok-build-cli
 )
 
-TARGET="all"
+TARGET="agents"
 TARGET_WAS_SET=0
 DEST=""
 FORCE=0
@@ -28,63 +25,43 @@ REQUESTED=()
 
 usage() {
   cat <<'EOF'
-Install this repository's coding-agent Skills.
+Install selected coding-agent Skills. No selection changes no files.
 
 Usage:
-  ./install.sh [skill|group ...] [options]
+  ./install.sh <skill|group ...> [options]
   ./install.sh --list
-  ./install.sh --global-rules [--target codex] [--dry-run]
 
 Skills:
-  design
-  clarify
-  dev
-  qa
-  acceptance
-  kimi-code
-  claude-code
-  codex-cli
-  opencode
-  grok-build-cli
+  design verify reflect kimi-code claude-code codex-cli opencode grok-build-cli
 
 Groups:
-  all          Install every Skill (default)
+  all          Install every Skill (explicit opt-in)
   ui           Install design
-  workflow     Install dev
-  planning     Install clarify for product judgment / architecture alignment
-  quality      Install qa and acceptance
-  delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
+  quality      Install verify
+  meta         Install reflect (explicit invocation only)
+  adapters     Install the five external CLI adapters
+  delegation   Alias for adapters
 
 Options:
-  --global-rules    Install/update the template in Codex global AGENTS.md only
-                    (requires Node.js 18+; preserves other content and backs up changes)
-  --target TARGET   agents, codex, claude, gemini, opencode, or all
-                    (default: all)
-  --dest DIR        Custom Skills directory, or rules directory in --global-rules mode
-                    (must not be / or a system path)
-  --force, -f       Replace an existing installed Skill
+  --target TARGET   agents (default), codex, claude, gemini, opencode, or all
+  --dest DIR        Custom Skills directory; cannot be / or a system path
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
   --help, -h        Show this help
+  --force, -f       Replace an existing installed Skill
+  --global-rules    Install the rules template into Codex global AGENTS.md only
+                    (requires Node.js 18+; preserves other content and backs up changes)
 
 Examples:
-  ./install.sh
-  ./install.sh ui --target agents
-  ./install.sh dev --target agents
-  ./install.sh planning --target agents
-  ./install.sh qa --target agents --force
-  ./install.sh acceptance --target agents
-  ./install.sh delegation --target claude --force
-  ./install.sh all --target gemini --force
-  ./install.sh all --target all --force
-  ./install.sh dev --dest /tmp/skills --dry-run
-  ./install.sh --global-rules --target codex
-  ./install.sh --global-rules --dest /tmp/codex-rules --dry-run
+  ./install.sh design --target agents
+  ./install.sh verify --dest ./local-skills --dry-run
+  ./install.sh adapters --target claude
+  ./install.sh all --target all --dry-run
+  ./install.sh --global-rules --target codex --dry-run
 
 Targets:
-  agents    $HOME/.agents/skills (recommended shared location; Codex-supported)
-  codex     ${CODEX_HOME:-$HOME/.codex}/skills (legacy Codex location)
+  agents    $HOME/.agents/skills
+  codex     ${CODEX_HOME:-$HOME/.codex}/skills
   claude    $HOME/.claude/skills
   gemini    $HOME/.gemini/skills
   opencode  $HOME/.config/opencode/skills
@@ -143,52 +120,27 @@ append_unique() {
 resolve_requests() {
   local request skill
   RESOLVED=()
-
-  if [[ "${#REQUESTED[@]}" -eq 0 ]]; then
-    REQUESTED=(all)
-  fi
-
+  [[ "${#REQUESTED[@]}" -gt 0 ]] || fail "choose a Skill or group explicitly; use --list"
   for request in "${REQUESTED[@]}"; do
     case "$request" in
       all)
         for skill in "${ALL_SKILLS[@]}"; do append_unique "$skill"; done
         ;;
-      workflow)
-        append_unique dev
-        ;;
-      ui)
-        append_unique design
-        ;;
-      planning)
-        append_unique clarify
-        ;;
-      quality)
-        append_unique qa
-        append_unique acceptance
-        ;;
-      delegation)
+      ui) append_unique design ;;
+      quality) append_unique verify ;;
+      meta) append_unique reflect ;;
+      delegation|adapters)
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
         append_unique opencode
         append_unique grok-build-cli
         ;;
-      adapters)
-        append_unique kimi-code
-        append_unique claude-code
-        append_unique codex-cli
-        append_unique opencode
-        append_unique grok-build-cli
+      dev|clarify|qa|acceptance|workflow|planning)
+        fail "retired Skill or group: $request; use verify for requested checks, or work directly. See README migration notes."
         ;;
-        meta)
-            append_unique reflect
-        ;;
-      design|clarify|dev|qa|acceptance|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
-        append_unique "$request"
-        ;;
-      *)
-        fail "unknown Skill or group: $request"
-        ;;
+      design|verify|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli) append_unique "$request" ;;
+      *) fail "unknown Skill or group: $request" ;;
     esac
   done
 }
@@ -262,6 +214,11 @@ install_skill() {
   cp -R "$source" "$destination"
   printf 'installed %s -> %s\n' "$skill" "$destination"
 }
+
+if [[ "$#" -eq 0 ]]; then
+  usage
+  exit 0
+fi
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in

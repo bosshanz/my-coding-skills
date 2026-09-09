@@ -18,9 +18,9 @@ Use OpenCode only when the current request or an earlier explicit user standing 
 - Static review stays read-only. Authorized verification may use necessary commands and isolated temporary artifacts under existing sandbox and approval controls; it does not authorize editing reviewed source or production data. If the user forbids all writes, respect that and report the resulting evidence gap.
 - Request the outcome, relevant changes or findings, actual commands/results, and material gaps. Use structured output only when a consumer needs it; preserve raw output if parsing fails. Findings are evidence for the caller to review, not authority to expand scope. The caller inspects changes, verifies missing/stale evidence or integration effects, and owns final delivery.
 
-## Skills In The Target CLI
+## Target Context
 
-Tell OpenCode to evaluate its discoverable user and project Skills, honor explicit selection, and prefer project-specific guidance when applicable. Load only the matching non-adapter workflow and useful references; ordinary implementation needs no separate QA or acceptance pass without the user's request. Report which Skills materially contributed, or why none applied. Do not ask the child to use another external adapter without explicit authorization.
+Respect the target's host rules, project instructions, and the user's Skill selection or prohibition. Ordinary implementation, clarification, and tests run directly; no extra workflow is required. Optional Skills or references may be used only when relevant and permitted. Preserve the user's chosen scope throughout the handoff.
 <!-- /adapter-shared:head -->
 
 ## First Steps
@@ -40,7 +40,7 @@ After admission, dispatch OpenCode for an independent research, coding, or revie
 - Implement a small or medium task with explicit file and test boundaries.
 - Use OpenCode TUI directly when the user wants an interactive handoff.
 
-Follow the task-size and access boundaries in Scoped Execution; an explicit agent selection remains binding.
+Follow the task-size and access boundaries in the execution contract; an explicit agent selection remains binding.
 
 ## Invocation
 
@@ -49,7 +49,7 @@ Use `opencode run` for bounded, non-interactive tasks:
 ```sh
 opencode run \
   --dir "$(pwd)" \
-  "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Evaluate global/user and project/local Skills discoverable by OpenCode, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used, evidence, assumptions, and unresolved risks."
+  "Mode: research-only. Inspect this repository and summarize the architecture, entry points, and likely test commands. Follow the user's scope and the target's host and project instructions. Do not edit files. Return evidence, assumptions, and unresolved risks."
 ```
 
 Use JSON event output when a script needs structured logs:
@@ -58,7 +58,7 @@ Use JSON event output when a script needs structured logs:
 opencode run \
   --dir "$(pwd)" \
   --format json \
-  "Mode: review-only. Review the current diff for correctness risks and missing tests. Evaluate global/user and project/local Skills discoverable by OpenCode, prefer project-local Skills over global Skills when both apply, and use the matching non-adapter Skill when its trigger applies. Do not edit files. Return Skills used and only actionable findings with file paths and reasoning."
+  "Mode: review-only. Review the current diff for correctness risks and missing tests. Follow the user's scope and the target's host and project instructions. Do not edit files. Return only actionable findings with file paths and reasoning."
 ```
 
 Use a specific OpenCode agent when available:
@@ -99,11 +99,11 @@ Use `--auto` only for trusted workspaces after the user explicitly accepts the a
 
 1. State the working directory, objective, and mode: `research-only`, `propose-only`, `review-only`, or `implement`.
 2. State boundaries: files or directories in scope, whether edits are allowed, and whether tests may run.
-3. Include the internal Skill routing instruction from this Skill.
-4. Request a concise result: changed files, commands run, evidence, Skills used, assumptions, and unresolved risks.
-5. Prefer read-only prompts for static research and review; scope authorized review checks under Scoped Execution. Allow implementation only when the user asked for OpenCode to edit.
+3. Pass the user's context, authorization, and any Skill selection or prohibition to the target.
+4. Request a concise result: changed files, commands run, evidence, assumptions, and unresolved risks.
+5. Prefer read-only prompts for static research and review; scope authorized review checks within the authorized scope. Allow implementation only when the user asked for OpenCode to edit.
 6. Keep prompts bounded; avoid broad “fix everything” tasks.
-7. Review the changes and evidence under Scoped Execution; run additional checks only when needed.
+7. Review the changes and evidence within the authorized scope; run additional checks only when needed.
 8. Treat OpenCode output as advisory until the relevant repository evidence supports it.
 
 ## Safety And Sessions

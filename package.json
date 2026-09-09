@@ -1,25 +1,25 @@
 {
   "name": "my-coding-skills",
   "version": "0.4.0",
-  "description": "Portable interaction and visual design, development workflow, QA, acceptance, and external-agent adapter skills for Codex, Claude Code, Gemini CLI, OpenCode, and Grok Build.",
+  "description": "Optional UI design, business verification, explicit preferences, engineering references, and external CLI adapters for coding agents.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
   },
   "files": [
     "design",
-    "clarify",
-    "dev",
-    "qa",
-    "acceptance",
+    "verify",
     "reflect",
     "kimi-code",
     "claude-code",
     "codex-cli",
     "opencode",
     "grok-build-cli",
+    "references",
+    "docs",
     "templates",
     "install.sh",
+    "uninstall.sh",
     "scripts/install-global-rules.mjs",
     "scripts/skills-doctor.sh",
     "scripts/check-routing-policy.mjs",
@@ -37,7 +37,7 @@
     "eval:behavior": "node evals/behavior/runner.mjs",
     "eval:e2e": "node evals/e2e/smoke.mjs",
     "adapters:sync": "node scripts/sync-adapters.mjs --write",
-    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs && bash scripts/test-install-safety.sh",
+    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
     "eval:execution": "node evals/execution/runner.mjs"
   },
   "keywords": [
@@ -47,10 +47,7 @@
     "grok-build",
     "skills",
     "design",
-    "clarify",
-    "dev",
-    "qa",
-    "acceptance"
+    "verify"
   ],
   "license": "MIT",
   "engines": {

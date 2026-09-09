@@ -36,7 +36,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli opencode grok-build-cli; do
+for skill in design verify reflect kimi-code claude-code codex-cli opencode grok-build-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -48,8 +48,8 @@ for skill in design clarify dev qa acceptance kimi-code claude-code codex-cli op
   fi
 done
 
-for ref in superpowers-lite.md design-and-research.md ablation.md documentation.md backend-engineering.md backend-architecture.md backend-quality.md database-engineering.md; do
-  check_file "dev/references/$ref"
+for ref in README.md debugging.md architecture-decisions.md ablation.md backend-architecture.md backend-quality.md database-engineering.md; do
+  check_file "references/$ref"
 done
 
 for ref in interaction.md design-direction.md quality.md animation.md anthropic-frontend-design-LICENSE.txt; do
@@ -92,6 +92,10 @@ check_file "docs/workflow.md"
 check_file "evals/results/README.md"
 check_file ".github/workflows/evals.yml"
 
+check_absent "dev"
+check_absent "clarify"
+check_absent "qa"
+check_absent "acceptance"
 check_absent "agent-delegation"
 check_absent "dev-workflow"
 check_absent "design-interview"

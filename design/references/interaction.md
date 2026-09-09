@@ -6,7 +6,7 @@ Interaction design defines how a person understands a system, acts on it, receiv
 
 Load this reference for product UI and stateful experiences: workflows, forms, editors, dashboards, admin tools, onboarding, search and filtering, multi-step tasks, async operations, permissions, destructive actions, interruption and resume, or AI-assisted work.
 
-Do not load it for a purely decorative visual change with settled behavior. If the target user, job, or product decision is still materially unclear, use `$clarify` before inventing an interaction. If the user asks for independent business or real-usage diagnosis rather than design changes, that belongs to the explicitly requested `$qa` workflow.
+Do not load it for a purely decorative visual change with settled behavior. Resolve material uncertainty about the user or job before inventing an interaction. A requested business diagnosis is a check of existing behavior; it does not by itself authorize redesign.
 
 ## Start From The Real Interaction
 

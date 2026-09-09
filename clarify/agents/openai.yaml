@@ -1,4 +1,0 @@
-interface:
-  display_name: "Clarify"
-  short_description: "Apply senior PM judgment before implementation."
-  default_prompt: "Use $clarify to resolve the material product or architecture decision and recommend the next bounded action. Resume implementation if already requested."

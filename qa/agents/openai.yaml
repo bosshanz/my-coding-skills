@@ -1,4 +1,0 @@
-interface:
-  display_name: "QA"
-  short_description: "Opt-in business and real-usage QA."
-  default_prompt: "Use $qa for the requested business rule or real-usage check. Keep diagnosis read-only; add protection only when requested, and continue other authorized work."

@@ -80,7 +80,7 @@ Follow the project's existing module shape first. Do not introduce a hexagonal o
 - Protocol adapters translate transport to an application command. They do not own business outcomes.
 - Application methods own the use case: resource-level authz, transaction start/commit, and repository calls.
 - Repositories persist and fetch. They do not decide whether the business action is allowed.
-- A new package earns its place by hiding an invariant or a real seam. A pass-through service that only forwards to a repository is not quality; see the deletion test in `design-and-research.md`.
+- A new package earns its place by hiding an invariant or a real seam. A pass-through service that only forwards to a repository is not quality; see the deletion test in `architecture-decisions.md`.
 
 ## Concurrency And Jobs
 
@@ -104,7 +104,7 @@ Follow the project's existing module shape first. Do not introduce a hexagonal o
 ## Test Gate
 
 - Prove each invariant at the lowest layer that still contains it.
-- For authz and tenancy, exercise the enforcement point: pure policy logic may use unit tests, while query scoping needs storage integration evidence. For uniqueness, atomic writes, and persisted idempotency, exercise the relevant database semantics. Pure state transitions do not require a database just because they represent domain behavior. Follow `dev`'s shared evidence rules.
+- For authz and tenancy, exercise the enforcement point: pure policy logic may use unit tests, while query scoping needs storage integration evidence. For uniqueness, atomic writes, and persisted idempotency, exercise the relevant database semantics. Pure state transitions do not require a database just because they represent domain behavior. A mock that removes the enforcing mechanism cannot establish its guarantee.
 - Cover the paths that change meaning: happy path, unauthenticated, wrong tenant, invalid input, duplicate or conflict, dependency timeout.
 - Time, randomness, and ID generation are injectable or fixed in tests when they affect the invariant.
 - Do not weaken a test to match a sloppy handler.
@@ -134,4 +134,4 @@ Use the smallest applicable set:
 - Evidence exercises the mechanism enforcing the changed invariant; mocks do not stand in for storage guarantees.
 - Readiness or shutdown behavior is checked only when process lifecycle changed.
 
-Final delivery follows `dev`; the gates above are internal checks for the changed behavior, not a report template.
+Use these checks only for affected behavior; report the result and material gaps without a fixed template.

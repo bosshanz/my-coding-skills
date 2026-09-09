@@ -5,36 +5,35 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
-### Added
-
-- Opt-in `install.sh --global-rules --target codex`: preview, backed-up managed
-  block updates, idempotent installs, custom rules directory, and refusal of
-  shadowing overrides or unsafe destinations; covered by installer tests.
-- Copyable `templates/AGENTS.md` with evidence-based problem framing,
-  task continuity, simple complete solutions, module ownership, explicit
-  uncertainty, and conditional independent review and ablation guidance.
-- `dev/references/ablation.md` for controlled baseline/removal comparisons,
-  repeated nondeterministic runs, confounders, and bounded conclusions.
-
 ### Changed
 
-- Condensed the global template, four workflow Skills, and shared adapter
-  instructions; removed fixed delivery report templates and repeated routing
-  prose while retaining admission, authorization, and evidence boundaries.
-- Removed portable language and middleware preferences from `stack.md`;
-  technology choices now follow the existing project and concrete constraints.
-- Static validation checks metadata, references, and fixture structure rather
-  than exact instruction sentences. Response fixtures screen for scope and
-  evidence signals without requiring report headings; these remain heuristics,
-  not proof of live model behavior.
-- `dev`, `clarify`, `qa`, and `acceptance` now make before/after evidence,
-  falsifiable judgments, and relevant uncertainty more explicit. Independent
-  reviewers form initial findings before seeing other verdicts; the shared
-  adapter contract carries the same review discipline without changing dispatch
-  authorization or Skill admission.
-- Bilingual entry docs, workflow mapping, package contents, and doctor checks
-  expose the template and optional experiment reference. Ordinary Skill installs
-  do not apply project rules; global rule installation is explicit.
+- Retired `dev` and `clarify` as workflow entries. Ordinary implementation,
+  analysis, and developer tests now run directly in the host agent.
+- Combined `qa` and `acceptance` into optional `verify`, preserving read-only
+  diagnosis, requested test protection, and final-verdict boundaries.
+- Made `reflect` explicit-only, including Codex invocation metadata; removed
+  routine correction capture and redundant confirmation for authorized writes.
+- Narrowed `design` to concrete references and decisions, removed repeated
+  delivery/process text, and qualified blanket motion rules.
+- Moved useful development references into standalone `references/`; renamed
+  debugging and architecture-decision documents and removed repeated routers.
+- Install and uninstall now require an explicit selection; no arguments only
+  show help. Default target is `agents`. Retired names remain uninstallable,
+  while install reports migration instructions. No global copies are changed
+  automatically.
+- External adapters preserve user Skill selections and prohibitions instead of
+  requiring a development workflow in the target. Current Codex work does not
+  need a redundant Codex CLI subprocess.
+- Updated routing/response fixtures, installer regression checks, and bilingual
+  docs. Execution fixtures no longer force-load `dev`; historical results are
+  not reclassified as evidence for this version.
+
+### Added
+
+- `skills references` to locate the engineering documents included in the npm
+  package; Skill installation does not inject them into a consuming project.
+- The separate global rules installer remains opt-in, with managed-block
+  updates, backups, idempotence, and protection against shadowing overrides.
 
 ## [0.5.0] - 2026-09-01
 ### Added

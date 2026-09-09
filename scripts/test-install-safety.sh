@@ -61,8 +61,8 @@ assert_allows() {
 
 # --- exploit cases: must refuse ---
 assert_refuses "$UNINSTALL" dev --dest / --dry-run
-assert_refuses "$INSTALL"  dev --dest / --force --dry-run
-assert_refuses "$INSTALL"  --dest / --dry-run
+assert_refuses "$INSTALL"  verify --dest / --force --dry-run
+assert_refuses "$INSTALL"  design --dest / --dry-run
 assert_refuses "$UNINSTALL" dev --dest /usr --dry-run
 assert_refuses "$UNINSTALL" dev --dest /dev --dry-run
 assert_refuses "$UNINSTALL" dev --dest // --dry-run
@@ -70,16 +70,16 @@ assert_refuses "$UNINSTALL" dev --dest // --dry-run
 # --- symlink-to-root bypass: must refuse ---
 ln -s / "$link"
 assert_refuses "$UNINSTALL" dev    --dest "$link" --dry-run
-assert_refuses "$INSTALL"  clarify --dest "$link" --dry-run
+assert_refuses "$INSTALL"  design --dest "$link" --dry-run
 rm -f "$link"
 
 # --- legitimate cases: must succeed ---
 tmp_base="$(mktemp -d)"
 dest="$tmp_base/skills"
-assert_allows "$INSTALL"  dev --dest "$dest" --dry-run
-assert_allows "$INSTALL"  dev --dest "$dest"
-if [ ! -f "$dest/dev/SKILL.md" ]; then
-  printf 'FAIL: real install did not create %s/dev/SKILL.md\n' "$dest" >&2
+assert_allows "$INSTALL"  verify --dest "$dest" --dry-run
+assert_allows "$INSTALL"  verify --dest "$dest"
+if [ ! -f "$dest/verify/SKILL.md" ]; then
+  printf 'FAIL: real install did not create %s/verify/SKILL.md\n' "$dest" >&2
   fails=$((fails+1))
 else
   pass=$((pass+1)); printf 'ok (real install created SKILL.md)\n'
@@ -96,12 +96,12 @@ for design_file in \
     pass=$((pass+1)); printf 'ok (real install copied %s)\n' "${design_file#$dest/}"
   fi
 done
-assert_allows "$UNINSTALL" dev --dest "$dest"
-if [ -e "$dest/dev" ]; then
-  printf 'FAIL: real uninstall did not remove %s/dev\n' "$dest" >&2
+assert_allows "$UNINSTALL" verify --dest "$dest"
+if [ -e "$dest/verify" ]; then
+  printf 'FAIL: real uninstall did not remove %s/verify\n' "$dest" >&2
   fails=$((fails+1))
 else
-  pass=$((pass+1)); printf 'ok (real uninstall removed dev)\n'
+  pass=$((pass+1)); printf 'ok (real uninstall removed verify)\n'
 fi
 
 # Catalog parity: every packaged SKILL.md directory must be named by

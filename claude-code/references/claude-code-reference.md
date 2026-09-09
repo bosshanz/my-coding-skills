@@ -46,7 +46,7 @@ claude auth status
 
 ## Permissions
 
-- `--permission-mode plan` is a good default for static research and review. For authorized review checks, scope the necessary tools and temporary artifacts under the Skill's Scoped Execution rules without authorizing source edits.
+- `--permission-mode plan` is a good default for static research and review. For authorized review checks, scope the necessary tools and temporary artifacts within the authorized scope without authorizing source edits.
 - `--permission-mode acceptEdits` may be appropriate for bounded implementation.
 - `--allowedTools` and `--disallowedTools` narrow tool access for a run.
 - Avoid `bypassPermissions` and `--dangerously-skip-permissions` unless the user explicitly accepts the risk and the environment is externally isolated.

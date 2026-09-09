@@ -5,18 +5,20 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ALL_SKILLS=(
   design
-  clarify
-  dev
-  qa
-  acceptance
+  verify
+  reflect
   kimi-code
   claude-code
   codex-cli
   opencode
   grok-build-cli
+  dev
+  clarify
+  qa
+  acceptance
 )
 
-TARGET="all"
+TARGET="agents"
 TARGET_WAS_SET=0
 DEST=""
 DRY_RUN=0
@@ -25,55 +27,43 @@ REQUESTED=()
 
 usage() {
   cat <<'EOF'
-Uninstall this repository's coding-agent Skills.
+Uninstall selected coding-agent Skills. No selection changes no files.
 
 Usage:
-  ./uninstall.sh [skill|group ...] [options]
+  ./uninstall.sh <skill|group ...> [options]
   ./uninstall.sh --list
 
 Skills:
-  design
-  clarify
-  dev
-  qa
-  acceptance
-  kimi-code
-  claude-code
-  codex-cli
-  opencode
-  grok-build-cli
+  design verify reflect kimi-code claude-code codex-cli opencode grok-build-cli
 
 Groups:
-  all          Uninstall every Skill (default)
+  all          Uninstall every Skill including retired entries
   ui           Uninstall design
-  workflow     Uninstall dev
-  planning     Uninstall clarify for product judgment / architecture alignment
-  quality      Uninstall qa and acceptance
-  delegation   Uninstall all external-agent adapters
-  adapters     Uninstall kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
+  quality      Uninstall verify and legacy qa/acceptance copies
+  meta         Uninstall reflect (explicit invocation only)
+  adapters     Uninstall the five external CLI adapters
+  delegation   Alias for adapters
+
+Migration: dev, clarify, qa, acceptance and the legacy workflow/planning groups
+remain accepted for removal only. No replacement is installed automatically.
 
 Options:
-  --target TARGET   agents, codex, claude, gemini, opencode, or all
-                    (default: all)
-  --dest DIR        Uninstall from a custom Skills directory (must not be / or a system path)
+  --target TARGET   agents (default), codex, claude, gemini, opencode, or all
+  --dest DIR        Custom Skills directory; cannot be / or a system path
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
   --help, -h        Show this help
 
 Examples:
-  ./uninstall.sh
-  ./uninstall.sh ui --target agents
-  ./uninstall.sh dev --target agents
-  ./uninstall.sh planning --target agents
-  ./uninstall.sh qa --target agents
-  ./uninstall.sh acceptance --target agents
-  ./uninstall.sh delegation --target claude
-  ./uninstall.sh all --target all
-  ./uninstall.sh dev --dest /tmp/skills --dry-run
+  ./uninstall.sh design --target agents
+  ./uninstall.sh verify --dest ./local-skills --dry-run
+  ./uninstall.sh adapters --target claude
+  ./uninstall.sh all --target all --dry-run
+  ./uninstall.sh dev clarify qa acceptance --target agents --dry-run
 
 Targets:
-  agents    $HOME/.agents/skills (recommended shared location; Codex-supported)
-  codex     ${CODEX_HOME:-$HOME/.codex}/skills (legacy Codex location)
+  agents    $HOME/.agents/skills
+  codex     ${CODEX_HOME:-$HOME/.codex}/skills
   claude    $HOME/.claude/skills
   gemini    $HOME/.gemini/skills
   opencode  $HOME/.config/opencode/skills
@@ -133,49 +123,26 @@ append_unique() {
 resolve_requests() {
   local request skill
   RESOLVED=()
-
-  if [[ "${#REQUESTED[@]}" -eq 0 ]]; then
-    REQUESTED=(all)
-  fi
-
+  [[ "${#REQUESTED[@]}" -gt 0 ]] || fail "choose a Skill or group explicitly; use --list"
   for request in "${REQUESTED[@]}"; do
     case "$request" in
       all)
         for skill in "${ALL_SKILLS[@]}"; do append_unique "$skill"; done
         ;;
-      workflow)
-        append_unique dev
-        ;;
-      ui)
-        append_unique design
-        ;;
-      planning)
-        append_unique clarify
-        ;;
-      quality)
-        append_unique qa
-        append_unique acceptance
-        ;;
-      delegation)
+      ui) append_unique design ;;
+      quality) append_unique verify; append_unique qa; append_unique acceptance ;;
+      meta) append_unique reflect ;;
+      delegation|adapters)
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
         append_unique opencode
         append_unique grok-build-cli
         ;;
-      adapters)
-        append_unique kimi-code
-        append_unique claude-code
-        append_unique codex-cli
-        append_unique opencode
-        append_unique grok-build-cli
-        ;;
-      design|clarify|dev|qa|acceptance|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
-        append_unique "$request"
-        ;;
-      *)
-        fail "unknown Skill or group: $request"
-        ;;
+      workflow) append_unique dev ;;
+      planning) append_unique clarify ;;
+      design|verify|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
+      *) fail "unknown Skill or group: $request" ;;
     esac
   done
 }
@@ -243,6 +210,11 @@ uninstall_skill() {
   rm -rf "$destination"
   printf 'uninstalled %s -> %s\n' "$skill" "$destination"
 }
+
+if [[ "$#" -eq 0 ]]; then
+  usage
+  exit 0
+fi
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
