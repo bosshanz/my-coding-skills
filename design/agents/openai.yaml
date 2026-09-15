@@ -1,4 +1,4 @@
 interface:
   display_name: "Design"
-  short_description: "Interaction, visual direction, quality, and motion for UI."
-  default_prompt: "Use $design to shape a meaningful UI interaction before implementation: load interaction.md for product flows, design-direction.md for visual direction, quality.md during implementation, and animation.md only when motion helps."
+  short_description: "Concrete interaction, visual, and motion guidance."
+  default_prompt: "Use $design for the requested interface or motion decision. Preserve the brief and existing design system, and read only the relevant references."

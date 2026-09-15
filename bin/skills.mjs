@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cpSync, existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -7,10 +7,8 @@ import { homedir } from 'node:os';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const availableSkills = [
   'design',
-  'clarify',
-  'dev',
-  'qa',
-  'acceptance',
+  'verify',
+  'eng',
   'reflect',
   'kimi-code',
   'claude-code',
@@ -18,12 +16,12 @@ const availableSkills = [
   'opencode',
   'grok-build-cli',
 ];
+const retiredSkills = new Set(['dev', 'clarify', 'qa', 'acceptance']);
 const groups = new Map([
   ['all', availableSkills],
   ['ui', ['design']],
-  ['workflow', ['dev']],
-  ['planning', ['clarify']],
-  ['quality', ['qa', 'acceptance']],
+  ['quality', ['verify']],
+  ['engineering', ['eng']],
   ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['meta', ['reflect']],
@@ -35,6 +33,7 @@ function usage() {
 Usage:
   skills list
   skills add <skill|group...> [--target agents|codex|claude|gemini|opencode|all] [--dest <dir>] [--force] [--dry-run]
+  skills references
   skills doctor
 
 Skills:
@@ -43,15 +42,14 @@ Skills:
 Groups:
   all          Install every skill
   ui           Install design only
-  workflow     Install dev only
-  planning     Install clarify for product judgment / architecture alignment
-  quality      Install qa and acceptance
+  quality      Install verify only
+  engineering  Install eng only
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
-  meta         Install reflect (explicit taste loop)
+  meta         Install reflect (explicit invocation only)
 
 Targets:
-  agents       ${join(homedir(), '.agents', 'skills')}
+  agents       ${join(homedir(), '.agents', 'skills')} (default)
   codex        ${join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'skills')}
   claude       ${join(homedir(), '.claude', 'skills')}
   gemini       ${join(homedir(), '.gemini', 'skills')}
@@ -60,21 +58,23 @@ Targets:
 
 Examples:
   skills add ui --target agents
-  skills add dev --target agents
-  skills add planning --target agents
-  skills add qa --target agents
-  skills add acceptance --target agents
+  skills add verify --target agents
+  skills add reflect --target agents
   skills add all --target claude --force
   skills add delegation --target all --force
-  skills add dev --dest ./skills --dry-run
+  skills add design --dest ./skills --dry-run
 `;
 }
 
 function parseArgs(argv) {
-  const opts = { target: 'codex', dest: null, force: false, dryRun: false };
+  const opts = { target: 'agents', dest: null, force: false, dryRun: false };
   const positionals = [];
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
+    if (['--target', '--runtime', '--dest', '--dir'].includes(arg) &&
+        (!argv[i + 1] || argv[i + 1].startsWith('-'))) {
+      throw new Error(`${arg} requires a value`);
+    }
     if (arg === '--target' || arg === '--runtime') {
       opts.target = argv[++i];
     } else if (arg === '--dest' || arg === '--dir') {
@@ -118,9 +118,13 @@ function targetDirs(target, dest) {
 }
 
 function resolveSkills(names) {
-  const input = names.length ? names : ['all'];
+  if (!names.length) throw new Error('choose a skill or group explicitly; use list to see the catalog');
+  const input = names;
   const result = [];
   for (const name of input) {
+    if (retiredSkills.has(name) || ['workflow', 'planning'].includes(name)) {
+      throw new Error(`retired skill or group: ${name}; ordinary work needs no workflow skill. Use verify for requested business checks or acceptance; see README migration notes.`);
+    }
     const expanded = groups.get(name) || [name];
     for (const skill of expanded) {
       if (!availableSkills.includes(skill)) {
@@ -145,9 +149,37 @@ function assertPackagedSkill(skill) {
   return src;
 }
 
+function assertSafeTarget(target) {
+  let existing = resolve(target);
+  const suffix = [];
+  while (!existsSync(existing)) {
+    const parent = dirname(existing);
+    if (parent === existing) break;
+    suffix.unshift(existing.slice(parent.length).replace(/^\//, ''));
+    existing = parent;
+  }
+  const physical = resolve(realpathSync(existing), ...suffix);
+  if (physical === '/' || dirname(physical) === '/') {
+    throw new Error(`refusing to operate on filesystem root or system path: ${target}`);
+  }
+}
+
+function references() {
+  const dir = join(root, 'eng', 'references');
+  console.log('Engineering references are loaded by the optional eng skill:');
+  for (const name of readdirSync(dir).filter(name => name.endsWith('.md')).sort()) {
+    console.log(join(dir, name));
+  }
+}
+
 function add(names, opts) {
   const skills = resolveSkills(names);
   const dirs = targetDirs(opts.target, opts.dest);
+  // Validate every destination before creating or replacing any installed files.
+  for (const dir of dirs) {
+    assertSafeTarget(dir);
+    for (const skill of skills) assertSafeTarget(join(dir, skill));
+  }
   for (const dir of dirs) {
     if (!opts.dryRun) {
       mkdirSync(dir, { recursive: true });
@@ -198,15 +230,17 @@ function doctor() {
   }
 }
 
-const { opts, positionals } = parseArgs(process.argv.slice(2));
-const command = positionals.shift();
 try {
+  const { opts, positionals } = parseArgs(process.argv.slice(2));
+  const command = positionals.shift();
   if (!command || opts.help) {
     console.log(usage());
   } else if (command === 'list') {
     list();
   } else if (command === 'add' || command === 'install') {
     add(positionals, opts);
+  } else if (command === 'references') {
+    references();
   } else if (command === 'doctor') {
     doctor();
   } else {

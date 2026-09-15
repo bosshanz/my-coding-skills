@@ -1,6 +1,6 @@
 # Focused Debugging And Test-First Guidance
 
-Load only for an unclear or resistant bug, or an explicit request for systematic debugging / TDD. Ordinary delivery uses the loop in `dev`; this reference adds no plan, design, review, or approval stage. The historical filename is retained for installed references.
+Reference for an unclear or resistant bug, or a requested test-first approach. Use within the current task and its existing authorization.
 
 ## Diagnose Before Repeating Edits
 
@@ -14,9 +14,9 @@ Load only for an unclear or resistant bug, or an explicit request for systematic
 ## Test-First When Useful
 
 - Prefer one observable behavior per cycle: demonstrate failure, make the smallest repair, then refactor if needed. Do not prewrite a large batch of imagined tests.
-- Evidence selection follows `dev`'s shared rules. Do not delete working code or add ceremony to enforce test-first ordering.
+- Choose a check that still contains the mechanism causing the failure. Do not delete working code or add ceremony to enforce test-first ordering.
 
-Return to `dev`'s verification and completion conditions after the cause is addressed. Do not rerun an entire workflow from this reference.
+Once the cause is addressed, complete the relevant project checks and report the result.
 
 ## Source Inspiration
 

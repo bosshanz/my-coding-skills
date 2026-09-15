@@ -1,127 +1,70 @@
-# Behavior eval fixtures (L2).
-#
-# Each fixture loads one SKILL.md as the governing contract, then asserts on
-# the generated output. Substring / regex assertions screen for evidence and
-# scope signals without requiring report headings. They can misclassify an
-# answer; passing does not prove semantic correctness or tool behavior.
-#
-# Fields:
-#   id        unique slug
-#   skill     which SKILL.md to load
-#   scenario  simulated environment note shown to the model (no real files)
-#   user      the simulated user message
-#   must_contain     substrings that must appear
-#   must_not_contain substrings that must not appear
-#   must_match       regexes (case-insensitive) that must match
+# Text-only checks for optional capabilities; no real tools or files.
+# These assertions screen scope/evidence signals, not runtime behavior.
 
-- id: qa-diagnosis-stops
-  skill: qa
+- id: verify-diagnosis-stops
+  skill: verify
   scenario: |
     Simulated repo: an e-commerce checkout flow (cart -> coupon -> pay).
     CONTEXT.md exists and describes the 下单 journey in Chinese. No files
     have been changed and you have made no edits.
-  user: "$qa 诊断第一次下单这条真实用法，只回答被问的这一刀"
+  user: $verify 诊断第一次下单这条真实用法，只回答被问的这一刀
   must_contain:
-    - "下单"
+    - 下单
   must_not_contain:
-    - "已新增"
-    - "已修改"
-    - "已保护"
+    - 已新增
+    - 已修改
+    - 已保护
   must_match:
-    - "(证据|未验证|无法|不能|缺少)"
-
-- id: qa-coverage-stays-in-track
-  skill: qa
+    - (证据|未验证|无法|不能|缺少)
+- id: verify-coverage-stays-in-track
+  skill: verify
   scenario: |
     Simulated repo: inventory deduction lives in OrderService.deduct() and is
     covered only by a mocked unit test. The business rule is clear: stock and
     orders must never silently disagree. The user has now asked for protection.
-  user: "$qa 保护库存扣减这条业务规则"
+  user: $verify 保护库存扣减这条业务规则
   must_contain: []
   must_not_contain:
-    - "accepted"
-    - "rejected"
+    - accepted
+    - rejected
   must_match:
-    - "(库存|stock)"
-    - "(mock|模拟|真实存储|数据库|集成)"
-    - "(无法|未.*(验证|执行|运行)|缺.*(证据|工具)|不能)"
-
-- id: acceptance-verdict-enum
-  skill: acceptance
+    - (库存|stock)
+    - (mock|模拟|真实存储|数据库|集成)
+    - (无法|未.*(验证|执行|运行)|缺.*(证据|工具)|不能)
+- id: verify-acceptance-verdict-enum
+  skill: verify
   scenario: |
     Simulated repo: yesterday's login fix touched src/auth/token.ts with a
     unit test added and passing. No manual verification, no CI run recorded.
-  user: "对这次登录修复做最终验收，给出结论"
+  user: 对这次登录修复做最终验收，给出结论
   must_contain: []
   must_not_contain: []
   must_match:
-    - "\\b(accepted with risk|accepted|rejected)\\b"
-    - "(单元测试|unit.*test)"
-    - "(未|缺|无).*(CI|手工|人工|端到端|证据|验证)"
-
-- id: clarify-product-judgment
-  skill: clarify
-  scenario: |
-    Simulated repo: an internal admin tool used by 12 support agents. The
-    request is to add AI-powered search over past tickets.
-  user: "$clarify 判断要不要做这个 AI 搜索功能"
-  must_contain: []
-  must_not_contain:
-    - "sprint"
-    - "backlog 排期"
-  must_match:
-    - "(build|experiment|stop|试点|实验|暂缓|不做)"
-    - "(成功|节省|耗时|解决率|准确率|命中率)"
-
+    - \b(accepted with risk|accepted|rejected)\b
+    - (单元测试|unit.*test)
+    - (未|缺|无).*(CI|手工|人工|端到端|证据|验证)
 - id: adapter-claude-unavailable
   skill: claude-code
   scenario: |
     Environment note: the `claude` executable is NOT installed on this
     machine and no Claude Code session exists. You cannot invoke it.
-  user: "让 Claude Code 审一下当前 diff"
+  user: 让 Claude Code 审一下当前 diff
   must_contain: []
   must_not_contain:
-    - "Claude Code 已完成审查"
+    - Claude Code 已完成审查
   must_match:
-    - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
-
+    - (不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)
 - id: adapter-kimi-unavailable
   skill: kimi-code
   scenario: |
     Environment note: the `kimi` executable is NOT installed on this machine.
     You cannot invoke Kimi Code.
-  user: "让 Kimi Code 研究一下这个仓库的架构"
+  user: 让 Kimi Code 研究一下这个仓库的架构
   must_contain: []
   must_not_contain:
-    - "Kimi Code 已完成研究"
+    - Kimi Code 已完成研究
   must_match:
-    - "(不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)"
-
-- id: dev-no-routine-qa-recommendation
-  skill: dev
-  scenario: |
-    Simulated repo: a Node service with jest configured. The user asks for
-    e2e coverage of the checkout flow, which is ordinary implementation work.
-  user: "给下单流程补点 e2e 测试"
-  must_contain: []
-  must_not_contain:
-    - "$qa"
-    - "/qa"
-  must_match: []
-
-- id: dev-delivery-evidence
-  skill: dev
-  scenario: |
-    Simulated repo: the role-filter change on the user list API is already
-    implemented and its unit tests pass. Summarize the delivery; do not write
-    code.
-  user: "总结这次改动：用户列表新增 role 筛选参数"
-  must_contain:
-    - "role"
-  must_not_contain: []
-  must_match:
-    - "(单元测试|unit.*test)"
-
+    - (不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)
 - id: design-interaction-delivery
   skill: design
   scenario: |
@@ -129,86 +72,63 @@
     The current UI jumps from selection to a generic spinner, cannot explain
     partial failure, and loses the selection after retry. The user wants a
     design proposal only, before implementation.
-  user: "$design 重新设计批量发布的交互，不要先做视觉稿"
+  user: $design 重新设计批量发布的交互，不要先做视觉稿
   must_contain: []
   must_not_contain: []
   must_match:
-    - "(部分失败|partial failure|失败项)"
-    - "(保留|保持|恢复).*(选择|选中|勾选)"
-    - "(重试|retry)"
-
-- id: reflect-capture-confirms-before-write
+    - (部分失败|partial failure|失败项)
+    - (保留|保持|恢复).*(选择|选中|勾选)
+    - (重试|retry)
+- id: reflect-authorized-entry-no-repeat-confirmation
   skill: reflect
-  scenario: |
-    Simulated repo: a web app. CLAUDE.md exists and already has a short
-    ## Taste section with two lines. The agent just ran npm install for
-    what is a pnpm project, and the user corrected it.
-  user: "$reflect 以后这个项目都用 pnpm,不要用 npm"
+  scenario: "Simulated project: CLAUDE.md has a Taste section. No tools or writes
+    are available. The user explicitly authorizes the exact preference and
+    destination."
+  user: $reflect 把“本项目使用 pnpm，不使用 npm”记录到 CLAUDE.md 的 Taste 段；这条内容和落点我都确认了。
   must_contain:
-    - "pnpm"
-    - "CLAUDE.md"
+    - pnpm
+    - CLAUDE.md
   must_not_contain:
-    - "已写入"
-    - "已新增"
+    - 已写入
+    - 已新增
+    - 请确认
+    - 是否确认
   must_match:
-    - "(确认|同意|批准)"
-
-# GPT-6 prompting regression scenarios. These text-only cases do not prove
-# tool execution, authorization enforcement, or live GPT-6 behavior.
-- id: dev-concise-delivery
-  skill: dev
-  scenario: |
-    A README typo was corrected as requested. The diff contains exactly that
-    correction and git diff --check passed. No behavior changed.
-  user: "总结一下，简单说就行"
-  must_contain: []
-  must_not_contain:
-    - "建议下一步"
-    - "$qa"
-    - "是否继续"
-  must_match:
-    - "(README|错别字|拼写)"
-
-- id: dev-existing-authorization
-  skill: dev
-  scenario: |
-    The user previously chose the role-filter implementation, asked you to
-    implement it, and approved its scope. No material decision remains.
-    Tools are unavailable in this simulated environment; do not claim edits.
-  user: "按刚才定的方案继续实现"
-  must_not_contain:
-    - "请确认方案"
-    - "是否开始实施"
-    - "是否继续"
-    - "已完成实现"
-  must_match:
-    - "(工具|无法|不能|不可用|tools|unavailable)"
-
-- id: clarify-resume-authorized-implementation
-  skill: clarify
-  scenario: |
-    The original request was to implement a role filter. You entered clarify
-    only to settle whether it allows multiple roles. The user has now chosen
-    single selection. All other criteria are defined. No edits have occurred.
-  user: "单选，其余按前面说的实现"
+    - (无法|不能|工具|不可用|unavailable)
+- id: verify-missing-required-check
+  skill: verify
+  scenario: The implementation criterion requires an integration check against the
+    actual database. Only mocked unit tests ran; there is no database access in
+    this simulation.
+  user: 对这次库存修复做最终验收。真实数据库集成检查是必需项。
   must_contain:
-    - "$dev"
+    - rejected
   must_not_contain:
-    - "是否开始"
-    - "请确认是否"
-    - "是否继续"
-    - "已实现"
-
-- id: dev-plan-only-scope
-  skill: dev
-  scenario: |
-    A role filter is proposed for a user-list API. The repository supports
-    an optional query parameter and a targeted handler test. No edits exist.
-  user: "只给最小实施方案，先别改文件"
-  must_not_contain:
-    - "已修改"
-    - "已实现"
-    - "测试通过"
-    - "$qa"
+    - 已通过最终验收
   must_match:
-    - "(role|角色)"
+    - (数据库|database)
+- id: verify-review-only-stays-read-only
+  skill: verify
+  scenario: No tools are available. The user asks only for diagnosis of draft loss
+    during account switching, with no permission to edit files.
+  user: $verify 只诊断切换账号时草稿会不会丢，不要修改代码或测试。
+  must_not_contain:
+    - 已新增
+    - 已修改
+    - 已修复
+  must_match:
+    - (草稿|draft)
+    - (证据|无法|未验证|缺少)
+- id: verify-resume-authorized-repair
+  skill: verify
+  scenario: The user previously authorized diagnosis and repair of duplicate
+    inventory deduction. Diagnosis is now complete. No tools are available in
+    this simulation, so no implementation can be claimed.
+  user: 按已确定的幂等方案继续修复，不用再确认。
+  must_not_contain:
+    - 请确认方案
+    - 是否开始实施
+    - 已完成修复
+    - $dev
+  must_match:
+    - (工具|无法|不可用|unavailable)

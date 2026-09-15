@@ -1,4 +1,4 @@
 interface:
   display_name: "Claude Code"
   short_description: "Delegate real work to Claude Code CLI."
-  default_prompt: "Use $claude-code to invoke Claude Code CLI, let it auto-route matching global/project non-adapter Skills, preserve output, then review and verify."
+  default_prompt: "Use $claude-code to invoke Claude Code CLI, preserve the user's scope and Skill choices, preserve output, then review and verify."

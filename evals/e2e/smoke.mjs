@@ -29,16 +29,16 @@ const STRICT = flag('strict');
 const CLI_ARG = args.find((a, i) => args[i - 1] === '--cli');
 const CLIS = (CLI_ARG ?? 'claude').split(',');
 
-// The most routing-sensitive fixtures: the historical qa mis-trigger shape,
-// the dev/qa boundary, and one explicit opt-in per workflow skill.
+// Ordinary work should select none; requested optional capabilities remain discoverable.
 const FIXTURE_IDS = QUICK
-  ? ['none-look-at-skill', 'dev-bare-e2e']
+  ? ['none-look-at-skill', 'none-bare-e2e']
   : [
       'none-look-at-skill',
-      'dev-bare-e2e',
-      'qa-explicit-dollar',
-      'acc-gonogo',
-      'clarify-whether-build',
+      'none-bare-e2e',
+      'verify-explicit-dollar',
+      'verify-acceptance-gonogo',
+      'none-product-whether-build',
+      'none-durable-correction',
       'design-interaction-redesign',
       'adapter-kimi',
     ];
@@ -46,6 +46,8 @@ const FIXTURE_IDS = QUICK
 const fixtures = YAML.parse(
   fs.readFileSync(path.join(root, 'evals', 'routing', 'fixtures.yaml'), 'utf8'),
 ).filter((f) => FIXTURE_IDS.includes(f.id));
+
+if (fixtures.length !== FIXTURE_IDS.length) throw new Error("missing smoke fixture");
 
 const INVOKERS = {
   claude: {

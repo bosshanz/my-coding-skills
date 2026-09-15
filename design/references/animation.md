@@ -6,7 +6,7 @@ Load this reference for meaningful motion work: micro-interactions, enter/exit a
 
 ### Duration
 
-UI animations stay under 300ms. Perceived speed matters as much as actual speed: ease-out at 200ms *feels* faster than ease-in at 200ms; a fast spinner makes loading feel faster even at identical load time.
+Frequent UI transitions usually stay under 300ms; larger surfaces and explanatory motion may need the longer ranges below. Perceived speed matters as much as actual speed: ease-out at 200ms *feels* faster than ease-in at 200ms; a fast spinner makes loading feel faster even at identical load time.
 
 | Interaction class | Duration |
 | --- | --- |
@@ -30,7 +30,7 @@ Decision order:
 - Constant motion (marquee, progress, hold-to-confirm fill) → **`linear`**
 - Default → **`ease-out`**
 
-Never use `ease-in` on UI — it starts slow, delaying the exact moment the user is watching. Built-in CSS easings are too weak for deliberate motion; define strong custom curves as tokens:
+Avoid `ease-in` for immediate action feedback: its slow start can delay the response the user is watching. Built-in CSS easings are too weak for deliberate motion; define strong custom curves as tokens:
 
 ```css
 --ease-out: cubic-bezier(0.23, 1, 0.32, 1);      /* strong ease-out for UI */
@@ -81,7 +81,7 @@ Every animation must answer "why does this animate?" Valid purposes: feedback, s
 
 | Frequency | Decision |
 | --- | --- |
-| 100+ times/day (keyboard shortcuts, command palette, core nav) | No animation. Ever. |
+| 100+ times/day (keyboard shortcuts, command palette, core nav) | Keep the action immediate; omit motion that delays repeated use. |
 | Tens of times/day (hover states, list navigation, frequent toggles) | None, or near-imperceptible |
 | Occasional (modals, drawers, toasts, settings) | Standard animation |
 | Rare / first-time (onboarding, empty states, success, celebration) | Delight budget lives here |
@@ -97,7 +97,7 @@ Every animation must answer "why does this animate?" Valid purposes: feedback, s
 
 ### Do NOT animate
 
-- Keyboard-initiated actions — command palettes, shortcuts, focus jumps. Raycast has no open/close animation; that is the correct experience.
+- Keyboard-initiated actions — command palettes, shortcuts, focus jumps. Keep their response immediate; use motion only if it communicates a needed state without delaying use.
 - Functional data the user is reading or acting on (a chart in a banking app). Decoration hinders comprehension.
 - High-frequency list items, hover states, and toggles — delete or reduce to near-imperceptible.
 - Ambient/looping motion anywhere outside marketing or delight moments.
@@ -110,7 +110,7 @@ Run category by category over the codebase. Severity: **HIGH** = feel-breaking, 
 | Category | Check |
 | --- | --- |
 | Purpose & frequency | Every animation can name a valid purpose; none on keyboard or 100+/day actions; high-frequency motion deleted or minimized |
-| Easing & duration | No `ease-in` on UI; strong custom curves, not weak built-ins; UI under 300ms; tooltips instant after the first |
+| Easing & duration | No `ease-in` on UI; strong custom curves, not weak built-ins; frequent UI transitions usually under 300ms; tooltips instant after the first |
 | Physicality & origin | No `scale(0)` (use `scale(0.9–0.97)` + opacity); popovers/dropdowns/tooltips scale from their trigger; modals centered; pressables have press feedback |
 | Interruptibility | Rapidly-triggered or reversible motion uses transitions/springs, not keyframes; gestures carry velocity; asymmetric enter/exit timing |
 | Performance | Only `transform`/`opacity` animated; no `transition: all` or layout properties; Framer Motion uses full `transform` strings, not `x`/`y` shorthand, on busy pages; no parent CSS variables driving child transforms |

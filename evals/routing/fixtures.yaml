@@ -1,373 +1,442 @@
-# Routing eval fixtures (L1).
-#
-# Each fixture simulates one user message and the skill(s) it must route to.
-# Discipline: a real mis-trigger becomes a fixture in the same session it was
-# noticed. `source` names the commit or design decision that motivated it.
-#
-# Fields:
-#   id         unique slug
-#   prompt     the simulated user message
-#   expect     expected skills; [none] means no skill should trigger
-#   strict     true  -> first-pass mismatch fails the run
-#              false -> first-pass mismatch is a warning only
-#   rationale  why this expectation holds
-#   source     motivating commit or "design"
+# Catalog routing proxy fixtures. none means the host handles the task directly.
+# Expected routing is not a runtime or quality result.
 
-# --- dev: default dispatcher (CN + EN, feature + bug) ---
-
-- id: dev-feature-filter-cn
-  prompt: "帮我给用户列表加一个按角色筛选的功能"
-  expect: [dev]
+- id: none-feature-filter-cn
+  prompt: 帮我给用户列表加一个按角色筛选的功能
+  expect:
+    - none
   strict: true
-  rationale: "Ordinary new requirement, default dispatcher."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-feature-pagination-en
-  prompt: "Add pagination to the orders API"
-  expect: [dev]
+- id: none-feature-pagination-en
+  prompt: Add pagination to the orders API
+  expect:
+    - none
   strict: true
-  rationale: "Ordinary new requirement in English."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-bug-500-cn
-  prompt: "修一下这个登录偶发 500 的 bug"
-  expect: [dev]
+- id: none-bug-500-cn
+  prompt: 修一下这个登录偶发 500 的 bug
+  expect:
+    - none
   strict: true
-  rationale: "Bug fix track."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-bug-npe
-  prompt: "这里偶尔空指针，帮我排查修复"
-  expect: [dev]
+- id: none-bug-npe
+  prompt: 这里偶尔空指针，帮我排查修复
+  expect:
+    - none
   strict: true
-  rationale: "Bug fix track with reproduction-first wording."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-bare-e2e
-  prompt: "给下单流程补点 e2e 测试"
-  expect: [dev]
+- id: none-bare-e2e
+  prompt: 给下单流程补点 e2e 测试
+  expect:
+    - none
   strict: true
-  rationale: "Bare request to add e2e/regression/tests stays in dev."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 2947557
-
-- id: dev-refactor
-  prompt: "把这段重复代码提取成公共函数"
-  expect: [dev]
+- id: none-refactor
+  prompt: 把这段重复代码提取成公共函数
+  expect:
+    - none
   strict: true
-  rationale: "Ordinary implementation work."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-csv-export
-  prompt: "新需求：支持把账单导出成 CSV"
-  expect: [dev]
+- id: none-csv-export
+  prompt: 新需求：支持把账单导出成 CSV
+  expect:
+    - none
   strict: true
-  rationale: "Explicit new requirement."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-money-feature
-  prompt: "帮我实现优惠券核销功能"
-  expect: [dev]
+- id: none-money-feature
+  prompt: 帮我实现优惠券核销功能
+  expect:
+    - none
   strict: true
-  rationale: "Money/business-relevant implementation still stays in dev."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 99a1cae
-
-- id: dev-trivial-css
-  prompt: "把这个按钮的边距调小一点"
-  expect: [dev]
+- id: none-trivial-css
+  prompt: 把这个按钮的边距调小一点
+  expect:
+    - none
   strict: false
-  rationale: "Trivial tweak; dev handles it without the design skill."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-# --- none: generic looks, chat, methodology ---
-
 - id: none-weather
-  prompt: "今天上海天气怎么样"
-  expect: [none]
+  prompt: 今天上海天气怎么样
+  expect:
+    - none
   strict: true
-  rationale: "Not software work."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
 - id: none-leave-email
-  prompt: "帮我写一封请假邮件"
-  expect: [none]
+  prompt: 帮我写一封请假邮件
+  expect:
+    - none
   strict: true
-  rationale: "Not software work."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
 - id: none-idempotency-q
-  prompt: "什么是幂等性？"
-  expect: [none]
+  prompt: 什么是幂等性？
+  expect:
+    - none
   strict: true
-  rationale: "Methodology question, not a delivery task."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
 - id: none-interaction-methodology
-  prompt: "交互设计和动效设计有什么区别？"
-  expect: [none]
+  prompt: 交互设计和动效设计有什么区别？
+  expect:
+    - none
   strict: true
-  rationale: "A conceptual question is not a request to design or change UI."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: interaction-design
-
 - id: none-look-at-skill
-  prompt: "看一下这个 skill 写得怎么样"
-  expect: [none]
+  prompt: 看一下这个 skill 写得怎么样
+  expect:
+    - none
   strict: true
-  rationale: "Generic look request must not trigger qa."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 99a1cae
-
 - id: none-look-normal
-  prompt: "看下这个用法正常吗"
-  expect: [none]
+  prompt: 看下这个用法正常吗
+  expect:
+    - none
   strict: false
-  rationale: "Narrow is-this-normal look; qa must not trigger, dev may answer."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: a20f32c
-
 - id: none-run-suite
-  prompt: "跑一遍现有的测试套件"
-  expect: [none]
+  prompt: 跑一遍现有的测试套件
+  expect:
+    - none
   strict: false
-  rationale: "Only running the existing suite is not a qa ask."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
 - id: none-pr-review
-  prompt: "review 一下这个 PR"
-  expect: [none]
+  prompt: review 一下这个 PR
+  expect:
+    - none
   strict: false
-  rationale: "Generic review without business/acceptance framing."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 2947557
-
 - id: none-repo-what
-  prompt: "这个仓库是干嘛的"
-  expect: [none]
+  prompt: 这个仓库是干嘛的
+  expect:
+    - none
   strict: false
-  rationale: "Orientation question, not delivery."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-# --- qa: opt-in business / real-usage pass ---
-
-- id: qa-explicit-dollar
-  prompt: "$qa 走一遍首次下单的真实用法，只诊断不改代码"
-  expect: [qa]
+- id: verify-explicit-dollar
+  prompt: $verify 走一遍首次下单的真实用法，只诊断不改代码
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit invocation, diagnosis track."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: baae915
-
-- id: qa-slash-diagnose
-  prompt: "/qa 诊断这条退款旅程哪里会坑用户"
-  expect: [qa]
+- id: verify-slash-diagnose
+  prompt: /verify 诊断这条退款旅程哪里会坑用户
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit invocation, named journey."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: 2947557
-
-- id: qa-thinking
-  prompt: "用 QA 思维检查一下优惠码这条业务规则会不会静默坏掉"
-  expect: [qa]
+- id: verify-thinking
+  prompt: 用 QA 思维检查一下优惠码这条业务规则会不会静默坏掉
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit QA-thinking ask on a named rule."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: 2947557
-
-- id: qa-business-test
-  prompt: "业务测试一下购物车合并逻辑"
-  expect: [qa]
+- id: verify-business-test
+  prompt: 业务测试一下购物车合并逻辑
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit business-testing ask."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: baae915
-
-- id: qa-protect-rule
-  prompt: "保护一下库存扣减这条业务规则，别让它静默坏掉"
-  expect: [qa]
+- id: verify-protect-rule
+  prompt: 保护一下库存扣减这条业务规则，别让它静默坏掉
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit protection ask on a named rule."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: a20f32c
-
-- id: qa-journey-diagnosis
-  prompt: "诊断一下新用户从注册到首次使用的真实用法，看看哪里会坑人"
-  expect: [qa]
+- id: verify-journey-diagnosis
+  prompt: 诊断一下新用户从注册到首次使用的真实用法，看看哪里会坑人
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit real-usage diagnosis."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: a20f32c
-
-# --- acceptance: opt-in go/no-go ---
-
-- id: acc-explicit
-  prompt: "$acceptance 独立复核一下昨天的登录修复"
-  expect: [acceptance]
+- id: verify-acceptance-explicit
+  prompt: $verify 独立复核一下昨天的登录修复
+  expect:
+    - verify
   strict: true
-  rationale: "Explicit invocation."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: design
-
-- id: acc-gonogo
-  prompt: "这个功能上线前做个最终验收，给个 go/no-go"
-  expect: [acceptance]
+- id: verify-acceptance-gonogo
+  prompt: 这个功能上线前做个最终验收，给个 go/no-go
+  expect:
+    - verify
   strict: true
-  rationale: "Final acceptance verdict ask."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: design
-
-- id: acc-verify-criteria
-  prompt: "验证一下实现是否符合澄清过的需求，给出验收结论"
-  expect: [acceptance]
+- id: verify-acceptance-verify-criteria
+  prompt: 验证一下实现是否符合澄清过的需求，给出验收结论
+  expect:
+    - verify
   strict: true
-  rationale: "Verification pass against clarified criteria."
+  rationale: Explicit business check, journey diagnosis, or final acceptance.
   source: design
-
-# --- clarify: opt-in product judgment ---
-
-- id: clarify-whether-build
-  prompt: "$clarify 我们要不要做这个功能"
-  expect: [clarify]
+- id: none-product-whether-build
+  prompt: 我们要不要做这个功能？
+  expect:
+    - none
   strict: true
-  rationale: "Explicit invocation, build-or-not judgment."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 9ca698a
-
-- id: clarify-first-slice
-  prompt: "这个需求第一期该怎么切？目标用户是谁？"
-  expect: [clarify]
+- id: none-product-first-slice
+  prompt: 这个需求第一期该怎么切？目标用户是谁？
+  expect:
+    - none
   strict: true
-  rationale: "First slice and target users are clarify asks."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 9ca698a
-
-- id: clarify-prioritize
-  prompt: "这两个产品机会怎么排优先级，关键取舍是什么"
-  expect: [clarify]
+- id: none-product-prioritize
+  prompt: 这两个产品机会怎么排优先级，关键取舍是什么
+  expect:
+    - none
   strict: true
-  rationale: "Prioritization and tradeoffs."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 9ca698a
-
-- id: clarify-success-metric
-  prompt: "成功指标怎么定？先做低成本实验还是直接开发？"
-  expect: [clarify]
+- id: none-product-success-metric
+  prompt: 成功指标怎么定？先做低成本实验还是直接开发？
+  expect:
+    - none
   strict: true
-  rationale: "Success signal and low-cost experiment design."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 9ca698a
-
-- id: clarify-backlog-reject
-  prompt: "帮我把 backlog 整理一下排个 sprint 计划"
-  expect: [none]
+- id: none-product-backlog-reject
+  prompt: 帮我把 backlog 整理一下排个 sprint 计划
+  expect:
+    - none
   strict: true
-  rationale: "Ongoing PM operations are explicitly out of clarify's scope."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: 9ca698a
-
-# --- design: meaningful UI / interaction / motion ---
-
 - id: design-explicit
-  prompt: "$design 给这个落地页做一次视觉重塑"
-  expect: [design]
+  prompt: $design 给这个落地页做一次视觉重塑
+  expect:
+    - design
   strict: true
-  rationale: "Explicit invocation, visible reshape."
+  rationale: Explicit invocation, visible reshape.
   source: design
-
 - id: design-animation-audit
-  prompt: "这个页面切换动画卡顿，审计一下微交互"
-  expect: [design]
+  prompt: 这个页面切换动画卡顿，审计一下微交互
+  expect:
+    - design
   strict: true
-  rationale: "Animation audit belongs to design."
+  rationale: Animation audit belongs to design.
   source: design
-
 - id: design-interaction-redesign
-  prompt: "先不要实现，重新设计批量发布的交互流程：预览、确认、失败恢复和撤销应该怎么走"
-  expect: [design]
+  prompt: 先不要实现，重新设计批量发布的交互流程：预览、确认、失败恢复和撤销应该怎么走
+  expect:
+    - design
   strict: true
-  rationale: "A design-only request for flow, state, control, and recovery belongs to design."
+  rationale: A design-only request for flow, state, control, and recovery belongs
+    to design.
   source: interaction-design
-
 - id: design-ai-native-flow
-  prompt: "这个 Agent 页面让用户看不懂它正在做什么，也不能暂停或恢复；请做一次 AI Native 交互设计"
-  expect: [design]
+  prompt: 这个 Agent 页面让用户看不懂它正在做什么，也不能暂停或恢复；请做一次 AI Native 交互设计
+  expect:
+    - design
   strict: true
-  rationale: "AI-native Runtime visibility and user control are interaction-design work."
+  rationale: AI-native Runtime visibility and user control are interaction-design work.
   source: interaction-design
-
-# --- adapters: explicit external agent only ---
-
 - id: adapter-kimi
-  prompt: "让 Kimi Code 帮我研究一下这个仓库的架构"
-  expect: [kimi-code]
+  prompt: 让 Kimi Code 帮我研究一下这个仓库的架构
+  expect:
+    - kimi-code
   strict: true
-  rationale: "Explicit external agent named."
+  rationale: Explicit external agent named.
   source: design
-
 - id: adapter-claude
-  prompt: "use Claude Code to review this diff"
-  expect: [claude-code]
+  prompt: use Claude Code to review this diff
+  expect:
+    - claude-code
   strict: true
-  rationale: "Explicit external agent named."
+  rationale: Explicit external agent named.
   source: design
-
 - id: adapter-codex
-  prompt: "用 Codex CLI 做个只读的仓库调研"
-  expect: [codex-cli]
+  prompt: 用 Codex CLI 做个只读的仓库调研
+  expect:
+    - codex-cli
   strict: true
-  rationale: "Explicit external agent named."
+  rationale: Explicit external agent named.
   source: design
-
 - id: adapter-opencode
-  prompt: "ask OpenCode to investigate this build failure"
-  expect: [opencode]
+  prompt: ask OpenCode to investigate this build failure
+  expect:
+    - opencode
   strict: true
-  rationale: "Explicit external agent named."
+  rationale: Explicit external agent named.
   source: design
-
 - id: adapter-grok
-  prompt: "grok 帮我看看为什么构建挂了"
-  expect: [grok-build-cli]
+  prompt: grok 帮我看看为什么构建挂了
+  expect:
+    - grok-build-cli
   strict: true
-  rationale: "Explicit external agent named."
+  rationale: Explicit external agent named.
   source: design
-
-# --- reflect: explicit taste loop (durable corrections only) ---
-- id: reflect-explicit-dollar
-  prompt: "$reflect 把刚才那条纠正记下来"
-  expect: [reflect]
+- id: eng-explicit-dollar
+  prompt: $eng 看一下这个服务的边界该怎么切
+  expect:
+    - eng
   strict: true
-  rationale: "Explicit invocation."
+  rationale: Explicit engineering-reference request.
+  source: skill-simplification
+- id: eng-tenant-isolation
+  prompt: 这个接口的租户隔离和鉴权有没有 IDOR，按后端质量规范看
+  expect:
+    - eng
+  strict: true
+  rationale: Backend quality and tenancy belong to eng, not ordinary CRUD.
+  source: skill-simplification
+- id: eng-migration
+  prompt: 这次用户表回填和迁移要注意哪些数据库约束
+  expect:
+    - eng
+  strict: true
+  rationale: Storage semantics and migrations load database-engineering.
+  source: skill-simplification
+- id: eng-idempotency-write
+  prompt: 这个支付回调要做成幂等写入，帮我按后端质量规范看约束
+  expect:
+    - eng
+  strict: true
+  rationale: Idempotent writes are backend-quality work, not a definition question.
+  source: skill-simplification
+- id: reflect-explicit-dollar
+  prompt: $reflect 把刚才那条纠正记下来
+  expect:
+    - reflect
+  strict: true
+  rationale: Explicit preference recording invocation.
   source: design
 - id: reflect-durable-correction-cn
-  prompt: "以后这个项目提交信息都用中文,别再用英文了"
-  expect: [reflect]
+  prompt: 以后这个项目提交信息都用中文,别再用英文了
+  expect:
+    - none
   strict: true
-  rationale: "Durable correction about how the agent works; exactly the capture case."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
 - id: reflect-durable-correction-en
-  prompt: "From now on always use pnpm instead of npm in this repo"
-  expect: [reflect]
+  prompt: From now on always use pnpm instead of npm in this repo
+  expect:
+    - none
   strict: true
-  rationale: "Durable tooling preference stated by the user."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-- id: reflect-oneoff-feedback-goes-to-dev
-  prompt: "这个变量名改成 userId,顺便把日志级别调到 debug"
-  expect: [dev]
+- id: none-oneoff-feedback
+  prompt: 这个变量名改成 userId,顺便把日志级别调到 debug
+  expect:
+    - none
   strict: false
-  rationale: "One-off task feedback is dev work, not a preference to capture."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-- id: reflect-business-rule-goes-to-clarify
-  prompt: "产品规则:所有金额字段一律用分存储,后续新表也照这个来"
-  expect: [clarify]
+- id: none-stated-product-rule
+  prompt: 产品规则:所有金额字段一律用分存储,后续新表也照这个来
+  expect:
+    - none
   strict: false
-  rationale: "Product/business rule, not an agent-working-style preference. Boundary case: cheap+strong both say none (bare statement, no ask); kept non-strict warn to keep the reflect/clarify boundary visible."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: design
-
-- id: dev-intake-material-choice
+- id: none-intake-material-choice
   phase: intake
-  prompt: "实现订单归档功能，具体保留策略还没定"
-  expect: [dev]
+  prompt: 实现订单归档功能，具体保留策略还没定
+  expect:
+    - none
   strict: true
-  rationale: "Implementation enters dev; material decisions are resolved during delivery."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: workflow-alignment
-
-- id: clarify-delivery-material-choice
+- id: none-product-delivery-material-choice
   phase: delivery
-  context: "dev is implementing order archival. Repository inspection and ordinary development questions cannot settle legally significant retention versus permanent deletion; the product owner must choose."
-  prompt: "现在需要确定永久删除还是保留归档这项产品决策。"
-  expect: [clarify]
+  context: the current agent is implementing order archival. Repository inspection
+    and ordinary the current agentelopment questions cannot settle legally
+    significant retention versus permanent deletion; the product owner must
+    choose.
+  prompt: 现在需要确定永久删除还是保留归档这项产品决策。
+  expect:
+    - none
   strict: true
-  rationale: "Consult clarify for the unresolved decision within the authorized delivery."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: workflow-alignment
-
-- id: dev-resume-after-clarify
+- id: none-resume-after-decision
   phase: delivery
-  context: "Implementation was requested. clarify resolved the only material choice: archive, never permanently delete."
-  prompt: "按已定的归档方案继续实现"
-  expect: [dev]
+  context: "Implementation was requested. a product discussion resolved the only
+    material choice: archive, never permanently delete."
+  prompt: 按已定的归档方案继续实现
+  expect:
+    - none
   strict: true
-  rationale: "Resume original delivery without another authorization gate."
+  rationale: No optional capability is needed; the current agent handles this
+    request directly.
   source: workflow-alignment
+- id: none-durable-correction
+  prompt: 以后这个项目都用 pnpm，不要用 npm。
+  expect:
+    - none
+  strict: true
+  rationale: Apply the correction without automatically recording a preference.
+  source: skill-simplification
+- id: none-retired-dev
+  prompt: $dev 修复角色筛选
+  expect:
+    - none
+  strict: true
+  rationale: Retired names are absent; ordinary implementation can proceed directly.
+  source: skill-simplification
+- id: none-no-skills
+  prompt: 不要使用任何 Skill，直接分析这个界面的问题。
+  expect:
+    - none
+  strict: true
+  rationale: Honor the user prohibition.
+  source: skill-simplification
+- id: none-retired-clarify
+  prompt: $clarify 分析一下是否值得做这个功能
+  expect:
+    - none
+  strict: true
+  rationale: No retired entry exists; the host can answer the product question directly.
+  source: skill-simplification

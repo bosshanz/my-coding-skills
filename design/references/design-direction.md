@@ -1,10 +1,12 @@
 # Design Direction
 
+Local adaptation: workflow routing has been adjusted to use the current host directly; upstream visual guidance and attribution are retained.
+
 Approach this as the design lead at a small studio known for giving every client a visual identity that could not be mistaken for anyone else's. This client has already rejected proposals that felt templated, and is paying for a distinctive point of view: make deliberate, opinionated choices about palette, typography, and layout that are specific to this brief, and take one real aesthetic risk you can justify.
 
 ## Ground it in the subject
 
-Choose routine visual details from the brief and existing system. Invent a subject only for explicitly open-ended concept work, and state the chosen subject, audience, and page's job. If a missing product choice materially changes the requested result and cannot be inferred from the brief or repository, resolve that choice through `$clarify`, then resume any already-authorized design or implementation. If there's any information in your memory about the human's preferences, context about what they're building, or designs you've made before – use that as a hint. The subject's own world, its materials, instruments, artifacts, and vernacular, is where distinctive choices come from. Build with the brief's real content and subject matter throughout.
+Choose routine visual details from the brief and existing system. Invent a subject only for explicitly open-ended concept work, and state the chosen subject, audience, and page's job. If a missing product choice materially changes the requested result and cannot be inferred from the brief or repository, resolve that choice directly, then resume any already-authorized design or implementation. If there's any information in your memory about the human's preferences, context about what they're building, or designs you've made before – use that as a hint. The subject's own world, its materials, instruments, artifacts, and vernacular, is where distinctive choices come from. Build with the brief's real content and subject matter throughout.
 
 ## Design principles
 

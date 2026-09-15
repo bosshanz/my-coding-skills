@@ -3,9 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const cases = [
   { id: 'implement', mode: 'write', request: '给用户列表增加可选的 role 单选筛选；不传 role 返回全部，未知 role 返回空数组。请完成实现和相关验证。' },
   { id: 'review-only', mode: 'read', request: '只审查用户列表的 role 筛选是否正确，给出发现和证据，不要改文件。预期：不传 role 返回全部，传入 role 只返回匹配的用户。' },
@@ -32,15 +30,14 @@ export function snapshot(dir) {
 }
 export function prepare() {
   const run = fs.mkdtempSync(path.join(os.tmpdir(), 'skills-execution-'));
-  const manifest = { version: 1, createdAt: new Date().toISOString(), cases: [] };
+  const manifest = { version: 1, variant: 'host-no-injected-skill', createdAt: new Date().toISOString(), cases: [] };
   for (const c of cases) {
     const dir = path.join(run, c.id);
     write(path.join(dir, 'src/users.cjs'), source);
     write(path.join(dir, 'test.cjs'), test);
     write(path.join(dir, 'README.md'), 'Small user-list library. Run node test.cjs. Preserve this file.\n');
-    fs.cpSync(path.join(root, 'dev'), path.join(dir, '.skills/dev'), { recursive: true });
-    write(path.join(dir, 'AGENTS.md'), 'Use .skills/dev/SKILL.md for the requested task. Work only in this directory. Do not invoke other agents, install packages, or access the network. Preserve README.md and the skill files.\n');
-    write(path.join(run, `${c.id}.task.txt`), `Work in ${dir}. Read AGENTS.md and .skills/dev/SKILL.md.\n${c.request}\nReturn your result and verification evidence in the final response.\n`);
+    write(path.join(dir, 'AGENTS.md'), 'Work only in this directory. Do not invoke other agents, install packages, or access the network. Preserve README.md. No library Skill is injected by this fixture.\n');
+    write(path.join(run, `${c.id}.task.txt`), `Work in ${dir}. Read AGENTS.md.\n${c.request}\nReturn your result and verification evidence in the final response.\n`);
     manifest.cases.push({ ...c, before: snapshot(dir) });
   }
   write(path.join(run, 'manifest.json'), JSON.stringify(manifest, null, 2));

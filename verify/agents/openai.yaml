@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify"
+  short_description: "Requested business checks, journey diagnosis, and final acceptance."
+  default_prompt: "Use $verify to check the named business rule, user journey, or acceptance scope. Report evidence and material gaps; change tests or product code only within the user's authorization."

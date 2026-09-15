@@ -2,27 +2,7 @@
 
 ## When To Use
 
-Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. For a new or visibly reshaped UI, load `design-direction.md` first for the complete visual-design workflow, then use this companion reference for project-facing engineering and verification gates.
-
-## Frontend Design Gate
-
-Before coding a meaningful UI, make a small design commitment:
-
-- Purpose: what job does this interface do, and who uses it?
-- Tone: what should it feel like in this product context: utilitarian, editorial, playful, premium, dense, calm, technical, or something else?
-- Constraints: framework, existing design system, accessibility, performance, responsive targets, and content shape.
-- Differentiation: what makes this screen specific to this product instead of a generic template?
-
-Do not over-design internal tools, but do make even internal tools feel intentional.
-
-## Frontend Aesthetic Gate
-
-- Choose a clear aesthetic direction before coding UI: purpose, audience, product tone, constraints, differentiation, and one memorable design idea when appropriate.
-- Avoid generic AI-looking UI: predictable layouts, timid palettes, overused fonts, context-free gradients, and template-like component arrangements.
-- Define typography, color roles, spacing rhythm, motion, hierarchy, and visual details intentionally instead of relying on defaults.
-- Match visual intensity to product context: internal tools favor clarity, density, and predictability; public or marketing pages can be more distinctive and expressive; dashboards need hierarchy and trust more than decoration.
-- Make the interface feel designed for this product and task flow, not generated from a default template.
-- Align with the existing design language when the repository already has tokens, components, or brand rules.
+Use this reference for UI implementation, frontend architecture, accessibility, frontend performance, visual polish, public pages, dashboards, and interaction-heavy components. Use the existing design system and add visual guidance from `design-direction.md` only when a visual decision is needed.
 
 ## UI State Checklist
 
@@ -66,16 +46,6 @@ Use this only when the page is user-facing, high-traffic, slow, or performance-s
 - Prefer server-side or build-time data loading when it clearly improves first render and fits the framework.
 - Treat hydration errors as correctness bugs: compare server/client markup, browser-only APIs, time/random values, and conditional rendering.
 
-## Frontend Delivery Template
-
-For UI-heavy delivery, include:
-
-- Design direction: the chosen tone and why it fits.
-- Implementation: components, data flow, and states covered.
-- Accessibility: keyboard, focus, semantics, form errors, and contrast considerations.
-- Responsiveness: target breakpoints or layout behavior.
-- Verification: tests, visual checks, manual interaction checks, and known limits.
-
 ## Verification Checklist
 
 Before delivery, use the smallest applicable set:
@@ -90,7 +60,7 @@ Before delivery, use the smallest applicable set:
 
 This reference combines local engineering guidance with these sources:
 
-- Anthropic `frontend-design`: incorporated in full as `design-direction.md`, pinned to upstream commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d`. It remains Apache-2.0; see `anthropic-frontend-design-LICENSE.txt`.
+- Anthropic `frontend-design`: adapted as `design-direction.md` from upstream commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d`. It remains Apache-2.0; see `anthropic-frontend-design-LICENSE.txt`.
 - PeterHdd `engineering-frontend-developer`: frontend architecture, layout, accessibility, Core Web Vitals, typed API clients, and verification gates. Source: https://github.com/PeterHdd/agent-skills/tree/main/skills/engineering-frontend-developer
 
 ## Frontend Task Classification

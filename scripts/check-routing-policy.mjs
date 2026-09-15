@@ -85,6 +85,25 @@ export function validateRepository(root) {
     }
   }
 
+  // Standalone engineering documents remain discoverable from their index,
+  // both README trees, and the npm package without a workflow Skill.
+  const referenceDir = path.join(root, 'references');
+  if (fs.existsSync(referenceDir)) {
+    const indexFile = path.join(referenceDir, 'README.md');
+    const index = fs.existsSync(indexFile) ? read('references/README.md') : '';
+    check(nonempty(index), 'standalone references: missing README.md index');
+    for (const file of fs.readdirSync(referenceDir).filter(name => name.endsWith('.md'))) {
+      const entry = `references/${file}`;
+      if (file !== 'README.md') check(index.includes(`](${file})`), `${entry}: missing from standalone index`);
+      check(trees.every(tree => tree.has(entry)), `${entry}: missing from a README tree`);
+    }
+    const packageFile = path.join(root, 'package.json');
+    if (fs.existsSync(packageFile)) {
+      const pkg = JSON.parse(read('package.json'));
+      check(pkg.files?.includes('references'), 'standalone references: absent from package files');
+    }
+  }
+
   for (const kind of ['routing', 'behavior']) {
     const file = `evals/${kind}/fixtures.yaml`;
     if (!check(fs.existsSync(path.join(root, file)), `missing ${file}`)) continue;
