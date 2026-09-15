@@ -312,6 +312,34 @@
   strict: true
   rationale: Explicit external agent named.
   source: design
+- id: eng-explicit-dollar
+  prompt: $eng 看一下这个服务的边界该怎么切
+  expect:
+    - eng
+  strict: true
+  rationale: Explicit engineering-reference request.
+  source: skill-simplification
+- id: eng-tenant-isolation
+  prompt: 这个接口的租户隔离和鉴权有没有 IDOR，按后端质量规范看
+  expect:
+    - eng
+  strict: true
+  rationale: Backend quality and tenancy belong to eng, not ordinary CRUD.
+  source: skill-simplification
+- id: eng-migration
+  prompt: 这次用户表回填和迁移要注意哪些数据库约束
+  expect:
+    - eng
+  strict: true
+  rationale: Storage semantics and migrations load database-engineering.
+  source: skill-simplification
+- id: eng-idempotency-write
+  prompt: 这个支付回调要做成幂等写入，帮我按后端质量规范看约束
+  expect:
+    - eng
+  strict: true
+  rationale: Idempotent writes are backend-quality work, not a definition question.
+  source: skill-simplification
 - id: reflect-explicit-dollar
   prompt: $reflect 把刚才那条纠正记下来
   expect:

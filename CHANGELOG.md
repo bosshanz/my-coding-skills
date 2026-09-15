@@ -5,6 +5,16 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-15
+
+### Added
+
+- Optional `eng` skill as a thin load table for backend, storage, architecture,
+  debugging, and ablation references, so installed agents can read those files.
+- `skills references` lists the packaged `eng/references/` paths.
+- The separate global rules installer remains opt-in, with managed-block
+  updates, backups, idempotence, and protection against shadowing overrides.
+
 ### Changed
 
 - Retired `dev` and `clarify` as workflow entries. Ordinary implementation,
@@ -17,7 +27,7 @@ a coarse 0.x scheme tied to capability batches.
   delivery/process text, and qualified blanket motion rules.
 - Recorded the design gate in `design/references/interaction.md`: prove
   willingness and value before optimizing experience and packaging.
-- Moved useful development references into standalone `references/`; renamed
+- Moved useful development references into `eng/references/`; renamed
   debugging and architecture-decision documents and removed repeated routers.
 - Install and uninstall now require an explicit selection; no arguments only
   show help. Default target is `agents`. Retired names remain uninstallable,
@@ -29,13 +39,6 @@ a coarse 0.x scheme tied to capability batches.
 - Updated routing/response fixtures, installer regression checks, and bilingual
   docs. Execution fixtures no longer force-load `dev`; historical results are
   not reclassified as evidence for this version.
-
-### Added
-
-- `skills references` to locate the engineering documents included in the npm
-  package; Skill installation does not inject them into a consuming project.
-- The separate global rules installer remains opt-in, with managed-block
-  updates, backups, idempotence, and protection against shadowing overrides.
 
 ## [0.5.0] - 2026-09-01
 ### Added

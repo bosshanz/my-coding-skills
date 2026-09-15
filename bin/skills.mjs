@@ -8,6 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const availableSkills = [
   'design',
   'verify',
+  'eng',
   'reflect',
   'kimi-code',
   'claude-code',
@@ -20,6 +21,7 @@ const groups = new Map([
   ['all', availableSkills],
   ['ui', ['design']],
   ['quality', ['verify']],
+  ['engineering', ['eng']],
   ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
   ['meta', ['reflect']],
@@ -41,6 +43,7 @@ Groups:
   all          Install every skill
   ui           Install design only
   quality      Install verify only
+  engineering  Install eng only
   delegation   Install all external-agent adapters
   adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
   meta         Install reflect (explicit invocation only)
@@ -162,9 +165,8 @@ function assertSafeTarget(target) {
 }
 
 function references() {
-  const dir = join(root, 'references');
-  console.log(readFileSync(join(dir, 'README.md'), 'utf8'));
-  console.log('Bundled reference files:');
+  const dir = join(root, 'eng', 'references');
+  console.log('Engineering references are loaded by the optional eng skill:');
   for (const name of readdirSync(dir).filter(name => name.endsWith('.md')).sort()) {
     console.log(join(dir, name));
   }

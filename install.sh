@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ALL_SKILLS=(
   design
   verify
+  eng
   reflect
   kimi-code
   claude-code
@@ -32,12 +33,13 @@ Usage:
   ./install.sh --list
 
 Skills:
-  design verify reflect kimi-code claude-code codex-cli opencode grok-build-cli
+  design verify eng reflect kimi-code claude-code codex-cli opencode grok-build-cli
 
 Groups:
   all          Install every Skill (explicit opt-in)
   ui           Install design
   quality      Install verify
+  engineering  Install eng
   meta         Install reflect (explicit invocation only)
   adapters     Install the five external CLI adapters
   delegation   Alias for adapters
@@ -128,6 +130,7 @@ resolve_requests() {
         ;;
       ui) append_unique design ;;
       quality) append_unique verify ;;
+      engineering) append_unique eng ;;
       meta) append_unique reflect ;;
       delegation|adapters)
         append_unique kimi-code
@@ -139,7 +142,7 @@ resolve_requests() {
       dev|clarify|qa|acceptance|workflow|planning)
         fail "retired Skill or group: $request; use verify for requested checks, or work directly. See README migration notes."
         ;;
-      design|verify|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli) append_unique "$request" ;;
+      design|verify|eng|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done

@@ -41,7 +41,7 @@ test('no selection cannot install or remove anything in a supplied destination',
 
 test('both installers copy exactly the optional catalog with bundled resources', t => {
   const base = workspace(t);
-  assert.deepEqual(catalog, ['claude-code', 'codex-cli', 'design', 'grok-build-cli', 'kimi-code', 'opencode', 'reflect', 'verify']);
+  assert.deepEqual(catalog, ['claude-code', 'codex-cli', 'design', 'eng', 'grok-build-cli', 'kimi-code', 'opencode', 'reflect', 'verify']);
   for (const kind of ['npm', 'shell']) {
     const dest = path.join(base, kind);
     succeeds(kind, ['all', '--dest', dest]);
@@ -50,6 +50,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
       assert.equal(fs.readFileSync(path.join(dest, skill, 'SKILL.md'), 'utf8'), fs.readFileSync(path.join(root, skill, 'SKILL.md'), 'utf8'));
     }
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
+    assert.ok(fs.existsSync(path.join(dest, 'eng/references/backend-quality.md')));
     assert.ok(fs.existsSync(path.join(dest, 'codex-cli/scripts/codex-cli-status.sh')));
     const reflect = YAML.parse(fs.readFileSync(path.join(dest, 'reflect/agents/openai.yaml'), 'utf8'));
     assert.equal(reflect.policy.allow_implicit_invocation, false);
@@ -59,7 +60,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
 
 test('groups are consistent and optional capabilities require selection', t => {
   const base = workspace(t);
-  const groups = { ui: ['design'], quality: ['verify'], meta: ['reflect'], adapters: catalog.filter(name => !['design', 'verify', 'reflect'].includes(name)) };
+  const groups = { ui: ['design'], quality: ['verify'], engineering: ['eng'], meta: ['reflect'], adapters: catalog.filter(name => !['design', 'verify', 'eng', 'reflect'].includes(name)) };
   for (const kind of ['npm', 'shell']) {
     for (const [group, names] of Object.entries(groups)) {
       const dest = path.join(base, kind, group);
@@ -115,12 +116,13 @@ test('npm installer refuses protected and symlinked roots before writes', t => {
 
 test('references are packaged and readable without a development Skill', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  assert.ok(pkg.files.includes('references'));
+  assert.ok(pkg.files.includes('eng'));
+  assert.ok(!pkg.files.includes('references'));
   assert.ok(pkg.files.includes('uninstall.sh'));
   for (const skill of retired) assert.ok(!pkg.files.includes(skill));
   const result = spawnSync(process.execPath, ['bin/skills.mjs', 'references'], { cwd: root, encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
-  for (const file of fs.readdirSync(path.join(root, 'references'))) {
-    assert.ok(result.stdout.includes(path.join(root, 'references', file)));
+  for (const file of fs.readdirSync(path.join(root, 'eng/references'))) {
+    assert.ok(result.stdout.includes(path.join(root, 'eng/references', file)));
   }
 });

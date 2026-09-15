@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering"
+  short_description: "Backend, storage, architecture, and debugging references."
+  default_prompt: "Use $eng only for the named backend, storage, architecture, debugging, or ablation decision. Read the one matching reference."

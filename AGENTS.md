@@ -12,7 +12,7 @@ Portable optional skills and engineering references. These rules govern this rep
 
 ## Structure and verification
 
-- `*/SKILL.md` contains a self-contained optional capability. Plain engineering documentation lives in `references/`, indexed by `references/README.md`; it is not a discoverable Skill. Keep installation and migration docs consistent with the catalog.
+- `*/SKILL.md` contains a self-contained optional capability. Engineering documents live with the optional `eng` skill in `eng/references/`. Keep installation and migration docs consistent with the catalog.
 - Shared adapter instructions belong in `adapters/contract.md`; run `npm run adapters:sync` after changing them. CLI-specific instructions stay in each adapter.
 - Required for library changes: `npm test`, `npm run doctor`, and `git diff --check`. Catalog or CLI changes also require `npm run check:cli`. Inspect `git status --short` and preserve unrelated work.
 - Choose additional checks by changed behavior and actual risk. Fixture loading and static checks do not prove model behavior. Do not invoke external models or agents without applicable authorization. Keep historical evaluation results in their original context.

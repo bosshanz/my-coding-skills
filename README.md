@@ -8,12 +8,13 @@
 
 ## 可选能力
 
-当前有 8 个 Skill，全部按需选择：
+当前有 9 个 Skill，全部按需选择：
 
 | Skill | 用途 |
 | --- | --- |
 | `design` | 需要具体设计决策时查阅交互、视觉、前端质量和动效资料；已定设计的普通实现无需再走设计流程。 |
 | `verify` | 用户明确要求的业务规则检查、用户旅程诊断或最终验收。请求保护规则时可以补测试；仅评审时保持只读。 |
+| `eng` | 后端边界、质量、存储、架构决策、调试方法或消融比较；普通功能、修复和补测试不必加载。 |
 | `reflect` | 仅显式 `$reflect` / `/reflect` 记录用户说过的偏好；普通纠正立即遵循，不自动触发记录流程。 |
 | `kimi-code` | 用户选定 Kimi Code 时的调用、权限、会话与排障。 |
 | `claude-code` | 用户选定 Claude Code CLI 时的调用与结果复核。 |
@@ -27,9 +28,7 @@
 
 ## 工程参考
 
-原 `dev` 中有用的资料迁到 [references/README.md](references/README.md)：后端架构、后端质量、数据库工程、架构决策、调试和消融比较。它们是普通文档，可以按具体问题直接读，不要求先加载开发 Skill。
-
-资料随仓库和 npm 包分发；`skills references` 列出包内路径。单独安装 Skill 不会复制这套资料。消费项目需要长期使用时，选择相关文件放入项目文档，再在已有项目说明里添加链接。
+后端、存储、架构、调试和消融资料由可选的 `eng` 加载，文件在 `eng/references/`。只读当前决策需要的那一份。`skills references` 列出打包路径。安装 `eng` 或 `all` 时会复制这些文件。
 
 ## 安装与查看
 
@@ -57,9 +56,10 @@ npx --package my-coding-skills skills references
 | --- | --- |
 | `ui` | `design` |
 | `quality` | `verify` |
+| `engineering` | `eng` |
 | `meta` | `reflect` |
 | `adapters` / `delegation` | 5 个外部 CLI 适配器 |
-| `all` | 全部 8 个 Skill，显式选择才安装 |
+| `all` | 全部 9 个 Skill，显式选择才安装 |
 
 目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`gemini`、`opencode` 和 `all`。`all` 写入 agents、claude、gemini、opencode 四处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
 
@@ -86,12 +86,12 @@ npx --package my-coding-skills skills references
 
 若原来安装到 `codex`、`claude` 等目标，应指定对应目标；有本地修改时先保留。卸载器仍接受旧名称、`workflow`、`planning`，便于移除历史安装。卸载 `quality` 会包含 `verify` 及旧 `qa`、`acceptance`；卸载 `all` 会包含当前和退役目录。无参数卸载也只显示帮助。
 
-原 `dev` 的参考资料见独立目录；原 `superpowers-lite.md` 改名 `debugging.md`，`design-and-research.md` 的模块与架构内容保留在 `architecture-decisions.md`。重复的开发流程、资料路由和通用文档写作入口已移除，旧内容可从 Git 历史恢复。
+原 `dev` 的参考资料现由可选的 `eng` 加载；原 `superpowers-lite.md` 改名 `debugging.md`，`design-and-research.md` 的模块与架构内容保留在 `architecture-decisions.md`。重复的开发流程、资料路由和通用文档写作入口已移除，旧内容可从 Git 历史恢复。
 
 ## 调用边界
 
 - 普通功能、修复、分析、开发测试和常规 code review 直接交给当前 Agent。
-- 需要设计决策时按需使用 `design`；业务规则检查、真实用法诊断或最终验收明确请求 `verify`；记录偏好显式调用 `reflect`。
+- 需要设计决策时按需使用 `design`；业务规则检查、真实用法诊断或最终验收明确请求 `verify`；后端、存储、架构或调试方法使用 `eng`；记录偏好显式调用 `reflect`。
 - 外部 CLI 只有在当前请求或适用的用户持续指令已选定时才调用。发现项目策略文件本身不构成授权。
 - 调用方必须实际调用指定 CLI，准确报告不可用情况，保留真实结果并复核证据。把用户选择或禁止使用 Skill 的要求传给目标，不强制目标加载本库流程。
 - Skill 不授权增加任务、发布、生产操作或递归委派。结束一个检查不结束其他已授权工作。
@@ -126,6 +126,17 @@ verify/
   SKILL.md
   agents/
     openai.yaml
+eng/
+  SKILL.md
+  agents/
+    openai.yaml
+  references/
+    ablation.md
+    architecture-decisions.md
+    backend-architecture.md
+    backend-quality.md
+    database-engineering.md
+    debugging.md
 reflect/
   SKILL.md
   agents/
@@ -170,14 +181,6 @@ grok-build-cli/
     grok-build-cli-reference.md
   scripts/
     grok-build-cli-status.sh
-references/
-  README.md
-  ablation.md
-  architecture-decisions.md
-  backend-architecture.md
-  backend-quality.md
-  database-engineering.md
-  debugging.md
 templates/
   AGENTS.md
 install.sh

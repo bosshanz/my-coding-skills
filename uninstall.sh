@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ALL_SKILLS=(
   design
   verify
+  eng
   reflect
   kimi-code
   claude-code
@@ -34,12 +35,13 @@ Usage:
   ./uninstall.sh --list
 
 Skills:
-  design verify reflect kimi-code claude-code codex-cli opencode grok-build-cli
+  design verify eng reflect kimi-code claude-code codex-cli opencode grok-build-cli
 
 Groups:
   all          Uninstall every Skill including retired entries
   ui           Uninstall design
   quality      Uninstall verify and legacy qa/acceptance copies
+  engineering  Uninstall eng
   meta         Uninstall reflect (explicit invocation only)
   adapters     Uninstall the five external CLI adapters
   delegation   Alias for adapters
@@ -131,6 +133,7 @@ resolve_requests() {
         ;;
       ui) append_unique design ;;
       quality) append_unique verify; append_unique qa; append_unique acceptance ;;
+      engineering) append_unique eng ;;
       meta) append_unique reflect ;;
       delegation|adapters)
         append_unique kimi-code
@@ -141,7 +144,7 @@ resolve_requests() {
         ;;
       workflow) append_unique dev ;;
       planning) append_unique clarify ;;
-      design|verify|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
+      design|verify|eng|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done

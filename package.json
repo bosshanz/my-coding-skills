@@ -1,6 +1,6 @@
 {
   "name": "my-coding-skills",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "description": "Optional UI design, business verification, explicit preferences, engineering references, and external CLI adapters for coding agents.",
   "type": "module",
   "bin": {
@@ -9,13 +9,13 @@
   "files": [
     "design",
     "verify",
+    "eng",
     "reflect",
     "kimi-code",
     "claude-code",
     "codex-cli",
     "opencode",
     "grok-build-cli",
-    "references",
     "docs",
     "templates",
     "install.sh",
