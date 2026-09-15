@@ -15,6 +15,8 @@ a coarse 0.x scheme tied to capability batches.
   routine correction capture and redundant confirmation for authorized writes.
 - Narrowed `design` to concrete references and decisions, removed repeated
   delivery/process text, and qualified blanket motion rules.
+- Recorded the design gate in `design/references/interaction.md`: prove
+  willingness and value before optimizing experience and packaging.
 - Moved useful development references into standalone `references/`; renamed
   debugging and architecture-decision documents and removed repeated routers.
 - Install and uninstall now require an explicit selection; no arguments only

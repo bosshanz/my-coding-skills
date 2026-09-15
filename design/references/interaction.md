@@ -1,6 +1,6 @@
 # Interaction Design
 
-Interaction design defines how a person understands a system, acts on it, receives feedback, stays in control, and recovers. It comes before visual polish. Motion can clarify an interaction, but it cannot repair a broken task flow, misleading state, or missing recovery path.
+Interaction design defines how a person understands a system, acts on it, receives feedback, stays in control, and recovers. First prove that users are willing to complete the behavior, then optimize the experience of completing it. First prove the product creates value, then discuss how that value should be packaged. Motion can clarify an interaction, but it cannot repair a broken task flow, misleading state, or missing recovery path.
 
 ## When To Use
 

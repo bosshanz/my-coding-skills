@@ -11,7 +11,7 @@ Use the references that add concrete information to the requested design decisio
 
 | Reference | Relevant work |
 | --- | --- |
-| `references/interaction.md` | Stateful product flows, object identity, async feedback, interruption, preserved work, and recovery. |
+| `references/interaction.md` | Behavior and value before packaging, stateful product flows, object identity, async feedback, interruption, preserved work, and recovery. |
 | `references/design-direction.md` | Visual exploration, typography, palette, layout, and product-specific copy. |
 | `references/quality.md` | Frontend state handling, accessibility, responsive behavior, and performance. |
 | `references/animation.md` | Motion timing, curves, springs, gestures, interruption, and reduced-motion behavior. |
