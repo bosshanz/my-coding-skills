@@ -8,6 +8,7 @@ ALL_SKILLS=(
   verify
   eng
   reflect
+  external-cli
   kimi-code
   claude-code
   codex-cli
@@ -35,7 +36,7 @@ Usage:
   ./uninstall.sh --list
 
 Skills:
-  design verify eng reflect kimi-code claude-code codex-cli opencode grok-build-cli
+  design verify eng reflect external-cli
 
 Groups:
   all          Uninstall every Skill including retired entries
@@ -43,11 +44,12 @@ Groups:
   quality      Uninstall verify and legacy qa/acceptance copies
   engineering  Uninstall eng
   meta         Uninstall reflect (explicit invocation only)
-  adapters     Uninstall the five external CLI adapters
+  adapters     Uninstall external-cli and leftover adapter directories
   delegation   Alias for adapters
 
-Migration: dev, clarify, qa, acceptance and the legacy workflow/planning groups
-remain accepted for removal only. No replacement is installed automatically.
+Migration: kimi-code, claude-code, codex-cli, opencode, grok-build-cli, plus
+dev, clarify, qa, acceptance and the legacy workflow/planning groups, remain
+accepted for removal only. No replacement is installed automatically.
 
 Options:
   --target TARGET   agents (default), codex, claude, gemini, opencode, or all
@@ -136,6 +138,7 @@ resolve_requests() {
       engineering) append_unique eng ;;
       meta) append_unique reflect ;;
       delegation|adapters)
+        append_unique external-cli
         append_unique kimi-code
         append_unique claude-code
         append_unique codex-cli
@@ -144,7 +147,7 @@ resolve_requests() {
         ;;
       workflow) append_unique dev ;;
       planning) append_unique clarify ;;
-      design|verify|eng|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
+      design|verify|eng|reflect|external-cli|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done

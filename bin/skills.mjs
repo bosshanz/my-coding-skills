@@ -10,20 +10,23 @@ const availableSkills = [
   'verify',
   'eng',
   'reflect',
-  'kimi-code',
-  'claude-code',
-  'codex-cli',
-  'opencode',
-  'grok-build-cli',
+  'external-cli',
 ];
 const retiredSkills = new Set(['dev', 'clarify', 'qa', 'acceptance']);
+const adapterAliases = new Map([
+  ['kimi-code', 'external-cli'],
+  ['claude-code', 'external-cli'],
+  ['codex-cli', 'external-cli'],
+  ['opencode', 'external-cli'],
+  ['grok-build-cli', 'external-cli'],
+]);
 const groups = new Map([
   ['all', availableSkills],
   ['ui', ['design']],
   ['quality', ['verify']],
   ['engineering', ['eng']],
-  ['delegation', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
-  ['adapters', ['kimi-code', 'claude-code', 'codex-cli', 'opencode', 'grok-build-cli']],
+  ['delegation', ['external-cli']],
+  ['adapters', ['external-cli']],
   ['meta', ['reflect']],
 ]);
 
@@ -44,8 +47,8 @@ Groups:
   ui           Install design only
   quality      Install verify only
   engineering  Install eng only
-  delegation   Install all external-agent adapters
-  adapters     Install kimi-code, claude-code, codex-cli, opencode, and grok-build-cli
+  delegation   Install external-cli
+  adapters     Install external-cli (aliases: kimi-code, claude-code, codex-cli, opencode, grok-build-cli)
   meta         Install reflect (explicit invocation only)
 
 Targets:
@@ -121,9 +124,16 @@ function resolveSkills(names) {
   if (!names.length) throw new Error('choose a skill or group explicitly; use list to see the catalog');
   const input = names;
   const result = [];
+  const aliasNotes = [];
   for (const name of input) {
     if (retiredSkills.has(name) || ['workflow', 'planning'].includes(name)) {
       throw new Error(`retired skill or group: ${name}; ordinary work needs no workflow skill. Use verify for requested business checks or acceptance; see README migration notes.`);
+    }
+    if (adapterAliases.has(name)) {
+      aliasNotes.push(name);
+      const skill = adapterAliases.get(name);
+      if (!result.includes(skill)) result.push(skill);
+      continue;
     }
     const expanded = groups.get(name) || [name];
     for (const skill of expanded) {
@@ -135,7 +145,7 @@ function resolveSkills(names) {
       }
     }
   }
-  return result;
+  return { skills: result, aliasNotes };
 }
 
 function assertPackagedSkill(skill) {
@@ -173,7 +183,7 @@ function references() {
 }
 
 function add(names, opts) {
-  const skills = resolveSkills(names);
+  const { skills, aliasNotes } = resolveSkills(names);
   const dirs = targetDirs(opts.target, opts.dest);
   // Validate every destination before creating or replacing any installed files.
   for (const dir of dirs) {
@@ -200,6 +210,9 @@ function add(names, opts) {
       }
       console.log(`${opts.dryRun ? 'would install' : 'installed'} ${skill} -> ${dest}`);
     }
+  }
+  if (aliasNotes.length) {
+    console.log(`note: ${aliasNotes.join(' ')} now install external-cli. Remove leftover old adapter directories with uninstall.sh ${aliasNotes.join(' ')}`);
   }
 }
 

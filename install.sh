@@ -8,11 +8,7 @@ ALL_SKILLS=(
   verify
   eng
   reflect
-  kimi-code
-  claude-code
-  codex-cli
-  opencode
-  grok-build-cli
+  external-cli
 )
 
 TARGET="agents"
@@ -33,7 +29,7 @@ Usage:
   ./install.sh --list
 
 Skills:
-  design verify eng reflect kimi-code claude-code codex-cli opencode grok-build-cli
+  design verify eng reflect external-cli
 
 Groups:
   all          Install every Skill (explicit opt-in)
@@ -41,8 +37,11 @@ Groups:
   quality      Install verify
   engineering  Install eng
   meta         Install reflect (explicit invocation only)
-  adapters     Install the five external CLI adapters
+  adapters     Install external-cli
   delegation   Alias for adapters
+
+Aliases (install external-cli):
+  kimi-code claude-code codex-cli opencode grok-build-cli
 
 Options:
   --target TARGET   agents (default), codex, claude, gemini, opencode, or all
@@ -57,6 +56,8 @@ Options:
 Examples:
   ./install.sh design --target agents
   ./install.sh verify --dest ./local-skills --dry-run
+  ./install.sh external-cli --target agents
+  ./install.sh claude-code --target agents
   ./install.sh adapters --target claude
   ./install.sh all --target all --dry-run
   ./install.sh --global-rules --target codex --dry-run
@@ -122,6 +123,7 @@ append_unique() {
 resolve_requests() {
   local request skill
   RESOLVED=()
+  ALIAS_NOTES=()
   [[ "${#REQUESTED[@]}" -gt 0 ]] || fail "choose a Skill or group explicitly; use --list"
   for request in "${REQUESTED[@]}"; do
     case "$request" in
@@ -132,17 +134,15 @@ resolve_requests() {
       quality) append_unique verify ;;
       engineering) append_unique eng ;;
       meta) append_unique reflect ;;
-      delegation|adapters)
-        append_unique kimi-code
-        append_unique claude-code
-        append_unique codex-cli
-        append_unique opencode
-        append_unique grok-build-cli
+      delegation|adapters|external-cli) append_unique external-cli ;;
+      kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
+        append_unique external-cli
+        ALIAS_NOTES+=("$request")
         ;;
       dev|clarify|qa|acceptance|workflow|planning)
         fail "retired Skill or group: $request; use verify for requested checks, or work directly. See README migration notes."
         ;;
-      design|verify|eng|reflect|kimi-code|claude-code|codex-cli|opencode|grok-build-cli) append_unique "$request" ;;
+      design|verify|eng|reflect) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done
@@ -286,3 +286,7 @@ for destination_root in "${DESTINATIONS[@]}"; do
     install_skill "$skill" "$destination_root"
   done
 done
+
+if [[ "${#ALIAS_NOTES[@]}" -gt 0 ]]; then
+  printf 'note: %s now install external-cli. Remove leftover old adapter directories with ./uninstall.sh %s\n' "${ALIAS_NOTES[*]}" "${ALIAS_NOTES[*]}"
+fi

@@ -1,6 +1,6 @@
 # Coding Agent Skills
 
-Optional design, business verification, explicit preference capture, and external CLI adapters, plus directly readable engineering references.
+Optional design, business verification, explicit preference capture, and a unified external CLI adapter, plus directly readable engineering references.
 
 Ordinary implementation, fixes, product analysis, and developer tests run in the current agent. There is no default development dispatcher or mandatory clarification / QA / acceptance pipeline. Honor the user's choice not to use Skills.
 
@@ -14,11 +14,7 @@ Ordinary implementation, fixes, product analysis, and developer tests run in the
 | `verify` | Explicitly requested business-rule checks, journey diagnosis, or final acceptance. Add protection only when requested; review alone stays read-only. |
 | `eng` | Backend boundaries, quality, storage, architecture decisions, debugging method, or ablation. Ordinary features, fixes, and tests do not load it. |
 | `reflect` | Explicit `$reflect` / `/reflect` preference recording. Ordinary corrections do not trigger persistence. |
-| `kimi-code` | Selected Kimi Code invocation, permissions, sessions, and troubleshooting. |
-| `claude-code` | Selected Claude Code CLI invocation and evidence review. |
-| `codex-cli` | Cross-host Codex invocation or explicitly requested CLI automation / isolated CLI work. Current Codex work proceeds directly. |
-| `opencode` | Selected OpenCode CLI invocation and sessions. |
-| `grok-build-cli` | Selected Grok Build CLI invocation, permissions, and output handling. |
+| `external-cli` | After the user names Claude Code, Codex CLI, Kimi Code, OpenCode, or Grok Build, invoke that CLI's headless command. ACP is only for a client-driven session or editor embedding. |
 
 `verify` combines the former `qa` and `acceptance` purposes while preserving read-only review, requested test protection, and final-verdict boundaries. Technical acceptance is not publication authority. Independent review requires actual reviewer separation and applicable authorization.
 
@@ -54,6 +50,7 @@ No arguments display help without installing or uninstalling anything. Select a 
 ./install.sh design --target agents --dry-run
 ./install.sh design --target agents
 ./install.sh verify --target agents
+./install.sh external-cli --target agents
 ./install.sh claude-code --target agents
 ```
 
@@ -71,8 +68,8 @@ These interfaces describe the current source. Until a release includes this chan
 | `quality` | `verify` |
 | `engineering` | `eng` |
 | `meta` | `reflect` |
-| `adapters` / `delegation` | All five external CLI adapters |
-| `all` | All nine Skills, only when explicitly selected |
+| `adapters` / `delegation` | `external-cli` |
+| `all` | All five Skills, only when explicitly selected |
 
 Targets: `agents` (default, `~/.agents/skills`), `codex` (`${CODEX_HOME:-$HOME/.codex}/skills`), `claude`, `gemini`, `opencode`, and `all`. The `all` target writes to agents, claude, gemini, and opencode. `--dest DIR` selects one custom directory and cannot be combined with an explicit `--target all`. `--force` replaces an existing same-name Skill.
 
@@ -87,17 +84,19 @@ This requires Node.js 18+, preserves non-managed content, backs up changes, skip
 
 ## Migration
 
-`dev`, `clarify`, `qa`, `acceptance`, and installation groups `workflow` / `planning` are retired. The installer reports a migration hint instead of silently renaming or deleting existing copies. Old installed entries remain discoverable until explicitly removed.
+`dev`, `clarify`, `qa`, `acceptance`, and installation groups `workflow` / `planning` are retired. `kimi-code`, `claude-code`, `codex-cli`, `opencode`, and `grok-build-cli` are install aliases of `external-cli`; the installer writes `external-cli` and does not silently delete leftover directories. Old installed entries remain discoverable until explicitly removed.
 
 Preview removal at the original installation target, preserve any local modifications, then select the replacement capability:
 
 ```bash
 ./uninstall.sh dev clarify qa acceptance --target agents --dry-run
 ./uninstall.sh dev clarify qa acceptance --target agents
+./uninstall.sh kimi-code claude-code codex-cli opencode grok-build-cli --target agents
 ./install.sh verify --target agents
+./install.sh external-cli --target agents
 ```
 
-Use the original `codex`, `claude`, or other target if applicable. Uninstall still accepts legacy names and groups. Uninstalling `quality` includes `verify`, `qa`, and `acceptance`; uninstalling `all` includes current and retired entries. No-argument uninstall only displays help.
+Use the original `codex`, `claude`, or other target if applicable. Uninstall still accepts legacy names and groups. Uninstalling `quality` includes `verify`, `qa`, and `acceptance`; uninstalling `adapters` includes `external-cli` and leftover adapter directories; uninstalling `all` includes current and retired entries. No-argument uninstall only displays help.
 
 Useful `dev` references now load through optional `eng`. `superpowers-lite.md` became `debugging.md`; module and architecture material from `design-and-research.md` remains in `architecture-decisions.md`. Repeated workflow, reference-routing, and generic documentation guidance were removed. Git history retains the original files.
 
@@ -115,7 +114,7 @@ npm run check:cli
 git diff --check
 ```
 
-Static tests cover adapter sync, catalog and reference integrity, fixture loading, evaluator regression, and installer safety. `doctor` checks resources; missing optional CLIs produce warnings. See [workflow and evaluation](docs/workflow.md) for proxy routing, response checks, host self-reports, and real execution.
+Static tests cover catalog and reference integrity, fixture loading, evaluator regression, and installer safety. `doctor` checks resources; missing optional CLIs produce warnings. See [workflow and evaluation](docs/workflow.md) for proxy routing, response checks, host self-reports, and real execution.
 
 The execution fixture no longer injects `dev`. Historical results describe their original versions. Static checks do not prove model behavior or quality after simplification. Establishing benefit requires comparable with/without runs on the same model, tasks, and environment; external model use still needs authorization.
 
@@ -153,46 +152,22 @@ reflect/
   SKILL.md
   agents/
     openai.yaml
-kimi-code/
+external-cli/
   SKILL.md
   agents/
     openai.yaml
   references/
-    kimi-code-reference.md
-  scripts/
-    kimi-code-status.sh
-claude-code/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    claude-code-reference.md
+    claude-code.md
+    codex-cli.md
+    grok-build.md
+    kimi-code.md
+    opencode.md
   scripts/
     claude-code-status.sh
-codex-cli/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    codex-cli-reference.md
-  scripts/
     codex-cli-status.sh
-opencode/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    opencode-reference.md
-  scripts/
-    opencode-status.sh
-grok-build-cli/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    grok-build-cli-reference.md
-  scripts/
     grok-build-cli-status.sh
+    kimi-code-status.sh
+    opencode-status.sh
 templates/
   AGENTS.md
 install.sh

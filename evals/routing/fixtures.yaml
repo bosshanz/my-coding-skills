@@ -280,35 +280,35 @@
 - id: adapter-kimi
   prompt: 让 Kimi Code 帮我研究一下这个仓库的架构
   expect:
-    - kimi-code
+    - external-cli
   strict: true
   rationale: Explicit external agent named.
   source: design
 - id: adapter-claude
   prompt: use Claude Code to review this diff
   expect:
-    - claude-code
+    - external-cli
   strict: true
   rationale: Explicit external agent named.
   source: design
 - id: adapter-codex
   prompt: 用 Codex CLI 做个只读的仓库调研
   expect:
-    - codex-cli
+    - external-cli
   strict: true
   rationale: Explicit external agent named.
   source: design
 - id: adapter-opencode
   prompt: ask OpenCode to investigate this build failure
   expect:
-    - opencode
+    - external-cli
   strict: true
   rationale: Explicit external agent named.
   source: design
 - id: adapter-grok
   prompt: grok 帮我看看为什么构建挂了
   expect:
-    - grok-build-cli
+    - external-cli
   strict: true
   rationale: Explicit external agent named.
   source: design

@@ -13,6 +13,15 @@ a coarse 0.x scheme tied to capability batches.
   for restrained typography and motion, and explicit preference conflict/retraction
   handling in `reflect`. These are guidance changes, not measured model gains.
 
+- Merged the five external CLI adapters into one `external-cli` skill. The
+  shared contract lives in that entry; each CLI keeps a short reference.
+  Headless commands remain the default; ACP is documented only for
+  client-driven sessions and editor embedding.
+- `kimi-code`, `claude-code`, `codex-cli`, `opencode`, and `grok-build-cli`
+  are install aliases of `external-cli` and remain uninstallable leftovers.
+- Refreshed CLI notes against current local help, including Kimi's `-c`
+  continue flag, yolo/auto meanings, and resume-mode overrides.
+
 ## [0.6.0] - 2026-09-15
 
 ### Added

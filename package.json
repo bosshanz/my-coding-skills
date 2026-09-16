@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
   "version": "0.6.0",
-  "description": "Optional UI design, business verification, explicit preferences, engineering references, and external CLI adapters for coding agents.",
+  "description": "Optional UI design, business verification, explicit preferences, engineering references, and a unified external CLI adapter for coding agents.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
@@ -11,11 +11,7 @@
     "verify",
     "eng",
     "reflect",
-    "kimi-code",
-    "claude-code",
-    "codex-cli",
-    "opencode",
-    "grok-build-cli",
+    "external-cli",
     "docs",
     "templates",
     "install.sh",
@@ -36,8 +32,7 @@
     "eval:routing": "node evals/routing/runner.mjs",
     "eval:behavior": "node evals/behavior/runner.mjs",
     "eval:e2e": "node evals/e2e/smoke.mjs",
-    "adapters:sync": "node scripts/sync-adapters.mjs --write",
-    "test": "node scripts/sync-adapters.mjs --check && node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
+    "test": "node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
     "eval:execution": "node evals/execution/runner.mjs"
   },
   "keywords": [
