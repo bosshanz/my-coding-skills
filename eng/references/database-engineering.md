@@ -97,8 +97,8 @@ Treat unknown, shared, staging-with-prod-data, and production databases as read-
 
 - Prefer expand-migrate-contract for production data changes:
   1. Add a compatible new shape.
-  2. Backfill historical data in bounded batches.
-  3. Dual write or compatibility read during the transition.
+  2. Establish compatible reads/writes and decide how overlapping writers stay consistent.
+  3. Backfill historical data in bounded batches without overwriting newer writes.
   4. Cut reads over gradually.
   5. Remove the old shape after rollback risk is gone.
 - Avoid blocking table rewrites, long exclusive locks, and in-place renames on hot production tables.
@@ -109,6 +109,24 @@ Treat unknown, shared, staging-with-prod-data, and production databases as read-
 - For large tables, plan online schema changes, concurrent index creation, throttled backfills, progress visibility, and pause/resume behavior.
 - Define rollback limits honestly. Some data migrations are forward-only; say so before launch.
 - Verify migrations against realistic data volume when feasible, not only an empty development database.
+
+## Worked Example: Renaming A Populated Column
+
+**Applies when:** old and new application versions may overlap while `display_name` becomes `public_name`.
+
+**Counterexample:** rename the column and deploy the new reader immediately. Old instances fail; a one-shot backfill can miss concurrent writes or overwrite a newer value.
+
+**Better shape:** add the new nullable column, deploy compatible writers, backfill in bounded resumable batches, and switch readers after checking completeness and consistency. Decide which field is authoritative during overlap. If old writers cannot populate the new field, use a suitable synchronization mechanism or retire them before the final reconciliation. A backfill must not overwrite newer writes; use a version predicate or equivalent coordination. Retain the old field until the rollback window closes. Do not require this sequence for a disposable database or a migration with an explicitly accepted maintenance window.
+
+**Verify:** on an isolated database matching the target engine/version, exercise old and new readers/writers together, update a row during backfill, interrupt and resume a batch, and compare final values. Test the supported rollback path. Separately measure locks and duration on representative data; correctness on a tiny fixture does not establish production migration latency.
+
+### PostgreSQL-specific index example
+
+For a large live PostgreSQL table, `CREATE INDEX CONCURRENTLY` can reduce write blocking compared with ordinary index creation. It cannot run inside a transaction block; migration tools that wrap all statements need a compatible execution mode. A failed build can leave an invalid index, so recovery must inspect index validity rather than treating the name's existence as success. This is PostgreSQL-specific guidance, not syntax for MySQL or SQLite, and does not authorize a production operation.
+
+Check the target version's [PostgreSQL CREATE INDEX documentation](https://www.postgresql.org/docs/current/sql-createindex.html) before preparing the migration. Verify the migration runner's transaction mode and the resulting index validity in the isolated target database.
+
+Example organization is informed by [Supabase Postgres Best Practices](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices): applicability, counterexample, correction, and evidence. These local examples are not upstream benchmark results.
 
 ## Capacity And Operations
 

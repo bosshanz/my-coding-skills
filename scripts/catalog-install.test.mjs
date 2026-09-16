@@ -51,6 +51,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
     }
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
     assert.ok(fs.existsSync(path.join(dest, 'eng/references/backend-quality.md')));
+    assert.equal(fs.readFileSync(path.join(dest, 'verify/references/scenarios.md'), 'utf8'), fs.readFileSync(path.join(root, 'verify/references/scenarios.md'), 'utf8'));
     assert.ok(fs.existsSync(path.join(dest, 'codex-cli/scripts/codex-cli-status.sh')));
     const reflect = YAML.parse(fs.readFileSync(path.join(dest, 'reflect/agents/openai.yaml'), 'utf8'));
     assert.equal(reflect.policy.allow_implicit_invocation, false);

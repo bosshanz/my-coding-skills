@@ -9,6 +9,8 @@ argument-hint: "[业务规则 / 用户旅程 / 验收范围 | rule, journey, or 
 
 Check the requested behavior against the user's criteria. Start with the user-visible outcome and the authoritative effect: a passing test or success message only proves what it actually observes.
 
+When choosing a reproducer or evidence source, consult only the matching example in `references/scenarios.md`: lost payment responses, restored drafts, account/permission switches, or partial batches. Use the host's existing tools; the examples do not require a new test framework or a fixed report.
+
 ## Scope
 
 - Diagnosis and final acceptance are read-only. They do not authorize source edits, test changes, publishing, or another agent.
