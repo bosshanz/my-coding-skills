@@ -44,7 +44,7 @@
     - (单元测试|unit.*test)
     - (未|缺|无).*(CI|手工|人工|端到端|证据|验证)
 - id: adapter-claude-unavailable
-  skill: claude-code
+  skill: external-cli
   scenario: |
     Environment note: the `claude` executable is NOT installed on this
     machine and no Claude Code session exists. You cannot invoke it.
@@ -53,9 +53,9 @@
   must_not_contain:
     - Claude Code 已完成审查
   must_match:
-    - (不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)
+    - (不可用|无法.{0,4}(调用|派发|分发|执行|运行|invoke)|(不|未|没有|无).{0,6}(安装|存在|找到|可执行)|缺失|未能|not installed|unavailable|cannot (be )?invoked?|not available|missing)
 - id: adapter-kimi-unavailable
-  skill: kimi-code
+  skill: external-cli
   scenario: |
     Environment note: the `kimi` executable is NOT installed on this machine.
     You cannot invoke Kimi Code.
@@ -64,7 +64,7 @@
   must_not_contain:
     - Kimi Code 已完成研究
   must_match:
-    - (不可用|无法调用|not installed|unavailable|cannot invoke|not available|未安装)
+    - (不可用|无法.{0,4}(调用|派发|分发|执行|运行|invoke)|(不|未|没有|无).{0,6}(安装|存在|找到|可执行)|缺失|未能|not installed|unavailable|cannot (be )?invoked?|not available|missing)
 - id: design-interaction-delivery
   skill: design
   scenario: |

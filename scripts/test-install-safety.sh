@@ -128,10 +128,21 @@ for skill_md in "$ROOT"/*/SKILL.md; do
   fi
   assert_allows "$INSTALL" "$skill" --dest "$catalog_dest" --dry-run
 done
-if grep -q "would install grok-build-cli ->" <<<"$adapters_out"; then
-  pass=$((pass+1)); printf 'ok (adapters dry-run includes grok-build-cli)\n'
+if grep -q "would install external-cli ->" <<<"$adapters_out"; then
+  pass=$((pass+1)); printf 'ok (adapters dry-run includes external-cli)\n'
 else
-  printf 'FAIL: install.sh adapters --dry-run omitted grok-build-cli\n' >&2
+  printf 'FAIL: install.sh adapters --dry-run omitted external-cli\n' >&2
+  fails=$((fails+1))
+fi
+alias_out="$("$INSTALL" claude-code --dest "$catalog_dest" --dry-run 2>&1)" || {
+  printf 'FAIL: install.sh claude-code --dry-run failed\n  output: %s\n' "$alias_out" >&2
+  fails=$((fails+1))
+  alias_out=""
+}
+if grep -q "would install external-cli ->" <<<"$alias_out" && grep -q "note: claude-code now install" <<<"$alias_out"; then
+  pass=$((pass+1)); printf 'ok (claude-code alias installs external-cli)\n'
+else
+  printf 'FAIL: install.sh claude-code --dry-run did not alias to external-cli\n  output: %s\n' "$alias_out" >&2
   fails=$((fails+1))
 fi
 

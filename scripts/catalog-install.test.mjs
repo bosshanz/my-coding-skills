@@ -41,7 +41,7 @@ test('no selection cannot install or remove anything in a supplied destination',
 
 test('both installers copy exactly the optional catalog with bundled resources', t => {
   const base = workspace(t);
-  assert.deepEqual(catalog, ['claude-code', 'codex-cli', 'design', 'eng', 'grok-build-cli', 'kimi-code', 'opencode', 'reflect', 'verify']);
+  assert.deepEqual(catalog, ['design', 'eng', 'external-cli', 'reflect', 'verify']);
   for (const kind of ['npm', 'shell']) {
     const dest = path.join(base, kind);
     succeeds(kind, ['all', '--dest', dest]);
@@ -52,7 +52,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
     assert.ok(fs.existsSync(path.join(dest, 'eng/references/backend-quality.md')));
     assert.equal(fs.readFileSync(path.join(dest, 'verify/references/scenarios.md'), 'utf8'), fs.readFileSync(path.join(root, 'verify/references/scenarios.md'), 'utf8'));
-    assert.ok(fs.existsSync(path.join(dest, 'codex-cli/scripts/codex-cli-status.sh')));
+    assert.ok(fs.existsSync(path.join(dest, 'external-cli/scripts/codex-cli-status.sh')));
     const reflect = YAML.parse(fs.readFileSync(path.join(dest, 'reflect/agents/openai.yaml'), 'utf8'));
     assert.equal(reflect.policy.allow_implicit_invocation, false);
     assert.ok(!fs.existsSync(path.join(dest, 'references')));
@@ -113,6 +113,22 @@ test('npm installer refuses protected and symlinked roots before writes', t => {
   const result = run('npm', ['design', '--dest', base, '--target', 'all']);
   assert.notEqual(result.status, 0);
   assert.deepEqual(fs.readdirSync(base), ['root-link']);
+});
+
+test('legacy adapter names install external-cli and remain uninstallable leftovers', t => {
+  const dest = workspace(t);
+  const added = succeeds('npm', ['claude-code', '--dest', dest]);
+  assert.match(added, /installed external-cli ->/);
+  assert.match(added, /note: claude-code now install/);
+  assert.ok(fs.existsSync(path.join(dest, 'external-cli/SKILL.md')));
+  assert.ok(!fs.existsSync(path.join(dest, 'claude-code')));
+  fs.mkdirSync(path.join(dest, 'claude-code'));
+  fs.writeFileSync(path.join(dest, 'claude-code/keep.txt'), 'legacy');
+  succeeds('remove', ['claude-code', '--dest', dest]);
+  assert.ok(!fs.existsSync(path.join(dest, 'claude-code')));
+  assert.ok(fs.existsSync(path.join(dest, 'external-cli/SKILL.md')));
+  succeeds('remove', ['adapters', '--dest', dest]);
+  assert.ok(!fs.existsSync(path.join(dest, 'external-cli')));
 });
 
 test('references are packaged and readable without a development Skill', () => {

@@ -1,6 +1,6 @@
 # Coding Agent Skills
 
-按需使用的设计、业务验证、偏好记录和外部 CLI 适配器，以及可以直接查阅的工程资料。
+按需使用的设计、业务验证、偏好记录和外部 CLI 调用合同，以及可以直接查阅的工程资料。
 
 普通开发、修复、需求分析和补测试由当前 Agent 直接完成。本库不再提供默认的开发调度器，也不把澄清、QA 和验收串成固定阶段。是否使用 Skill 取决于它能否补充当前任务需要的信息；用户要求不使用时，直接遵从。
 
@@ -8,7 +8,7 @@
 
 ## 可选能力
 
-当前有 9 个 Skill，全部按需选择：
+当前有 5 个 Skill，全部按需选择：
 
 | Skill | 用途 |
 | --- | --- |
@@ -16,15 +16,28 @@
 | `verify` | 用户明确要求的业务规则检查、用户旅程诊断或最终验收。请求保护规则时可以补测试；仅评审时保持只读。 |
 | `eng` | 后端边界、质量、存储、架构决策、调试方法或消融比较；普通功能、修复和补测试不必加载。 |
 | `reflect` | 仅显式 `$reflect` / `/reflect` 记录用户说过的偏好；普通纠正立即遵循，不自动触发记录流程。 |
-| `kimi-code` | 用户选定 Kimi Code 时的调用、权限、会话与排障。 |
-| `claude-code` | 用户选定 Claude Code CLI 时的调用与结果复核。 |
-| `codex-cli` | 跨宿主调用 Codex 或明确的 CLI 自动化、隔离 CLI 任务。当前 Codex 的普通工作直接完成。 |
-| `opencode` | 用户选定 OpenCode CLI 时的调用、会话与排障。 |
-| `grok-build-cli` | 用户选定 Grok Build CLI 时的调用、权限和输出处理。 |
+| `external-cli` | 用户点名 Claude Code、Codex CLI、Kimi Code、OpenCode 或 Grok Build 时，按合同调用对应无头 CLI；ACP 只用于有客户端的会话或编辑器嵌入。 |
 
 `verify` 合并了原 `qa` 和 `acceptance` 的用途。它区分检查行为、按请求增加测试保护和给出最终结论；技术验收不授权发布。真正的独立审查需要实际的审查者分离和相应授权。
 
 `reflect` 遵从宿主的记忆与文件写入规则。已明确授权内容和落点时直接记录；只在范围或落点有实质歧义时询问。Codex 元数据关闭其隐式调用，其他宿主以明确的入口描述约束。参见 [Codex 调用策略](https://learn.chatgpt.com/docs/build-skills#optional-metadata)。
+
+## 怎样使用这四个能力
+
+从任务需要补充的信息选择入口，不必按顺序调用：
+
+| 你要完成的事 | 示例请求 | 重点 |
+| --- | --- | --- |
+| 改善已有产品的交互 | `$design 重新设计批量发布的部分失败和重试，沿用现有视觉系统。` | 先处理状态、反馈和恢复；不强制换字体、加动效或追求新奇。 |
+| 判断工程方案 | `$eng 检查库存预留在并发请求和超时重试下的幂等方案。` | 对照适用条件、错误做法、改法与验证方法，只读相关参考。 |
+| 检查实际行为 | `$verify 只诊断草稿在保存后刷新是否丢失，不修改代码。` | 将界面声称的结果与真实持久化状态对应；缺少证据就说明边界。 |
+| 记录明确偏好 | `$reflect 将本项目的包管理器偏好从 pnpm 改为 npm，更新项目 AGENTS.md 的偏好段。` | 在宿主允许的机制内更新同作用域旧条目，不重复记录、不扩展成全局偏好。 |
+
+设计参考提供营销概念、管理工具和原生桌面三类[选择示例](design/references/design-direction.md#calibration-examples)。工程例证覆盖[幂等与租户隔离](eng/references/backend-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
+
+`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换和批量部分完成，说明证据足以证明什么。它复用宿主已有工具，不要求额外浏览器或测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；普通纠正不自动持久化。
+
+这些例子是指导资料，不是已执行的测试报告。上游来源用于说明借鉴的方法，不代表已经证明本库的模型增益。具体证据层级见[工作流程与评估](docs/workflow.md)，规则与偏好的落点见[职责说明](docs/three-layers.md)。
 
 ## 工程参考
 
@@ -39,6 +52,7 @@
 ./install.sh design --target agents --dry-run
 ./install.sh design --target agents
 ./install.sh verify --target agents
+./install.sh external-cli --target agents
 ./install.sh claude-code --target agents
 ```
 
@@ -58,8 +72,8 @@ npx --package my-coding-skills skills references
 | `quality` | `verify` |
 | `engineering` | `eng` |
 | `meta` | `reflect` |
-| `adapters` / `delegation` | 5 个外部 CLI 适配器 |
-| `all` | 全部 9 个 Skill，显式选择才安装 |
+| `adapters` / `delegation` | `external-cli` |
+| `all` | 全部 5 个 Skill，显式选择才安装 |
 
 目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`gemini`、`opencode` 和 `all`。`all` 写入 agents、claude、gemini、opencode 四处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
 
@@ -74,17 +88,19 @@ npx --package my-coding-skills skills references
 
 ## 从旧目录迁移
 
-`dev`、`clarify`、`qa`、`acceptance` 及安装分组 `workflow`、`planning` 已退役，安装器会给出迁移提示，不静默替换名字或删除旧安装。已有安装需要显式清理，否则旧入口仍可能被宿主发现。
+`dev`、`clarify`、`qa`、`acceptance` 及安装分组 `workflow`、`planning` 已退役。`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 现为 `external-cli` 的安装别名，安装器写入 `external-cli`，不静默删除旧目录。已有安装需要显式清理，否则旧入口仍可能被宿主发现。
 
 在原先的安装目标预览并清理本库的旧目录，再按需安装新能力：
 
 ```bash
 ./uninstall.sh dev clarify qa acceptance --target agents --dry-run
 ./uninstall.sh dev clarify qa acceptance --target agents
+./uninstall.sh kimi-code claude-code codex-cli opencode grok-build-cli --target agents
 ./install.sh verify --target agents
+./install.sh external-cli --target agents
 ```
 
-若原来安装到 `codex`、`claude` 等目标，应指定对应目标；有本地修改时先保留。卸载器仍接受旧名称、`workflow`、`planning`，便于移除历史安装。卸载 `quality` 会包含 `verify` 及旧 `qa`、`acceptance`；卸载 `all` 会包含当前和退役目录。无参数卸载也只显示帮助。
+若原来安装到 `codex`、`claude` 等目标，应指定对应目标；有本地修改时先保留。卸载器仍接受旧名称、`workflow`、`planning`，便于移除历史安装。卸载 `quality` 会包含 `verify` 及旧 `qa`、`acceptance`；卸载 `adapters` 会包含 `external-cli` 及旧适配器目录；卸载 `all` 会包含当前和退役目录。无参数卸载也只显示帮助。
 
 原 `dev` 的参考资料现由可选的 `eng` 加载；原 `superpowers-lite.md` 改名 `debugging.md`，`design-and-research.md` 的模块与架构内容保留在 `architecture-decisions.md`。重复的开发流程、资料路由和通用文档写作入口已移除，旧内容可从 Git 历史恢复。
 
@@ -105,7 +121,7 @@ npm run check:cli
 git diff --check
 ```
 
-`npm test` 检查适配器同步、目录与引用、fixture 加载、校验器回归、安装和卸载安全。`doctor` 检查资源完整性；外部 CLI 不存在只产生提示。
+`npm test` 检查目录与引用、fixture 加载、校验器回归、安装和卸载安全。`doctor` 检查资源完整性；外部 CLI 不存在只产生提示。
 
 路由代理、文本回答、宿主自报和真实执行是不同证据，详见 [工作流程与评估](docs/workflow.md)。当前真实执行夹具不再强制注入 `dev`；历史报告仍代表原版本。静态检查通过不证明删减后质量相当或更好，也不证明真实宿主的触发行为。需要证明增益时，使用相同模型、任务和环境的有无对照，单独记录结果；外部模型调用仍需相应授权。
 
@@ -143,46 +159,22 @@ reflect/
   SKILL.md
   agents/
     openai.yaml
-kimi-code/
+external-cli/
   SKILL.md
   agents/
     openai.yaml
   references/
-    kimi-code-reference.md
-  scripts/
-    kimi-code-status.sh
-claude-code/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    claude-code-reference.md
+    claude-code.md
+    codex-cli.md
+    grok-build.md
+    kimi-code.md
+    opencode.md
   scripts/
     claude-code-status.sh
-codex-cli/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    codex-cli-reference.md
-  scripts/
     codex-cli-status.sh
-opencode/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    opencode-reference.md
-  scripts/
-    opencode-status.sh
-grok-build-cli/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    grok-build-cli-reference.md
-  scripts/
     grok-build-cli-status.sh
+    kimi-code-status.sh
+    opencode-status.sh
 templates/
   AGENTS.md
 install.sh
