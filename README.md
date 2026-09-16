@@ -26,6 +26,23 @@
 
 `reflect` 遵从宿主的记忆与文件写入规则。已明确授权内容和落点时直接记录；只在范围或落点有实质歧义时询问。Codex 元数据关闭其隐式调用，其他宿主以明确的入口描述约束。参见 [Codex 调用策略](https://learn.chatgpt.com/docs/build-skills#optional-metadata)。
 
+## 怎样使用这四个能力
+
+从任务需要补充的信息选择入口，不必按顺序调用：
+
+| 你要完成的事 | 示例请求 | 重点 |
+| --- | --- | --- |
+| 改善已有产品的交互 | `$design 重新设计批量发布的部分失败和重试，沿用现有视觉系统。` | 先处理状态、反馈和恢复；不强制换字体、加动效或追求新奇。 |
+| 判断工程方案 | `$eng 检查库存预留在并发请求和超时重试下的幂等方案。` | 对照适用条件、错误做法、改法与验证方法，只读相关参考。 |
+| 检查实际行为 | `$verify 只诊断草稿在保存后刷新是否丢失，不修改代码。` | 将界面声称的结果与真实持久化状态对应；缺少证据就说明边界。 |
+| 记录明确偏好 | `$reflect 将本项目的包管理器偏好从 pnpm 改为 npm，更新项目 AGENTS.md 的偏好段。` | 在宿主允许的机制内更新同作用域旧条目，不重复记录、不扩展成全局偏好。 |
+
+设计参考提供营销概念、管理工具和原生桌面三类[选择示例](design/references/design-direction.md#calibration-examples)。工程例证覆盖[幂等与租户隔离](eng/references/backend-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
+
+`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换和批量部分完成，说明证据足以证明什么。它复用宿主已有工具，不要求额外浏览器或测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；普通纠正不自动持久化。
+
+这些例子是指导资料，不是已执行的测试报告。上游来源用于说明借鉴的方法，不代表已经证明本库的模型增益。具体证据层级见[工作流程与评估](docs/workflow.md)，规则与偏好的落点见[职责说明](docs/three-layers.md)。
+
 ## 工程参考
 
 后端、存储、架构、调试和消融资料由可选的 `eng` 加载，文件在 `eng/references/`。只读当前决策需要的那一份。`skills references` 列出打包路径。安装 `eng` 或 `all` 时会复制这些文件。
