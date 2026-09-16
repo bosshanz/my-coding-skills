@@ -2,7 +2,7 @@
 
 Local adaptation: workflow routing has been adjusted to use the current host directly; upstream visual guidance and attribution are retained.
 
-Approach this as the design lead at a small studio known for giving every client a visual identity that could not be mistaken for anyone else's. This client has already rejected proposals that felt templated, and is paying for a distinctive point of view: make deliberate, opinionated choices about palette, typography, and layout that are specific to this brief, and take one real aesthetic risk you can justify.
+Make deliberate choices about palette, typography, and layout for the actual brief. For an expressive concept, seek a distinct visual identity and take aesthetic risks only when they serve the subject. For an existing product or a repeated-use tool, preserve its identity, native platform conventions, and clarity. Do not invent a client demand for novelty.
 
 ## Ground it in the subject
 
@@ -12,11 +12,11 @@ Choose routine visual details from the brief and existing system. Invent a subje
 
 For web designs, the hero is a thesis. Open with the most characteristic thing in the subject's world, in whatever form makes sense for it: a headline, an image, an animation, a live demo, an interactive moment. Be deliberate with your choice: a big number with a small label, supporting stats, and a gradient accent is the template answer, only use if that's truly the best option.
 
-Typography carries the personality of the page. Pair the display and body faces deliberately, not the same families you would reach for on any other project, and set a clear type scale with intentional weights, widths, and spacing. Make the type treatment itself a memorable part of the design, not a neutral delivery vehicle for the content.
+Typography carries the personality of the page. Choose one typeface family or a deliberately complementary pair according to the content and existing system, and set a clear type scale with intentional weights, widths, and spacing. Use expressive type where the brief calls for it; in dense tools, prioritize legibility, hierarchy, and familiar platform typography.
 
 Structure is information. Structural devices, numbering, eyebrows, dividers, labels, should encode something true about the content, not decorate it. Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence - like a real process or a typed timeline where order carries information the reader needs. Question if choices like numbered markers actually make sense before incorporating them.
 
-Leverage motion deliberately. Think about where and if animation can serve the subject: a page-load sequence, a scroll-triggered reveal, hover micro-interactions, ambient atmosphere. An orchestrated moment usually lands harder than scattered effects; choose what the direction calls for. However, sometimes less is more, and extra animation contributes to the feeling that the design is AI-generated.
+Use non-user-triggered motion sparingly. Prefer motion that explains a person's action or preserves spatial continuity. A page-load sequence or reveal may suit an expressive brief, but repeated section entrances and ambient effects need a concrete purpose. Respect reduced motion and keep frequent actions immediate.
 
 Match complexity to the vision. Maximalist directions need elaborate execution; minimal directions need precision in spacing, type, and detail. Elegance is executing the chosen vision well.
 
@@ -26,7 +26,7 @@ Consider written content carefully. Often a design brief may not contain real co
 
 For calibration: AI-generated design right now clusters around three looks: (1) a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta accent; (2) a near-black background with a single bright acid-green or vermilion accent; (3) a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns. All three are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. Just like a human designer who's hired, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
 
-Work in two passes. First, brainstorm a short design plan based on the human's design brief: create a compact token system with color, type, layout, and signature. Color: describe the palette as 4–6 named hex values. Type: the typefaces for 2+ roles (a characterful display face that's used with restraint, a complementary body face, and a utility face for captions or data if needed). Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Signature: the single unique element this page will be remembered by that embodies the brief in an appropriate way.
+Work in two passes. First, brainstorm a short design plan based on the human's design brief: create a compact token system with color, type, layout, and signature. Color: describe the palette as 4–6 named hex values. Type: the family or families and their roles; one family may cover headings, body, and data through size and weight. Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Focal point: the content or action that deserves emphasis; an expressive signature is optional. Reuse existing tokens for established products instead of inventing a new palette.
 
 Before coding, check that the design fits the brief and existing system. Revise concrete mismatches, then proceed. Originality is a design consideration, not a prerequisite for implementation or an additional user-approval gate. If the user explicitly requested approval of the design before implementation, wait for that approval. Use the chosen design to guide color, type, and layout decisions.
 
@@ -36,7 +36,7 @@ Try to do a lot of this planning and iteration in your thinking, and only show i
 
 ## Restraint and self-critique
 
-Spend your boldness in one place. Let the signature element be the one memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Not taking a risk can be a risk itself! Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected. Critique your own work as you build, taking screenshots if your environment supports it – a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creators have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
+Spend your boldness in one place. Let the signature element be the one memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected. Critique your own work as you build, taking screenshots if your environment supports it – a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creators have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
 
 ## More on writing in design
 
@@ -49,3 +49,11 @@ Use active voice as default. A control should say exactly what happens when it's
 Treat failure and emptiness as moments for direction, not mood. Explain what went wrong and how to fix it, in the interface's voice rather than a person's. Errors don't apologize, and they are never vague about what happened. An empty screen is an invitation to act.
 
 Keep the register conversational and tuned: plain verbs, sentence case, no filler, with tone matched to the brand and the audience. Let each element do exactly one job. A label labels, an example demonstrates, and nothing quietly does double duty.
+
+## Calibration Examples
+
+- **Marketing concept:** a brief about field recording may justify distinctive sound imagery and expressive type. Choose one relevant focal treatment; a generic waveform on every card adds decoration without meaning. Compare the rendered result with the actual subject and copy.
+- **Existing admin tool:** preserve its type, controls, and navigation. Improve a partial publish result with per-item status and a clear retry action; a new display font does not solve that task. Check both the rendered hierarchy and the retry behavior.
+- **Native desktop workflow:** follow established platform controls and content readability. A memorable hero or elaborate entrance is not a requirement for a settings pane. Inspect focus, resizing, and repeated use as well as appearance.
+
+These examples illustrate choices, not completed user studies. Upstream reference: [Anthropic frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md). Preserve the bundled attribution and license; local adaptations retain host authorization and existing-system precedence.

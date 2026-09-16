@@ -119,6 +119,8 @@ verify/
   SKILL.md
   agents/
     openai.yaml
+  references/
+    scenarios.md
 eng/
   SKILL.md
   agents/

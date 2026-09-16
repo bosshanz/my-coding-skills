@@ -57,6 +57,26 @@ Keep the checklist useful, not decorative:
 - Do not report success before the write commits. If a side effect must not diverge from the write, publish in the same transaction via the project's outbox pattern; see `backend-architecture.md`.
 - Batch endpoints are atomic or return an explicit per-item result. Silent partial success is a contract bug.
 
+## Worked Examples: Idempotency And Tenant Scope
+
+Use these examples only when the affected path has the corresponding invariant. They are design sketches, not a new framework or a claim of runtime verification.
+
+### Retried inventory reservation
+
+- **Applies when:** a client or worker can repeat a reservation after a timeout.
+- **Counterexample:** read `requests[key]`; if absent, decrement stock; then store the result. Two callers can both pass the read, and a crash between the decrement and result write leaves an unrecorded effect.
+- **Better shape:** derive the tenant from the authenticated context; validate positive quantity; bind the key to the operation and a canonical payload fingerprint. In one database transaction, claim a unique `(tenant, operation, key)`, perform the constrained stock update, and persist the result. On a duplicate, follow the database's conflict semantics to read the committed result; reject reuse with a different payload. Define whether a pending operation waits or returns a retryable status. A rolled-back transaction must not leave a successful claim.
+- **Verify:** issue concurrent identical requests against the enforcing database; inspect one reservation, one stock decrement, and consistent results. Repeat after losing the response to a committed transaction. Reuse the key with a different quantity and expect a conflict. Inject failure before commit and check that no partial effect remains.
+
+This local transaction does not make an external payment or message atomic. Remote effects need the provider's idempotency contract and reconciliation, or the project's durable outbox; do not hold a database lock while calling a provider.
+
+### Cross-tenant document access
+
+- **Applies when:** an authenticated user supplies the ID of a tenant-owned object.
+- **Counterexample:** `findById(input.id)` followed by an update, with tenancy checked only in the list page. A foreign ID bypasses that page.
+- **Better shape:** authorize the requested action and scope the read/write to the authenticated tenant. For example, bind both `id` and trusted `tenant_id` in the update predicate. A tenant selector from the request must first be checked against the actor's allowed memberships. Cache keys, exports, and background jobs must preserve the same scope.
+- **Verify:** create tenants A and B; use A's credentials with B's object ID for the affected read and write paths. Expect the product's non-disclosing denial and verify B's row is unchanged. Include a successful same-tenant operation so a deny-all implementation cannot pass. If RLS is the enforcement mechanism, test with the actual application role rather than an owner or bypass role.
+
 ## Error Mapping Gate
 
 - Map domain outcomes to stable, machine-readable classes: validation, unauthenticated, forbidden, not found, conflict, rate limited, dependency failure.

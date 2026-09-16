@@ -5,6 +5,14 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+### Changed
+
+- Added scoped engineering examples for idempotency, tenant isolation, migration,
+  and publish-state ownership, with counterexamples and verification methods.
+- Added optional behavior-evidence scenarios to `verify`; refined design guidance
+  for restrained typography and motion, and explicit preference conflict/retraction
+  handling in `reflect`. These are guidance changes, not measured model gains.
+
 ## [0.6.0] - 2026-09-15
 
 ### Added
