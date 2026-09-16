@@ -4,8 +4,8 @@ Portable optional skills and engineering references. These rules govern this rep
 
 ## Scope
 
-- Follow host instructions, the user's current request, and existing authorization. A request to work without Skills takes precedence over optional workflows. Ordinary implementation and analysis run directly; there is no default development dispatcher.
-- `design` adds concrete UI guidance. `verify` handles explicitly requested business checks or final acceptance; review-only work does not authorize edits. `reflect` records user-stated preferences only on explicit invocation and within host persistence rules.
+- Follow host instructions, the user's current request, and existing authorization. A request to work without Skills takes precedence over optional workflows. Development work uses `eng` as the common engineering-principles entry and runs in the current agent; it prescribes no fixed workflow or automatic delegation. Pure analysis proceeds directly.
+- `design` adds concrete UI guidance. `verify` handles explicitly requested business checks or final acceptance; review-only work does not authorize edits. `grill-me` provides requested decision interviews. `reflect` learns from corrections, failures, and verified improvements during repository work, keeping lessons repository-local under host persistence rules; global memory requires an explicit user request.
 - External adapters require the user's selection for the relevant scope. A discovered project policy counts only if explicitly adopted. Invoke the actual target, preserve output, and report unavailability accurately. Pass through the user's Skill choices and prohibitions.
 - Native subagents are optional and require applicable authorization; this file does not request delegation. When authorized, assign bounded ownership, avoid overlapping work and recursive delegation, and integrate the result.
 - Editing this library does not authorize global installation, publishing, production changes, or messages to others. Preserve unrelated edits and reuse existing authorization within its scope.

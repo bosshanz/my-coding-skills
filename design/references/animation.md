@@ -1,189 +1,183 @@
-# Animation
+# 动画
 
-Load this reference for meaningful motion work: micro-interactions, enter/exit animations, gesture-driven UI, and animation audits or improvements. It covers technique — durations, easing curves, springs, choreography — plus an audit checklist and vocabulary for precise instructions. For whether animation fits the visual direction at all, see design-direction.md; for state, accessibility, and delivery gates, see quality.md.
+有实质动效工作时加载：微交互、进入与退出动画、手势驱动界面，以及动画审查或改进。本参考包含时长、缓动曲线、弹簧、编排等技术，也包含检查清单和便于精确表达的术语。动画是否符合视觉方向见 design-direction.md；状态、输入与恢复行为见 interaction.md。
 
-## Core Motion Parameters
+## 核心动效参数
 
-### Duration
+### 时长
 
-Frequent UI transitions usually stay under 300ms; larger surfaces and explanatory motion may need the longer ranges below. Perceived speed matters as much as actual speed: ease-out at 200ms *feels* faster than ease-in at 200ms; a fast spinner makes loading feel faster even at identical load time.
+高频界面过渡通常控制在 300ms 以内；较大界面区域和解释性动效可能需要下方更长区间。感知速度与实际速度同样重要：200ms 的 ease-out 比同样时长的 ease-in 感觉更快；加载时间相同，转得更快的加载指示也会让等待感觉更短。
 
-| Interaction class | Duration |
+| 交互类别 | 时长 |
 | --- | --- |
-| Button press feedback | 100–160ms |
-| Tooltips, small popovers | 125–200ms |
-| Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
-| Marketing / explanatory | Can be longer |
+| 按钮按压反馈 | 100–160ms |
+| 提示和小浮层 | 125–200ms |
+| 下拉和选择控件 | 150–250ms |
+| 模态框和抽屉 | 200–500ms |
+| 营销 / 解释性动效 | 可以更长 |
 
-- Make tooltips instant after the first one opens (skip delay + skip animation).
-- Asymmetric timing: slow where the user is deciding (hold-to-confirm fill: 2s linear), fast where the system responds (release: 200ms ease-out). Exits typically faster than entrances.
-- Frequency shortens duration: the more often an animation is seen, the shorter and subtler it should be.
+- 第一个提示打开后，后续提示即时出现，跳过延迟和动画。
+- 非对称时长：用户做决定时慢一些（按住确认的填充：2s linear），系统响应时快一些（松开：200ms ease-out）。退出通常快于进入。
+- 频率越高，时长越短：越常见的动画越应短促、轻微。
 
-### Easing
+### 缓动
 
-Decision order:
+选择顺序：
 
-- Entering or exiting → **`ease-out`** (starts fast, feels responsive)
-- Moving / morphing on screen → **`ease-in-out`**
-- Hover / color change → **`ease`**
-- Constant motion (marquee, progress, hold-to-confirm fill) → **`linear`**
-- Default → **`ease-out`**
+- 进入或退出 → **`ease-out`**，快速开始，响应感强。
+- 屏幕内移动或变形 → **`ease-in-out`**。
+- 悬停或颜色变化 → **`ease`**。
+- 匀速运动（跑马灯、进度、按住确认填充）→ **`linear`**。
+- 默认 → **`ease-out`**。
 
-Avoid `ease-in` for immediate action feedback: its slow start can delay the response the user is watching. Built-in CSS easings are too weak for deliberate motion; define strong custom curves as tokens:
+即时动作反馈避免 `ease-in`：慢启动会延迟用户正关注的响应。内置 CSS 缓动对精心设计的动效往往不够鲜明，可以把更明确的自定义曲线定义为 token：
 
 ```css
---ease-out: cubic-bezier(0.23, 1, 0.32, 1);      /* strong ease-out for UI */
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* strong ease-in-out for on-screen movement */
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* iOS-like drawer curve */
+--ease-out: cubic-bezier(0.23, 1, 0.32, 1);      /* 用于界面的明显减速曲线 */
+--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* 用于屏内移动的明显加减速曲线 */
+--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* 类似 iOS 的抽屉曲线 */
 ```
 
-- Mirror the easing on reversible transitions (inverse cubic-bézier control points) so the return path matches the outbound path.
-- Source curves from easing.dev or easings.co rather than hand-rolling them.
+- 可逆过渡采用镜像缓动，即反转三次贝塞尔控制点，让返回路径匹配去程。
+- 从 easing.dev 或 easings.co 选择曲线，不自行随意拼造。
 
-### Springs
+### 弹簧
 
-Springs have no fixed duration — they settle from physics parameters, and they carry velocity when interrupted (keyframes restart from zero). Use for: drags with momentum, interruptible gestures, "alive" elements, decorative mouse-tracking.
+弹簧没有固定时长，而是依据物理参数收敛；中断时会保留速度，关键帧则从零重新开始。适用于带惯性的拖动、可中断手势、有生命感的元素和装饰性鼠标跟随。
 
 ```js
-// Apple-style — recommended, easier to reason about
+// Apple 风格：推荐，更容易理解
 { type: "spring", duration: 0.5, bounce: 0.2 }
 
-// Traditional physics — more control
+// 传统物理参数：控制更细
 { type: "spring", mass: 1, stiffness: 100, damping: 10 }
 ```
 
-| Interaction | Damping | Response (s) |
+| 交互 | 阻尼 | 响应时间（秒） |
 | --- | --- | --- |
-| Default UI | 1.0 (critically damped, no overshoot) | 0.3–0.4 |
-| Move / reposition | 1.0 | 0.4 |
-| Rotation | 0.8 | 0.4 |
-| Drawer / sheet / flick release | ~0.8 (slight bounce) | 0.3 |
+| 默认界面 | 1.0（临界阻尼，无过冲） | 0.3–0.4 |
+| 移动 / 重新定位 | 1.0 | 0.4 |
+| 旋转 | 0.8 | 0.4 |
+| 抽屉 / 面板 / 甩动释放 | 约 0.8（轻微回弹） | 0.3 |
 
-- Keep bounce subtle (0.1–0.3) and reserve it for momentum-driven or playful interactions. Overshoot on a menu that just faded in feels wrong; overshoot on a flicked card feels right.
-- Interrupt cleanly: always animate from the presentation (live on-screen) value, never the target. On a reversal, blend velocity through the re-target — hard-cutting creates a "brick wall."
-- Velocity handoff: pass the gesture's release velocity as the spring's initial velocity so there is no seam between drag and animation.
-- Momentum projection: don't snap from the release point — project the resting position (`current + (v/1000)·d/(1−d)`, d ≈ 0.998), then snap to the nearest target.
-- Interpolate mouse-linked values with `useSpring` instead of tying them 1:1 to cursor position — but only when the motion is decorative.
+- 回弹保持轻微（0.1–0.3），留给惯性驱动或有趣的交互。刚淡入的菜单过冲会显得不自然，甩出的卡片过冲则合理。
+- 干净地处理中断：始终从屏幕当前呈现值开始，不从目标值开始。反向时在重新设定目标过程中衔接速度，硬切会产生撞墙感。
+- 速度交接：把手势释放速度作为弹簧初速度，使拖动和动画无缝连接。
+- 惯性预测：不要从释放点直接吸附；先预测停留位置（`current + (v/1000)·d/(1−d)`，d 约为 0.998），再吸附最近目标。
+- 装饰性鼠标联动可以平滑跟随；直接操控的拖动应保持与指针一致，不用装饰性滞后妨碍控制。
 
-### Choreography
+### 编排
 
-- Stagger group entrances 30–80ms per item; longer feels slow. Stagger is decorative — never block interaction while it plays.
-- Enter and exit along the same path (a panel sliding in from the right dismisses to the right), anchored to the trigger (`transform-origin` at the trigger; modals exempt, keep centered).
-- Orchestrate related changes so they read as one coordinated motion; intermediate frames should telegraph the outcome, not interpolate blindly.
-- Materialize glass surfaces instead of just fading them: animate blur + scale together on enter/exit.
+- 群组入场每项错开 30–80ms，更长会显慢。错峰只是装饰，不得在播放期间阻塞交互。
+- 进出路径一致：从右侧进入的面板向右退出，并与触发点关联，`transform-origin` 设在触发点；模态框例外，保持居中。
+- 关联变化应呈现为一次协调运动；中间帧应提示结果，不只是盲目插值。
+- 玻璃表面进入退出时同时变化模糊和缩放，让它逐渐成形，而不只是淡入淡出。
 
-## Where to Animate — and Where Not To
+## 哪些地方适合动画，哪些不适合
 
-Every animation must answer "why does this animate?" Valid purposes: feedback, spatial continuity, state indication, preventing a jarring change, explanation, and delight (rare moments only). "It looks cool" on a frequently-seen element is not valid.
+每个动画都必须回答“为什么要动”。有效目的包括反馈、空间连续性、状态指示、避免突兀变化、解释，以及罕见时刻的愉悦。高频元素仅因“看起来酷”而动，不是有效理由。
 
-### Frequency gate (run first)
+### 先检查频率
 
-| Frequency | Decision |
+| 频率 | 决策 |
 | --- | --- |
-| 100+ times/day (keyboard shortcuts, command palette, core nav) | Keep the action immediate; omit motion that delays repeated use. |
-| Tens of times/day (hover states, list navigation, frequent toggles) | None, or near-imperceptible |
-| Occasional (modals, drawers, toasts, settings) | Standard animation |
-| Rare / first-time (onboarding, empty states, success, celebration) | Delight budget lives here |
+| 每天 100 次以上，如快捷键、命令面板、核心导航 | 保持动作即时响应，省略延迟反复操作的动画。 |
+| 每天数十次，如悬停、列表导航、常用开关 | 不加动画，或轻微到几乎察觉不到。 |
+| 偶尔使用，如模态框、抽屉、提示、设置 | 使用标准动画。 |
+| 罕见或首次，如引导、空状态、成功、庆祝 | 将愉悦表现的预算留在这里。 |
 
-### Animate (high-conviction seams)
+### 值得添加动画的连接处
 
-- **Feedback gaps**: pressable elements with no `:active` → `transform: scale(0.97)`, `transition: transform 160ms ease-out` (subtle: 0.95–0.98). Destructive one-click actions → hold-to-confirm fill.
-- **Teleporting state**: conditional renders, route content, accordions that snap, list adds/removes → fade/scale entrance from `scale(0.95–0.97)` + `opacity: 0`, ease-out, with a matching exit. `@starting-style` for entry without JS.
-- **Missing spatial story**: panels/popovers/menus appearing with no link to their trigger → scale in from the trigger's origin. Dismissable surfaces → symmetric exit paths, `translateY(100%)` percentages, not hardcoded pixels.
-- **Group entrances**: a grid/list that pops in all at once on an occasionally-seen page → 30–80ms stagger.
-- **Gesture seams**: draggable/swipeable elements that snap with no physics → springs, velocity-based dismissal, rubber-banding at boundaries instead of hard stops.
-- **Delight moments**: rare, high-emotion moments rendered flat — first-run, empty states, success, celebration. The only places bounce and longer beats are welcome.
+- **反馈缺失**：可按元素没有 `:active` → 使用 `transform: scale(0.97)` 和 `transition: transform 160ms ease-out`，缩放保持轻微（0.95–0.98）。一键破坏性动作 → 按住确认填充。
+- **状态瞬移**：条件渲染、路由内容、突然展开的折叠区、列表增删 → 从 `scale(0.95–0.97)` 与 `opacity: 0` 开始淡入和缩放，使用 ease-out，并配置对应退出。
+- **空间关系缺失**：面板、浮层、菜单出现时与触发点没有关联 → 从触发点缩放进入。可关闭界面 → 采用对称退出路径，用 `translateY(100%)` 百分比，不写死像素。
+- **群组入场**：低频页面上网格或列表同时突然出现 → 每项错开 30–80ms。
+- **手势断裂**：可拖动或滑动元素没有物理过渡、直接跳转 → 使用弹簧、基于速度的关闭，以及边界橡皮筋阻力，不硬停。
+- **愉悦时刻**：首次使用、空状态、成功、庆祝等罕见且有情绪意义的场景显得平淡。回弹和较长节奏只适合这些场合。
 
-### Do NOT animate
+### 不要添加动画
 
-- Keyboard-initiated actions — command palettes, shortcuts, focus jumps. Keep their response immediate; use motion only if it communicates a needed state without delaying use.
-- Functional data the user is reading or acting on (a chart in a banking app). Decoration hinders comprehension.
-- High-frequency list items, hover states, and toggles — delete or reduce to near-imperceptible.
-- Ambient/looping motion anywhere outside marketing or delight moments.
-- Anything that only "works" as a slow, showy animation — it fails the budget.
+- 键盘发起的动作，如命令面板、快捷键、焦点跳转，应即时响应；只有动效能传达必要状态且不延迟使用时才保留。
+- 用户正在阅读或操作的功能数据，例如银行应用图表；装饰会妨碍理解。
+- 高频列表项、悬停和开关，删除动效或减到几乎不可察觉。
+- 营销或愉悦时刻之外的氛围循环动效。
+- 只有放得很慢、很炫才能成立的动画，它超出了合理预算。
 
-## Audit Checklist
+## 审查清单
 
-Run category by category over the codebase. Severity: **HIGH** = feel-breaking, **MEDIUM** = noticeably off, **LOW** = polish.
+按类别检查代码库。严重程度：**高**表示破坏操作感，**中**表示明显不协调，**低**表示细节打磨。
 
-| Category | Check |
+| 类别 | 检查 |
 | --- | --- |
-| Purpose & frequency | Every animation can name a valid purpose; none on keyboard or 100+/day actions; high-frequency motion deleted or minimized |
-| Easing & duration | No `ease-in` on UI; strong custom curves, not weak built-ins; frequent UI transitions usually under 300ms; tooltips instant after the first |
-| Physicality & origin | No `scale(0)` (use `scale(0.9–0.97)` + opacity); popovers/dropdowns/tooltips scale from their trigger; modals centered; pressables have press feedback |
-| Interruptibility | Rapidly-triggered or reversible motion uses transitions/springs, not keyframes; gestures carry velocity; asymmetric enter/exit timing |
-| Performance | Only `transform`/`opacity` animated; no `transition: all` or layout properties; Framer Motion uses full `transform` strings, not `x`/`y` shorthand, on busy pages; no parent CSS variables driving child transforms |
-| Accessibility | `prefers-reduced-motion` handled (gentler, not zero); hover motion gated behind `(hover: hover) and (pointer: fine)` |
-| Cohesion & tokens | Curves/durations live as shared tokens, not hand-typed duplicates; motion matches product personality; group entrances staggered; double-exposing crossfades blur-masked |
-| Missed opportunities | Teleporting state, spatially disconnected surfaces, flat rare moments — reported separately, a handful at most |
+| 目的与频率 | 每个动画都有有效目的；键盘或每天 100 次以上的动作不加延迟；高频动效删除或最小化。 |
+| 缓动与时长 | 界面避免 `ease-in`；采用明确自定义曲线而非弱内置曲线；高频过渡通常低于 300ms；首个提示之后即时出现。 |
+| 物理感与原点 | 不使用 `scale(0)`，改为 `scale(0.9–0.97)` 加透明度；浮层、下拉和提示从触发点缩放；模态框居中；可按元素有按压反馈。 |
+| 可中断性 | 高频触发或可逆运动使用过渡或弹簧，不用关键帧；手势传递速度；进出时长不对称。 |
+| 无障碍 | 处理 `prefers-reduced-motion`，使动效更轻而非完全无反馈；悬停动效限制在 `(hover: hover) and (pointer: fine)`。 |
+| 一致性与 token | 曲线和时长使用共享 token，不反复手写；动效匹配产品性格；群组错峰入场；交叉淡化的重影用模糊遮蔽。 |
+| 遗漏机会 | 状态瞬移、空间关系断裂、罕见时刻平淡，可单独报告少量机会。 |
 
-Fix-preference order when proposing changes: delete → reduce → fix easing → fix origin/physicality → make interruptible → move to GPU → asymmetric timing → polish (blur masks, stagger, `@starting-style`, springs) → accessibility & cohesion.
+提出改进时，先判断是否应删除或减少动效，再检查缓动、原点、物理感、中断和进出节奏，最后打磨编排。无障碍与产品一致性贯穿这些判断。
 
-Useful greps: `transition: all`, `ease-in`, `scale(0)`, `@keyframes` near toast/toggle code, `transform-origin`, `prefers-reduced-motion`, `setProperty('--`, `animate={{ x`.
+检查时关注动作触发、入场原点、退出路径、快速重复操作和减少动态效果下的实际表现。
 
-When feel can't be judged from code alone, say so — recommend slow-motion playback (2–5× duration or DevTools Animations panel at 10%), frame-by-frame stepping, real-device testing for gestures, and a fresh-eyes pass the next day.
+仅凭代码无法判断手感时应说明；建议慢速播放（时长放大 2–5 倍，或开发者工具动画面板设为 10%）、逐帧查看、真机手势测试，以及隔天重新观察。
 
-## Anti-patterns
+## 反模式
 
-| Anti-pattern | Problem | Fix |
+| 反模式 | 问题 | 修正 |
 | --- | --- | --- |
-| `transition: all` | Animates unintended properties off-GPU | Name exact properties: `transition: transform 200ms ease-out` |
-| `ease-in` on UI | Delays the moment the user watches most | `ease-out` or a strong custom curve |
-| `scale(0)` entrance | Comes from nowhere; nothing in the real world does | `scale(0.95)` + `opacity: 0` |
-| Duration > 300ms on a UI element | Feels slow and disconnected | Cut to the band for its class |
-| Animating layout properties (`width`, `height`, `margin`, `top`, `left`) | Layout + paint every frame, jank | `transform`/`opacity` only |
-| `transform-origin: center` on a popover | Ignores the trigger relationship | Origin at the trigger; modals stay centered |
-| Keyframes on toasts/toggles | Restart from zero on rapid retrigger | CSS transitions or springs |
-| Symmetric enter/exit timing | Release feels as slow as the deliberate press | Slow the deciding phase, snap the response |
-| Framer Motion `x`/`y`/`scale` shorthand under load | Main-thread rAF, drops frames | Full `transform` string |
-| CSS variable on a parent driving child transforms | Style recalc storm across all children | Set `transform` on the element directly |
-| Gratuitous ambient/looping motion on functional UI | Distraction, battery, vestibular risk | Delete; keep loops to marketing/delight |
-| Exit along a different path than entry | User loses the spatial story | Symmetric paths, mirrored easing |
-| Distance-only dismissal threshold | Flicks don't register | Velocity check: `abs(distance)/elapsedMs > ~0.11` |
-| Hard stops at drag boundaries | Reads as "frozen" | Rubber-banding: progressive resistance |
-| Everything-at-once group entrance | Flat, no choreography | 30–80ms stagger, decorative and non-blocking |
-| Crossfade that double-exposes two states | Reads as two objects swapping | `filter: blur(2px)` bridge during the transition (keep < 20px — heavy blur is expensive, especially Safari) |
-| No `:active` on pressable elements | Interface feels dead | `scale(0.97)` on press, 160ms ease-out |
-| Feedback only at gesture end | Drag feels disconnected | Continuous 1:1 tracking from pointer-down |
+| 界面使用 `ease-in` | 延迟用户最关注的响应瞬间 | 使用 `ease-out` 或明显自定义曲线。 |
+| 从 `scale(0)` 进入 | 像凭空出现，缺乏现实感 | 使用 `scale(0.95)` 加 `opacity: 0`。 |
+| 界面元素动画超过 300ms | 感觉迟缓、脱节 | 缩短至对应类别区间。 |
+| 浮层设为 `transform-origin: center` | 忽略触发关系 | 原点放在触发点；模态框保持居中。 |
+| 提示或开关使用关键帧 | 快速再次触发时从零重来 | 使用 CSS 过渡或弹簧。 |
+| 进出时长完全相同 | 释放像有意按压一样慢 | 决定阶段放慢，响应迅速。 |
+| 功能界面无必要的氛围循环 | 分心、耗电、可能引发前庭不适 | 删除；循环留给营销或愉悦时刻。 |
+| 退出与进入路径不同 | 用户丢失空间关系 | 使用对称路径和镜像缓动。 |
+| 只按距离判断关闭 | 快速甩动无法识别 | 检查速度：`abs(distance)/elapsedMs > ~0.11`。 |
+| 拖动边界硬停 | 看起来像冻结 | 使用渐进阻力的橡皮筋效果。 |
+| 群组全部同时入场 | 平淡，缺少编排 | 每项错开 30–80ms，仅作装饰且不阻塞。 |
+| 交叉淡化同时暴露两个状态 | 看起来像两个对象互换 | 过渡中用 `filter: blur(2px)` 衔接；低于 20px，重度模糊尤其在 Safari 中昂贵。 |
+| 可按元素没有 `:active` | 界面缺少反馈 | 按下使用 `scale(0.97)`，160ms ease-out。 |
+| 只在手势结束时反馈 | 拖动脱节 | 从指针按下起持续一比一跟随。 |
 
-## Vocabulary
+## 术语
 
-Names for precise implementation instructions. Each row is a pattern, not a spec.
+用于精确实现指令的名称。每行是一种模式，不是硬性规格。
 
-| Pattern | When to use |
+| 模式 | 适用情形 |
 | --- | --- |
-| Scale in / Pop in | Element appears; pop adds a slight overshoot for a bouncy landing |
-| Reveal | Content uncovered via clip-path or mask instead of fading in |
-| Enter / Exit | The animation an element plays when added/removed — always define both |
-| Stagger | Multiple items enter together; small delay per item |
-| Origin-aware animation | Popover/menu grows from its trigger, not its own center |
-| Continuity transition | State change that keeps the user oriented by visually connecting before/after (exit continuity) |
-| Shared element transition | An element travels between positions (thumbnail → card) |
-| Layout animation | A size/position change animates to the new spot instead of snapping |
-| Direction-aware transition | Forward navigation slides one way, back slides the opposite |
-| Scroll reveal | Element fades/slides in as it enters the viewport |
-| Scroll-driven animation | Animation progress tied directly to scroll position |
-| Skeleton / shimmer | Placeholder with a moving sheen while content loads |
-| Number ticker | Digits roll or count to a new value; use tabular numbers so widths don't shift |
-| Text morph | Text animates character-by-character on change, drawing attention to the new value |
-| Hold to confirm | Progress fill while the user holds a button (destructive actions) |
-| Drag to reorder | Item moved within a list while others shift to make room |
-| Swipe to dismiss | Drag a surface off-screen to close it (toast, sheet, drawer) |
-| Rubber-banding | Resistance and snap-back at a scroll or drag boundary |
-| Follow-through | Parts of an element keep settling after the main motion stops, adding weight |
-| Anticipation | A small wind-up opposite the move, hinting at what's coming |
-| Pulse | Gentle repeating scale/opacity change to draw attention — sparingly |
-| Line drawing | SVG path draws itself in (onboarding, empty states) |
-| Crossfade | One element fades out as another fades in, in the same spot |
+| 缩放进入 / 弹出 | 元素出现；弹出增加轻微过冲和回弹落点。 |
+| 揭示 | 用 clip-path 或遮罩露出内容，不是淡入。 |
+| 进入 / 退出 | 元素添加或移除时的动画；始终定义两者。 |
+| 错峰 | 多项共同入场，每项稍微延迟。 |
+| 感知原点的动画 | 浮层或菜单从触发点展开，而非自身中心。 |
+| 连续性过渡 | 视觉连接变化前后，帮助用户保持方向感，包括退出连续性。 |
+| 共享元素过渡 | 元素在不同位置间移动，如缩略图到卡片。 |
+| 布局动画 | 尺寸或位置变化时过渡到新位置，而非跳变。 |
+| 感知方向的过渡 | 前进导航向一侧滑动，返回向相反方向。 |
+| 滚动揭示 | 元素进入视口时淡入或滑入。 |
+| 滚动驱动动画 | 动画进度直接绑定滚动位置。 |
+| 骨架 / 微光 | 内容加载时，占位区域带移动光泽。 |
+| 数字滚动 | 数字滚动或计数至新值；使用等宽数字避免宽度变化。 |
+| 文字变形 | 文本变化时逐字动画，强调新值。 |
+| 按住确认 | 按住按钮期间填充进度，用于破坏性动作。 |
+| 拖动排序 | 列表项移动，其他项让出空间。 |
+| 滑动关闭 | 把提示、面板或抽屉拖出屏幕来关闭。 |
+| 橡皮筋效果 | 滚动或拖动边界处的阻力与回弹。 |
+| 随动 | 主要动作停止后，局部继续收敛，增加重量感。 |
+| 预备动作 | 主动作前向相反方向轻微蓄势，提示即将发生什么。 |
+| 脉冲 | 轻微重复缩放或透明度变化以吸引注意，节制使用。 |
+| 线条绘制 | SVG 路径逐渐画出，适用于引导或空状态。 |
+| 交叉淡化 | 同一位置一个元素淡出，另一个淡入。 |
 
-## Accessibility
+## 无障碍
 
-- `prefers-reduced-motion: reduce` → replace slides, springs, and parallax with short opacity cross-fades; drop transform-based motion and overshoot. Keep opacity/color transitions that aid comprehension — reduced motion is gentler, not zero, and feedback (press states, state changes, errors) must still communicate.
-- In JS, branch transform values on `useReducedMotion()` rather than relying on CSS alone.
-- Gate hover motion behind `@media (hover: hover) and (pointer: fine)` — touch fires false hovers on tap.
-- `prefers-reduced-transparency: reduce` → make translucent surfaces solid: drop the blur, raise background opacity.
-- Avoid full-viewport moving backgrounds and slow loops (~0.2 Hz, one cycle per 5s) — prime vestibular triggers.
+- `prefers-reduced-motion: reduce` → 用短暂透明度交叉淡化替代滑动、弹簧和视差，移除基于变换的运动与过冲。保留帮助理解的透明度或颜色过渡；减少动态效果意味着更轻柔，不是零反馈，按压、状态变化和错误仍需传达。
+- 悬停动效限制在 `@media (hover: hover) and (pointer: fine)`；触摸点击可能误触发悬停。
+- `prefers-reduced-transparency: reduce` → 将半透明表面改为实色，去掉模糊、提高背景不透明度。
+- 避免全视口移动背景和慢循环（约 0.2 Hz，即每 5 秒一轮），这些容易引发前庭不适。
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -191,21 +185,7 @@ Names for precise implementation instructions. Each row is a pattern, not a spec
 }
 ```
 
-## Motion Library Selection
-
-Only add a library when it removes concrete complexity (see quality.md) — plain CSS transitions are the right tool for a simple hover or fade.
-
-| Task | Use |
-| --- | --- |
-| Springs, layout animations, enter/exit, gesture-driven values | [motion](https://motion.dev) (Framer Motion) |
-| Toasts / notifications | [Sonner](https://sonner.emilkowal.ski) |
-| Animated numbers (counters, prices, stats) | [NumberFlow](https://number-flow.barvian.me) |
-| Drag and drop | [dnd kit](https://dndkit.com) |
-| Unstyled accessible primitives (dialog, popover, menu, select) | [base-ui](https://base-ui.com) |
-
-- CSS (and WAAPI) beat rAF-based JS under load: CSS for predetermined motion, JS/springs for dynamic, interruptible, gesture-driven motion.
-- Hand-built toasts or div-based dropdowns with manual focus handling → use Sonner / base-ui instead.
 
 ---
 
-Distilled from [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT license).
+提炼自 [emilkowalski/skills](https://github.com/emilkowalski/skills)，采用 MIT 许可证。

@@ -1,26 +1,27 @@
 # Coding Agent Skills
 
-按需使用的设计、业务验证、偏好记录和外部 CLI 调用合同，以及可以直接查阅的工程资料。
+按需使用的设计、业务验证、决策追问、仓库内经验积累和外部 CLI 调用合同，以及覆盖所有开发任务的工程行为准则。
 
-普通开发、修复、需求分析和补测试由当前 Agent 直接完成。本库不再提供默认的开发调度器，也不把澄清、QA 和验收串成固定阶段。是否使用 Skill 取决于它能否补充当前任务需要的信息；用户要求不使用时，直接遵从。
+开发、修复、重构、开发测试和代码审查以 `eng` 为统一工程入口，由当前 Agent 完成；纯需求分析按问题直接处理。本库不再提供默认的开发调度器，也不把澄清、QA 和验收串成固定阶段。是否使用 Skill 取决于它能否补充当前任务需要的信息；用户要求不使用时，直接遵从。
 
 [English](README.en.md)
 
 ## 可选能力
 
-当前有 5 个 Skill，全部按需选择：
+当前有 6 个 Skill，全部按需选择：
 
 | Skill | 用途 |
 | --- | --- |
-| `design` | 需要具体设计决策时查阅交互、视觉、前端质量和动效资料；已定设计的普通实现无需再走设计流程。 |
+| `design` | 需要具体设计决策时查阅交互、视觉和动效资料；已定设计的普通实现无需再走设计流程。 |
 | `verify` | 用户明确要求的业务规则检查、用户旅程诊断或最终验收。请求保护规则时可以补测试；仅评审时保持只读。 |
-| `eng` | 后端边界、质量、存储、架构决策、调试方法或消融比较；普通功能、修复和补测试不必加载。 |
-| `reflect` | 仅显式 `$reflect` / `/reflect` 记录用户说过的偏好；普通纠正立即遵循，不自动触发记录流程。 |
+| `eng` | 所有开发任务的统一工程入口：约束工程行为与品味，遵循如无必要勿增实体、可维护表达、清晰契约、真实失败、状态归属、兼容性和证据原则；不规定固定流程。 |
+| `grill-me` | 用户要求深度追问或挑战方案时，先查事实，一次追问一个关键问题，收敛决策与待验证项。 |
+| `reflect` | 日常从纠正、失败和有证据的改进中自动复盘，经验默认跟随仓库；全局记忆需用户明确要求。 |
 | `external-cli` | 用户点名 Claude Code、Codex CLI、Kimi Code、OpenCode 或 Grok Build 时，按合同调用对应无头 CLI；ACP 只用于有客户端的会话或编辑器嵌入。 |
 
 `verify` 合并了原 `qa` 和 `acceptance` 的用途。它区分检查行为、按请求增加测试保护和给出最终结论；技术验收不授权发布。真正的独立审查需要实际的审查者分离和相应授权。
 
-`reflect` 遵从宿主的记忆与文件写入规则。已明确授权内容和落点时直接记录；只在范围或落点有实质歧义时询问。Codex 元数据关闭其隐式调用，其他宿主以明确的入口描述约束。参见 [Codex 调用策略](https://learn.chatgpt.com/docs/build-skills#optional-metadata)。
+`reflect` 遵从宿主的记忆与文件写入规则。优先复用仓库已有经验日志，否则在首次有可记录经验时使用仓库根目录 `.agent-learning.md`；宿主禁止自动持久化时只在对话中复盘。区分确认偏好、已获证据的经验与待验证假设，不自动改写项目规则。Codex 元数据允许隐式调用；其他宿主按入口描述触发。`$reflect` / `/reflect` 仍可主动复盘或维护经验。
 
 ## 怎样使用这四个能力
 
@@ -31,17 +32,19 @@
 | 改善已有产品的交互 | `$design 重新设计批量发布的部分失败和重试，沿用现有视觉系统。` | 先处理状态、反馈和恢复；不强制换字体、加动效或追求新奇。 |
 | 判断工程方案 | `$eng 检查库存预留在并发请求和超时重试下的幂等方案。` | 对照适用条件、错误做法、改法与验证方法，只读相关参考。 |
 | 检查实际行为 | `$verify 只诊断草稿在保存后刷新是否丢失，不修改代码。` | 将界面声称的结果与真实持久化状态对应；缺少证据就说明边界。 |
+| 挑战方案 | `$grill-me 帮我逐步推敲离线编辑方案，一次问一个问题。` | 先查现有事实，再沿关键分支追问，收敛为决策、边界和最小验证。 |
+| 复盘并积累经验 | `$reflect 复盘这次修复，将有证据的经验留在仓库。` | 区分事实、经验和假设，复用仓库日志并遵从宿主写入规则。 |
 | 记录明确偏好 | `$reflect 将本项目的包管理器偏好从 pnpm 改为 npm，更新项目 AGENTS.md 的偏好段。` | 在宿主允许的机制内更新同作用域旧条目，不重复记录、不扩展成全局偏好。 |
 
-设计参考提供营销概念、管理工具和原生桌面三类[选择示例](design/references/design-direction.md#calibration-examples)。工程例证覆盖[幂等与租户隔离](eng/references/backend-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
+设计参考提供营销概念、管理工具和原生桌面三类[选择示例](design/references/design-direction.md#calibration-examples)。工程例证覆盖[幂等与租户隔离](eng/references/software-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
 
-`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换和批量部分完成，说明证据足以证明什么。它复用宿主已有工具，不要求额外浏览器或测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；普通纠正不自动持久化。
+`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换和批量部分完成，说明证据足以证明什么。它复用宿主已有工具，不要求额外浏览器或测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；记录始终受宿主规则约束；不会默认写入全局。
 
 这些例子是指导资料，不是已执行的测试报告。上游来源用于说明借鉴的方法，不代表已经证明本库的模型增益。具体证据层级见[工作流程与评估](docs/workflow.md)，规则与偏好的落点见[职责说明](docs/three-layers.md)。
 
-## 工程参考
+## 工程原则与参考
 
-后端、存储、架构、调试和消融资料由可选的 `eng` 加载，文件在 `eng/references/`。只读当前决策需要的那一份。`skills references` 列出打包路径。安装 `eng` 或 `all` 时会复制这些文件。
+`eng/SKILL.md` 提供各类开发任务共同的工程准则。已有架构、存储、调试和消融资料保留在 `eng/references/`，仅在具体问题需要时读取；不按前端、后端或客户端加载整套规范。`skills references` 列出打包路径。安装 `eng` 或 `all` 时会复制这些文件。
 
 ## 安装与查看
 
@@ -52,6 +55,7 @@
 ./install.sh design --target agents --dry-run
 ./install.sh design --target agents
 ./install.sh verify --target agents
+./install.sh grill-me --target agents
 ./install.sh external-cli --target agents
 ./install.sh claude-code --target agents
 ```
@@ -73,7 +77,7 @@ npx --package my-coding-skills skills references
 | `engineering` | `eng` |
 | `meta` | `reflect` |
 | `adapters` / `delegation` | `external-cli` |
-| `all` | 全部 5 个 Skill，显式选择才安装 |
+| `all` | 全部 6 个 Skill，显式选择才安装 |
 
 目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`gemini`、`opencode` 和 `all`。`all` 写入 agents、claude、gemini、opencode 四处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
 
@@ -106,8 +110,8 @@ npx --package my-coding-skills skills references
 
 ## 调用边界
 
-- 普通功能、修复、分析、开发测试和常规 code review 直接交给当前 Agent。
-- 需要设计决策时按需使用 `design`；业务规则检查、真实用法诊断或最终验收明确请求 `verify`；后端、存储、架构或调试方法使用 `eng`；记录偏好显式调用 `reflect`。
+- 功能、修复、重构、调试、开发测试和代码审查使用 `eng` 的共同准则，由当前 Agent 直接完成；用户禁用 Skill 时遵从。
+- 需要设计决策时按需使用 `design`；业务规则检查、真实用法诊断或最终验收明确请求 `verify`；工程原则和按需参考由 `eng` 提供；挑战方案可请求 `grill-me`；纠正、失败和有证据的改进可触发 `reflect` 的仓库内学习。
 - 外部 CLI 只有在当前请求或适用的用户持续指令已选定时才调用。发现项目策略文件本身不构成授权。
 - 调用方必须实际调用指定 CLI，准确报告不可用情况，保留真实结果并复核证据。把用户选择或禁止使用 Skill 的要求传给目标，不强制目标加载本库流程。
 - Skill 不授权增加任务、发布、生产操作或递归委派。结束一个检查不结束其他已授权工作。
@@ -137,7 +141,6 @@ design/
     anthropic-frontend-design-LICENSE.txt
     design-direction.md
     interaction.md
-    quality.md
 verify/
   SKILL.md
   agents/
@@ -151,10 +154,14 @@ eng/
   references/
     ablation.md
     architecture-decisions.md
-    backend-architecture.md
-    backend-quality.md
+    software-architecture.md
+    software-quality.md
     database-engineering.md
     debugging.md
+grill-me/
+  SKILL.md
+  agents/
+    openai.yaml
 reflect/
   SKILL.md
   agents/

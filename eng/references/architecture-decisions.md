@@ -1,45 +1,54 @@
-# Architecture Decisions
+# 架构决策
 
-## Codebase Design Vocabulary
+## 如无必要，勿增实体
 
-Use this vocabulary when discussing module shape or refactoring:
+新增模块、接口、依赖、服务或配置应解决当前问题，收益要覆盖其理解、维护和运行成本。先看已有结构能否承担职责，不为想象中的未来或某个架构名称增加实体。
 
-- **Module**: anything with an interface and an implementation, from a function to a package.
-- **Interface**: everything a caller must know to use the module correctly: types, invariants, ordering, errors, configuration, and performance expectations.
-- **Seam**: the place where behavior can vary without editing the caller.
-- **Adapter**: a concrete implementation that sits at a seam.
-- **Depth**: how much useful behavior sits behind how little interface a caller must learn.
-- **Leverage**: the caller benefit from a deep module.
-- **Locality**: the maintainer benefit from concentrating change, bugs, and verification in one place.
+- **反例：** 单一实现、没有替换或隔离需求，却先建立注册表、抽象工厂和插件协议；调用方仍需理解所有底层细节。
+- **合理例外：** 一个边界能隔离外部副作用、集中必须一致的状态或隐藏复杂协议，即使暂时只有一个调用方，也可能值得建立。
+- **判断方式：** 比较增加与不增加结构时，约束由谁保证、变化会触及哪些地方、失败如何定位。删除后复杂性若只是转移到调用方，不能算简化；保留少量独立重复有时比错误共享更易维护。
 
-Prefer deep modules: small interfaces with meaningful behavior behind them. Use the deletion test: if deleting a module makes complexity disappear, it was probably pass-through; if deleting it spreads complexity across callers, it was earning its place.
+## 代码库设计术语
 
-Keep logic that changes for the same reason together, with explicit ownership of state and invariants. Make inputs, outputs, errors, and relevant ordering part of the contract so a change can be understood and verified near its owner. Splitting files or adding forwarding layers alone does not create cohesion or reduce coupling. The deletion test is a design heuristic, not measured evidence; use `ablation.md` when the decision needs a controlled comparison.
+讨论模块结构或重构时，使用以下概念：
 
-## Backend Research
+- **模块**：任何具有接口和实现的单元，从函数到包都可以。
+- **接口**：调用方为了正确使用模块必须了解的全部内容，包括类型、不变量、顺序、错误、配置和性能预期。
+- **变化接缝**：无需修改调用方即可改变行为的位置。
+- **适配器**：位于变化接缝处的具体实现。
+- **深度**：调用方只需了解少量接口，即可获得多少有用行为。
+- **收益**：深模块为调用方带来的价值。
+- **局部性**：把改动、缺陷和验证集中在一处，为维护者带来的便利。
 
-- Research before coding when library behavior, protocol choices, schema design, or middleware semantics are uncertain.
-- Prefer primary sources: official docs, source code, RFCs, framework references, or direct behavior verification.
-- Capture only the decision-relevant outcome: chosen option, rejected options, and why.
+优先采用深模块：小接口背后承载有意义的行为。使用删除检验：删除模块后复杂性也消失，它可能只是转发层；删除后复杂性分散到各调用方，它就在发挥价值。
 
-## Architecture Framing
+把因同一原因而变化的逻辑放在一起，明确状态和不变量的归属。将输入、输出、错误和相关顺序纳入约定，使改动能在所属模块附近被理解和验证。仅拆分文件或增加转发层不会提高内聚或降低耦合。删除检验是设计启发，不是测量证据；决策需要受控比较时使用 `ablation.md`。
 
-- Define module or service seams, responsibilities, and integration points early.
-- State data flow, consistency model, retry behavior, timeout strategy, and observability needs.
-- Design for operability: logging, metrics, tracing, error surfacing, and rollback path.
-- Favor evolvable structures over premature platform complexity.
-- Avoid speculative seams. One adapter means a seam is only hypothetical; two real adapters or a concrete testing/operational need make it worth considering.
-- Use a component, sequence, or data-flow view only when it clarifies the decision or is requested.
+## 软件工程调研
 
-## Worked Example: One Owner For Publish State
+- 库行为、协议选择、数据模型设计或中间件语义不确定时，先调研再编码。
+- 优先使用一手来源：官方文档、源码、RFC、框架参考或直接行为验证。
+- 只记录与决策有关的结果：选择什么、排除什么，以及原因。
 
-- **Applies when:** a UI, request handler, and background worker all describe the same publication.
-- **Counterexample:** the handler sets `published = true` when enqueueing, the worker separately tracks delivery, and the UI infers completion from a successful HTTP response. A worker failure leaves three incompatible meanings of success.
-- **Better shape:** one domain owner defines allowed transitions and durable operation identity, such as `queued -> running -> succeeded | failed`. The handler acknowledges enqueueing; workers apply guarded transitions; the UI displays that authoritative status. Include item results when partial completion is a real domain outcome. An attempt/version token can reject stale worker updates after a retry or cancellation. Reuse the existing module if it can own this contract; do not introduce a service merely to house an enum.
-- **Verify:** delay completion, fail a worker, replay a result, and send an old attempt's completion after a newer attempt begins. Check the durable state and each affected consumer. A rendering test alone cannot prove transition enforcement.
+## 架构梳理
 
-Compare designs by how many callers must understand retries and transition rules. A shared enum without a shared enforcing owner does not solve the problem.
+- 尽早明确模块或服务的变化边界、职责和集成点。
+- 说明数据流、一致性模型、重试行为、超时策略和可观测性需求。
+- 考虑运维能力：日志、指标、追踪、错误呈现和回滚路径。
+- 优先采用可演进结构，避免过早引入平台复杂性。
+- 避免推测性的扩展点。只有一个适配器时，扩展需求仍是假设；出现两个真实适配器，或具体测试、运维需求时，才值得考虑。
+- 仅在能澄清决策或用户要求时，使用组件图、时序图或数据流视图。
 
-## Source Inspiration
+<a id="worked-example-one-owner-for-publish-state"></a>
+## 示例：发布状态由一个模块负责
 
-This reference includes a localized extraction of Matt Pocock's `codebase-design` vocabulary: deep modules, interfaces, seams, adapters, leverage, and locality. Source: https://github.com/mattpocock/skills
+- **适用情形：** 界面、请求处理器和后台工作进程都在描述同一次发布。
+- **反例：** 处理器入队时就设置 `published = true`，工作进程另行跟踪交付，界面从 HTTP 成功响应推断完成。工作进程一旦失败，就出现三种不一致的成功定义。
+- **更好的结构：** 由一个领域模块定义允许的状态转换和持久化操作标识，例如 `queued -> running -> succeeded | failed`。处理器只确认入队；工作进程执行带约束的状态转换；界面显示该权威状态。部分完成是实际领域结果时，包含逐项结果。尝试标识或版本令牌可拒绝重试或取消后的旧工作进程更新。现有模块能负责该约定时就复用，不要只为容纳一个枚举而新增服务。
+- **验证：** 延迟完成、让工作进程失败、重放结果，并在新尝试开始后发送旧尝试的完成消息。检查持久化状态和每个受影响的消费方。仅有渲染测试不能证明状态转换约束生效。
+
+比较方案时，看有多少调用方必须理解重试和状态转换规则。只有共享枚举、没有统一执行约束的所有者，不能解决问题。
+
+## 借鉴来源
+
+本参考提炼并本地化了 Matt Pocock 的 `codebase-design` 术语：深模块、接口、变化接缝、适配器、收益和局部性。来源：https://github.com/mattpocock/skills

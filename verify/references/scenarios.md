@@ -1,46 +1,46 @@
-# Behavior Evidence Examples
+# 行为证据示例
 
-Read only the scenario relevant to the requested check. These are examples for choosing evidence, not a mandatory suite or authorization to exercise production effects. Use the host's available browser, CLI, logs, and isolated test storage; no specific browser package is required. Select affected journeys from the request and changed behavior, using the diff when helpful.
+只阅读与所请求检查有关的场景。这些示例用于选择证据，不是必跑测试集，也不授权制造生产副作用。使用宿主可用的浏览器、CLI、日志和隔离测试存储，不要求特定浏览器软件包。依据请求和行为变化选择受影响旅程，必要时参考差异。
 
-## Match The Claim To The Evidence
+## 让结论与证据匹配
 
-| Claim | Relevant evidence | Insufficient alone |
+| 声称的结果 | 相关证据 | 单独不足以证明的内容 |
 | --- | --- | --- |
-| A user can complete the flow | Execute the affected steps and inspect the resulting authoritative state | Screenshot or success toast |
-| A retry cannot duplicate an effect | Duplicate/concurrent attempts through the enforcing mechanism, then count durable effects | Mocked handler returning twice |
-| A fix resolves the reported bug | Same reproducer and conditions before/after, when feasible | An unrelated passing suite |
-| A change is ready for acceptance | Agreed criteria and required checks at the relevant revision | Test count or reviewer confidence |
+| 用户能完成流程 | 执行受影响步骤，检查产生的权威状态 | 截图或成功提示 |
+| 重试不会产生重复效果 | 通过实际约束机制发起重复或并发尝试，再统计持久化效果 | 模拟处理器返回两次 |
+| 修复解决了原始缺陷 | 可行时在相同条件下用同一方式对比修复前后 | 无关测试集通过 |
+| 改动可以验收 | 对应版本满足约定标准和必需检查 | 测试数量或审查者信心 |
 
-Reuse evidence when its revision, configuration, inputs, and dependencies still apply. Rerun when those changed or freshness is material; no need to rerun every command merely to repeat a status. Record a minimal reproduction, expected/observed effect, and evidence location. Never invent a defect to fill a report quota.
+版本、配置、输入和依赖仍适用时复用证据；这些条件变化或时效重要时再重跑，无需只为重复状态而重跑每条命令。记录最小复现、预期与实际效果、证据位置。绝不为填满报告而编造缺陷。
 
-## Response Lost After Payment
+## 支付完成后响应丢失
 
-- **Trigger:** in a provider sandbox or controlled test double, commit a payment but drop its response; retry the same operation.
-- **Inspect:** the provider operation identity, local order/payment record, and reconciliation result. Confirm one charge and eventual truthful local state. A local database count cannot prove provider-side uniqueness.
-- **Countercheck:** a genuinely new operation follows the intended business rule; idempotency must not silently suppress unrelated work.
-- **Limit:** a test double proves local handling only. Without provider evidence, report that boundary as unverified. Do not create real charges for a diagnosis.
+- **触发：** 在提供商沙箱或受控测试替身中完成支付，但丢弃响应；重试同一操作。
+- **检查：** 提供商操作标识、本地订单或支付记录、对账结果。确认只扣款一次，且本地状态最终真实。仅统计本地数据库不能证明提供商侧唯一性。
+- **反向检查：** 真正的新操作仍遵循预期业务规则；幂等不能静默吞掉无关工作。
+- **限制：** 测试替身只能证明本地处理。缺少提供商证据时，将该边界报告为未验证。不要为诊断产生真实扣款。
 
-## Saved Draft After Refresh Or Restart
+## 刷新或重启后恢复已保存草稿
 
-- **Trigger:** edit a draft, wait for the claimed save acknowledgment, then reload or restart at the boundary the product promises to survive.
-- **Inspect:** the restored content and the actual persistence layer. Repeat an interrupted save if recovery is in scope. Distinguish committed work from unsaved input according to the product contract.
-- **Countercheck:** use a new edit so old cached content cannot masquerade as a successful save.
-- **Limit:** a DOM snapshot before reload does not establish durability; browser reload does not establish server-process recovery.
+- **触发：** 编辑草稿，等待产品声称的保存确认，然后在产品承诺能承受的边界上刷新或重启。
+- **检查：** 恢复内容和实际持久化层。恢复在范围内时，再检查中断的保存。依据产品约定区分已提交工作和未保存输入。
+- **反向检查：** 使用一次新编辑，避免旧缓存内容冒充保存成功。
+- **限制：** 刷新前的 DOM 快照不能证明持久性；浏览器刷新不能证明服务端进程恢复。
 
-## Permission Or Account Switch
+## 权限或账号切换
 
-- **Trigger:** with two authorized test accounts, load a resource as A, switch to B, then attempt the affected read or action using A's known ID.
-- **Inspect:** server authorization, cache/account scope, visible data, and durable rows. Verify a permitted B operation still succeeds.
-- **Expected:** use the product's stated denial and draft-isolation behavior; do not invent a universal rule that all drafts must survive or be erased on account switch.
-- **Limit:** hiding a button is not authorization proof. Never access unrelated users' data to construct the test.
+- **触发：** 使用两个已获准的测试账号，以 A 加载资源，切换至 B，再使用 A 的已知 ID 尝试相关读取或操作。
+- **检查：** 服务端授权、缓存和账号范围、可见数据及持久化行。确认 B 获准的操作仍可成功。
+- **预期：** 遵循产品规定的拒绝和草稿隔离行为；不要编造“切换账号时所有草稿都必须保留或删除”的通用规则。
+- **限制：** 隐藏按钮不是授权证据。绝不为构造测试而访问无关用户数据。
 
-## Partial Batch Completion
+## 批量操作部分完成
 
-- **Trigger:** let two test items succeed and one fail; retry according to the advertised contract.
-- **Inspect:** per-item results, operation identities, retained user context, and final effects. If the contract retries failed items, successful items must not be repeated. If the batch is atomic, assert rollback instead of assuming partial success is valid.
-- **Countercheck:** refresh or revisit the operation to ensure the visible result agrees with durable progress.
-- **Limit:** browser observations prove interaction behavior; storage/provider evidence establishes duplicate or missing effects.
+- **触发：** 让两个测试项成功、一个失败，按产品声称的约定重试。
+- **检查：** 逐项结果、操作标识、保留的用户上下文和最终效果。若约定只重试失败项，成功项不得重复执行。若批次要求原子性，应断言回滚，而不是假设部分成功有效。
+- **反向检查：** 刷新或重新查看操作，确认可见结果与持久化进度一致。
+- **限制：** 浏览器观察证明交互行为；存储或提供商证据用于确认重复或缺失效果。
 
-## Sources And Limits
+## 来源与限制
 
-The evidence mapping draws on [Superpowers verification-before-completion](https://github.com/obra/superpowers/blob/main/skills/verification-before-completion/SKILL.md); affected-flow exploration and reproducible browser evidence are informed by [gstack QA](https://github.com/garrytan/gstack/blob/main/docs/skills.md#qa). These locally written examples preserve this library's scope and host-tool boundaries. They are not claims that these scenarios have been executed or that a Skill outperforms the host baseline.
+证据映射借鉴 [Superpowers 的完成前验证](https://github.com/obra/superpowers/blob/main/skills/verification-before-completion/SKILL.md)；受影响流程探索和可复现浏览器证据借鉴 [gstack QA](https://github.com/garrytan/gstack/blob/main/docs/skills.md#qa)。这些本地编写的例子保留了本库的范围和宿主工具边界，不代表已执行这些场景，也不声称 Skill 优于宿主基线。

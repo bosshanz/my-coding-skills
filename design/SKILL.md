@@ -1,27 +1,26 @@
 ---
 name: design
-description: "UI interaction, visual direction, and motion references for meaningful design work. Use for requested interface design, flow redesign, visual reshaping, or animation work."
-when_to_use: "Use when a task needs concrete interaction or visual decisions, or a design critique. Ordinary implementation of an established design, trivial CSS edits, backend work, and business acceptance need no design workflow."
-argument-hint: "[界面 / 流程 / 动效 | UI, flow, or motion]"
+description: "为有实质设计需求的任务提供界面交互、视觉方向和动效参考。用于用户请求的界面设计、流程重设计、视觉调整或动画工作。"
+when_to_use: "任务需要具体交互、视觉决策或设计评审时使用。按既定设计实现、简单 CSS 修改、后端工作和业务验收无需引入设计流程。"
+argument-hint: "[界面 / 流程 / 动效]"
 ---
 
-# Design
+# 设计
 
-Use the references that add concrete information to the requested design decision. The user's brief, existing design system, platform conventions, and accessibility needs take precedence over stylistic recommendations.
+只使用能为当前设计决策提供具体信息的参考。用户的设计要求、已有设计系统、平台惯例和无障碍需求优先于风格建议。
 
-| Reference | Relevant work |
+| 参考 | 适用工作 |
 | --- | --- |
-| `references/interaction.md` | Behavior and value before packaging, stateful product flows, object identity, async feedback, interruption, preserved work, and recovery. |
-| `references/design-direction.md` | Visual exploration, typography, palette, layout, and product-specific copy. |
-| `references/quality.md` | Frontend state handling, accessibility, responsive behavior, and performance. |
-| `references/animation.md` | Motion timing, curves, springs, gestures, interruption, and reduced-motion behavior. |
+| `references/interaction.md` | 先确认行为与价值，再考虑包装；有状态的产品流程、对象身份、异步反馈、中断、工作保留与恢复。 |
+| `references/design-direction.md` | 视觉探索、字体、配色、布局和符合产品场景的文案。 |
+| `references/animation.md` | 动效时长、曲线、弹簧、手势、中断和减少动态效果。 |
 
-Inspect the existing experience before changing it. Resolve critical flow and state behavior before visual polish when both are in scope. Read only the reference needed for the affected decision; a meaningful UI task does not require loading every file.
+改动前先检查现有体验。如果流程与视觉都在范围内，先解决关键流程和状态行为，再打磨外观。只阅读当前决策需要的参考；有实质意义的界面任务也不要求加载全部文件。
 
-For implementation requests, choose routine details from the brief and existing system, then build and verify. For design-only requests, provide the proposal. Use screenshots for appearance and actual interaction evidence for state, persistence, and recovery. No separate design approval or fixed report is required.
+本 Skill 负责交互、视觉和动效判断，不提供前端架构、状态管理、性能调优或测试分层规范。用户要求实现时，依据设计要求和已有系统继续已授权工作；工程原则由 `eng` 提供。仅要求设计时，交付方案。用截图证明外观，用真实交互证据证明状态、持久化和恢复。不要求额外的设计审批或固定报告。
 
-Keep technical implementation details out of product copy unless they help its user decide or act. Explain the chosen direction and meaningful verification in the caller's language, proportionally to the task.
+除非技术实现细节能帮助产品用户做决定或采取行动，否则不要把它们写入产品文案。使用调用方的语言，按任务规模说明所选方向和有意义的验证。
 
-## Sources
+## 来源
 
-`design-direction.md` is adapted from pinned third-party Apache-2.0 content; its license is in `references/anthropic-frontend-design-LICENSE.txt`. `animation.md` is adapted from Emil Kowalski's MIT-licensed skills. Preserve attribution when reusing these files.
+`design-direction.md` 改编自 Anthropic `frontend-design` 提交 `9d2f1ae187231d8199c64b5b762e1bdf2244733d` 的 Apache-2.0 内容，许可证见 `references/anthropic-frontend-design-LICENSE.txt`。`animation.md` 改编自 Emil Kowalski 以 MIT 许可证发布的 Skills。复用时保留来源声明。

@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
-  "version": "0.6.0",
-  "description": "Optional UI design, business verification, explicit preferences, engineering references, and a unified external CLI adapter for coding agents.",
+  "version": "0.7.0",
+  "description": "Optional software engineering principles, UI design, business verification, decision interviews, repository-local learning, and a unified external CLI adapter for coding agents.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
@@ -11,6 +11,7 @@
     "verify",
     "eng",
     "reflect",
+    "grill-me",
     "external-cli",
     "docs",
     "templates",

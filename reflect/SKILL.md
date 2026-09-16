@@ -1,31 +1,82 @@
 ---
 name: reflect
-description: "Record a durable user preference only when explicitly invoked as $reflect or /reflect. A correction during ordinary work does not activate this Skill."
-argument-hint: "[要记录的偏好与范围 | preference and scope]"
+description: "在日常仓库工作中，从用户纠正、失败尝试和有证据的更好做法中学习；也可用 $reflect 或 /reflect 开展专题复盘或记忆维护。经验默认留在当前仓库，全局记忆必须由用户明确要求。"
+argument-hint: "[复盘对象、经验或偏好与范围]"
 ---
 
-# Reflect
+# 复盘与学习
 
-Record only a preference the user actually stated. Apply current corrections immediately; persistence is a separate, explicitly requested action.
+把已完成工作、纠正、失败或更好做法中的证据转化为下一次可用的改进。立即落实当前纠正。在仓库工作中，遇到有意义的纠正、失败尝试或有证据的更好做法时启用。有具体学习信号时复盘重要结果，不必每次微小操作后都复盘。仓库内学习是默认能力；所有写入仍遵守宿主的持久化规则。全局记忆始终需要用户明确要求。
 
-- Identify the preference, its scope, and its source. Do not infer a general rule from a situational edit or a product requirement.
-- Follow the host's memory and instruction-file rules. Use the requested destination or an existing project preference section when clearly authorized. Do not copy private host memories into a repository.
-- If the request already authorizes the entry and destination, write it without another confirmation. Ask one focused question only when persistence scope or destination is materially ambiguous.
-- Keep the entry short, dated, and sourced. Update an existing equivalent entry instead of appending a duplicate; preserve unrelated instructions.
-- Report what was recorded and where. Continue other authorized work. Recording a preference does not authorize changes to this skill library.
+## 复盘并提炼经验
 
-## Scope, Conflicts, And Retraction
+1. 从可用对话、差异、日志和检查中还原预期与实际结果。识别哪些成功、哪些失败、哪些尚未验证。只阅读相关材料，不把缺失证据补写成事实。
+2. 找出重要偏差。区分已观察症状、有证据支持的原因和可能解释。一次工具失败不能证明普遍限制；一次检查通过只能证明其实际覆盖的行为。
+3. 形成具体经验：在什么条件下，Agent 应改变什么做法，以及什么证据能证明这样更有效？优先记录具体恢复方式或决策规则，不写“更仔细一点”之类空泛建议。没有可复用信号时，不强行制造经验。
+4. 区分**用户确认的偏好**、**有证据支持的经验**和**待验证的假设**。沉默、称赞、重复或自我批评都不能把推断变成用户偏好。只有条件和结果提供支持，重复出现才会增强经验的可信度；固定重复次数不是证明。
+5. 报告有用发现及下一次应用或验证方法。继续其他已授权工作。复盘不授权无关修复、修改 Skill 库或调用外部模型。
 
-Distinguish personal preferences from team/project conventions. Use a shared repository file only when that destination is authorized; a personal preference does not become team policy merely because a repository is open.
+如果请求只是记录一条准确偏好，跳过复盘，直接遵循下方记录规则。
 
-Before writing, check the relevant existing entries. An explicit replacement supersedes the old preference at the same scope; update it instead of leaving contradictory instructions. A narrower exception does not erase a broader preference. If the intended precedence is materially ambiguous, ask about that conflict only. On an explicit retraction, remove or mark superseded only the matching entry through the host's permitted mechanism; some hosts require an update note rather than direct edits.
+## 仓库内记忆
 
-| User statement | Handling |
+如果仓库已明确指定经验日志，优先使用它。否则使用仓库根目录的 `.agent-learning.md`，仅在首次有有用且允许记录的条目时创建。这是随仓库携带的文件，不是主目录或某台机器专用的存储。仓库根目录不明确时，先从项目上下文或 Git 确认，再写入。仓库之外，除非用户指定落点，否则仅在对话中保留结论；绝不自动转存全局记忆。
+
+条目保持简短，例如：
+
+```markdown
+## 草稿保存确认
+- 类型：有证据支持的经验
+- 范围：本仓库的草稿保存流程
+- 触发与做法：报告保存成功前，等待持久化确认。
+- 证据：2026-09-16，刷新丢失的失败复现及通过的回归检查；链接到相关测试或任务记录。
+- 限制：仅适用于已测试的草稿流程；离线同步尚未验证。
+```
+
+上述日期和证据仅演示格式，不代表已执行结果。只添加真实证据。将个人偏好与技术经验分开。局部经验不会自动成为团队规则：经验日志是供查阅的证据，而修改 `AGENTS.md` 等指令文件需要相应授权。不要仅为保存经验而提交、推送或修改忽略规则。
+
+## 遵循宿主持久化约定
+
+- 明确条目的类型、范围、证据或来源，以及可信程度。不要从情境性修改或产品需求推导通用规则。
+- 遵守宿主的记忆和指令文件规则。使用用户指定落点，否则默认使用仓库经验日志；只有明确获准时才使用项目偏好段。不要把私有宿主记忆复制到仓库。
+- 请求已授权条目与落点时，直接写入，不重复确认。只有持久化范围或落点存在实质歧义时，才问一个聚焦问题。
+- 条目保持简短，注明日期和来源。经验应包含触发条件、改进做法、证据和限制；假设应注明仍需哪些证据。更新已有等价条目，不重复追加；保留无关指令。
+- 报告记录了什么、写在哪里。继续其他已授权工作。记录偏好不授权修改本 Skill 库。
+
+如果宿主只允许用户明确要求后持久化，自动启用不能覆盖该限制。缺少适用写入授权时，只在对话中保留结论，不反复打断用户询问是否保存。遵守明确的不保存要求。已请求的写入无法执行时，提供拟写条目并说明尚未保存。
+
+## 检索与维护
+
+复用指定的仓库日志，遵守宿主专用写入机制。在后续相关工作中启用时，只阅读匹配的仓库条目。不是每个宿主都会自动注入 Markdown 文件；没有实际读取，就不要声称已加载经验。复核可能变化的事实，保留原有范围和证据限制。
+
+已授权存储需要整理时，用短索引保留稳定、常用条目，按需读取主题或项目详情，把已被替代或不确定的材料移出当前指导。仅在规模确有需要时建立这套结构。少量条目不需要分层目录树。
+
+用户授权维护时，合并重复条目，依据证据解决冲突，将过时经验标记为已被替代，并保留有用来源。不要因为年代久远就静默删除已确认偏好，不要自动把假设升级为指令，也不要把项目经验扩展成全局规则。不能仅因安装或调用本 Skill，就安装心跳任务、修改宿主指令文件或安排定时维护。
+
+<a id="scope-conflicts-and-retraction"></a>
+## 作用域、冲突与撤销
+
+区分个人偏好与团队或项目约定。只有落点已获授权时，才写入共享仓库文件；打开一个仓库不会自动把个人偏好变成团队规则。
+
+写入前检查相关已有条目。明确替换同作用域偏好时，更新旧偏好，不让矛盾指令并存。较窄的例外不会抹去较广的偏好。预期优先级存在实质歧义时，只询问该冲突。用户明确撤销时，通过宿主允许的机制，仅移除对应条目或标记其已失效；某些宿主要求写更新说明，而非直接编辑。
+
+| 用户表达 | 处理方式 |
 | --- | --- |
-| `$reflect` records “Use pnpm in this project” in the named project file | Record the project scope and source once; no repeated confirmation. |
-| “Make this heading red” during an ordinary edit | Apply the edit; do not infer or persist a preference for red headings. |
-| `$reflect` replaces this project's pnpm preference with npm | Replace the equivalent project entry; preserve unrelated and other-project entries. |
-| `$reflect` records “This legacy package uses npm; other packages keep pnpm” | Add the explicit package exception without broadening it. |
-| `$reflect` retracts the earlier preference | Retract that entry without treating its opposite as a new preference. |
+| `$reflect` 将“本项目使用 pnpm”记录到指定项目文件 | 记录项目范围和来源一次，无需重复确认。 |
+| 普通编辑中说“把这个标题改成红色” | 完成修改，不推断或持久化“偏好红色标题”。 |
+| `$reflect` 把本项目的 pnpm 偏好替换成 npm | 替换等价项目条目，保留无关和其他项目条目。 |
+| `$reflect` 记录“旧包用 npm，其他包继续用 pnpm” | 添加明确的包级例外，不扩大范围。 |
+| `$reflect` 撤销先前偏好 | 撤销对应条目，不把其反面视为新偏好。 |
 
-Keep one concept per entry. Session-specific fixes, obvious advice, and inferred lessons are not user-stated preferences. This remains a preference-recording capability, not automatic session learning. The shared/personal distinction and concise-entry approach are informed by Anthropic's [CLAUDE.md management](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management); its broader session-learning scope and mandatory reconfirmation are not adopted here.
+每条只记录一个概念。当前会话修复、显而易见的建议和推断经验都不是用户明确偏好。绝不持久化凭据或不必要的私密对话数据。
+
+## 经验示例
+
+- 界面显示已保存，但刷新后草稿消失。如果日志显示提示早于持久化确认，可以提炼针对这一边界的经验。原因尚未确认时，只把症状和拟议检查记为假设，不声称是数据库缺陷。
+- 同一命令因已安装版本不支持某参数而失败三次。检查本地帮助，可以支持关于该参数的版本限定经验，不能推导“这个 CLI 不可用”的普遍结论。
+- 用户说“把这个标题改成红色”。立即修改。即使正在复盘，这也不能证明用户偏好所有标题都是红色。
+- 用户要求复盘但不保存。在回答中说明有用经验，保持记忆不变。
+
+## 借鉴来源
+
+纠正与复盘循环、按需组织方式借鉴了 [Self-Improving + Proactive Agent](https://clawhub.ai/ivangdavila/skills/self-improving)。本实现使用自动学习信号、仓库内存储和宿主控制的持久化，不集成心跳任务，也不隐式写入全局记忆。个人与共享范围的区分也借鉴了 Anthropic 的 [CLAUDE.md 管理](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-md-management)。

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Design"
-  short_description: "Concrete interaction, visual, and motion guidance."
-  default_prompt: "Use $design for the requested interface or motion decision. Preserve the brief and existing design system, and read only the relevant references."
+  display_name: "设计"
+  short_description: "提供具体的交互、视觉和动效指导。"
+  default_prompt: "使用 $design 处理所请求的界面或动效决策。遵循设计要求和已有设计系统，只阅读相关参考。"

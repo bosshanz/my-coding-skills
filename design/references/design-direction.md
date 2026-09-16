@@ -1,59 +1,58 @@
-# Design Direction
+# 设计方向
 
-Local adaptation: workflow routing has been adjusted to use the current host directly; upstream visual guidance and attribution are retained.
+本地改编说明：工作流路由已调整为直接使用当前宿主，保留上游视觉指导与来源声明。
 
-Make deliberate choices about palette, typography, and layout for the actual brief. For an expressive concept, seek a distinct visual identity and take aesthetic risks only when they serve the subject. For an existing product or a repeated-use tool, preserve its identity, native platform conventions, and clarity. Do not invent a client demand for novelty.
+依据实际设计要求，有意识地选择配色、字体和布局。表现力强的概念设计可以寻求鲜明视觉身份，但审美冒险必须服务主题。已有产品或反复使用的工具，应保留其身份、平台惯例和清晰度。不要凭空假设客户要求新奇。
 
-## Ground it in the subject
+## 扎根于主题
 
-Choose routine visual details from the brief and existing system. Invent a subject only for explicitly open-ended concept work, and state the chosen subject, audience, and page's job. If a missing product choice materially changes the requested result and cannot be inferred from the brief or repository, resolve that choice directly, then resume any already-authorized design or implementation. If there's any information in your memory about the human's preferences, context about what they're building, or designs you've made before – use that as a hint. The subject's own world, its materials, instruments, artifacts, and vernacular, is where distinctive choices come from. Build with the brief's real content and subject matter throughout.
+根据设计要求和已有系统决定常规视觉细节。只有明确开放的概念任务才自行设定主题，并说明主题、受众和页面职责。缺失的产品选择会实质改变结果，且无法从要求或仓库推断时，直接解决该选择，再继续已授权设计或实现。记忆中已有的用户偏好、产品背景或既往设计可作为线索。独特选择来自主题自身的世界：材料、工具、产物和表达方式。始终使用设计要求中的真实内容和主题材料。
 
-## Design principles
+## 设计原则
 
-For web designs, the hero is a thesis. Open with the most characteristic thing in the subject's world, in whatever form makes sense for it: a headline, an image, an animation, a live demo, an interactive moment. Be deliberate with your choice: a big number with a small label, supporting stats, and a gradient accent is the template answer, only use if that's truly the best option.
+网页首屏应表达核心主张。从主题中最有辨识度的事物开始，以适合的形式呈现：标题、图片、动画、实时演示或交互片段。选择要有意识：大数字、小标签、辅助统计和渐变点缀是模板化答案，只有确实最合适时才用。
 
-Typography carries the personality of the page. Choose one typeface family or a deliberately complementary pair according to the content and existing system, and set a clear type scale with intentional weights, widths, and spacing. Use expressive type where the brief calls for it; in dense tools, prioritize legibility, hierarchy, and familiar platform typography.
+字体承载页面性格。依据内容和已有系统，选择一个字体家族或经过搭配的互补组合，明确字号层级，并有意识地设置字重、字宽和间距。设计要求需要时使用表现性字体；密集工具优先保证可读性、层级和熟悉的平台字体。
 
-Structure is information. Structural devices, numbering, eyebrows, dividers, labels, should encode something true about the content, not decorate it. Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence - like a real process or a typed timeline where order carries information the reader needs. Question if choices like numbered markers actually make sense before incorporating them.
+结构就是信息。编号、眉题、分隔线和标签应表达真实内容关系，不应只是装饰。通用设计常用编号标记（01 / 02 / 03），但只有内容确有顺序，例如真实流程或顺序具有含义的时间线时才适合。加入编号前先判断它是否有意义。
 
-Use non-user-triggered motion sparingly. Prefer motion that explains a person's action or preserves spatial continuity. A page-load sequence or reveal may suit an expressive brief, but repeated section entrances and ambient effects need a concrete purpose. Respect reduced motion and keep frequent actions immediate.
+节制使用非用户触发的动效。优先用动效解释用户动作或保持空间连续。页面加载或揭示序列可能适合表现性设计，但反复分区入场和氛围效果需要具体目的。尊重减少动态效果设置，保持高频操作即时响应。
 
-Match complexity to the vision. Maximalist directions need elaborate execution; minimal directions need precision in spacing, type, and detail. Elegance is executing the chosen vision well.
+复杂度应匹配设计意图。繁复方向需要充分执行；极简方向需要精准的间距、字体与细节。优雅来自把所选方向落实好。
 
-Consider written content carefully. Often a design brief may not contain real content, and it's up to you to come up with copy. Copy can make a design feel as templated as the design itself. See the below section on writing for more guidance.
+认真考虑文案。设计要求可能没有真实内容，需要你补写。文案也可能像视觉一样模板化，具体指导见下方写作部分。
 
-## Process: brainstorm, explore, plan, critique, build, critique again
+## 流程：构思、探索、规划、评审、构建、再评审
 
-For calibration: AI-generated design right now clusters around three looks: (1) a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta accent; (2) a near-black background with a single bright acid-green or vermilion accent; (3) a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns. All three are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. Just like a human designer who's hired, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
+用于校准：当前 AI 生成设计常集中于三种外观：（1）接近 #F4F1EA 的暖奶油底色、高对比衬线标题和陶土色点缀；（2）近黑底色搭配单一酸绿或朱红亮色；（3）细线、零圆角和密集报纸分栏。这些方向都可能适合某些要求，但经常脱离主题成为默认答案。要求已明确视觉方向时，严格遵循；即使它要求这些外观，用户原话仍优先。某个维度留有自由时，不要自动选择这些默认样式。如同受聘设计师，需要平衡发挥所长与借每个项目尝试、学习。
 
-Work in two passes. First, brainstorm a short design plan based on the human's design brief: create a compact token system with color, type, layout, and signature. Color: describe the palette as 4–6 named hex values. Type: the family or families and their roles; one family may cover headings, body, and data through size and weight. Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Focal point: the content or action that deserves emphasis; an expressive signature is optional. Reuse existing tokens for established products instead of inventing a new palette.
+分两轮工作。先根据设计要求形成简短计划：建立紧凑的颜色、字体、布局和特征元素 token 系统。颜色用 4–6 个具名十六进制值描述。字体说明家族及用途；一个家族也能通过字号和字重覆盖标题、正文和数据。布局用一句话描述和 ASCII 线框来构思、比较。焦点是值得强调的内容或动作；鲜明特征并非必需。已有产品复用现有 token，不重新发明配色。
 
-Before coding, check that the design fits the brief and existing system. Revise concrete mismatches, then proceed. Originality is a design consideration, not a prerequisite for implementation or an additional user-approval gate. If the user explicitly requested approval of the design before implementation, wait for that approval. Use the chosen design to guide color, type, and layout decisions.
+编码前检查方案是否符合要求和已有系统，修正具体不匹配后继续。原创性是设计考量，不是实现前提或新增用户审批。用户明确要求先审批设计再实现时，等待该审批。用选定设计指导颜色、字体和布局决策。
 
-When writing the code, be careful of structuring your CSS selector specificities. It's easy to generate CSS classes that cancel each other out (especially with a type-based selector like .section and a element-based selector like .cta). This can happen often with paddings/margins between sections.
+尽量在思考中完成规划和迭代，对方案能满足用户预期有较高把握后再展示。
 
-Try to do a lot of this planning and iteration in your thinking, and only show ideas to the user when you have higher confidence it'll delight them.
+## 克制与自我评审
 
-## Restraint and self-critique
+把大胆用在一个地方。让特征元素成为最值得记住的一点，周围保持安静有序，移除不服务要求的装饰。自然做到基本质量：响应式覆盖移动端、键盘焦点可见、尊重减少动态效果。构建时自查，环境支持时用截图观察；一张图胜过大量描述。可借鉴 Chanel 的建议：出门前照镜子，拿掉一件配饰。创作者会记住尝试并寻找新意；若有适合快速记笔记的位置，记录尝试可能有助于后续迭代。
 
-Spend your boldness in one place. Let the signature element be the one memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected. Critique your own work as you build, taking screenshots if your environment supports it – a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creators have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
+## 设计中的写作
 
-## More on writing in design
+文字存在的目的，是让设计更易理解和使用。文字是设计材料，不是装饰。像对待间距和颜色一样认真对待文案。写之前先想清楚设计要说什么，怎样说最能帮助用户完成体验。
 
-Words appear in a design for one reason: to make it easier to understand, and therefore easier to use. They are design material, not decoration. Bring the same intentionality to copy that you would bring to spacing and color. Before writing anything, ask what the design needs to say, and how it can best be said to help the person navigate the experience.
+从最终用户的角度写作。按用户能控制和识别的对象命名，不按系统实现命名。用户管理的是通知，不是 webhook 配置。用平实语言说明功能，不推销。具体始终优于机巧。
 
-Write from the end user's side of the screen. Name things by what people control and recognize, never by how the system is built. A person manages notifications, not webhook config. Describe what something does in plain terms rather than selling it. Being specific is always better than being clever.
+默认用主动表达。控件应准确说明操作结果，例如“保存更改”，而非“提交”。同一动作全程名称一致：“发布”按钮对应“已发布”提示。界面词汇是用户探索产品的路标，一致与连贯能帮助建立认知。
 
-Use active voice as default. A control should say exactly what happens when it's used: "Save changes," not "Submit." An action keeps the same name through the whole flow, so the button that says "Publish" produces a toast that says "Published." The vocabulary of an interface is the signposting for someone navigating the product. Cohesion and consistency are how people learn their way around.
+把失败和空状态当作指引时机，而不是表达情绪的场合。用界面的口吻清楚说明哪里出了问题、如何修复。错误消息不道歉，也不含糊描述发生了什么。空页面应邀请用户采取行动。
 
-Treat failure and emptiness as moments for direction, not mood. Explain what went wrong and how to fix it, in the interface's voice rather than a person's. Errors don't apologize, and they are never vague about what happened. An empty screen is an invitation to act.
+语气自然且匹配品牌和受众：使用平实动词、常规大小写，不写填充语。每个元素只做一件事：标签负责命名，示例负责演示，不暗中兼任其他职责。
 
-Keep the register conversational and tuned: plain verbs, sentence case, no filler, with tone matched to the brand and the audience. Let each element do exactly one job. A label labels, an example demonstrates, and nothing quietly does double duty.
+<a id="calibration-examples"></a>
+## 选择示例
 
-## Calibration Examples
+- **营销概念：** 野外录音主题可能适合独特声音意象和表现性字体。选择一种相关焦点处理；每张卡片都放通用波形只会增加无意义装饰。将渲染结果与实际主题、文案比较。
+- **已有管理工具：** 保留字体、控件和导航。用逐项状态和清晰重试改善发布部分完成的结果；换一种标题字体无法解决该任务。同时检查渲染层级和重试行为。
+- **原生桌面流程：** 遵循平台控件和内容可读性。设置面板不需要醒目首屏或复杂入场。除外观外，还要检查焦点、缩放窗口和反复使用。
 
-- **Marketing concept:** a brief about field recording may justify distinctive sound imagery and expressive type. Choose one relevant focal treatment; a generic waveform on every card adds decoration without meaning. Compare the rendered result with the actual subject and copy.
-- **Existing admin tool:** preserve its type, controls, and navigation. Improve a partial publish result with per-item status and a clear retry action; a new display font does not solve that task. Check both the rendered hierarchy and the retry behavior.
-- **Native desktop workflow:** follow established platform controls and content readability. A memorable hero or elaborate entrance is not a requirement for a settings pane. Inspect focus, resizing, and repeated use as well as appearance.
-
-These examples illustrate choices, not completed user studies. Upstream reference: [Anthropic frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md). Preserve the bundled attribution and license; local adaptations retain host authorization and existing-system precedence.
+这些例子说明设计选择，不代表已完成用户研究。上游参考：[Anthropic frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md)。保留随附的来源声明和许可证；本地改编继续遵循宿主授权与已有系统优先原则。

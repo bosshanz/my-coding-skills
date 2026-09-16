@@ -1,6 +1,6 @@
 interface:
-  display_name: "Reflect"
-  short_description: "Explicitly record a user-stated preference."
-  default_prompt: "Use $reflect to record the preference I stated, within the specified scope and the host's persistence rules."
+  display_name: "复盘与学习"
+  short_description: "从纠正和失败中学习，把经验留在仓库。"
+  default_prompt: "使用 $reflect 复盘结果与证据，区分经验、假设和用户偏好，遵从宿主规则把经验留在本仓库；只有我明确要求才使用全局记忆。"
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

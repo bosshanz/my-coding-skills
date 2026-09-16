@@ -1,21 +1,47 @@
 ---
 name: eng
-description: "Engineering references for backend shape, quality, storage, architecture decisions, debugging, and ablation. Use when those decisions are open. Ordinary features, bugfixes, refactors, and tests do not load this Skill."
-when_to_use: "Load only for backend boundaries, tenancy, idempotency, migrations, module shape, failure diagnosis method, or a requested ablation. Pagination, CRUD, CSS, and routine fixes need no engineering Skill."
-argument-hint: "[后端 / 数据库 / 调试 | backend, storage, or debugging]"
+description: "所有开发任务的统一工程入口，以工程行为和品味约束功能实现、修复、重构、调试、开发测试和代码审查。适用于各种技术栈与运行环境，遵循如无必要勿增实体、明确状态归属、兼容性和证据原则，不规定固定开发流程。"
+when_to_use: "编写、修改、调试、测试或审查软件时使用，包括小改动。明确禁用 Skill 时不加载。纯概念问答、产品取舍、仅设计或仅最终验收不因与软件相关就自动叠加本 Skill；已选定外部 CLI 时遵从其调用约定，不强制目标加载。"
+argument-hint: "[开发任务 / 改动范围 / 工程取舍]"
 ---
 
-# Engineering references
+# 工程
 
-Read only the file that adds information to the current decision. Project code, actual versions, and the user's constraints take precedence.
+用稳定的工程判断完成当前任务。以下原则约束实现选择，不规定步骤、仪式或报告格式。用户目标、已有授权、项目约定和实际运行条件优先；具体做法从代码与证据中决定。原则适用于前端、后端、客户端及跨边界工作，不按代码所在端划分责任。
 
-| Reference | Relevant work |
+## 工程原则
+
+- **如无必要，勿增实体。** 优先复用已有能力。新增抽象、模块、服务、依赖、配置、状态或流程，必须解决当前具体问题，且收益值得其维护、理解和运行成本。不为假想扩展点或模式完整性增加结构。必要性可以来自正确性、可读性、隔离、测试或运维，不等于必须已有两个调用方；避免抽象也不应成为堆积条件分支的借口。
+- **从真实问题出发。** 改动应对应可说明的需求、缺陷或约束。不要用技术偏好替代问题，不顺手建设无关平台，不把可能发生的未来当作当前需求。
+- **为下一位维护者写代码。** 命名表达领域含义，控制流容易追踪，依赖和副作用可见。注释解释原因、约束和取舍，不复述代码。优先采用项目中清楚、熟悉的表达，不炫技，不用大量注释掩盖含混结构。
+- **让正确使用容易，错误使用困难。** 接口与数据模型尽量排除非法状态，明确单位、时间、精度、空值和调用前提。避免含糊的布尔参数、魔法值与隐式调用顺序；按语言和问题选择足够的表达，不为类型技巧额外制造结构。
+- **不掩盖失败和未知。** 区分缺失、空结果、失败和取消。不用默认值、空捕获、静默降级或无限重试制造成功表象。回退必须有明确业务含义，保留必要诊断依据，并如实表达剩余限制。
+- **先理清数据与状态。** 让一起变化的规则和状态有明确归属，通过清楚的输入、输出、错误和必要顺序协作。避免多处各自判断同一事实，或保存可可靠推导的重复状态；确需副本时说明一致性和恢复机制。
+- **用合适的模型减少特殊情况。** 条件不断增多时检查数据结构、边界和契约。优先让规则自然成立，保留业务确有必要的差异；不为消除几行重复而耦合变化原因不同的行为。
+- **选择最简单的完整方案。** 简单以整体理解和维护成本衡量，不以文件数、代码行数或层数衡量。接口应隐藏有意义的复杂性。处理当前范围内必要的失败、并发、权限和资源边界；不以简洁为由省略正确性或恢复能力。
+- **尊重已有使用者和数据。** 兼容性包括真实行为、协议、数据和使用方式，不只是类型签名。破坏性变化需要明确需求和相应授权，必要时提供迁移、兼容窗口及恢复路径；不以清理或优雅为由静默改变约定。
+- **保持改动内聚、可审查。** 围绕问题根因修改，保留无关工作，不夹带无关重构。局部补丁无法解决原因时可以扩大到必要边界，并说明理由；不机械追求最小差异，也不新增纯转发层伪装成分层。
+- **以证据判断正确性和性能。** 修复尽量用原始症状对比前后，测试覆盖实际执行约束的机制，性能取舍基于测量。区分观察、推断和未验证项；不为绿灯削弱预期，不以测试数量或架构名词证明质量。完成标准满足后收尾。
+
+这些是带有适用条件的软件工程准则，不是人物模仿或绝对禁令。不因一句“最佳实践”就引入模式，也不因一句“保持简单”就拒绝必要结构。常规选择直接落实；只有影响结果的取舍才需要解释，无需逐条证明自己遵守了原则。
+
+## 按需参考
+
+遇到具体取舍或证据缺口时，只阅读能补充当前判断的资料。不要按技术栈加载整套清单，也不要因为入口适用于所有开发任务就读取全部参考。
+
+| 当前问题 | 参考 |
 | --- | --- |
-| `references/backend-architecture.md` | Service boundaries, cache, messaging, failure recovery, capacity, and release compatibility. |
-| `references/backend-quality.md` | Authority, tenancy, idempotency, errors, timeouts, and process lifecycle. |
-| `references/database-engineering.md` | Constraints, transactions, queries, migrations, backfills, and bounded data operations. |
-| `references/architecture-decisions.md` | Module interfaces, depth, state ownership, and evolutionary tradeoffs. |
-| `references/debugging.md` | Reproduction, falsifiable hypotheses, diagnosis after failure, and before/after comparison. |
-| `references/ablation.md` | Controlled comparison of an optional element; does not authorize paid evals or production changes. |
+| 新增结构是否值得，接口与状态应由谁负责 | `references/architecture-decisions.md` |
+| 模块协作、依赖选择、状态同步和长期演进有什么代价 | `references/software-architecture.md` |
+| 契约、状态、副作用、资源、测试和交付物如何保持可信 | `references/software-quality.md` |
+| 存储约束、事务、查询、迁移和回填有哪些限制 | `references/database-engineering.md` |
+| 原因不明或修复反复失败，缺少什么可证伪证据 | `references/debugging.md` |
+| 是否需要受控比较来判断某个可选元素的贡献 | `references/ablation.md` |
 
-Do not load every file. A named business-rule check uses `verify`. Interface design uses `design`.
+参考中的例子有自己的适用条件。平台和框架细节按实际需要查阅现有专业能力、项目代码或官方资料，不把它们扩展为通用工程禁令。
+
+## 与其他能力协作
+
+`design` 负责交互与视觉设计判断；工程实现仍遵守上述原则。`verify` 负责用户明确要求的业务诊断与最终验收，不替代开发中的必要检查。`grill-me` 用于用户请求的深入追问，`reflect` 用于复盘与经验积累。它们可以独立使用，不自动串成流水线。
+
+仅审查时保持只读；本 Skill 不扩大修改范围，不授权委派、发布或生产操作，也不新增审批环节。保持已有授权与任务连续性。

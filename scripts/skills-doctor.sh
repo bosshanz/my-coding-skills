@@ -36,7 +36,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in design verify eng reflect external-cli; do
+for skill in design verify eng reflect grill-me external-cli; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -48,11 +48,11 @@ for skill in design verify eng reflect external-cli; do
   fi
 done
 
-for ref in debugging.md architecture-decisions.md ablation.md backend-architecture.md backend-quality.md database-engineering.md; do
+for ref in debugging.md architecture-decisions.md ablation.md software-architecture.md software-quality.md database-engineering.md; do
   check_file "eng/references/$ref"
 done
 
-for ref in interaction.md design-direction.md quality.md animation.md anthropic-frontend-design-LICENSE.txt; do
+for ref in interaction.md design-direction.md animation.md anthropic-frontend-design-LICENSE.txt; do
   check_file "design/references/$ref"
 done
 

@@ -8,6 +8,7 @@ ALL_SKILLS=(
   verify
   eng
   reflect
+  grill-me
   external-cli
   kimi-code
   claude-code
@@ -36,14 +37,14 @@ Usage:
   ./uninstall.sh --list
 
 Skills:
-  design verify eng reflect external-cli
+  design verify eng reflect grill-me external-cli
 
 Groups:
   all          Uninstall every Skill including retired entries
   ui           Uninstall design
   quality      Uninstall verify and legacy qa/acceptance copies
   engineering  Uninstall eng
-  meta         Uninstall reflect (explicit invocation only)
+  meta         Uninstall reflect (repository-local learning)
   adapters     Uninstall external-cli and leftover adapter directories
   delegation   Alias for adapters
 
@@ -147,7 +148,7 @@ resolve_requests() {
         ;;
       workflow) append_unique dev ;;
       planning) append_unique clarify ;;
-      design|verify|eng|reflect|external-cli|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
+      design|verify|eng|reflect|grill-me|external-cli|kimi-code|claude-code|codex-cli|opencode|grok-build-cli|dev|clarify|qa|acceptance) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done

@@ -1,175 +1,182 @@
-# Interaction Design
+# 交互设计
 
-Interaction design defines how a person understands a system, acts on it, receives feedback, stays in control, and recovers. First prove that users are willing to complete the behavior, then optimize the experience of completing it. First prove the product creates value, then discuss how that value should be packaged. Motion can clarify an interaction, but it cannot repair a broken task flow, misleading state, or missing recovery path.
+交互设计定义人如何理解系统、操作系统、接收反馈、保持控制并从问题中恢复。先证明用户愿意完成某个行为，再优化完成体验；先证明产品创造价值，再讨论如何包装价值。动效能解释交互，但无法修复断裂的任务流程、误导状态或缺失的恢复路径。
 
-## When To Use
+## 适用时机
 
-Load this reference for product UI and stateful experiences: workflows, forms, editors, dashboards, admin tools, onboarding, search and filtering, multi-step tasks, async operations, permissions, destructive actions, interruption and resume, or AI-assisted work.
+用于产品界面和有状态体验：工作流、表单、编辑器、面板、管理工具、引导、搜索筛选、多步骤任务、异步操作、权限、破坏性动作、中断恢复或 AI 辅助工作。
 
-Do not load it for a purely decorative visual change with settled behavior. Resolve material uncertainty about the user or job before inventing an interaction. A requested business diagnosis is a check of existing behavior; it does not by itself authorize redesign.
+行为已确定的纯装饰视觉修改无需加载。设计交互前，先解决有关用户或任务的重要不确定性。用户要求的业务诊断是检查已有行为，本身不授权重设计。
 
-## Start From The Real Interaction
+## 从真实交互出发
 
-Inspect the existing UI, code, routes, state ownership, persistence, and backend effects before redesigning an established flow. A page list or screenshot shows surfaces, not behavior. Trace what happens from the user's trigger through pending work, persistence, completion, failure, and return.
+重设计既有流程前，检查实际界面、代码、路由、状态归属、持久化和后端效果。页面列表或截图只能展示表面，不能展示行为。从用户触发开始，追踪等待、持久化、完成、失败和返回。
 
-Separate four facts:
+区分四项事实：
 
-- **User intent**: the outcome the person is trying to achieve.
-- **User action**: what the interface lets the person do.
-- **System effect**: what actually changes in local state, server state, external systems, or other users' views.
-- **Visible state**: what the interface claims happened.
+- **用户意图**：用户想达到的结果。
+- **用户动作**：界面允许用户做什么。
+- **系统效果**：本地状态、服务端状态、外部系统或其他用户视图实际发生了什么变化。
+- **可见状态**：界面声称发生了什么。
 
-These must agree. A success toast without a completed effect, a disabled button without an explanation, or a retry that duplicates work is an interaction defect even when the UI looks polished.
+四者必须一致。效果未完成就显示成功、禁用按钮却不解释原因、重试产生重复工作，即使外观精美，也是交互缺陷。
 
-## Interaction Direction
+## 交互方向
 
-Before drawing screens, make a short interaction commitment:
+画页面前，简短明确交互目标：
 
-- **User and context**: role, expertise, device, frequency, time pressure, and collaboration context when relevant.
-- **Job and proof of completion**: what the user came to accomplish and what observable state proves success.
-- **Risk and constraints**: latency, permissions, irreversibility, money, privacy, shared state, offline behavior, or expensive computation.
-- **Interaction thesis**: one sentence describing the intended experience and its key tradeoff.
+- **用户与场景**：相关时明确角色、经验、设备、频率、时间压力和协作背景。
+- **任务与完成证据**：用户为何而来，什么可观察状态证明成功。
+- **风险与约束**：延迟、权限、不可逆性、资金、隐私、共享状态、离线行为或昂贵计算。
+- **交互主张**：用一句话说明预期体验及关键取舍。
 
-Example shape:
+示例：
 
-> A frequent expert operator can inspect, act, and recover without leaving the keyboard; high-impact changes stay previewable and explicit.
+> 高频使用的熟练操作员可以不离开键盘就完成检查、操作和恢复；影响大的变更保持可预览且含义明确。
 
-Do not make personas or journey maps by default. Create only the artifact that changes the design decision.
+不默认制作用户画像或旅程地图。只创建会改变设计决策的产物。
 
-## Objects, Actions, And Information Architecture
+## 对象、动作与信息架构
 
-Model the interface in the user's language:
+用用户的语言建立界面模型：
 
-- Identify the primary objects, their meaningful statuses, and the actions users believe they can take.
-- Give each important status one authoritative meaning. Do not let a badge, button, backend job, and detail page disagree about whether work is pending, complete, failed, or stale.
-- Separate navigation from actions, selection from activation, and draft changes from committed effects.
-- Make the primary action obvious without making every secondary action permanently prominent. Use progressive disclosure when it reduces decision load without hiding needed capability.
-- Preserve stable object identity across list, detail, modal, history, and notification surfaces so users can tell what changed.
-- Match information hierarchy to decision order: show what is needed to choose before what is useful only after choosing.
+- 识别主要对象、有意义的状态，以及用户认为自己能执行的动作。
+- 每个重要状态只有一种权威含义。徽标、按钮、后台任务和详情页不能对等待、完成、失败或过期各说各话。
+- 区分导航与动作、选择与激活、草稿变化与已提交效果。
+- 让主要动作明显，但不必让每个次要动作始终突出。渐进展示能减少决策负担又不隐藏所需能力时才使用。
+- 列表、详情、模态框、历史和通知之间保留稳定的对象身份，使用户知道什么发生了变化。
+- 信息层级匹配决策顺序：先展示做选择需要的内容，再展示选择后才有用的信息。
 
-For dense or expert tools, optimize repeated work, comparison, scanning, and keyboard continuity. For infrequent or high-consequence work, favor explanation, preview, and safe reversal over raw speed.
+密集或专业工具优先优化重复操作、比较、扫描和键盘连续性。低频或高影响工作优先解释、预览和安全撤销，而不只追求速度。
 
-## Task Flow
+## 任务流程
 
-Design the flow from entry to a verifiable outcome:
+从入口设计到可验证结果：
 
-1. Name the entry conditions and what context the user already has.
-2. Draw the shortest coherent happy path.
-3. Add only branches caused by real decisions, permissions, missing data, or system outcomes.
-4. Define where the user can go back, cancel, save a draft, leave, or resume.
-5. Define the completion state and the next sensible action.
+1. 明确入口条件和用户已有上下文。
+2. 画出最短且连贯的正常路径。
+3. 只增加由真实决策、权限、缺失数据或系统结果引起的分支。
+4. 定义用户何处可以返回、取消、保存草稿、离开或恢复。
+5. 定义完成状态和合理下一步。
 
-For branching or multi-step work, use a compact wireflow or flowchart. Do not confuse screens with steps: one screen can contain several meaningful states, and a single task can cross routes, background jobs, notifications, and restored sessions.
+分支或多步骤工作可用紧凑线框流程或流程图。不要把页面当作步骤：一个页面可有多个有意义的状态，一项任务也可能跨越路由、后台任务、通知和恢复的会话。
 
-Challenge every step:
+逐步追问：
 
-- Does this collect information the system already knows?
-- Is confirmation preventing a real costly mistake, or compensating for an unclear action?
-- Can a strong default remove a decision without removing control?
-- Does moving to another screen preserve enough context to return confidently?
-- Can frequent users act directly while new users still discover the capability?
+- 这一步是否在收集系统已知的信息？
+- 确认是在防止真实且代价高的错误，还是在弥补动作含义不清？
+- 好的默认值能否减少决策而不剥夺控制？
+- 切换页面后，是否保留足够上下文让用户安心返回？
+- 高频用户能否直接操作，同时新用户仍能发现能力？
 
-## State And Transition Contract
+## 状态与转换约定
 
-For each critical interaction, define behavior rather than only component appearance. Use a state table when transitions matter:
+对关键交互定义行为，而不只定义组件外观。转换重要时使用状态表：
 
-| Current state | User or system event | Immediate feedback | Actual effect | Next visible state | Escape or recovery |
+| 当前状态 | 用户或系统事件 | 即时反馈 | 实际效果 | 下一可见状态 | 退出或恢复 |
 | --- | --- | --- | --- | --- | --- |
-| Ready | User starts action | Control acknowledges input | Request begins once | Pending with context preserved | Cancel when safe |
-| Pending | Request succeeds | Result is associated with the action | Effect is committed | Complete with next action | Undo if supported |
-| Pending | Request fails | Specific failure and safe action | No duplicate effect | Recoverable error | Retry, edit, or leave safely |
+| 就绪 | 用户发起动作 | 控件确认收到输入 | 请求开始且仅开始一次 | 保留上下文的等待状态 | 安全时可取消 |
+| 等待中 | 请求成功 | 结果与动作关联 | 效果已提交 | 完成并提供下一步 | 支持时可撤销 |
+| 等待中 | 请求失败 | 明确失败和安全动作 | 不产生重复效果 | 可恢复错误 | 重试、编辑或安全离开 |
 
-Use only applicable states, but consider initial, loading, empty, ready, edited, validating, pending, partially complete, complete, failed, stale, conflicted, offline, cancelled, and permission-limited behavior.
+只使用适用状态，但应考虑初始、加载、空、就绪、已编辑、验证中、等待、部分完成、完成、失败、过期、冲突、离线、取消和权限受限行为。
 
-Key rules:
+关键规则：
 
-- Acknowledge input immediately and keep enough context visible to explain what is pending.
-- Use optimistic UI only when the effect is likely, reversible, and cheap to reconcile. Make rollback visible when optimism fails.
-- Prevent accidental duplicate submission. A retry must either reuse a safe operation identity or clearly start a new operation.
-- Distinguish validation failure, permission denial, network failure, system failure, conflict, and partial success when they require different recovery.
-- Make cancellation semantics explicit: whether it stops future work, preserves completed work, rolls back, or merely detaches the view.
-- Treat partial success truthfully. Do not collapse it into either generic success or generic failure.
-- Make completion durable enough that refresh, back navigation, or another surface does not immediately contradict it.
+- 立即确认输入，保留足够可见上下文来解释正在等待什么。
+- 只有效果较确定、可撤销且对账成本低时才使用乐观界面。乐观更新失败时，让回滚可见。
+- 防止意外重复提交。重试要么复用安全操作标识，要么明确启动新操作。
+- 恢复方式不同时，区分验证失败、权限拒绝、网络失败、系统失败、冲突和部分成功。
+- 明确取消语义：停止未来工作、保留已完成部分、回滚，还是仅脱离当前视图。
+- 如实表达部分成功，不压缩成笼统成功或失败。
+- 完成状态应有足够持久性，不应在刷新、返回或另一界面中立刻被否定。
 
-## Feedback, Control, And Recovery
+## 反馈、控制与恢复
 
-Every important action needs an understandable loop:
+每项重要动作都需要可理解的循环：
 
-- **Feedforward** before action: label, consequence, requirements, scope, and cost when material.
-- **Acknowledgement** at the trigger: visible pressed, selected, accepted, queued, or validation state.
-- **Progress** during work: real stage or bounded status when available, not theatrical activity that implies knowledge the system does not have.
-- **Outcome** after work: what changed, what did not, and the next available action.
-- **Recovery** when the outcome is not complete: a safe, specific action that matches the failure.
+- **事前提示**：标签、后果、前提、范围，以及重要时的成本。
+- **触发确认**：可见的按下、选中、接受、入队或验证状态。
+- **过程进度**：可用时显示真实阶段或有明确边界的状态，不用表演式活动暗示系统掌握它并不知道的信息。
+- **执行结果**：什么改变了、什么没改变、下一步能做什么。
+- **未完成时的恢复**：匹配失败原因的安全、具体动作。
 
-Prefer prevention plus recovery over repeated confirmation dialogs. Confirm uncommon, destructive, externally visible, expensive, or hard-to-reverse effects with concrete object and consequence language. Prefer undo for frequent reversible actions.
+优先预防加恢复，而不是反复弹确认框。低频、破坏性、对外可见、昂贵或难以撤销的效果，用具体对象和后果描述进行确认。高频可逆动作优先支持撤销。
 
-Preserve user work across validation errors, failed submissions, authentication detours, route changes, interruption, and restart when the product can do so safely. Preserve relevant text, attachments, selections, filters, sort, scroll or cursor position, expanded context, and partial artifacts. Never turn recovery into “start over” merely because it is simpler to implement.
+产品能安全做到时，在验证错误、提交失败、认证跳转、路由变化、中断和重启间保留用户工作，包括相关文本、附件、选择、筛选、排序、滚动或光标位置、已展开上下文和部分产物。不能仅因实现更容易，就把恢复变成“从头再来”。
 
-Disabled controls must not become unexplained dead ends. When the missing prerequisite matters, explain it near the control and provide the safe next action.
+禁用控件不能成为没有解释的死路。缺失前提重要时，在控件附近说明，并提供安全下一步。
 
-## Input Model And Ergonomics
+## 输入模型与操作体验
 
-Choose input behavior from context rather than desktop or mobile habit:
+依据场景选择输入行为，不照搬桌面或移动习惯：
 
-- Support the primary device and the actual frequency of use.
-- Keep keyboard order, focus movement, focus restoration, shortcuts, pointer targets, touch gestures, and screen-reader semantics coherent.
-- Let shortcuts accelerate visible actions; do not make them the only way to discover essential capability.
-- Keep high-frequency navigation and commands immediate. Avoid animation that delays expert operation.
-- Provide non-drag alternatives for ordering or movement when precision, accessibility, or device constraints make drag unreliable.
-- On responsive layouts, preserve task state and action meaning; do not merely stack the desktop layout or hide essential controls.
-- Keep selection visible across actions, and distinguish single selection, multi-selection, and active item behavior.
+- 支持主要设备和实际使用频率。
+- 保持键盘顺序、焦点移动与恢复、快捷键、指针目标、触摸手势和屏幕阅读器语义一致。
+- 快捷键用于加速可见动作，不应成为发现关键能力的唯一方式。
+- 高频导航和命令即时响应，不用动效延迟熟练操作。
+- 精度、无障碍或设备限制使拖动不可靠时，为排序或移动提供非拖动方式。
+- 响应式布局保留任务状态和动作含义，不只是把桌面布局堆叠或隐藏关键控件。
+- 操作期间保持选择可见，区分单选、多选和活动项行为。
 
-Use `quality.md` for the detailed accessibility and frontend implementation gates. Use `animation.md` only after the interaction behavior is correct.
+无障碍与适配属于交互质量本身：
 
-## AI-Native Interaction
+- 控件名称和含义清楚，按钮执行动作，链接负责导航；不要只靠颜色区分状态。
+- 模态界面打开时焦点进入，关闭时回到触发位置，安全时可用 Escape 退出；非模态浮层不应无故困住焦点。
+- 表单标签与错误对应明确，验证或提交失败后保留输入；禁用状态解释所缺条件。
+- 关键内容有足够对比度，操作目标易于命中；长文本、缺图、大数字和不同窗口尺寸不遮挡关键信息或动作。
+- 加载状态保留重要上下文，不让用户正在操作的内容突然移位。
 
-When AI participates in understanding, generating, deciding, or acting, design the control loop rather than attaching a chat box:
+交互行为正确后再使用 `animation.md`。
 
-- Show what the system understood when ambiguity could materially change the outcome, and ask for clarification only when it changes the action.
-- Distinguish user intent, system proposal, approved action, execution progress, and result. Do not visually collapse them into one “AI is working” state.
-- Preview and scope high-impact actions before execution. Approval should name the concrete effect, target, and boundary.
-- Expose real Runtime or tool state when available. Never fabricate progress, certainty, completion, or recoverability.
-- Let users steer, pause, cancel, take over, edit, retry, or resume where the underlying system can honor those controls.
-- Preserve prompts, drafts, attachments, generated artifacts, checkpoints, and completed sub-results through interruption and failure.
-- Make partial artifacts inspectable and editable instead of coupling all value to one terminal success state.
-- Explain failures in terms of what was preserved, what may have changed, and which retry is safe. Avoid duplicate external effects.
-- Keep provenance and boundaries visible when users must review, trust, or attribute generated output.
+## AI 原生交互
 
-Not every AI interaction needs confirmation or a visible plan. Scale control to consequence, ambiguity, reversibility, and user expertise.
+AI 参与理解、生成、决策或执行时，应设计完整控制流程，而不只是加一个聊天框：
 
-## Interaction Critique
+- 歧义可能实质改变结果时，展示系统理解；只有澄清会改变动作时才提问。
+- 区分用户意图、系统建议、已批准动作、执行进度和结果，不在视觉上压缩成单一“AI 工作中”。
+- 高影响动作执行前可预览并限定范围。审批应指向具体效果、目标和边界。
+- 有真实运行时或工具状态时展示它，不编造进度、确定性、完成或可恢复性。
+- 底层系统能兑现时，允许用户引导、暂停、取消、接管、编辑、重试或恢复。
+- 中断和失败时保留提示词、草稿、附件、生成产物、检查点和已完成子结果。
+- 部分产物也应可检查、可编辑，不把全部价值绑定到最后一次成功。
+- 说明失败时保留了什么、可能改变了什么，以及哪种重试安全，避免重复外部效果。
+- 用户需要审查、信任或标注生成内容来源时，让来源与边界可见。
 
-Before coding and again against the working UI, try to disprove the interaction:
+不是每次 AI 交互都需要确认或可见计划。依据后果、歧义、可逆性和用户经验调整控制程度。
 
-- **Comprehension**: Can the user tell where they are, what is selected, what is happening, and what will happen next?
-- **Efficiency**: Is the common path direct? Are repeated decisions or context switches avoidable?
-- **Control**: Can the user safely go back, cancel, undo, edit, or take over?
-- **Continuity**: What survives refresh, navigation, interruption, failure, session rotation, or device-size changes?
-- **Truthfulness**: Does visible state match the authoritative Runtime, persistence, permission, and external effect?
-- **Recovery**: Does each meaningful failure offer a safe next action without losing unrelated work?
-- **Ergonomics**: Are focus, target size, reach, keyboard flow, and high-frequency behavior appropriate for the real context?
+## 交互评审
 
-Rank findings by task impact: blocked or misleading outcomes first, lost work and unsafe effects next, avoidable effort and ambiguity after that, polish last.
+编码前和真实界面运行后，都尝试找出交互不成立的地方：
 
-## Verification
+- **理解**：用户能否知道身处何处、选中了什么、正在发生什么、接下来会怎样？
+- **效率**：常用路径是否直接？能否减少重复决策或上下文切换？
+- **控制**：用户能否安全返回、取消、撤销、编辑或接管？
+- **连续性**：刷新、导航、中断、失败、会话轮换或设备尺寸变化后保留了什么？
+- **真实性**：可见状态是否符合权威运行时、持久化、权限和外部效果？
+- **恢复**：每种重要失败是否提供安全下一步，且不丢失无关工作？
+- **操作体验**：焦点、目标大小、可触达性、键盘流程和高频行为是否适合真实场景？
 
-Use the smallest representative scenario set that can falsify the design. Depending on the interaction, include the happy path plus the most consequential variants: first use, returning use, empty data, permission-limited use, slow response, failure, partial success, cancellation, retry, interruption and resume, stale or conflicting state, and keyboard-only operation.
+按任务影响排序：阻塞或误导结果优先，其次是工作丢失和不安全效果，再次是可避免的操作负担与歧义，最后才是打磨。
 
-Verify observable behavior through the strongest available evidence:
+## 验证
 
-- Walk the real UI when available; inspect screenshots only for visual evidence.
-- Check DOM semantics, focus, URL and history behavior, persisted state, Runtime state, network effects, and logs when those boundaries matter.
-- Use component tests for local behavior, integration tests for cross-state transitions, and end-to-end checks for critical journeys.
-- Confirm that retries, cancellation, undo, and recovery produce the intended real effect, not merely the expected copy or animation.
-- State what was not exercised. A clean build or a beautiful screenshot is not interaction acceptance.
+使用能证伪设计的最小代表性场景集合。按交互需要，包含正常路径及最重要变体：首次使用、再次使用、空数据、权限受限、慢响应、失败、部分成功、取消、重试、中断恢复、过期或冲突状态，以及纯键盘操作。
 
-## Proportional Deliverables
+用最有力的可用证据验证可观察行为：
 
-Do not produce every artifact for every task. Use the smallest set that removes ambiguity:
+- 有真实界面时实际走流程；截图仅用于视觉证据。
+- 相关边界重要时，检查 DOM 语义、焦点、URL 和历史行为、持久化状态、运行时状态、网络效果和日志。
+- 确认重试、取消、撤销和恢复产生预期真实效果，而不只是对应文案或动画。
+- 说明未执行的部分。构建通过或截图美观不等于交互验收。
 
-- Interaction thesis for any meaningful interaction decision.
-- Wireflow for multi-step or branching tasks.
-- State-transition table for async, interruptible, permissioned, or high-consequence behavior.
-- Behavior contract for critical controls and system effects.
-- Representative acceptance scenarios for implementation and verification.
-- Known evidence gaps when behavior could not be exercised.
+## 按任务规模交付
+
+不为每项任务制作全部产物。选择能消除歧义的最小集合：
+
+- 对有实质意义的交互决策，说明交互主张。
+- 多步骤或分支任务使用线框流程。
+- 异步、可中断、有权限或高影响行为使用状态转换表。
+- 关键控件和系统效果给出行为约定。
+- 为实现与验证选择代表性验收场景。
+- 无法实际运行行为时，说明已知证据缺口。

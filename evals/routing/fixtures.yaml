@@ -1,77 +1,68 @@
 # Catalog routing proxy fixtures. none means the host handles the task directly.
 # Expected routing is not a runtime or quality result.
 
-- id: none-feature-filter-cn
+- id: eng-feature-filter-cn
   prompt: 帮我给用户列表加一个按角色筛选的功能
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-feature-pagination-en
+- id: eng-feature-pagination-en
   prompt: Add pagination to the orders API
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-bug-500-cn
+- id: eng-bug-500-cn
   prompt: 修一下这个登录偶发 500 的 bug
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-bug-npe
+- id: eng-bug-npe
   prompt: 这里偶尔空指针，帮我排查修复
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-bare-e2e
+- id: eng-bare-e2e
   prompt: 给下单流程补点 e2e 测试
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: 2947557
-- id: none-refactor
+- id: eng-refactor
   prompt: 把这段重复代码提取成公共函数
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-csv-export
+- id: eng-csv-export
   prompt: 新需求：支持把账单导出成 CSV
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-money-feature
+- id: eng-money-feature
   prompt: 帮我实现优惠券核销功能
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: 99a1cae
-- id: none-trivial-css
+- id: eng-trivial-css
   prompt: 把这个按钮的边距调小一点
   expect:
-    - none
+    - eng
   strict: false
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
 - id: none-weather
   prompt: 今天上海天气怎么样
@@ -121,21 +112,19 @@
   rationale: No optional capability is needed; the current agent handles this
     request directly.
   source: a20f32c
-- id: none-run-suite
+- id: eng-run-suite
   prompt: 跑一遍现有的测试套件
   expect:
-    - none
+    - eng
   strict: false
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
-- id: none-pr-review
+- id: eng-pr-review
   prompt: review 一下这个 PR
   expect:
-    - none
+    - eng
   strict: false
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: 2947557
 - id: none-repo-what
   prompt: 这个仓库是干嘛的
@@ -317,14 +306,14 @@
   expect:
     - eng
   strict: true
-  rationale: Explicit engineering-reference request.
+  rationale: 显式请求工程判断。
   source: skill-simplification
 - id: eng-tenant-isolation
   prompt: 这个接口的租户隔离和鉴权有没有 IDOR，按后端质量规范看
   expect:
     - eng
   strict: true
-  rationale: Backend quality and tenancy belong to eng, not ordinary CRUD.
+  rationale: 租户隔离属于 eng 的权限与状态约束；普通开发同样使用共同工程准则。
   source: skill-simplification
 - id: eng-migration
   prompt: 这次用户表回填和迁移要注意哪些数据库约束
@@ -338,7 +327,7 @@
   expect:
     - eng
   strict: true
-  rationale: Idempotent writes are backend-quality work, not a definition question.
+  rationale: 幂等写入是软件质量约束在持久化路径中的应用，不是纯概念问答。
   source: skill-simplification
 - id: reflect-explicit-dollar
   prompt: $reflect 把刚才那条纠正记下来
@@ -350,26 +339,23 @@
 - id: reflect-durable-correction-cn
   prompt: 以后这个项目提交信息都用中文,别再用英文了
   expect:
-    - none
+    - reflect
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: Explicit durable correction is a learning signal; persistence still follows host rules.
   source: design
 - id: reflect-durable-correction-en
   prompt: From now on always use pnpm instead of npm in this repo
   expect:
-    - none
+    - reflect
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: Explicit durable correction is a learning signal; persistence still follows host rules.
   source: design
-- id: none-oneoff-feedback
+- id: eng-oneoff-feedback
   prompt: 这个变量名改成 userId,顺便把日志级别调到 debug
   expect:
-    - none
+    - eng
   strict: false
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
 - id: none-stated-product-rule
   prompt: 产品规则:所有金额字段一律用分存储,后续新表也照这个来
@@ -379,14 +365,13 @@
   rationale: No optional capability is needed; the current agent handles this
     request directly.
   source: design
-- id: none-intake-material-choice
+- id: eng-intake-material-choice
   phase: intake
   prompt: 实现订单归档功能，具体保留策略还没定
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: workflow-alignment
 - id: none-product-delivery-material-choice
   phase: delivery
@@ -401,30 +386,29 @@
   rationale: No optional capability is needed; the current agent handles this
     request directly.
   source: workflow-alignment
-- id: none-resume-after-decision
+- id: eng-resume-after-decision
   phase: delivery
   context: "Implementation was requested. a product discussion resolved the only
     material choice: archive, never permanently delete."
   prompt: 按已定的归档方案继续实现
   expect:
-    - none
+    - eng
   strict: true
-  rationale: No optional capability is needed; the current agent handles this
-    request directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: workflow-alignment
-- id: none-durable-correction
+- id: reflect-project-correction
   prompt: 以后这个项目都用 pnpm，不要用 npm。
   expect:
-    - none
+    - reflect
   strict: true
-  rationale: Apply the correction without automatically recording a preference.
+  rationale: 明确持续纠正触发仓库内学习，持久化仍遵从宿主规则。
   source: skill-simplification
-- id: none-retired-dev
+- id: eng-retired-dev
   prompt: $dev 修复角色筛选
   expect:
-    - none
+    - eng
   strict: true
-  rationale: Retired names are absent; ordinary implementation can proceed directly.
+  rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: skill-simplification
 - id: none-no-skills
   prompt: 不要使用任何 Skill，直接分析这个界面的问题。
@@ -440,3 +424,52 @@
   strict: true
   rationale: No retired entry exists; the host can answer the product question directly.
   source: skill-simplification
+- id: grill-me-explicit
+  prompt: $grill-me 帮我逐步推敲离线编辑方案，一次问一个关键问题。
+  expect:
+    - grill-me
+  strict: true
+  rationale: Explicit decision interview request.
+  source: repository-learning
+- id: grill-me-natural-interview
+  prompt: 请深入追问并挑战我的产品方案，每次只问一个问题，直到关键决策清楚。
+  expect:
+    - grill-me
+  strict: true
+  rationale: An explicitly requested interview, not ordinary product analysis.
+  source: repository-learning
+- id: reflect-failed-attempt
+  prompt: 同一个命令旧参数又失败了，刚查本机帮助确认新版已改名，总结一下经验以后别重复。
+  expect:
+    - reflect
+  strict: true
+  rationale: A correction and verified better approach trigger repository-local learning.
+  source: repository-learning
+- id: reflect-focused-retrospective
+  prompt: $reflect 复盘这次修复，区分有证据的经验和待验证的假设，留在仓库。
+  expect:
+    - reflect
+  strict: true
+  rationale: Explicit retrospective with repository-local scope.
+  source: repository-learning
+- id: eng-native-client-fix
+  prompt: 修复 macOS 应用关闭窗口后后台任务没有取消的问题。
+  expect:
+    - eng
+  strict: true
+  rationale: 共同工程原则适用于客户端生命周期，不按端限定入口。
+  source: engineering-principles
+- id: eng-frontend-state
+  prompt: 按已有设计实现筛选状态的 URL 同步，不需要重新做设计。
+  expect:
+    - eng
+  strict: true
+  rationale: 既定设计的实现使用工程原则，无需重新设计流程。
+  source: engineering-principles
+- id: eng-unnecessary-entities
+  prompt: $eng 单一文件导出现在是否需要抽象工厂和插件注册表？帮我判断取舍。
+  expect:
+    - eng
+  strict: true
+  rationale: 如无必要勿增实体，依据当前约束判断新增结构。
+  source: engineering-principles

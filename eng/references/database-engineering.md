@@ -1,175 +1,176 @@
-# Database Engineering
+# 数据库工程
 
-## When To Use
+## 适用时机
 
-Use this reference when a task changes or depends on database correctness, performance, operability, or production migration safety:
+任务改变或依赖数据库正确性、性能、可运维性或生产迁移安全时使用：
 
-- Schema design, relational modeling, constraints, indexes, query plans, or large result sets.
-- Transactions, isolation levels, locking, deadlocks, idempotency, or consistency guarantees.
-- Migrations, backfills, online schema changes, dual writes, data repair, retention, partitioning, or archival.
-- Destructive SQL, ORM destroy helpers, tombstones, retention jobs, or erasure.
-- Production or shared-database writes, live data repair, or agent-operated SQL.
-- Replication, read/write splitting, failover, connection pools, database capacity, slow queries, or database incidents.
-- Choosing between PostgreSQL, MySQL, Redis, search indexes, queues, or another persistence technology.
+- 数据模型设计、关系建模、约束、索引、查询计划或大结果集。
+- 事务、隔离级别、锁、死锁、幂等或一致性保证。
+- 迁移、回填、在线模式变更、双写、数据修复、保留、分区或归档。
+- 破坏性 SQL、ORM 删除辅助方法、墓碑、保留任务或擦除。
+- 生产或共享数据库写入、线上数据修复，或由 Agent 操作 SQL。
+- 复制、读写分离、故障切换、连接池、数据库容量、慢查询或数据库事故。
+- 在 PostgreSQL、MySQL、Redis、搜索索引、队列等持久化技术之间做选择。
 
-Do not load this reference for business logic that only calls an existing repository abstraction and does not change schema, query shape, transaction behavior, data volume assumptions, a delete / retire path, or live database access.
+业务逻辑仅调用已有数据仓储抽象，且不改变数据模型、查询结构、事务行为、数据量假设、删除或停用路径，也不访问线上数据库时，不加载本参考。
 
-## Database Design Gate
+## 数据库设计检查
 
-- Start from access patterns, invariants, write paths, read paths, retention, consistency needs, and expected data volume.
-- Name the source of truth for every data item. Derived indexes, caches, search documents, and read models must have a rebuild or repair path.
-- Prefer explicit constraints for durable invariants: primary keys, foreign keys, unique indexes, check constraints, and not-null rules when the database supports them.
-- Keep the model normalized until a measured access pattern justifies denormalization. When denormalizing, define the consistency mechanism and reconciliation path.
-- Use the existing database and migration tooling unless a new store solves a concrete problem the current stack cannot reasonably solve.
+- 从访问模式、不变量、写入与读取路径、保留策略、一致性需求和预期数据量出发。
+- 为每项数据明确事实源。派生索引、缓存、搜索文档和读模型必须有重建或修复路径。
+- 数据库支持时，用明确约束保护持久化不变量：主键、外键、唯一索引、检查约束和非空规则。
+- 保持模型规范化，直到实测访问模式足以支持反规范化。反规范化时，定义一致性机制和对账路径。
+- 使用现有数据库和迁移工具，除非新存储能解决当前技术栈无法合理解决的具体问题。
 
-## Schema And Constraints
+## 数据模型与约束
 
-- Every table should have a clear owner, lifecycle, primary key strategy, retention rule, and top query patterns.
-- Use stable, intentional identifiers. Avoid exposing auto-increment IDs externally when enumeration or cross-system coupling is a concern.
-- Model status fields as explicit state machines when transitions matter; define allowed transitions and who can perform them.
-- Add uniqueness constraints for idempotency, natural uniqueness, and duplicate prevention instead of relying only on application checks.
-- Treat nullable columns as a domain decision. If `NULL` means unknown, absent, not applicable, or not yet backfilled, name that meaning in the migration or model notes.
-- Define referential behavior deliberately: restrict, cascade, set null, or application-managed deletion. Physical deletes follow Destructive Data Operations.
+- 每张表都应有明确归属、生命周期、主键策略、保留规则和主要查询模式。
+- 使用稳定且经过设计的标识符。担心枚举或跨系统耦合时，避免对外暴露自增 ID。
+- 状态转换重要时，将状态字段建模为明确状态机，定义允许的转换及执行主体。
+- 为幂等、天然唯一性和防重复添加唯一约束，不仅依靠应用检查。
+- 可空列属于领域决策。`NULL` 表示未知、不存在、不适用或尚未回填时，在迁移或模型说明中注明。
+- 明确设计引用行为：限制、级联、置空或应用管理删除。物理删除遵循下方“破坏性数据操作”。
 
-## Destructive Data Operations
+## 破坏性数据操作
 
-User-facing business actions change state. Physical deletes belong to named retention, erasure, or cleanup jobs.
+面向用户的业务动作改变状态。物理删除属于明确命名的保留、擦除或清理任务。
 
-Do not ban `DELETE`. Ban unbounded or irreversible destruction of durable domain records.
+不要禁止 `DELETE`；应禁止对持久化领域记录进行无界或不可逆破坏。
 
-The same red line applies to ORM calls, query builders, repositories, and raw SQL. `destroy`, `deleteMany`, `onDelete: Cascade`, and equivalent helpers are physical deletes.
+同样的边界适用于 ORM、查询构建器、数据仓储和原始 SQL。`destroy`、`deleteMany`、`onDelete: Cascade` 等辅助方法也是物理删除。
 
-Choose one lifecycle per table. Do not default every table to `deleted_at`:
+为每张表选择一种生命周期，不要默认全部添加 `deleted_at`：
 
-- Durable domain records: explicit state transition (`cancel`, `void`, `revoke`, `expire`, `close`).
-- Identity that must remain queryable as gone: tombstone.
-- Ephemeral, derived and rebuildable, or past a named retention or erasure policy: physical delete.
+- 持久化领域记录：明确状态转换（`cancel`、`void`、`revoke`、`expire`、`close`）。
+- 必须仍可查询到“已不存在”状态的身份记录：墓碑。
+- 临时、派生且可重建，或已达到明确保留或擦除策略条件的数据：物理删除。
 
-Red lines:
+不可越过的边界：
 
-- In request handlers and ordinary write models, do not physically delete ledger, order, account, permission, or other audit-relevant records.
-- Do not use `DELETE` or an ORM destroy helper to express a business event.
-- Do not run `DELETE` or `UPDATE` without a `WHERE` clause bounded to a named primary-key set or fixed batch size.
-- Do not put `TRUNCATE`, `DROP TABLE`, or `DROP DATABASE` in application code.
-- Do not use `ON DELETE CASCADE` or ORM `onDelete: Cascade` as the default for domain aggregates.
-- Do not hard-delete audit, compliance, or money-movement records.
-- Do not erase a durable record by nulling or overwriting its business payload.
+- 请求处理器和普通写模型中，不物理删除账本、订单、账号、权限或其他审计相关记录。
+- 不用 `DELETE` 或 ORM 删除方法表达业务事件。
+- 不执行缺少 `WHERE` 限定的 `DELETE` 或 `UPDATE`；条件须限定为明确主键集合或固定批次大小。
+- 不在应用代码中放入 `TRUNCATE`、`DROP TABLE` 或 `DROP DATABASE`。
+- 不把 `ON DELETE CASCADE` 或 ORM 的 `onDelete: Cascade` 作为领域聚合默认方式。
+- 不硬删除审计、合规或资金流动记录。
+- 不通过置空或覆盖业务载荷来抹去持久化记录。
 
-Physical `DELETE` is allowed only when all of these are true:
+只有同时满足以下条件，才允许物理 `DELETE`：
 
-- The data is ephemeral, derived and rebuildable, or past a named retention or erasure policy.
-- The delete is bounded to a primary-key set or fixed batch size.
-- Owner, trigger, and rollback or repair path are named.
-- The delete is not the only record of a user-visible business event.
+- 数据是临时、派生且可重建的，或已达到明确保留或擦除策略条件。
+- 删除限定在主键集合或固定批次大小内。
+- 明确负责方、触发条件和回滚或修复路径。
+- 删除对象不是某个用户可见业务事件的唯一记录。
 
-If using a tombstone, define how uniqueness, default queries, and foreign keys treat inactive rows. Do not default to a database-wide `REVOKE DELETE`; scope privileges by role.
+使用墓碑时，定义唯一性、默认查询和外键如何处理非活动行。不要默认在全库执行 `REVOKE DELETE`；按角色限定权限。
 
-## Production Data Access
+## 生产数据访问
 
-Treat unknown, shared, staging-with-prod-data, and production databases as read-only until the user explicitly approves a write.
+用户明确批准写入之前，将未知数据库、共享数据库、含生产数据的预发布数据库和生产数据库视为只读。
 
-- Default to `SELECT` or `EXPLAIN`. Do not default to `EXPLAIN ANALYZE` on production; it can execute and lock.
-- Before a write to these databases (`INSERT`, `UPDATE`, `DELETE`, or DDL), estimate affected rows and name the rollback or repair path. Require explicit approval for that target and operation; reuse it if already given and the scope is unchanged. This gate does not apply to editing migration files or running an authorized disposable local test database.
-- Do not use application credentials to "just fix one row."
-- Do not run migrate, seed, or truncate against a production `DATABASE_URL`. This operation prohibition is separate from the write-approval gate; general write approval does not waive it. Preparing migration files and testing an authorized disposable local database remain allowed.
+- 默认使用 `SELECT` 或 `EXPLAIN`。生产环境不默认使用 `EXPLAIN ANALYZE`，它可能实际执行并加锁。
+- 向这些数据库写入（`INSERT`、`UPDATE`、`DELETE` 或 DDL）前，估算影响行数，明确回滚或修复路径。需要针对目标和操作的明确批准；已有授权且范围不变时直接复用。该要求不适用于编辑迁移文件或运行已授权、可丢弃的本地测试数据库。
+- 不使用应用凭据“顺手修一行”。
+- 不对生产 `DATABASE_URL` 执行迁移、播种或清空。该操作禁令独立于写入审批；一般写入授权不会取消它。准备迁移文件和测试已授权、可丢弃的本地数据库仍然允许。
 
-## Query And Index Review
+## 查询与索引审查
 
-- For every new or materially changed query, identify filter columns, join columns, sort order, result cardinality, and maximum page size.
-- Use `EXPLAIN` for query paths that can touch large tables, hot endpoints, dashboards, exports, background jobs, or user-facing latency budgets. Use `EXPLAIN ANALYZE` on realistic non-production data, or on production only with explicit approval.
-- Design compound indexes in equality-filter, range-filter, sort-order order according to the target database's planner behavior.
-- Avoid indexes that duplicate an existing useful prefix or add write cost without a named query path.
-- Bound every list, export, and background scan. Use cursor pagination or bounded batch iteration for deep traversal.
-- Watch for N+1 queries, unbounded joins, non-sargable predicates, implicit casts, leading-wildcard searches, and functions applied to indexed columns.
+- 每个新增或实质变化的查询，都应明确筛选列、连接列、排序、结果基数和最大分页大小。
+- 对可能访问大表、热门端点、面板、导出、后台任务或影响用户延迟预算的查询路径使用 `EXPLAIN`。`EXPLAIN ANALYZE` 应在接近真实的非生产数据上使用；生产使用必须明确获准。
+- 根据目标数据库规划器行为，按等值筛选、范围筛选、排序顺序设计复合索引。
+- 避免重复已有有效前缀，或没有明确查询用途却增加写入成本的索引。
+- 所有列表、导出和后台扫描都有界。深度遍历采用游标分页或有界批次迭代。
+- 注意 N+1 查询、无界连接、无法利用索引的谓词、隐式类型转换、前置通配符搜索，以及对索引列应用函数。
 
-## Transactions And Concurrency
+## 事务与并发
 
-- Keep transactions short, bounded, and free of slow network calls.
-- State the isolation assumption when correctness depends on concurrent behavior.
-- Use optimistic locking for ordinary user edits where conflict feedback is acceptable.
-- Use pessimistic locks only for short critical sections with clear lock ordering and timeout behavior.
-- Make retryable operations idempotent. Define unique request keys or natural uniqueness for create/payment/job-trigger style flows.
-- For money, inventory, seats, coupons, or other scarce balances, do not read-modify-write. Use a single constrained update such as `UPDATE ... SET bal = bal - :n WHERE id = :id AND bal >= :n`, and treat zero rows as a business failure.
-- Posted ledger, audit, and money-movement rows are append-only. Correct with a new row, not an update or delete of the original.
-- For job workers and batch processors, define duplicate handling, retry behavior, dead-letter behavior, and safe resume points.
+- 事务保持短、有界，且不包含慢网络调用。
+- 正确性依赖并发行为时，说明隔离级别假设。
+- 普通用户编辑可以接受冲突反馈时，使用乐观锁。
+- 悲观锁只用于短临界区，并明确加锁顺序和超时行为。
+- 可重试操作应幂等。创建、支付、触发任务等流程需定义唯一请求键或天然唯一性。
+- 对资金、库存、席位、优惠券等稀缺余额，不采用先读后改再写。使用单条带条件更新，如 `UPDATE ... SET bal = bal - :n WHERE id = :id AND bal >= :n`，零行更新视为业务失败。
+- 已入账账本、审计和资金流动行仅可追加。用新行更正，不更新或删除原记录。
+- 任务工作进程和批处理器须定义重复处理、重试、死信和安全恢复点。
 
-## Migration And Backfill Safety
+## 迁移与回填安全
 
-- Prefer expand-migrate-contract for production data changes:
-  1. Add a compatible new shape.
-  2. Establish compatible reads/writes and decide how overlapping writers stay consistent.
-  3. Backfill historical data in bounded batches without overwriting newer writes.
-  4. Cut reads over gradually.
-  5. Remove the old shape after rollback risk is gone.
-- Avoid blocking table rewrites, long exclusive locks, and in-place renames on hot production tables.
-- Do not add `NOT NULL` without a default, or a prior backfill, on a populated table.
-- Do not change a column type or enum in place on a hot populated table.
-- Do not put a schema change and a full-table backfill in the same transaction.
-- Do not create a unique index before duplicate rows are removed or made compatible.
-- For large tables, plan online schema changes, concurrent index creation, throttled backfills, progress visibility, and pause/resume behavior.
-- Define rollback limits honestly. Some data migrations are forward-only; say so before launch.
-- Verify migrations against realistic data volume when feasible, not only an empty development database.
+- 生产数据变更优先采用扩展—迁移—收缩：
+  1. 添加兼容的新结构。
+  2. 建立兼容读写，明确并存写入方如何保持一致。
+  3. 分有界批次回填历史数据，不覆盖更新的写入。
+  4. 逐步切换读取。
+  5. 回滚风险消失后移除旧结构。
+- 避免在繁忙生产表上进行阻塞式重写、长时间排他锁和原地重命名。
+- 对已有数据的表，不在既无默认值又未先回填时直接添加 `NOT NULL`。
+- 不在繁忙且已有数据的表上原地修改列类型或枚举。
+- 不把结构变更和全表回填放在同一事务。
+- 重复行尚未清理或处理为兼容状态之前，不创建唯一索引。
+- 大表需规划在线结构变更、并发建索引、限速回填、进度可见性和暂停恢复行为。
+- 如实定义回滚限制。有些数据迁移只能向前修复，应在上线前说明。
+- 可行时在接近真实数据量上验证迁移，而不只在空开发数据库上验证。
 
-## Worked Example: Renaming A Populated Column
+<a id="worked-example-renaming-a-populated-column"></a>
+## 示例：重命名已有数据的列
 
-**Applies when:** old and new application versions may overlap while `display_name` becomes `public_name`.
+**适用情形：** `display_name` 改为 `public_name` 期间，新旧应用版本可能并存。
 
-**Counterexample:** rename the column and deploy the new reader immediately. Old instances fail; a one-shot backfill can miss concurrent writes or overwrite a newer value.
+**反例：** 直接重命名列并立即部署新读取方。旧实例失败；一次性回填可能漏掉并发写入或覆盖更新值。
 
-**Better shape:** add the new nullable column, deploy compatible writers, backfill in bounded resumable batches, and switch readers after checking completeness and consistency. Decide which field is authoritative during overlap. If old writers cannot populate the new field, use a suitable synchronization mechanism or retire them before the final reconciliation. A backfill must not overwrite newer writes; use a version predicate or equivalent coordination. Retain the old field until the rollback window closes. Do not require this sequence for a disposable database or a migration with an explicitly accepted maintenance window.
+**更好的结构：** 添加新的可空列，部署兼容写入方，以有界、可恢复的批次回填，检查完整性与一致性后切换读取。明确并存期间哪个字段是权威值。如果旧写入方不能填写新字段，采用合适的同步机制，或在最终对账前退役旧写入方。回填不得覆盖更新的写入，应使用版本条件或等价协调。保留旧字段直到回滚窗口关闭。可丢弃数据库或明确接受维护窗口的迁移，不必强求此流程。
 
-**Verify:** on an isolated database matching the target engine/version, exercise old and new readers/writers together, update a row during backfill, interrupt and resume a batch, and compare final values. Test the supported rollback path. Separately measure locks and duration on representative data; correctness on a tiny fixture does not establish production migration latency.
+**验证：** 在与目标引擎和版本一致的隔离数据库中，让新旧读写方并存，在回填期间更新行，中断并恢复批次，比较最终值。测试支持的回滚路径。另用有代表性的数据测量锁和耗时；小型夹具上的正确性不能证明生产迁移延迟。
 
-### PostgreSQL-specific index example
+### PostgreSQL 专用索引示例
 
-For a large live PostgreSQL table, `CREATE INDEX CONCURRENTLY` can reduce write blocking compared with ordinary index creation. It cannot run inside a transaction block; migration tools that wrap all statements need a compatible execution mode. A failed build can leave an invalid index, so recovery must inspect index validity rather than treating the name's existence as success. This is PostgreSQL-specific guidance, not syntax for MySQL or SQLite, and does not authorize a production operation.
+对线上大型 PostgreSQL 表，与普通建索引相比，`CREATE INDEX CONCURRENTLY` 可以减少写阻塞。它不能在事务块内执行；自动把语句包进事务的迁移工具需要兼容执行模式。构建失败可能留下无效索引，因此恢复时应检查索引有效性，不能把同名索引存在当作成功。这是 PostgreSQL 专用指导，不是 MySQL 或 SQLite 语法，也不授予生产操作权限。
 
-Check the target version's [PostgreSQL CREATE INDEX documentation](https://www.postgresql.org/docs/current/sql-createindex.html) before preparing the migration. Verify the migration runner's transaction mode and the resulting index validity in the isolated target database.
+准备迁移前，查阅目标版本的 [PostgreSQL CREATE INDEX 文档](https://www.postgresql.org/docs/current/sql-createindex.html)。在隔离目标数据库中验证迁移执行器的事务模式和最终索引有效性。
 
-Example organization is informed by [Supabase Postgres Best Practices](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices): applicability, counterexample, correction, and evidence. These local examples are not upstream benchmark results.
+示例组织方式借鉴 [Supabase Postgres 最佳实践](https://github.com/supabase/agent-skills/tree/main/skills/supabase-postgres-best-practices)：适用性、反例、修正和证据。这些本地示例不是上游基准结果。
 
-## Capacity And Operations
+## 容量与运维
 
-- Estimate row counts, write rate, read QPS, hot key distribution, index size, storage growth, retention, and backup/restore time for non-trivial data changes.
-- Check connection pool sizing before increasing concurrency. Database saturation often appears as app latency before it appears as database CPU.
-- Track slow queries, lock waits, deadlocks, replication lag, connection usage, cache hit rate, table/index bloat, and disk growth where the platform supports it.
-- Define alerts on user-visible symptoms first: latency, error rate, saturation, failed jobs, backlog age, and replication lag.
-- For read replicas, name the stale-read tolerance and the paths that must read from primary.
+- 对非微小数据改动，估算行数、写入速率、读取 QPS、热键分布、索引大小、存储增长、保留期和备份恢复时间。
+- 提高并发前检查连接池大小。数据库饱和往往先表现为应用延迟，再表现为数据库 CPU 升高。
+- 平台支持时，跟踪慢查询、锁等待、死锁、复制延迟、连接使用量、缓存命中率、表或索引膨胀和磁盘增长。
+- 优先对用户可见症状告警：延迟、错误率、饱和、任务失败、积压时长和复制延迟。
+- 使用只读副本时，明确可容忍的陈旧读取程度，以及必须从主库读取的路径。
 
-## Database Debugging Paths
+## 数据库调试路径
 
-- Slow query: capture the SQL, parameters, cardinality, plan, indexes, table size, cache behavior, and competing load.
-- Deadlock or lock wait: identify statements, lock order, transaction length, indexes used for updates, and retry behavior.
-- Data inconsistency: identify source of truth, last good state, write paths, backfill jobs, replication or cache lag, and repair strategy.
-- Connection exhaustion: separate request concurrency, transaction duration, pool settings, leaked connections, long-running queries, and job worker concurrency.
-- Migration incident: stop or throttle the migration, identify lock or replication impact, confirm rollback feasibility, and preserve evidence before retrying.
+- 慢查询：收集 SQL、参数、基数、执行计划、索引、表大小、缓存行为和竞争负载。
+- 死锁或锁等待：识别语句、锁顺序、事务时长、更新使用的索引和重试行为。
+- 数据不一致：识别事实源、最后正确状态、写入路径、回填任务、复制或缓存延迟，以及修复策略。
+- 连接耗尽：区分请求并发、事务时长、连接池设置、连接泄漏、长查询和工作进程并发。
+- 迁移事故：停止或限速迁移，识别锁或复制影响，确认回滚可行性，重试前保留证据。
 
-## Verification Checklist
+## 验证清单
 
-Use the smallest applicable set:
+选择最小适用集合：
 
-- Exercise storage constraints, persisted idempotency, and transaction conflicts against the relevant database semantics at the lowest layer that includes the enforcing mechanism. Pure domain logic can be verified separately without storage.
-- Query plan review for hot or large-table queries.
-- Bounded-delete or tombstone review for any path that removes or retires durable rows.
-- Constrained-update or append-only review for balance and ledger paths.
-- Production write approval and row-estimate check before live data changes.
-- Migration dry run, rollback review, and backfill resume check for production data changes.
-- Load or capacity sanity check for high-volume paths.
-- Manual database inspection only as supporting evidence, not the sole proof for repeatable behavior.
+- 在包含约束机制的最低层，依据相关数据库语义检查存储约束、持久化幂等和事务冲突。纯领域逻辑可以脱离存储单独验证。
+- 对热门或大表查询审查执行计划。
+- 对移除或停用持久化行的路径，审查有界删除或墓碑。
+- 对余额和账本路径，审查带条件更新或仅追加行为。
+- 线上数据变更前，检查生产写入授权和影响行数估算。
+- 生产数据变更需试运行迁移、审查回滚，并检查回填恢复。
+- 对高流量路径做负载或容量合理性检查。
+- 手工数据库检查仅作为辅助证据，不作为可重复行为的唯一证明。
 
-## Database Decision Template
+## 数据库决策模板
 
-Optional outline for a requested or project-required database decision artifact. Include only fields needed for the decision; this is not the default final reply.
+用于用户要求或项目规定的数据库决策产物的可选提纲。只包含影响决策的字段；这不是默认最终回答格式。
 
 ```text
-Access patterns:
-Invariants:
-Schema / indexes:
-Transaction and isolation assumptions:
-Deletion / retention:
-Production access:
-Migration / backfill:
-Capacity assumptions:
-Failure and rollback:
-Verification:
+访问模式：
+不变量：
+数据模型 / 索引：
+事务与隔离假设：
+删除 / 保留：
+生产访问：
+迁移 / 回填：
+容量假设：
+失败与回滚：
+验证：
 ```

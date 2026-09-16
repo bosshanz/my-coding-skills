@@ -5,22 +5,19 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-16
+
 ### Changed
 
-- Added scoped engineering examples for idempotency, tenant isolation, migration,
-  and publish-state ownership, with counterexamples and verification methods.
-- Added optional behavior-evidence scenarios to `verify`; refined design guidance
-  for restrained typography and motion, and explicit preference conflict/retraction
-  handling in `reflect`. These are guidance changes, not measured model gains.
-
-- Merged the five external CLI adapters into one `external-cli` skill. The
-  shared contract lives in that entry; each CLI keeps a short reference.
-  Headless commands remain the default; ACP is documented only for
-  client-driven sessions and editor embedding.
-- `kimi-code`, `claude-code`, `codex-cli`, `opencode`, and `grok-build-cli`
-  are install aliases of `external-cli` and remain uninstallable leftovers.
-- Refreshed CLI notes against current local help, including Kimi's `-c`
-  continue flag, yolo/auto meanings, and resume-mode overrides.
+- 新增 `grill-me`：先查证据，一次追问一个关键问题，收敛决策。
+- `reflect` 支持日常复盘与仓库内经验积累，区分偏好、经验和假设；持久化遵循宿主规则，全局记忆需用户明确要求。
+- `eng` 成为所有开发任务的统一工程原则入口，强调“如无必要，勿增实体”、可维护表达、清晰契约、真实失败、状态归属、兼容性和证据，不规定固定流程。
+- 工程参考改为 `software-architecture.md` 与 `software-quality.md`，按契约、状态、副作用、资源和演进组织，补充行为测试、依赖长期成本和实际交付物验证；服务端内容保留为条件性例子。
+- `design` 聚焦交互、视觉、动效、无障碍与适配，删除重复的前端工程质量规范及库选型内容。
+- 全部 6 个 Skill 入口、15 份现存参考和展示文案改为简体中文，保留命令、标识符、来源链接和许可证。
+- 补充工程条件、反例与验证例证，以及 `verify` 的行为证据场景；这些指导和静态检查不代表已测得模型增益。
+- 五个外部 CLI 入口合并为 `external-cli`，原名称保留为安装别名和可卸载的历史目录；默认使用无头命令，ACP 仅用于客户端驱动会话。
+- CLI 参考按本地帮助更新，涵盖 Kimi 的继续会话参数、权限模式含义与恢复模式覆盖；安装器、目录、文档和评估夹具同步更新。
 
 ## [0.6.0] - 2026-09-15
 

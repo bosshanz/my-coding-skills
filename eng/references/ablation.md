@@ -1,27 +1,27 @@
-# Ablation For A Concrete Decision
+# 针对具体决策的消融
 
-Load when the user requests an ablation, or when a delivery decision depends on the contribution of an optional rule, prompt section, tool, or component. Ordinary implementation does not require proving every element individually. Use only authorized resources and side effects; this reference does not authorize an external agent, a paid evaluation, or production changes.
+用户要求消融，或交付决策取决于某个可选规则、提示词片段、工具或组件的贡献时加载。普通实现无需逐项证明每个元素的价值。仅使用已授权资源和副作用；本参考不授予外部 Agent、付费评估或生产变更权限。
 
-## Define What The Comparison Can Decide
+## 明确比较能回答什么
 
-- Name the factor, the claimed benefit, and whether the decision is to retain, simplify, remove, or investigate it. State a falsifiable hypothesis and a meaningful change threshold before examining results.
-- Choose representative inputs and a fixed behavior-facing verifier. Include the failure cases the factor is supposed to prevent, not only convenient happy paths. A wording check or fixture dry run cannot establish agent behavior.
-- Compare quality or failure rate with relevant cost and latency. Keep permission, compatibility, data integrity, and other required constraints in both variants. Do not remove a required safeguard from a live system to measure its value.
+- 明确因素、声称的收益，以及要决定保留、简化、移除还是继续调查。在查看结果之前，提出可证伪假设和有意义的变化阈值。
+- 选择有代表性的输入和固定、面向行为的判定方法。包含该因素本应防止的失败情形，不只选方便的正常路径。措辞检查或夹具试加载不能证明 Agent 行为。
+- 比较质量或失败率，以及相关成本与延迟。两个版本都保留权限、兼容性、数据完整性等必要约束。不要为了测量价值而移除真实系统中的必要保护。
 
-## Run A Comparable Baseline And Variant
+## 运行可比较的基线与变体
 
-- Preserve the full baseline and make one variant with only the chosen factor removed or disabled. Use isolated copies/configurations; do not reset a shared checkout or change other agents' work.
-- Hold inputs, repository and dependency versions, environment, model/version, settings, tool availability apart from the tested tool, verifier, and comparable budgets as constant as practical. Record uncontrolled differences and any minimal compatibility change needed to keep the variant runnable.
-- Start both variants from clean, equivalent state. Do not share conversation history, memory, caches, generated artifacts, or already-fixed fixtures that could reveal another run's result. Control or record run order and warm-up effects when timing matters.
-- For nondeterministic behavior, use paired repeated runs on the same cases, matched seeds where supported, and a bounded run budget appropriate to the decision. Retain every attempt, failure, timeout, and aggregate variation; do not rerun only failures until a preferred result appears.
-- The evaluator uses the same criteria for both variants. Conceal variant labels from a subjective evaluator where practical. A reviewer or external model still needs applicable authorization; use available deterministic evidence when it is sufficient.
+- 保留完整基线，创建仅移除或禁用所选因素的变体。使用隔离副本或配置，不重置共享工作区，也不改动其他 Agent 的工作。
+- 尽可能固定输入、仓库和依赖版本、环境、模型及版本、设置、除被测工具以外的工具可用性、判定方法和可比预算。记录未控制的差异，以及为保证变体可运行而必需的最小兼容性改动。
+- 两个版本从干净且等价的状态开始。不共享可能泄露其他运行结果的对话历史、记忆、缓存、生成产物或已修复夹具。计时重要时，控制或记录运行顺序和预热影响。
+- 对非确定性行为，在相同案例上成对重复运行；支持时使用匹配随机种子，并设定适合该决策的有限运行预算。保留每次尝试、失败、超时和总体波动；不要只重跑失败，直到得到偏好的结果。
+- 两个版本使用相同评价标准。可行时向主观评价者隐藏版本标签。审查者或外部模型仍需适用授权；已有确定性证据足够时，直接使用。
 
-## Interpret Without Overclaiming
+## 解释结果，避免夸大
 
-- Report each variant, the controlled conditions, cases and repetitions, measured differences and variation, and material limits alongside the decision.
-- A degradation supports a contribution under these conditions, not universal necessity. No detected change does not prove uselessness: the sample may miss a rare failure, the effect may be small, or another element may compensate. An improvement likewise needs evidence beyond one favorable run.
-- Single-factor removal measures its contribution in this configuration. If interactions could change the decision, consider a small combined comparison within scope instead of claiming independent effects or expanding into an exhaustive matrix.
-- If removing the factor makes the system unable to run, record that dependency result; do not equate it with a measured quality benefit. Confounded, noisy, or incomplete comparisons may remain inconclusive.
-- Restore temporary setup and integrate a supported change only within the original implementation authorization. An experiment-only request ends with findings; it does not authorize applying the result.
+- 将各版本、受控条件、案例与重复次数、实测差异与波动、重要限制连同决策一起报告。
+- 移除后退化支持该因素在这些条件下有贡献，不证明其普遍必需。未检出变化不证明无用：样本可能漏掉罕见失败、效果可能较小，或其他元素可能起补偿作用。改善也需要一次有利运行之外的证据。
+- 单因素移除测量的是它在当前配置中的贡献。交互效应可能改变决策时，在范围内考虑少量组合比较，不要声称效果独立，也不要扩张成穷尽矩阵。
+- 移除因素导致系统无法运行时，记录依赖性结果，不把它等同于实测质量收益。存在混杂、噪声过大或不完整的比较，可以保持无结论。
+- 恢复临时配置，仅在原有实现授权范围内应用有证据支持的改动。仅要求实验时，以发现收尾，不自动应用结果。
 
-For a requested experiment record, use a compact table such as `variant | conditions | cases/runs | quality/failures | cost/latency | variation/limits`. It is an optional artifact, not a new delivery format.
+用户要求实验记录时，可用简表：`版本 | 条件 | 案例/运行次数 | 质量/失败 | 成本/延迟 | 波动/限制`。这是可选产物，不是新增交付格式。

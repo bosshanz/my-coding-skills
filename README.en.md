@@ -1,8 +1,8 @@
 # Coding Agent Skills
 
-Optional design, business verification, explicit preference capture, and a unified external CLI adapter, plus directly readable engineering references.
+Optional design, business verification, decision interviews and repository-local learning, and a unified external CLI adapter, plus engineering principles for all development work.
 
-Ordinary implementation, fixes, product analysis, and developer tests run in the current agent. There is no default development dispatcher or mandatory clarification / QA / acceptance pipeline. Honor the user's choice not to use Skills.
+Implementation, fixes, refactoring, debugging, developer tests, and code review use `eng` as their common engineering entry and run in the current agent. Pure product analysis proceeds directly. There is no default development dispatcher or mandatory clarification / QA / acceptance pipeline. Honor the user's choice not to use Skills.
 
 [中文](README.md)
 
@@ -10,15 +10,16 @@ Ordinary implementation, fixes, product analysis, and developer tests run in the
 
 | Skill | Purpose |
 | --- | --- |
-| `design` | Concrete interaction, visual, frontend quality, and motion decisions. Implementing an established design needs no new design process. |
+| `design` | Concrete interaction, visual, and motion decisions. Implementing an established design needs no new design process. |
 | `verify` | Explicitly requested business-rule checks, journey diagnosis, or final acceptance. Add protection only when requested; review alone stays read-only. |
-| `eng` | Backend boundaries, quality, storage, architecture decisions, debugging method, or ablation. Ordinary features, fixes, and tests do not load it. |
-| `reflect` | Explicit `$reflect` / `/reflect` preference recording. Ordinary corrections do not trigger persistence. |
+| `eng` | A common entry for all development work, governing engineering behavior and taste: avoid unnecessary entities, write maintainable code, make contracts clear, expose failures truthfully, own state explicitly, preserve compatibility, and use evidence. No fixed workflow. |
+| `grill-me` | Requested plan challenges and decision interviews: inspect evidence, ask one consequential question at a time, and converge. |
+| `reflect` | Learn automatically from corrections, failures, and supported improvements. Lessons stay in the repository; global memory requires an explicit request. |
 | `external-cli` | After the user names Claude Code, Codex CLI, Kimi Code, OpenCode, or Grok Build, invoke that CLI's headless command. ACP is only for a client-driven session or editor embedding. |
 
 `verify` combines the former `qa` and `acceptance` purposes while preserving read-only review, requested test protection, and final-verdict boundaries. Technical acceptance is not publication authority. Independent review requires actual reviewer separation and applicable authorization.
 
-`reflect` follows host persistence rules and records only user-stated preferences. Reuse clear authorization for the entry and destination; ask only about material ambiguity. Its Codex metadata disables implicit invocation; portable descriptions retain the explicit-only boundary. See [Codex invocation policy](https://learn.chatgpt.com/docs/build-skills#optional-metadata).
+`reflect` follows host persistence rules. Reuse the repository's designated learning log, otherwise use `.agent-learning.md` at its root when the first useful entry is permitted. If the host forbids automatic persistence, reflect in the conversation only. Distinguish confirmed preferences, evidence-backed lessons, and hypotheses; do not automatically rewrite project instructions. Codex metadata permits implicit invocation; other hosts use the entry description. `$reflect` / `/reflect` remain available for focused retrospectives and maintenance.
 
 ## Choosing A Capability
 
@@ -29,17 +30,19 @@ Select the information the task needs; these are not sequential stages.
 | Improve an existing interaction | `$design Redesign partial failure and retry for bulk publishing; retain the current visual system.` | State, feedback, and recovery before polish; no mandatory new fonts or animation. |
 | Assess an engineering decision | `$eng Check reservation idempotency under concurrent requests and timeout retries.` | Applicability, counterexample, correction, and verification; read only relevant references. |
 | Check actual behavior | `$verify Diagnose whether a saved draft survives reload. Do not change code.` | Compare visible claims with authoritative persisted state and identify evidence gaps. |
+| Challenge a plan | `$grill-me Pressure-test offline editing, one question at a time.` | Inspect facts, follow consequential branches, and converge on decisions and validation. |
+| Learn from an outcome | `$reflect Review this fix and keep supported lessons in the repository.` | Distinguish observations, lessons, and hypotheses; reuse repository records under host rules. |
 | Record an explicit preference | `$reflect Replace this project's pnpm preference with npm in its AGENTS.md preference section.` | Use the host-permitted mechanism, replace the same-scope entry, and avoid turning project scope into a global preference. |
 
-Design includes [calibration examples](design/references/design-direction.md#calibration-examples) for marketing, admin tools, and native desktop workflows. Engineering examples cover [idempotency and tenant isolation](eng/references/backend-quality.md#worked-examples-idempotency-and-tenant-scope), [compatible migrations](eng/references/database-engineering.md#worked-example-renaming-a-populated-column), and [publish-state ownership](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state). Database-specific syntax names its engine rather than posing as a universal rule.
+Design includes [calibration examples](design/references/design-direction.md#calibration-examples) for marketing, admin tools, and native desktop workflows. Engineering examples cover [idempotency and tenant isolation](eng/references/software-quality.md#worked-examples-idempotency-and-tenant-scope), [compatible migrations](eng/references/database-engineering.md#worked-example-renaming-a-populated-column), and [publish-state ownership](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state). Database-specific syntax names its engine rather than posing as a universal rule.
 
-The [verification scenarios](verify/references/scenarios.md) cover lost payment responses, restored drafts, account/permission switches, and partial batches. They explain which evidence supports a claim and reuse host tools without requiring a new browser or test framework. `reflect` handles same-scope replacements, narrow exceptions, and explicit retractions; ordinary corrections do not trigger persistence.
+The [verification scenarios](verify/references/scenarios.md) cover lost payment responses, restored drafts, account/permission switches, and partial batches. They explain which evidence supports a claim and reuse host tools without requiring a new browser or test framework. `reflect` handles same-scope replacements, narrow exceptions, and explicit retractions; writes follow host rules and never default to global memory.
 
 These are guidance examples, not executed test reports. Upstream attribution explains the method's origin, not measured gains from this library. See [workflow and evaluation](docs/workflow.md) for evidence levels and [rules, capabilities, and preferences](docs/three-layers.md) for where information belongs.
 
 ## Engineering References
 
-Backend, storage, architecture, debugging, and ablation notes are loaded by the optional `eng` skill from `eng/references/`. Read only the file needed for the current decision. `skills references` prints packaged paths. Installing `eng` or `all` copies these files.
+`eng/SKILL.md` provides shared engineering principles across development work. Existing architecture, storage, debugging, and ablation notes remain in `eng/references/`; load only what a concrete decision needs, not a whole frontend/backend/client checklist. `skills references` prints packaged paths. Installing `eng` or `all` copies these files.
 
 ## Installation
 
@@ -50,6 +53,7 @@ No arguments display help without installing or uninstalling anything. Select a 
 ./install.sh design --target agents --dry-run
 ./install.sh design --target agents
 ./install.sh verify --target agents
+./install.sh grill-me --target agents
 ./install.sh external-cli --target agents
 ./install.sh claude-code --target agents
 ```
@@ -102,7 +106,7 @@ Useful `dev` references now load through optional `eng`. `superpowers-lite.md` b
 
 ## Scope And Evidence
 
-- Ordinary work and generic code review proceed directly in the current agent. Design decisions may use `design`; business checks or final acceptance explicitly request `verify`; backend, storage, architecture, or debugging method uses `eng`; preference recording invokes `reflect`.
+- Development work and code review use `eng` principles and proceed directly in the current agent; honor requests to use no Skills. Design decisions may use `design`; business checks or final acceptance explicitly request `verify`; engineering principles and on-demand references come from `eng`; requested plan challenges use `grill-me`; corrections, failures, and supported improvements can trigger repository-local learning with `reflect`.
 - External adapters require selection by the current request or an applicable explicit standing instruction. Discovering a policy file is not authorization.
 - Actually invoke the chosen CLI, report unavailability accurately, preserve real output, and review its evidence. Pass through the user's Skill selection or prohibition; do not require a development Skill in the child.
 - Skills do not grant publication, production access, unrelated work, or recursive delegation. Finish other authorized work after a check.
@@ -130,7 +134,6 @@ design/
     anthropic-frontend-design-LICENSE.txt
     design-direction.md
     interaction.md
-    quality.md
 verify/
   SKILL.md
   agents/
@@ -144,10 +147,14 @@ eng/
   references/
     ablation.md
     architecture-decisions.md
-    backend-architecture.md
-    backend-quality.md
+    software-architecture.md
+    software-quality.md
     database-engineering.md
     debugging.md
+grill-me/
+  SKILL.md
+  agents/
+    openai.yaml
 reflect/
   SKILL.md
   agents/

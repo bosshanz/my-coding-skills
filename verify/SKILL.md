@@ -1,39 +1,39 @@
 ---
 name: verify
-description: "Opt-in business-rule checks, real user-journey diagnosis, and final acceptance. Use when the user explicitly requests these checks or invokes $verify; ordinary implementation and developer tests need no separate verification Skill."
-when_to_use: "Check a named business rule or journey, protect it with requested tests, or judge completed work against agreed acceptance criteria. Generic code review, running a suite, and ordinary test additions do not trigger this Skill."
-argument-hint: "[业务规则 / 用户旅程 / 验收范围 | rule, journey, or acceptance scope]"
+description: "按需开展业务规则检查、真实用户旅程诊断和最终验收。仅在用户明确要求这些检查或调用 $verify 时使用；普通实现和开发测试无需单独启用验证 Skill。"
+when_to_use: "检查指定业务规则或旅程，按请求添加保护性测试，或依据约定验收标准判断已完成工作。普通代码审查、运行测试集和常规补测试不触发本 Skill。"
+argument-hint: "[业务规则 / 用户旅程 / 验收范围]"
 ---
 
-# Verify
+# 验证
 
-Check the requested behavior against the user's criteria. Start with the user-visible outcome and the authoritative effect: a passing test or success message only proves what it actually observes.
+依据用户标准检查指定行为。从用户可见结果和权威状态中的实际效果出发：测试通过或成功提示只能证明它实际观察到的内容。
 
-When choosing a reproducer or evidence source, consult only the matching example in `references/scenarios.md`: lost payment responses, restored drafts, account/permission switches, or partial batches. Use the host's existing tools; the examples do not require a new test framework or a fixed report.
+选择复现方式或证据来源时，只查阅 `references/scenarios.md` 中匹配的例子：支付响应丢失、草稿恢复、账号或权限切换、批量部分完成。复用宿主已有工具；这些例子不要求新测试框架或固定报告。
 
-## Scope
+## 范围
 
-- Diagnosis and final acceptance are read-only. They do not authorize source edits, test changes, publishing, or another agent.
-- When the user requests protection, add the smallest meaningful test or check for the named rule. Keep the product behavior unchanged unless repair is also authorized. A wrong product is a finding, not a reason to weaken its expected behavior.
-- Continue already-authorized repairs or other work after the check; no new workflow or repeated approval is needed. Unrelated journeys and missing evidence do not create more tasks.
+- 诊断和最终验收保持只读，不授权修改源码、测试、发布或调用其他 Agent。
+- 用户要求保护时，为指定规则添加最小且有意义的测试或检查。除非也获准修复，否则保持产品行为不变。产品行为错误应作为发现报告，而不是降低预期的理由。
+- 检查后继续已获授权的修复或其他工作，无需新流程或重复审批。无关旅程和证据缺口不会自动产生更多任务。
 
-## Check The Behavior
+## 检查行为
 
-1. Establish the target, criteria, relevant revision, and actual evidence. Resolve business meaning from the request, product copy, domain notes, code, and existing checks. Ask only about an unresolved assumption that changes the conclusion.
-2. Follow the relevant trigger through state, persistence, visible completion, failure, and recovery. Look for false success, lost work, stale state, wrong permissions, duplicate effects, partial failure, and concurrency where they affect this slice.
-3. Test the weakest assumption using the cheapest check that includes the enforcing mechanism. Pure rules can use unit tests; persisted uniqueness, atomicity, or query scoping need the actual storage semantics or a demonstrated equivalent. Reuse fresh evidence and complete required project checks.
-4. For each material finding, state the trigger, expected and observed behavior, impact, and reproducible evidence or exact gap. Distinguish confirmed defects from hypotheses. A review can find no defects.
+1. 明确目标、标准、相关版本和实际证据。从请求、产品文案、领域说明、代码和已有检查中确认业务含义。只询问会改变结论且尚未解决的假设。
+2. 从相关触发点追踪状态、持久化、可见完成、失败和恢复。检查影响当前范围的虚假成功、工作丢失、过期状态、错误权限、重复效果、部分失败和并发问题。
+3. 用包含实际约束机制且成本最低的检查验证最薄弱的假设。纯规则可用单元测试；持久化唯一性、原子性或查询范围需要真实存储语义或已证明等价的环境。复用新鲜证据，完成项目必需检查。
+4. 每项重要发现应说明触发条件、预期与实际行为、影响，以及可复现证据或准确缺口。区分已确认缺陷与假设。审查也可能没有发现缺陷。
 
-For requested test protection, follow existing test patterns and show that the check detects the relevant failure when feasible. Do not add a framework or change the expected rule just to obtain a green result. Report only checks actually performed.
+按请求添加保护性测试时，遵循现有测试模式，并在可行时证明它能检出相关失败。不要为了得到通过结果而新增框架或修改预期规则。只报告实际执行过的检查。
 
-## Final Acceptance
+## 最终验收
 
-When the user asks for a final verdict, use:
+用户要求最终结论时，使用以下标记：
 
-- `accepted`: agreed criteria and required checks are satisfied by current evidence.
-- `accepted with risk`: no blocking criterion or required check remains; named nonblocking risks persist.
-- `rejected`: a criterion fails, a blocking regression exists, or required evidence is missing.
+- `accepted`：当前证据满足约定标准和必需检查。
+- `accepted with risk`：没有剩余阻塞标准或必需检查，但仍存在已明确列出的非阻塞风险。
+- `rejected`：某项标准不满足、存在阻塞性回归，或缺少必需证据。
 
-Keep evidence, reviewer separation, and authority distinct. The same implementer may self-check but cannot claim independent review. If a separate reviewer is requested and authorized, give a non-implementer the original criteria, revision, and raw evidence before other verdicts; disclose shared context. Technical acceptance does not grant release or merge permission.
+区分证据、审查者独立性和操作权限。同一实现者可以自查，但不能声称独立审查。用户要求且授权独立审查时，在提供其他结论之前，先把原始标准、版本和原始证据交给未参与实现的人；如实说明共享上下文。技术验收不授予发布或合并权限。
 
-Answer the requested question directly, in Chinese by default, with the strongest evidence and material limits. A business diagnosis needs no go/no-go label. Missing required checks remain gaps; optional nearby scenarios do not automatically block completion.
+直接回答所问问题，默认使用中文，给出最有力的证据和重要限制。业务诊断无需添加通过或不通过标签。未完成的必需检查仍是缺口；相邻的可选场景不会自动阻塞交付。

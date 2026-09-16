@@ -10,6 +10,7 @@ const availableSkills = [
   'verify',
   'eng',
   'reflect',
+  'grill-me',
   'external-cli',
 ];
 const retiredSkills = new Set(['dev', 'clarify', 'qa', 'acceptance']);
@@ -49,7 +50,7 @@ Groups:
   engineering  Install eng only
   delegation   Install external-cli
   adapters     Install external-cli (aliases: kimi-code, claude-code, codex-cli, opencode, grok-build-cli)
-  meta         Install reflect (explicit invocation only)
+  meta         Install reflect (repository-local learning)
 
 Targets:
   agents       ${join(homedir(), '.agents', 'skills')} (default)

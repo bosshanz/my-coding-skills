@@ -8,6 +8,7 @@ ALL_SKILLS=(
   verify
   eng
   reflect
+  grill-me
   external-cli
 )
 
@@ -29,14 +30,14 @@ Usage:
   ./install.sh --list
 
 Skills:
-  design verify eng reflect external-cli
+  design verify eng reflect grill-me external-cli
 
 Groups:
   all          Install every Skill (explicit opt-in)
   ui           Install design
   quality      Install verify
   engineering  Install eng
-  meta         Install reflect (explicit invocation only)
+  meta         Install reflect (repository-local learning)
   adapters     Install external-cli
   delegation   Alias for adapters
 
@@ -142,7 +143,7 @@ resolve_requests() {
       dev|clarify|qa|acceptance|workflow|planning)
         fail "retired Skill or group: $request; use verify for requested checks, or work directly. See README migration notes."
         ;;
-      design|verify|eng|reflect) append_unique "$request" ;;
+      design|verify|eng|reflect|grill-me) append_unique "$request" ;;
       *) fail "unknown Skill or group: $request" ;;
     esac
   done

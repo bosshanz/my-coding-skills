@@ -1,25 +1,25 @@
-# Focused Debugging And Test-First Guidance
+# 聚焦调试与测试先行参考
 
-Reference for an unclear or resistant bug, or a requested test-first approach. Use within the current task and its existing authorization.
+用于原因不明、反复难解的缺陷，或用户要求的测试先行方式。遵循当前任务及其已有授权。
 
-## Diagnose Before Repeating Edits
+## 反复修改前先诊断
 
-- Read the full failure and trace the actual path through inputs, callers, state, and configuration. Compare a nearby working path and relevant recent changes.
-- Build the smallest feedback loop capable of exposing the reported symptom: an existing test, command, trace replay, or local probe. Confirm it can fail for the original defect before treating a pass as evidence of repair.
-- Form a falsifiable hypothesis, state the observation that would contradict it, and isolate variables so results can distinguish causes. Independent read-only investigations can run together when delegation is authorized; avoid overlapping changes that obscure attribution.
-- Compare the original and repaired behavior with the same reproducer and relevant conditions. Preserve enough input, environment, and result evidence to tell a root-cause repair from a symptom that merely disappeared. Use an isolated baseline when needed; do not revert others' work or weaken the check to manufacture a pass.
-- When a repair fails or evidence contradicts the hypothesis, re-examine assumptions before repeating edits. Investigate rather than introducing an automatic permission pause.
-- If reproduction is unavailable, state the uncertainty. Inspect existing logs and use reversible local instrumentation within scope; ask only for missing evidence or access that is necessary. Remove temporary diagnostics after use.
+- 阅读完整失败信息，沿输入、调用方、状态和配置追踪实际路径。比较附近可正常工作的路径及相关近期改动。
+- 建立能够暴露原始症状的最小反馈循环：已有测试、命令、轨迹重放或本地探针。把通过当作修复证据之前，先确认它能因原始缺陷而失败。
+- 提出可证伪假设，说明什么观察会推翻它，并隔离变量，使结果能区分原因。委派已获授权时，独立只读调查可以并行；避免相互重叠的改动掩盖归因。
+- 使用同一复现方式和相关条件比较修复前后行为。保留足够的输入、环境和结果证据，区分根因修复与症状偶然消失。需要时使用隔离基线；不回退他人工作，也不削弱检查来制造通过。
+- 修复失败或证据反驳假设时，先重新检查假设，再继续修改。开展调查，不自动暂停索取权限。
+- 无法复现时，明确不确定性。在范围内检查现有日志、增加可撤销的本地诊断；只询问必需但缺失的证据或访问权限。使用后移除临时诊断。
 
-## Test-First When Useful
+## 有用时采用测试先行
 
-- Prefer one observable behavior per cycle: demonstrate failure, make the smallest repair, then refactor if needed. Do not prewrite a large batch of imagined tests.
-- Choose a check that still contains the mechanism causing the failure. Do not delete working code or add ceremony to enforce test-first ordering.
+- 每轮优先处理一个可观察行为：展示失败、做最小修复，再按需重构。不要提前写一大批想象中的测试。
+- 选择仍包含故障机制的检查。不要为了强制测试先行顺序而删除可用代码或增加形式步骤。
 
-Once the cause is addressed, complete the relevant project checks and report the result.
+解决原因后，完成相关项目检查并报告结果。
 
-## Source Inspiration
+## 借鉴来源
 
-Focused adaptation of Superpowers' systematic debugging and Matt Pocock's diagnosing-bugs / TDD patterns:
+针对性改编自 Superpowers 的系统调试，以及 Matt Pocock 的 diagnosing-bugs / TDD 模式：
 - https://github.com/obra/superpowers
 - https://github.com/mattpocock/skills
