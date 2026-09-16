@@ -5,6 +5,10 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+### Changed
+
+- `eng` 补充抽象、状态归属、失败回退、兼容与验证强度的决策边界和重新判断条件，消除适配器数量门槛的暗示；增加成对行为评估案例，尚未运行模型对照。
+
 ## [0.7.0] - 2026-09-16
 
 ### Added
