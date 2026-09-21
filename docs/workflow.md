@@ -41,7 +41,7 @@
 
 代理路由不包含所有宿主规则或 invocation policy。dry-run 只检查加载。文本评估的 Claude 结果不是 Codex 结果；自报选中 Skill 也不证明实际加载。首次失败保留，路由 `--recheck` 仅诊断；回答 `--attempts` 保留各次输出。`--record` 保存摘要和原始 JSON。
 
-现有 nightly 仍运行路由与文本代理，需要 `ANTHROPIC_API_KEY`，不自动启动真实执行 Agent。当前任务未授权外部模型时，仅运行静态检查；修改 fixture 不等于该行为已通过模型验证。
+模型评估仅通过 `workflow_dispatch` 手动触发，运行路由与文本代理，需要 `ANTHROPIC_API_KEY`，不自动启动真实执行 Agent。当前任务未授权外部模型时，仅运行静态检查；修改 fixture 不等于该行为已通过模型验证。
 
 ### 工程决策的成对案例
 
