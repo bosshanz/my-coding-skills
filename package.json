@@ -20,6 +20,7 @@
     "scripts/install-global-rules.mjs",
     "scripts/skills-doctor.sh",
     "scripts/check-routing-policy.mjs",
+    "evals/behavior/contract.mjs",
     "scripts/test-install-safety.sh",
     "bin/skills.mjs",
     "README.md",
@@ -33,7 +34,7 @@
     "eval:routing": "node evals/routing/runner.mjs",
     "eval:behavior": "node evals/behavior/runner.mjs",
     "eval:e2e": "node evals/e2e/smoke.mjs",
-    "test": "node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
+    "test": "node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/behavior/contract.test.mjs evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
     "eval:execution": "node evals/execution/runner.mjs"
   },
   "keywords": [

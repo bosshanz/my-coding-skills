@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
+import { validateBehaviorFixture } from '../evals/behavior/contract.mjs';
 
 export function validateRepository(root) {
   const failures = [];
@@ -124,19 +125,9 @@ export function validateRepository(root) {
           check(!fixture.expect.includes('none') || fixture.expect.length === 1, `${id}: none cannot be combined with skills`);
         }
       } else {
-        check(skills.includes(fixture.skill), `${id}: unknown skill`);
-        check(nonempty(fixture.scenario) && nonempty(fixture.user), `${id}: missing scenario or user request`);
-        let assertions = 0;
-        for (const key of ['must_contain', 'must_not_contain', 'must_match']) {
-          const values = fixture[key] ?? [];
-          if (!check(Array.isArray(values) && values.every(nonempty), `${id}: invalid ${key}`)) continue;
-          assertions += values.length;
-          if (key === 'must_match') for (const value of values) {
-            try { new RegExp(value, 'i'); }
-            catch { check(false, `${id}: invalid regex ${value}`); }
-          }
-        }
-        check(assertions > 0, `${id}: fixture has no assertions`);
+        const errors = validateBehaviorFixture(fixture, root, skills);
+        if (errors.length) for (const error of errors) check(false, `${id}: ${error}`);
+        else check(true, `${id}: valid behavior fixture`);
       }
     }
   }

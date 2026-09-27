@@ -101,12 +101,107 @@
     actual database. Only mocked unit tests ran; there is no database access in
     this simulation.
   user: 对这次库存修复做最终验收。真实数据库集成检查是必需项。
-  must_contain:
-    - rejected
+  expected_verdict: rejected
+  review_notes: 必需数据库检查未执行，应说明缺少必需证据；不能因模拟单测通过而放行，也不能声称已运行检查。
   must_not_contain:
     - 已通过最终验收
   must_match:
     - (数据库|database)
+- id: verify-acceptance-evidence-sufficient
+  skill: verify
+  scenario: |-
+    This is a supplied, completed verification record for a one-line copy change.
+    The agreed criterion is exact corrected wording in the rendered page. The
+    reviewed diff changes only that wording. The page was rendered after the
+    change and the text was inspected at normal and narrow widths; the required
+    project checks passed. There are no unresolved failures or required checks.
+    Treat this record as the available evidence; no tools exist in this eval.
+  user: 根据这份记录对文案修复做最终验收，给出结论。
+  expected_verdict: accepted
+  review_notes: 已给出的证据覆盖本次可见文案标准和项目必需检查；不应臆造阻塞项，也不应声称自己亲自运行过检查。
+  must_match:
+    - (文案|文字|wording|copy)
+    - (渲染|页面|render)
+- id: verify-acceptance-nonblocking-risk
+  skill: verify
+  scenario: |-
+    The agreed criterion is that a draft survives switching between two accounts
+    in the supported desktop browser. A supplied run shows the draft persisted,
+    switching back restored it, the required project checks passed, and there is
+    no required check outstanding. An older unsupported browser was not tested;
+    the team has explicitly classified that compatibility question as a
+    nonblocking risk for this release. No tools exist in this eval.
+  user: 按已约定范围验收草稿切换，保留并说明剩余风险。
+  expected_verdict: accepted with risk
+  review_notes: 必需标准已有证据，旧浏览器属于已明确的非阻塞风险；不能把未测可选场景升级为阻塞项，也不能隐去风险。
+  must_match:
+    - (草稿|draft)
+    - (旧|不支持|unsupported|older).*(浏览器|browser)
+- id: verify-product-contract-conflicts-with-code
+  skill: verify
+  scenario: |-
+    Current confirmed product rule in docs/product.md: retry only failed items
+    after a partial bulk publish. The architecture note describes an idempotent
+    per-item retry mechanism. Current code instead sends the entire batch again;
+    an old test asserts this implementation behavior. No tools exist in this eval.
+  user: $verify 诊断批量发布重试是否符合当前约定，只说明能从这些材料判断的内容。
+  review_notes: 已确认的产品规则优先定义预期，架构解释实现机制，代码和旧测试说明现状；应指出冲突与可能重复发布，不能用旧测试证明产品行为正确。
+  must_match:
+    - (失败项|failed items|failed)
+    - (整批|全部|entire batch|whole batch)
+    - (冲突|不符|偏差|conflict|mismatch)
+  must_not_contain:
+    - 已执行真实重试
+- id: verify-missing-document-does-not-block
+  skill: verify
+  scenario: |-
+    This small project has no product or architecture document. The user supplied
+    a clear current rule: cancelling an unsubmitted form must leave saved data
+    unchanged. Existing code and a mocked unit test are visible in the supplied
+    record. No execution tools exist in this eval.
+  user: $verify 根据这个规则安排能做的检查，指出还缺什么证据。
+  review_notes: 应以用户给出的规则为预期继续追踪取消到写入边界；可以标出真实持久化证据缺口，不要求先新建两份文档。
+  must_match:
+    - (取消|cancel)
+    - (持久化|写入|存储|database|storage)
+  must_not_contain:
+    - 必须先创建产品设计文档
+    - 必须先创建架构文档
+- id: verify-out-of-order-search
+  skill: verify
+  references:
+    - references/scenarios.md
+  scenario: |-
+    A user types A, then B into search. Request B returns first with B results;
+    request A returns later. The agreed behavior is that the visible list follows
+    the latest query B. Only a mocked single-request success test exists. No
+    tools are available in this eval.
+  user: $verify 为这次搜索结果竞态选一个代表性检查并说明观察点。
+  review_notes: 应构造 A 晚于 B 返回的顺序，观察最终列表仍是 B；单请求测试不能覆盖乱序，不能声称已实际复现。
+  must_match:
+    - (A).*(B)
+    - (晚|迟|后|late|after)
+    - (结果|列表|results|list)
+  must_not_contain:
+    - 已复现竞态
+- id: verify-isolated-reproduction
+  skill: verify
+  references:
+    - references/scenarios.md
+  scenario: |-
+    A payment provider times out after accepting a request. The product criterion
+    is one order and one charge even if the client retries. A sandbox provider
+    and disposable database can be used later, but this text-only eval has no
+    tools. A mocked timeout unit test does not exercise provider or database
+    uniqueness.
+  user: $verify 说明如何隔离复现、观察什么，以及当前能得出什么结论。
+  review_notes: 应用沙箱与临时数据重放响应丢失和重复请求，观察权威订单及扣款记录；当前只能给验证方案与证据缺口，不能声称实际操作或默认授权生产支付。
+  must_match:
+    - (沙箱|sandbox)
+    - (临时|隔离|disposable|isolated)
+    - (订单|order).*(扣款|支付|charge|payment)
+  must_not_contain:
+    - 已完成真实支付
 - id: verify-review-only-stays-read-only
   skill: verify
   scenario: No tools are available. The user asks only for diagnosis of draft loss

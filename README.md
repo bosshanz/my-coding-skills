@@ -12,14 +12,14 @@
 
 | Skill | 用途 |
 | --- | --- |
-| `design` | 需要具体设计决策时查阅交互、视觉和动效资料；已定设计的普通实现无需再走设计流程。 |
+| `design` | 从任务与证据定位设计问题，形成交互模式、视觉层级、设计语言和动效选择；已定设计的普通实现无需再走设计流程。 |
 | `verify` | 用户明确要求的业务规则检查、用户旅程诊断或最终验收。请求保护规则时可以补测试；仅评审时保持只读。 |
 | `eng` | 所有开发任务的统一工程入口：约束工程行为与品味，遵循如无必要勿增实体、可维护表达、清晰契约、真实失败、状态归属、兼容性和证据原则；不规定固定流程。 |
 | `grill-me` | 用户要求深度追问或挑战方案时，先查事实，一次追问一个关键问题，收敛决策与待验证项。 |
 | `reflect` | 日常从纠正、失败和有证据的改进中自动复盘，经验默认跟随仓库；全局记忆需用户明确要求。 |
 | `external-cli` | 用户点名 Claude Code、Codex CLI、Kimi Code、OpenCode 或 Grok Build 时，按合同调用对应无头 CLI；ACP 只用于有客户端的会话或编辑器嵌入。 |
 
-`verify` 合并了原 `qa` 和 `acceptance` 的用途。它区分检查行为、按请求增加测试保护和给出最终结论；技术验收不授权发布。真正的独立审查需要实际的审查者分离和相应授权。
+`verify` 合并了原 `qa` 和 `acceptance` 的用途。它区分检查行为、按请求增加测试保护和给出最终结论；只读检查不修改被审查源码或测试，但可在已有授权内运行检查、操作隔离测试数据并清理临时产物。技术验收不授权发布。真正的独立审查需要实际的审查者分离和相应授权。
 
 `reflect` 遵从宿主的记忆与文件写入规则。优先复用仓库已有经验日志，否则在首次有可记录经验时使用仓库根目录 `.agent-learning.md`；宿主禁止自动持久化时只在对话中复盘。区分确认偏好、已获证据的经验与待验证假设，不自动改写项目规则。Codex 元数据允许隐式调用；其他宿主按入口描述触发。`$reflect` / `/reflect` 仍可主动复盘或维护经验。
 
@@ -36,11 +36,19 @@
 | 复盘并积累经验 | `$reflect 复盘这次修复，将有证据的经验留在仓库。` | 区分事实、经验和假设，复用仓库日志并遵从宿主写入规则。 |
 | 记录明确偏好 | `$reflect 将本项目的包管理器偏好从 pnpm 改为 npm，更新项目 AGENTS.md 的偏好段。` | 在宿主允许的机制内更新同作用域旧条目，不重复记录、不扩展成全局偏好。 |
 
-设计参考提供营销概念、管理工具和原生桌面三类[选择示例](design/references/design-direction.md#calibration-examples)。工程例证覆盖[幂等与租户隔离](eng/references/software-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
+设计参考覆盖诊断与取舍、视觉基本功、交互模式、动效、设计语言和结果判断，适用于产品工具、展示网站及原生界面。除三类产品的[选择示例](design/references/design-direction.md#calibration-examples)，还提供六组成对案例：[浏览与比较、表单依赖、动作可逆性](design/references/interaction.md#paired-examples)、[既有品牌约束](design/references/design-direction.md#paired-examples)、[操作频率与减少动态效果](design/references/animation.md#paired-examples)。每组固定背景，只改变关键约束，说明具体方案、理由、代价、重新判断条件和验证方法。渲染检查外观，实际操作检查流程，正常速度播放及中断操作检查动画。
 
-`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换和批量部分完成，说明证据足以证明什么。它复用宿主已有工具，不要求额外浏览器或测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；记录始终受宿主规则约束；不会默认写入全局。
+工程例证覆盖[幂等与租户隔离](eng/references/software-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
+
+`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换、批量部分完成，以及文档冲突或缺失、请求乱序、隔离复现和证据充分性。它沿产品预期、技术机制和实际证据推导检查，区分不符合要求、必需证据缺失和非阻塞风险，复用已有工具而不要求新测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；记录始终受宿主规则约束；不会默认写入全局。
 
 这些例子是指导资料，不是已执行的测试报告。上游来源用于说明借鉴的方法，不代表已经证明本库的模型增益。具体证据层级见[工作流程与评估](docs/workflow.md)，规则与偏好的落点见[职责说明](docs/three-layers.md)。
+
+## 项目设计与架构文档
+
+`design` 在实质性的产品行为设计中按需建立、维护产品设计文档，说明用户任务、业务规则、流程状态、交互视觉与动效，以及可观察的验收条件。`eng` 在实质架构变化中维护架构文档，说明背景约束、模块、技术栈、DB 与中间件、数据与状态归属、关键机制和取舍。产品文档区分确认决定、建议与假设；架构文档区分当前实现与计划方案。
+
+先查项目导航和已有材料；没有合适落点时分别使用 `docs/product.md`、`docs/architecture.md`。只创建当前任务需要的文档，只更新受影响内容，小修复不要求新建。项目 `AGENTS.md` 在项目规则与授权允许时登记实际路径、用途和同步要求；全局模板仅提供查找和维护原则，不写死路径。`verify` 使用这些材料与实际证据检查结果，资料缺失不阻止仍可成立的检查。文档维护不自动串联 Skill，也不增加审批。详见[文档职责与项目规则](docs/three-layers.md)。
 
 ## 工程原则与参考
 
@@ -138,7 +146,6 @@ design/
     openai.yaml
   references/
     animation.md
-    anthropic-frontend-design-LICENSE.txt
     design-direction.md
     interaction.md
 verify/
@@ -216,4 +223,4 @@ docs/
 
 ## 许可证
 
-本仓库自有内容使用 [MIT License](LICENSE)。`design/references/design-direction.md` 改编自固定版本的第三方 Apache-2.0 内容，完整许可证位于 [对应许可证文件](design/references/anthropic-frontend-design-LICENSE.txt)；动效资料保留 [Emil Kowalski](https://github.com/emilkowalski/skills) 的 MIT 来源说明。
+本仓库自有内容使用 [MIT License](LICENSE)。参考资料如有来源说明，见对应文件。

@@ -52,7 +52,7 @@ for ref in debugging.md architecture-decisions.md ablation.md software-architect
   check_file "eng/references/$ref"
 done
 
-for ref in interaction.md design-direction.md animation.md anthropic-frontend-design-LICENSE.txt; do
+for ref in interaction.md design-direction.md animation.md; do
   check_file "design/references/$ref"
 done
 

@@ -23,7 +23,7 @@ function repository(t) {
   const behavior = { id: 'reply', skill: 'sample', scenario: 'No edits occurred.', user: 'Review only.', must_not_contain: ['已修改'] };
   write('evals/routing/fixtures.yaml', [routing]);
   write('evals/behavior/fixtures.yaml', [behavior]);
-  return { write, skill, routing, behavior, validate: () => validateRepository(root).failures };
+  return { root, write, skill, routing, behavior, validate: () => validateRepository(root).failures };
 }
 
 test('static validation accepts paraphrased workflow prose and multiline metadata', t => {
@@ -60,4 +60,32 @@ test('malformed YAML and empty or malformed assertions cannot pass', t => {
   assert.match(failures, /fixtures must be a nonempty list/);
   assert.match(failures, /invalid must_match/);
   assert.match(failures, /fixture has no assertions/);
+});
+
+test('static validation accepts a verdict and an explicitly loaded skill reference', t => {
+  const repo = repository(t);
+  repo.write('evals/behavior/fixtures.yaml', [{
+    ...repo.behavior, expected_verdict: 'accepted with risk',
+    references: ['references/method.md'], review_notes: 'Inspect actual reasoning.',
+  }]);
+  assert.deepEqual(repo.validate(), []);
+});
+
+test('static validation rejects invalid verdict fields and escaping references', t => {
+  const repo = repository(t);
+  repo.write('outside.md', '# Outside');
+  fs.symlinkSync(path.join(repo.root, 'outside.md'), path.join(repo.root, 'sample/references/outside.md'));
+  const invalid = [
+    [{ ...repo.behavior, expected_verdict: 'pass' }, /invalid expected_verdict/],
+    [{ ...repo.behavior, unknown: true }, /unknown field/],
+    [{ ...repo.behavior, references: ['/tmp/nope'] }, /invalid reference path/],
+    [{ ...repo.behavior, references: ['../outside.md'] }, /invalid reference path/],
+    [{ ...repo.behavior, references: ['references/missing.md'] }, /reference missing/],
+    [{ ...repo.behavior, references: ['references'] }, /not a file/],
+    [{ ...repo.behavior, references: ['references/outside.md'] }, /reference escapes skill/],
+  ];
+  for (const [fixture, pattern] of invalid) {
+    repo.write('evals/behavior/fixtures.yaml', [fixture]);
+    assert.match(repo.validate().join('\n'), pattern);
+  }
 });

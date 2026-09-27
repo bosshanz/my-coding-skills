@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // L2 behavior eval: load one SKILL.md as the governing contract and assert on
-// the generated output. Assertions are mechanical (substring / regex) over the
-// evidence and scope signals. They are heuristics, not semantic or execution proof.
+// the generated output. Assertions are mechanical (substring / regex / optional
+// exact verdict line) over evidence and scope signals. They are heuristics, not
+// semantic or execution proof.
 //
 // Usage:
 //   node evals/behavior/runner.mjs [--dry-run] [--filter substr] [--record]
@@ -18,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import Anthropic from '@anthropic-ai/sdk';
 import { firstPass } from '../lib/contracts.mjs';
+import { checkBehaviorOutput, loadBehaviorContext, renderBehaviorUser } from './contract.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -44,47 +46,9 @@ const fixtures = YAML.parse(
   fs.readFileSync(path.join(here, 'fixtures.yaml'), 'utf8'),
 );
 
-function loadSkill(name) {
-  const file = path.join(root, name, 'SKILL.md');
-  if (!fs.existsSync(file)) {
-    throw new Error(`unknown skill in fixture: ${name}`);
-  }
-  return fs.readFileSync(file, 'utf8');
-}
-
-function renderUser(f) {
-  return [
-    'You are executing inside a behavior eval harness. There are no real',
-    'files and no tools; answer in text as the loaded Skill contract',
-    'dictates. Scenario and request follow.',
-    '',
-    '```',
-    `Scenario: ${f.scenario.trim()}`,
-    '```',
-    '',
-    `User: ${f.user}`,
-  ].join('\n');
-}
-
-function check(f, output) {
-  const failures = [];
-  for (const s of f.must_contain ?? []) {
-    if (!output.includes(s)) failures.push(`missing substring: ${s}`);
-  }
-  for (const s of f.must_not_contain ?? []) {
-    if (output.includes(s)) failures.push(`forbidden substring present: ${s}`);
-  }
-  for (const re of f.must_match ?? []) {
-    if (!new RegExp(re, 'i').test(output)) {
-      failures.push(`regex not matched: ${re}`);
-    }
-  }
-  return failures;
-}
-
 async function generate(f) {
-  const skillText = loadSkill(f.skill);
-  const user = renderUser(f);
+  const skillText = loadBehaviorContext(f, root);
+  const user = renderBehaviorUser(f);
   if (BACKEND === 'claude') {
     const text = `${skillText}\n\n---\n\n${user}`;
     // The text starts with the SKILL.md frontmatter "---", which argv
@@ -112,7 +76,7 @@ async function generate(f) {
 
 const selected = FILTER ? fixtures.filter((f) => f.id.includes(FILTER)) : fixtures;
 if (!selected.length) throw new Error('no fixtures selected');
-for (const f of selected) { loadSkill(f.skill); for (const re of f.must_match ?? []) new RegExp(re, 'i'); }
+for (const f of selected) loadBehaviorContext(f, root);
 
 if (DRY_RUN) {
   console.log(`fixtures: ${fixtures.length} (${selected.length} selected)`);
@@ -136,7 +100,7 @@ for (const f of selected) {
       attempts.push({ attempt, output: '', failures: [`generation failed: ${error.message}`] });
       break;
     }
-    failures = check(f, output);
+    failures = checkBehaviorOutput(f, output);
     attempts.push({ attempt, output, failures });
     if (failures.length === 0) break;
   }

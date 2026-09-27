@@ -88,7 +88,7 @@ assert_allows "$INSTALL" design --dest "$dest"
 for design_file in \
   "$dest/design/references/interaction.md" \
   "$dest/design/references/design-direction.md" \
-  "$dest/design/references/anthropic-frontend-design-LICENSE.txt"; do
+  "$dest/design/references/animation.md"; do
   if [ ! -f "$design_file" ]; then
     printf 'FAIL: real install did not copy design file: %s\n' "$design_file" >&2
     fails=$((fails+1))
