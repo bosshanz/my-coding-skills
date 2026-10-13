@@ -14,6 +14,7 @@
     "grill-me",
     "external-cli",
     "docs",
+    "codex",
     "templates",
     "install.sh",
     "uninstall.sh",
@@ -34,8 +35,9 @@
     "eval:routing": "node evals/routing/runner.mjs",
     "eval:behavior": "node evals/behavior/runner.mjs",
     "eval:e2e": "node evals/e2e/smoke.mjs",
-    "test": "node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/behavior/contract.test.mjs evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs && bash scripts/test-install-safety.sh",
-    "eval:execution": "node evals/execution/runner.mjs"
+    "test": "node scripts/check-routing-policy.mjs && node evals/behavior/runner.mjs --dry-run && node evals/routing/runner.mjs --dry-run && node evals/routing/runner.mjs --surface extended --dry-run && node --test evals/behavior/contract.test.mjs evals/execution/harness.test.mjs scripts/install-global-rules.test.mjs scripts/check-routing-policy.test.mjs scripts/catalog-install.test.mjs codex/subagents/install.test.mjs && bash scripts/test-install-safety.sh",
+    "eval:execution": "node evals/execution/runner.mjs",
+    "install:codex-subagents": "node codex/subagents/install.mjs"
   },
   "keywords": [
     "codex",
@@ -52,6 +54,7 @@
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.122.0",
+    "smol-toml": "^1.9.1",
     "yaml": "^2.9.0"
   }
 }
