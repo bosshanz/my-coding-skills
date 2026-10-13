@@ -98,6 +98,10 @@ npx --package my-coding-skills skills references
 
 此选项需要 Node.js 18+，只替换模板托管区块，保留其他内容；修改前备份，内容相同则不重复写入，存在非空 `AGENTS.override.md` 时拒绝，以免结果被遮蔽。`--dest` 在此模式下指定规则目录。只采用适合自己的约定，项目命令和特定约束仍放在项目已有说明中。
 
+### Codex 子智能体（可选）
+
+`codex/subagents/` 提供三个 Codex 自定义子智能体角色和一段全局编排规则，与上面的 Skill 分开安装：`node codex/subagents/install.mjs --dry-run` 预览，去掉 `--dry-run` 安装。详见 [codex/subagents/README.md](codex/subagents/README.md)。
+
 ## 从旧目录迁移
 
 `dev`、`clarify`、`qa`、`acceptance` 及安装分组 `workflow`、`planning` 已退役。`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 现为 `external-cli` 的安装别名，安装器写入 `external-cli`，不静默删除旧目录。已有安装需要显式清理，否则旧入口仍可能被宿主发现。
