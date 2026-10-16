@@ -1,14 +1,13 @@
 # Codex 子智能体配置
 
-为 Codex 安装三个自定义子智能体角色和一段全局编排规则。与本库的 Skill 相互独立，需要单独安装。
+为 Codex 安装两个自定义子智能体角色和一段全局编排规则。与本库的 Skill 相互独立，需要单独安装。
 
 ## 安装内容
 
 | 文件 | 安装位置 | 作用 |
 | --- | --- | --- |
 | `agents/luna_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6-luna`，effort `max`：规则明确的机械修改、指定事实查询、命令执行与核对 |
-| `agents/sol_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6.1-sol`，effort `high`：默认实现伙伴，在已决定范围内完成探索、实现、测试和常规调试 |
-| `agents/sol_deep_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6.1-sol`，effort `max`：疑难调查、方案挑战和独立审查；默认只读 |
+| `agents/sol_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6.1-sol`，effort `xhigh`：默认实现伙伴，在已决定范围内完成探索、实现、测试、调试和疑难调查；独立审查使用未参与实现的新实例，调查和审查默认只读 |
 | `AGENTS.snippet.md` | `$CODEX_HOME/AGENTS.md` | 创建或只替换 `## 全局子智能体编排` 一节，保留其他内容 |
 
 `CODEX_HOME` 未设置时使用 `~/.codex`。
@@ -24,7 +23,7 @@ node codex/subagents/install.mjs --codex-home /path/to/codex-home
 - 先校验角色 TOML 能解析，且包含 `name`、`description`、`developer_instructions`、`model`、`model_reasoning_effort`。用仓库依赖 `smol-toml` 解析，没有 `node_modules` 时退回 Python 3.11+ 的 `tomllib`。
 - 修改前把要覆盖的角色文件、`AGENTS.md` 以及现有 `config.toml` 备份到 `$CODEX_HOME/backups/subagents-<时间戳>/`。
 - 不修改 `config.toml`。Codex 会自动发现 `$CODEX_HOME/agents/` 下的角色文件，不需要额外注册，也不会改动主会话的模型或 effort。
-- 可重复执行：内容一致时输出 `unchanged`，不写文件也不产生备份。不删除 `agents/` 下的其他角色。
+- 可重复执行：内容一致时输出 `unchanged`，不写文件也不产生备份。升级时备份并移除旧版 `agents/sol_deep_worker.toml`（包括该文件的本地修改，可从备份恢复），职责合并到 `sol_worker`；不删除其他角色。
 
 ## 生效条件
 

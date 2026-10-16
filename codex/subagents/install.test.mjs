@@ -12,8 +12,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const snippet = fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8');
 const expected = {
   luna_worker: ['gpt-6-luna', 'max'],
-  sol_worker: ['gpt-6.1-sol', 'high'],
-  sol_deep_worker: ['gpt-6.1-sol', 'max'],
+  sol_worker: ['gpt-6.1-sol', 'xhigh'],
 };
 function home(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-home-'));
@@ -82,4 +81,20 @@ test('appends the section after existing content', t => {
   fs.writeFileSync(path.join(dir, 'AGENTS.md'), '# 规则\n\n- 已有\n');
   run(dir);
   assert.equal(fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8'), `# 规则\n\n- 已有\n\n${snippet.trimEnd()}\n`);
+});
+
+test('upgrade removes retired role only after backup; dry-run preserves it', t => {
+  const dir = home(t);
+  fs.mkdirSync(path.join(dir, 'agents'));
+  const retired = path.join(dir, 'agents', 'sol_deep_worker.toml');
+  const original = 'name = "sol_deep_worker"\n# local customization\n';
+  fs.writeFileSync(retired, original);
+  assert.match(run(dir, '--dry-run'), /would remove/);
+  assert.equal(fs.readFileSync(retired, 'utf8'), original);
+  assert.equal(fs.existsSync(path.join(dir, 'backups')), false);
+  run(dir);
+  assert.equal(fs.existsSync(retired), false);
+  const [backup] = fs.readdirSync(path.join(dir, 'backups'));
+  assert.equal(fs.readFileSync(path.join(dir, 'backups', backup, 'agents', 'sol_deep_worker.toml'), 'utf8'), original);
+  assert.match(run(dir), /unchanged/);
 });

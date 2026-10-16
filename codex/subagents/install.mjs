@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const HEADING = '## 全局子智能体编排';
-export const ROLES = ['luna_worker', 'sol_worker', 'sol_deep_worker'];
+export const ROLES = ['luna_worker', 'sol_worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
 async function parseToml(text, file) {
@@ -63,13 +63,16 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
     const prev = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : null;
     if (prev !== next) plan.push({ dest, prev, next });
   }
+  // Retire the previous installer-owned role, preserving a rollback copy.
+  const retired = path.join(home, 'agents', 'sol_deep_worker.toml');
+  if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
   const agentsMd = path.join(home, 'AGENTS.md');
   const prevMd = fs.existsSync(agentsMd) ? fs.readFileSync(agentsMd, 'utf8') : null;
   const nextMd = upsertSection(prevMd ?? '', fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8'));
   if (prevMd !== nextMd) plan.push({ dest: agentsMd, prev: prevMd, next: nextMd });
 
   if (!plan.length) { log(`unchanged ${home}`); return { home, changed: [] }; }
-  for (const item of plan) log(`${dryRun ? 'would ' : ''}${item.prev === null ? 'create' : 'update'} ${item.dest}`);
+  for (const item of plan) log(`${dryRun ? 'would ' : ''}${item.next === null ? 'remove' : item.prev === null ? 'create' : 'update'} ${item.dest}`);
   if (dryRun) return { home, changed: plan.map(p => p.dest) };
 
   // Back up every existing file we touch, plus config.toml (never modified) for easy rollback.
@@ -83,6 +86,7 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
   }
   if (toBackup.length) log(`backup ${backupDir}`);
   for (const item of plan) {
+    if (item.next === null) { fs.unlinkSync(item.dest); continue; }
     fs.mkdirSync(path.dirname(item.dest), { recursive: true });
     const tmp = `${item.dest}.tmp-${process.pid}`;
     fs.writeFileSync(tmp, item.next);
