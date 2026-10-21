@@ -38,3 +38,11 @@ node codex/subagents/install.mjs --codex-home /path/to/codex-home
 测试不会启动 Codex。角色能否被 Codex 实际加载、模型和 effort 是否被接受，要在本机安装后新开会话，调用角色确认。
 
 角色加载成功不证明速度、成本或质量有提升；这些需要在真实任务上对比后再下结论。
+
+## Leader / Worker 分工
+
+主智能体作为 Leader（当前使用 Astra，安装器不固定或改动主模型），负责计划、歧义解释、关键判断及最终验收；Luna Max 作为 Worker，完整执行有明确边界的探索、实现、测试和修正。按判断需求而非工作量委派，Leader 核对关键差异和原始证据，不默认重做全部工作。
+
+Worker 遇到关键歧义、边界变化或尝试停滞时，交回受阻部分及当前状态、证据、已尝试方法、建议和所需决定，保留成果并继续独立有效的工作。Leader 澄清、调整任务或接手；同一任务优先复用原 Worker，不把未解决的问题原样反复派回。
+
+此分工参考 [Devin Fusion 的 Sidekick 机制](https://cognition.com/blog/devin-fusion)，不实现其运行时模型切换或缓存管理，也不承诺相同成本收益。
