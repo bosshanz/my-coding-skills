@@ -100,7 +100,7 @@ npx --package my-coding-skills skills references
 
 ### Codex 子智能体（可选）
 
-`codex/subagents/` 提供两个 Codex 自定义子智能体角色和一段全局编排规则，与上面的 Skill 分开安装：`node codex/subagents/install.mjs --dry-run` 预览，去掉 `--dry-run` 安装。详见 [codex/subagents/README.md](codex/subagents/README.md)。
+`codex/subagents/` 提供一个 Codex 自定义子智能体角色和一段全局编排规则，与上面的 Skill 分开安装：`node codex/subagents/install.mjs --dry-run` 预览，去掉 `--dry-run` 安装。详见 [codex/subagents/README.md](codex/subagents/README.md)。
 
 ## 从旧目录迁移
 

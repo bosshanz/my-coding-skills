@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const HEADING = '## 全局子智能体编排';
-export const ROLES = ['luna_worker', 'sol_worker'];
+export const ROLES = ['luna_worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
 async function parseToml(text, file) {
@@ -63,9 +63,11 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
     const prev = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : null;
     if (prev !== next) plan.push({ dest, prev, next });
   }
-  // Retire the previous installer-owned role, preserving a rollback copy.
-  const retired = path.join(home, 'agents', 'sol_deep_worker.toml');
-  if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
+  // Retire previous roles and the legacy Luna filename after backing them up.
+  for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml']) {
+    const retired = path.join(home, 'agents', filename);
+    if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
+  }
   const agentsMd = path.join(home, 'AGENTS.md');
   const prevMd = fs.existsSync(agentsMd) ? fs.readFileSync(agentsMd, 'utf8') : null;
   const nextMd = upsertSection(prevMd ?? '', fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8'));
