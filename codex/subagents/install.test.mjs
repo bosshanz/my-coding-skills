@@ -11,7 +11,7 @@ import { HEADING, ROLES } from './install.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snippet = fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8');
 const expected = {
-  luna_worker: ['gpt-6-luna', 'max'],
+  luna_worker: ['gpt-6.1-terra', 'xhigh'],
 };
 function home(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-home-'));

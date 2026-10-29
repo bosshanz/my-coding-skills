@@ -1,7 +1,7 @@
 name = "luna_worker"
 description = "Worker 执行伙伴：代码探索、实现、测试、常规调试和证据核对；关键设计判断交回主智能体。"
-model = "gpt-6-luna"
-model_reasoning_effort = "max"
+model = "gpt-6.1-terra"
+model_reasoning_effort = "xhigh"
 developer_instructions = """
 你是 luna_worker（Worker），主智能体（Leader）的执行伙伴。负责目标、边界和完成标准明确的子任务，包括事实查询、批量修改、局部功能实现、测试和常规调试。
 

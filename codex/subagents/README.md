@@ -6,10 +6,10 @@
 
 | 文件 | 安装位置 | 作用 |
 | --- | --- | --- |
-| `agents/luna_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6-luna`，effort `max`：边界明确的代码探索、实现、测试、常规调试和证据核对；关键设计及复杂疑难问题由主智能体负责 |
+| `agents/luna_worker.toml` | `$CODEX_HOME/agents/` | `gpt-6.1-terra`，effort `xhigh`：边界明确的代码探索、实现、测试、常规调试和证据核对；关键设计及复杂疑难问题由主智能体负责 |
 | `AGENTS.snippet.md` | `$CODEX_HOME/AGENTS.md` | 创建或只替换 `## 全局子智能体编排` 一节，保留其他内容 |
 
-`CODEX_HOME` 未设置时使用 `~/.codex`。
+`CODEX_HOME` 未设置时使用 `~/.codex`。保留历史角色标识 `luna_worker` 以兼容已有调用；实际模型为 GPT-6.1 Terra xhigh。
 
 ```sh
 node codex/subagents/install.mjs --dry-run   # 只显示将要修改的文件
@@ -27,7 +27,7 @@ node codex/subagents/install.mjs --codex-home /path/to/codex-home
 ## 生效条件
 
 - 使用支持自定义子智能体的 Codex 版本，安装后新开会话。
-- 账号能使用 `gpt-6-luna`，并且这些模型支持所配置的 effort。`max` 是 Codex 源码中的合法取值，但官方配置参考表只列到 `xhigh`，并注明可用值取决于模型。
+- 账号能使用 `gpt-6.1-terra`，并支持 `xhigh` effort。
 - 主智能体仍要在任务中选择委派，并按名称调用角色；全局规则只授权委派，不保证每个任务都会委派。
 - 项目里的 `AGENTS.md` 或同名项目级角色（`.codex/agents/`）可能会覆盖或补充这里的全局设置。
 
@@ -41,7 +41,7 @@ node codex/subagents/install.mjs --codex-home /path/to/codex-home
 
 ## Leader / Worker 分工
 
-主智能体作为 Leader（当前使用 Astra，安装器不固定或改动主模型），负责计划、歧义解释、关键判断及最终验收；Luna Max 作为 Worker，完整执行有明确边界的探索、实现、测试和修正。按判断需求而非工作量委派，Leader 核对关键差异和原始证据，不默认重做全部工作。
+主智能体作为 Leader（当前使用 Astra，安装器不固定或改动主模型），负责计划、歧义解释、关键判断及最终验收；GPT-6.1 Terra xhigh 作为 Worker，完整执行有明确边界的探索、实现、测试和修正。按判断需求而非工作量委派，Leader 核对关键差异和原始证据，不默认重做全部工作。
 
 Worker 遇到关键歧义、边界变化或尝试停滞时，交回受阻部分及当前状态、证据、已尝试方法、建议和所需决定，保留成果并继续独立有效的工作。Leader 澄清、调整任务或接手；同一任务优先复用原 Worker，不把未解决的问题原样反复派回。
 
