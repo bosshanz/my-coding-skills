@@ -266,41 +266,6 @@
   strict: true
   rationale: AI-native Runtime visibility and user control are interaction-design work.
   source: interaction-design
-- id: adapter-kimi
-  prompt: 让 Kimi Code 帮我研究一下这个仓库的架构
-  expect:
-    - external-cli
-  strict: true
-  rationale: Explicit external agent named.
-  source: design
-- id: adapter-claude
-  prompt: use Claude Code to review this diff
-  expect:
-    - external-cli
-  strict: true
-  rationale: Explicit external agent named.
-  source: design
-- id: adapter-codex
-  prompt: 用 Codex CLI 做个只读的仓库调研
-  expect:
-    - external-cli
-  strict: true
-  rationale: Explicit external agent named.
-  source: design
-- id: adapter-opencode
-  prompt: ask OpenCode to investigate this build failure
-  expect:
-    - external-cli
-  strict: true
-  rationale: Explicit external agent named.
-  source: design
-- id: adapter-grok
-  prompt: grok 帮我看看为什么构建挂了
-  expect:
-    - external-cli
-  strict: true
-  rationale: Explicit external agent named.
-  source: design
 - id: eng-explicit-dollar
   prompt: $eng 看一下这个服务的边界该怎么切
   expect:

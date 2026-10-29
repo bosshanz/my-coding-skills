@@ -9,7 +9,6 @@ ALL_SKILLS=(
   eng
   reflect
   grill-me
-  external-cli
 )
 
 TARGET="agents"
@@ -30,7 +29,7 @@ Usage:
   ./install.sh --list
 
 Skills:
-  design verify eng reflect grill-me external-cli
+  design verify eng reflect grill-me
 
 Groups:
   all          Install every Skill (explicit opt-in)
@@ -38,11 +37,6 @@ Groups:
   quality      Install verify
   engineering  Install eng
   meta         Install reflect (repository-local learning)
-  adapters     Install external-cli
-  delegation   Alias for adapters
-
-Aliases (install external-cli):
-  kimi-code claude-code codex-cli opencode grok-build-cli
 
 Options:
   --target TARGET   agents (default), codex, claude, gemini, opencode, or all
@@ -57,9 +51,6 @@ Options:
 Examples:
   ./install.sh design --target agents
   ./install.sh verify --dest ./local-skills --dry-run
-  ./install.sh external-cli --target agents
-  ./install.sh claude-code --target agents
-  ./install.sh adapters --target claude
   ./install.sh all --target all --dry-run
   ./install.sh --global-rules --target codex --dry-run
 
@@ -124,7 +115,6 @@ append_unique() {
 resolve_requests() {
   local request skill
   RESOLVED=()
-  ALIAS_NOTES=()
   [[ "${#REQUESTED[@]}" -gt 0 ]] || fail "choose a Skill or group explicitly; use --list"
   for request in "${REQUESTED[@]}"; do
     case "$request" in
@@ -135,10 +125,8 @@ resolve_requests() {
       quality) append_unique verify ;;
       engineering) append_unique eng ;;
       meta) append_unique reflect ;;
-      delegation|adapters|external-cli) append_unique external-cli ;;
-      kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
-        append_unique external-cli
-        ALIAS_NOTES+=("$request")
+      external-cli|delegation|adapters|kimi-code|claude-code|codex-cli|opencode|grok-build-cli)
+        fail "removed Skill or group: $request; external-cli is no longer provided. Remove leftovers with ./uninstall.sh $request"
         ;;
       dev|clarify|qa|acceptance|workflow|planning)
         fail "retired Skill or group: $request; use verify for requested checks, or work directly. See README migration notes."
@@ -287,7 +275,3 @@ for destination_root in "${DESTINATIONS[@]}"; do
     install_skill "$skill" "$destination_root"
   done
 done
-
-if [[ "${#ALIAS_NOTES[@]}" -gt 0 ]]; then
-  printf 'note: %s now install external-cli. Remove leftover old adapter directories with ./uninstall.sh %s\n' "${ALIAS_NOTES[*]}" "${ALIAS_NOTES[*]}"
-fi

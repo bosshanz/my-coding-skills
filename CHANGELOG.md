@@ -5,8 +5,14 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+### Removed
+
+- 删除 `external-cli` Skill 及其参考与状态脚本；安装器拒绝 `external-cli`、`adapters`、`delegation` 和旧适配器别名，卸载器仍可清理遗留目录，`doctor` 不再检测外部 CLI。
+
 ### Changed
 
+- Codex 子智能体编排由默认委派改为按需委派：仅在工作量大且可独立推进、需要隔离上下文、并行收益明确或用户要求时委派；优先级为用户当前请求 > 项目 `AGENTS.md` > 全局规则；委派默认只有一层。
+- 全局编排规则与 README 不再硬编码 Worker 模型，以 `worker.toml` 为准，并增加一致性测试；移除 `CLAUDE.md` 中失效的 `## Taste` 引用。
 - `design` 与 `eng` 分别在实质变化中按需维护产品设计和架构文档，项目规则提供导航；小修复不强制新建文档，也不自动串联 Skills。
 - `verify` 补充预期依据、文档冲突与缺失处理、检查范围推导、隔离复现和验收原因；场景覆盖请求乱序及证据充分性。
 - 行为评估支持显式参考文件和预期首行结论，增加结论误判与引用边界的回归检查；静态与单元检查不代表已完成模型效果对照。

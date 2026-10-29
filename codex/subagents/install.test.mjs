@@ -37,6 +37,17 @@ test('role TOML files parse with required fields and confirmed models', () => {
   }
 });
 
+test('snippet defers model choice to TOML and README matches TOML', () => {
+  const readme = fs.readFileSync(path.join(here, 'README.md'), 'utf8');
+  const [model, effort] = expected.worker;
+  const data = parse(fs.readFileSync(path.join(here, 'agents', 'worker.toml'), 'utf8'));
+  assert.deepEqual([data.model, data.model_reasoning_effort], [model, effort]);
+  assert.doesNotMatch(snippet, /gpt-[\w.-]+/i);
+  assert.doesNotMatch(snippet, /\b(?:minimal|low|medium|high|xhigh)\b/);
+  for (const m of readme.match(/gpt-[\w.-]*\w/gi) ?? []) assert.equal(m, model);
+  assert.match(snippet, /worker\.toml/);
+});
+
 test('snippet keeps its heading without HTML markers', () => {
   assert.ok(snippet.startsWith(`${HEADING}\n`));
   assert.doesNotMatch(snippet, /<!--/);

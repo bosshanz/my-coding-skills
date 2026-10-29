@@ -40,7 +40,6 @@ const FIXTURE_IDS = QUICK
       'none-product-whether-build',
       'none-durable-correction',
       'design-interaction-redesign',
-      'adapter-kimi',
     ];
 
 const fixtures = YAML.parse(

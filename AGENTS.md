@@ -4,17 +4,16 @@ Portable optional skills and engineering references. These rules govern this rep
 
 ## Scope
 
-- Follow host instructions, the user's current request, and existing authorization. A request to work without Skills takes precedence over optional workflows. Development work uses `eng` as the common engineering-principles entry and runs in the current agent; it prescribes no fixed workflow or automatic delegation. Pure analysis proceeds directly.
+- Follow host instructions, the user's current request, and existing authorization. A request to work without Skills takes precedence over optional workflows. Development work uses `eng` as the common engineering-principles entry and runs in the current agent unless delegation is warranted as below; it prescribes no fixed workflow, and Skills do not chain automatically. Pure analysis proceeds directly.
 - `design` adds concrete UI guidance. `verify` handles explicitly requested business checks or final acceptance; review-only work does not authorize edits. `grill-me` provides requested decision interviews. `reflect` learns from corrections, failures, and verified improvements during repository work, keeping lessons repository-local under host persistence rules; global memory requires an explicit user request.
-- External adapters require the user's selection for the relevant scope. A discovered project policy counts only if explicitly adopted. Invoke the actual target, preserve output, and report unavailability accurately. Pass through the user's Skill choices and prohibitions.
-- Native subagents are optional and require applicable authorization; this file does not request delegation. When authorized, assign bounded ownership, avoid overlapping work and recursive delegation, and integrate the result.
+- Native subagents are used on demand: delegate only for large independent work, context isolation, clear parallel benefit, or when the user asks; otherwise work in the current agent. Precedence: the user's current request, then project `AGENTS.md`, then global host rules. When delegating, assign bounded ownership, avoid overlapping work, keep delegation one level deep unless the user asks for more, and keep judgment, integration, and verification with the lead agent.
 - Editing this library does not authorize global installation, publishing, production changes, or messages to others. Preserve unrelated edits and reuse existing authorization within its scope.
 
 ## Structure and verification
 
 - `*/SKILL.md` contains a self-contained optional capability. Engineering documents live with the optional `eng` skill in `eng/references/`. Keep installation and migration docs consistent with the catalog.
-- Shared adapter contract lives in `external-cli/SKILL.md`. CLI-specific notes live in `external-cli/references/`. Old adapter names remain install aliases and uninstall leftovers.
-- Required for library changes: `npm test`, `npm run doctor`, and `git diff --check`. Catalog or CLI changes also require `npm run check:cli`. Inspect `git status --short` and preserve unrelated work.
+- `external-cli` and its former adapter names are removed; they are rejected by the installer and remain uninstall-only leftovers.
+- Required for library changes: `npm test`, `npm run doctor`, and `git diff --check`. Catalog or installer CLI (`bin/skills.mjs`) changes also require `npm run check:cli`. Inspect `git status --short` and preserve unrelated work.
 - Choose additional checks by changed behavior and actual risk. Fixture loading and static checks do not prove model behavior. Do not invoke external models or agents without applicable authorization. Keep historical evaluation results in their original context.
 - Deliver in concise Chinese: outcome, relevant evidence, and material gaps. A required check that did not run is not a pass. Optional uncovered cases do not automatically block completion.
 

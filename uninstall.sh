@@ -37,7 +37,7 @@ Usage:
   ./uninstall.sh --list
 
 Skills:
-  design verify eng reflect grill-me external-cli
+  design verify eng reflect grill-me
 
 Groups:
   all          Uninstall every Skill including retired entries
@@ -45,10 +45,11 @@ Groups:
   quality      Uninstall verify and legacy qa/acceptance copies
   engineering  Uninstall eng
   meta         Uninstall reflect (repository-local learning)
-  adapters     Uninstall external-cli and leftover adapter directories
+  adapters     Uninstall removed external-cli and leftover adapter directories
   delegation   Alias for adapters
 
-Migration: kimi-code, claude-code, codex-cli, opencode, grok-build-cli, plus
+Migration: external-cli (removed), kimi-code, claude-code, codex-cli, opencode,
+grok-build-cli, plus
 dev, clarify, qa, acceptance and the legacy workflow/planning groups, remain
 accepted for removal only. No replacement is installed automatically.
 
