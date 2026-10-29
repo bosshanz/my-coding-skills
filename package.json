@@ -1,7 +1,7 @@
 {
   "name": "my-coding-skills",
   "version": "0.7.0",
-  "description": "Optional software engineering principles, UI design, business verification, decision interviews, repository-local learning, and a unified external CLI adapter for coding agents.",
+  "description": "Optional software engineering principles, UI design, business verification, decision interviews, and repository-local learning for coding agents.",
   "type": "module",
   "bin": {
     "skills": "./bin/skills.mjs"
@@ -12,7 +12,6 @@
     "eng",
     "reflect",
     "grill-me",
-    "external-cli",
     "docs",
     "codex",
     "templates",
@@ -43,7 +42,6 @@
     "codex",
     "claude-code",
     "opencode",
-    "grok-build",
     "skills",
     "design",
     "verify"

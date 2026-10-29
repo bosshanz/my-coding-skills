@@ -41,7 +41,7 @@ test('no selection cannot install or remove anything in a supplied destination',
 
 test('both installers copy exactly the optional catalog with bundled resources', t => {
   const base = workspace(t);
-  assert.deepEqual(catalog, ['design', 'eng', 'external-cli', 'grill-me', 'reflect', 'verify']);
+  assert.deepEqual(catalog, ['design', 'eng', 'grill-me', 'reflect', 'verify']);
   for (const kind of ['npm', 'shell']) {
     const dest = path.join(base, kind);
     succeeds(kind, ['all', '--dest', dest]);
@@ -52,7 +52,6 @@ test('both installers copy exactly the optional catalog with bundled resources',
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
     assert.ok(fs.existsSync(path.join(dest, 'eng/references/software-quality.md')));
     assert.equal(fs.readFileSync(path.join(dest, 'verify/references/scenarios.md'), 'utf8'), fs.readFileSync(path.join(root, 'verify/references/scenarios.md'), 'utf8'));
-    assert.ok(fs.existsSync(path.join(dest, 'external-cli/scripts/codex-cli-status.sh')));
     const reflect = YAML.parse(fs.readFileSync(path.join(dest, 'reflect/agents/openai.yaml'), 'utf8'));
     assert.equal(reflect.policy.allow_implicit_invocation, true);
     assert.ok(!fs.existsSync(path.join(dest, 'references')));
@@ -61,7 +60,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
 
 test('groups are consistent and optional capabilities require selection', t => {
   const base = workspace(t);
-  const groups = { ui: ['design'], quality: ['verify'], engineering: ['eng'], meta: ['reflect'], adapters: ['external-cli'] };
+  const groups = { ui: ['design'], quality: ['verify'], engineering: ['eng'], meta: ['reflect'] };
   for (const kind of ['npm', 'shell']) {
     for (const [group, names] of Object.entries(groups)) {
       const dest = path.join(base, kind, group);
@@ -127,20 +126,23 @@ test('npm installer refuses protected and symlinked roots before writes', t => {
   assert.deepEqual(fs.readdirSync(base), ['root-link']);
 });
 
-test('legacy adapter names install external-cli and remain uninstallable leftovers', t => {
+test('removed external-cli names are rejected on install and remain uninstallable leftovers', t => {
   const dest = workspace(t);
-  const added = succeeds('npm', ['claude-code', '--dest', dest]);
-  assert.match(added, /installed external-cli ->/);
-  assert.match(added, /note: claude-code now install/);
-  assert.ok(fs.existsSync(path.join(dest, 'external-cli/SKILL.md')));
-  assert.ok(!fs.existsSync(path.join(dest, 'claude-code')));
-  fs.mkdirSync(path.join(dest, 'claude-code'));
-  fs.writeFileSync(path.join(dest, 'claude-code/keep.txt'), 'legacy');
-  succeeds('remove', ['claude-code', '--dest', dest]);
-  assert.ok(!fs.existsSync(path.join(dest, 'claude-code')));
-  assert.ok(fs.existsSync(path.join(dest, 'external-cli/SKILL.md')));
+  for (const kind of ['npm', 'shell']) {
+    for (const name of ['external-cli', 'adapters', 'claude-code']) {
+      const result = run(kind, [name, '--dest', dest]);
+      assert.notEqual(result.status, 0);
+      assert.match(result.output, /removed skill or group/i);
+    }
+  }
+  assert.deepEqual(fs.readdirSync(dest), []);
+  for (const name of ['external-cli', 'claude-code']) {
+    fs.mkdirSync(path.join(dest, name));
+    fs.writeFileSync(path.join(dest, name, 'keep.txt'), 'legacy');
+  }
   succeeds('remove', ['adapters', '--dest', dest]);
   assert.ok(!fs.existsSync(path.join(dest, 'external-cli')));
+  assert.ok(!fs.existsSync(path.join(dest, 'claude-code')));
 });
 
 test('references are packaged and readable without a development Skill', () => {

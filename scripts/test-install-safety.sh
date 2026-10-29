@@ -113,11 +113,6 @@ all_out="$("$INSTALL" all --dest "$catalog_dest" --dry-run 2>&1)" || {
   fails=$((fails+1))
   all_out=""
 }
-adapters_out="$("$INSTALL" adapters --dest "$catalog_dest" --dry-run 2>&1)" || {
-  printf 'FAIL: install.sh adapters --dry-run failed\n  output: %s\n' "$adapters_out" >&2
-  fails=$((fails+1))
-  adapters_out=""
-}
 for skill_md in "$ROOT"/*/SKILL.md; do
   skill="$(basename "$(dirname "$skill_md")")"
   if [[ -n "$all_out" ]] && grep -q "would install $skill ->" <<<"$all_out"; then
@@ -128,23 +123,14 @@ for skill_md in "$ROOT"/*/SKILL.md; do
   fi
   assert_allows "$INSTALL" "$skill" --dest "$catalog_dest" --dry-run
 done
-if grep -q "would install external-cli ->" <<<"$adapters_out"; then
-  pass=$((pass+1)); printf 'ok (adapters dry-run includes external-cli)\n'
-else
-  printf 'FAIL: install.sh adapters --dry-run omitted external-cli\n' >&2
-  fails=$((fails+1))
-fi
-alias_out="$("$INSTALL" claude-code --dest "$catalog_dest" --dry-run 2>&1)" || {
-  printf 'FAIL: install.sh claude-code --dry-run failed\n  output: %s\n' "$alias_out" >&2
-  fails=$((fails+1))
-  alias_out=""
-}
-if grep -q "would install external-cli ->" <<<"$alias_out" && grep -q "note: claude-code now install" <<<"$alias_out"; then
-  pass=$((pass+1)); printf 'ok (claude-code alias installs external-cli)\n'
-else
-  printf 'FAIL: install.sh claude-code --dry-run did not alias to external-cli\n  output: %s\n' "$alias_out" >&2
-  fails=$((fails+1))
-fi
+for removed in external-cli adapters claude-code; do
+  if "$INSTALL" "$removed" --dest "$catalog_dest" --dry-run >/dev/null 2>&1; then
+    printf 'FAIL: install.sh accepted removed name %s\n' "$removed" >&2
+    fails=$((fails+1))
+  else
+    pass=$((pass+1)); printf 'ok (install.sh rejects removed %s)\n' "$removed"
+  fi
+done
 
 printf '\n%d passed, %d failed\n' "$pass" "$fails"
 [ "$fails" -eq 0 ]

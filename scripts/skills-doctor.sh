@@ -22,10 +22,6 @@ check_absent() {
   if [ -e "$ROOT/$1" ]; then fail "old path still exists: $1"; else pass "old path absent: $1"; fi
 }
 
-check_command() {
-  if command -v "$1" >/dev/null 2>&1; then pass "command available: $1 ($(command -v "$1"))"; else warn "command missing: $1"; fi
-}
-
 info "Skills doctor"
 info "root=$ROOT"
 VERSION="$(sed -n 's/.*"version": "\(.*\)".*/\1/p' "$ROOT/package.json" | head -1)"
@@ -36,7 +32,7 @@ check_executable "install.sh"
 check_file "uninstall.sh"
 check_executable "uninstall.sh"
 
-for skill in design verify eng reflect grill-me external-cli; do
+for skill in design verify eng reflect grill-me; do
   check_file "$skill/SKILL.md"
   check_file "$skill/agents/openai.yaml"
   if [ -f "$ROOT/$skill/SKILL.md" ]; then
@@ -56,16 +52,6 @@ for ref in interaction.md design-direction.md animation.md; do
   check_file "design/references/$ref"
 done
 
-check_file "external-cli/references/kimi-code.md"
-check_file "external-cli/references/claude-code.md"
-check_file "external-cli/references/codex-cli.md"
-check_file "external-cli/references/opencode.md"
-check_file "external-cli/references/grok-build.md"
-check_executable "external-cli/scripts/kimi-code-status.sh"
-check_executable "external-cli/scripts/claude-code-status.sh"
-check_executable "external-cli/scripts/codex-cli-status.sh"
-check_executable "external-cli/scripts/opencode-status.sh"
-check_executable "external-cli/scripts/grok-build-cli-status.sh"
 check_executable "scripts/skills-doctor.sh"
 check_file "scripts/check-routing-policy.mjs"
 check_file "scripts/test-install-safety.sh"
@@ -94,6 +80,7 @@ check_absent "dev"
 check_absent "clarify"
 check_absent "qa"
 check_absent "acceptance"
+check_absent "external-cli"
 check_absent "kimi-code"
 check_absent "claude-code"
 check_absent "codex-cli"
@@ -125,11 +112,6 @@ else
 fi
 rm -f /tmp/skills-doctor-todo.$$
 
-check_command kimi
-check_command claude
-check_command codex
-check_command opencode
-check_command grok
 
 info "warnings=$WARN failures=$FAIL"
 if [ "$FAIL" -gt 0 ]; then

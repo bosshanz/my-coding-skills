@@ -1,6 +1,6 @@
 # Coding Agent Skills
 
-按需使用的设计、业务验证、决策追问、仓库内经验积累和外部 CLI 调用合同，以及覆盖所有开发任务的工程行为准则。
+按需使用的设计、业务验证、决策追问和仓库内经验积累，以及覆盖所有开发任务的工程行为准则。
 
 开发、修复、重构、开发测试和代码审查以 `eng` 为统一工程入口，由当前 Agent 完成；纯需求分析按问题直接处理。本库不再提供默认的开发调度器，也不把澄清、QA 和验收串成固定阶段。是否使用 Skill 取决于它能否补充当前任务需要的信息；用户要求不使用时，直接遵从。
 
@@ -8,7 +8,7 @@
 
 ## 可选能力
 
-当前有 6 个 Skill，全部按需选择：
+当前有 5 个 Skill，全部按需选择：
 
 | Skill | 用途 |
 | --- | --- |
@@ -17,7 +17,6 @@
 | `eng` | 所有开发任务的统一工程入口：约束工程行为与品味，遵循如无必要勿增实体、可维护表达、清晰契约、真实失败、状态归属、兼容性和证据原则；不规定固定流程。 |
 | `grill-me` | 用户要求深度追问或挑战方案时，先查事实，一次追问一个关键问题，收敛决策与待验证项。 |
 | `reflect` | 日常从纠正、失败和有证据的改进中自动复盘，经验默认跟随仓库；全局记忆需用户明确要求。 |
-| `external-cli` | 用户点名 Claude Code、Codex CLI、Kimi Code、OpenCode 或 Grok Build 时，按合同调用对应无头 CLI；ACP 只用于有客户端的会话或编辑器嵌入。 |
 
 `verify` 合并了原 `qa` 和 `acceptance` 的用途。它区分检查行为、按请求增加测试保护和给出最终结论；只读检查不修改被审查源码或测试，但可在已有授权内运行检查、操作隔离测试数据并清理临时产物。技术验收不授权发布。真正的独立审查需要实际的审查者分离和相应授权。
 
@@ -64,8 +63,6 @@
 ./install.sh design --target agents
 ./install.sh verify --target agents
 ./install.sh grill-me --target agents
-./install.sh external-cli --target agents
-./install.sh claude-code --target agents
 ```
 
 npm CLI 使用相同目录和分组：
@@ -84,8 +81,7 @@ npx --package my-coding-skills skills references
 | `quality` | `verify` |
 | `engineering` | `eng` |
 | `meta` | `reflect` |
-| `adapters` / `delegation` | `external-cli` |
-| `all` | 全部 6 个 Skill，显式选择才安装 |
+| `all` | 全部 5 个 Skill，显式选择才安装 |
 
 目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`gemini`、`opencode` 和 `all`。`all` 写入 agents、claude、gemini、opencode 四处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
 
@@ -104,19 +100,18 @@ npx --package my-coding-skills skills references
 
 ## 从旧目录迁移
 
-`dev`、`clarify`、`qa`、`acceptance` 及安装分组 `workflow`、`planning` 已退役。`kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 现为 `external-cli` 的安装别名，安装器写入 `external-cli`，不静默删除旧目录。已有安装需要显式清理，否则旧入口仍可能被宿主发现。
+`dev`、`clarify`、`qa`、`acceptance` 及安装分组 `workflow`、`planning` 已退役。`external-cli` 及其旧别名 `kimi-code`、`claude-code`、`codex-cli`、`opencode`、`grok-build-cli` 和分组 `adapters`、`delegation` 已移除，安装器会拒绝这些名称，也不静默删除旧目录。已有安装需要显式清理，否则旧入口仍可能被宿主发现。
 
 在原先的安装目标预览并清理本库的旧目录，再按需安装新能力：
 
 ```bash
 ./uninstall.sh dev clarify qa acceptance --target agents --dry-run
 ./uninstall.sh dev clarify qa acceptance --target agents
-./uninstall.sh kimi-code claude-code codex-cli opencode grok-build-cli --target agents
+./uninstall.sh adapters --target agents
 ./install.sh verify --target agents
-./install.sh external-cli --target agents
 ```
 
-若原来安装到 `codex`、`claude` 等目标，应指定对应目标；有本地修改时先保留。卸载器仍接受旧名称、`workflow`、`planning`，便于移除历史安装。卸载 `quality` 会包含 `verify` 及旧 `qa`、`acceptance`；卸载 `adapters` 会包含 `external-cli` 及旧适配器目录；卸载 `all` 会包含当前和退役目录。无参数卸载也只显示帮助。
+若原来安装到 `codex`、`claude` 等目标，应指定对应目标；有本地修改时先保留。卸载器仍接受旧名称、`workflow`、`planning`，便于移除历史安装。卸载 `quality` 会包含 `verify` 及旧 `qa`、`acceptance`；卸载 `adapters` 会移除已删除的 `external-cli` 及旧适配器目录；卸载 `all` 会包含当前和退役目录。无参数卸载也只显示帮助。
 
 原 `dev` 的参考资料现由可选的 `eng` 加载；原 `superpowers-lite.md` 改名 `debugging.md`，`design-and-research.md` 的模块与架构内容保留在 `architecture-decisions.md`。重复的开发流程、资料路由和通用文档写作入口已移除，旧内容可从 Git 历史恢复。
 
@@ -124,8 +119,6 @@ npx --package my-coding-skills skills references
 
 - 功能、修复、重构、调试、开发测试和代码审查使用 `eng` 的共同准则，由当前 Agent 直接完成；用户禁用 Skill 时遵从。
 - 需要设计决策时按需使用 `design`；业务规则检查、真实用法诊断或最终验收明确请求 `verify`；工程原则和按需参考由 `eng` 提供；挑战方案可请求 `grill-me`；纠正、失败和有证据的改进可触发 `reflect` 的仓库内学习。
-- 外部 CLI 只有在当前请求或适用的用户持续指令已选定时才调用。发现项目策略文件本身不构成授权。
-- 调用方必须实际调用指定 CLI，准确报告不可用情况，保留真实结果并复核证据。把用户选择或禁止使用 Skill 的要求传给目标，不强制目标加载本库流程。
 - Skill 不授权增加任务、发布、生产操作或递归委派。结束一个检查不结束其他已授权工作。
 
 ## 验证与限制
@@ -137,7 +130,7 @@ npm run check:cli
 git diff --check
 ```
 
-`npm test` 检查目录与引用、fixture 加载、校验器回归、安装和卸载安全。`doctor` 检查资源完整性；外部 CLI 不存在只产生提示。
+`npm test` 检查目录与引用、fixture 加载、校验器回归、安装和卸载安全。`doctor` 检查资源完整性。
 
 路由代理、文本回答、宿主自报和真实执行是不同证据，详见 [工作流程与评估](docs/workflow.md)。当前真实执行夹具不再强制注入 `dev`；历史报告仍代表原版本。静态检查通过不证明删减后质量相当或更好，也不证明真实宿主的触发行为。需要证明增益时，使用相同模型、任务和环境的有无对照，单独记录结果；外部模型调用仍需相应授权。
 
@@ -177,22 +170,6 @@ reflect/
   SKILL.md
   agents/
     openai.yaml
-external-cli/
-  SKILL.md
-  agents/
-    openai.yaml
-  references/
-    claude-code.md
-    codex-cli.md
-    grok-build.md
-    kimi-code.md
-    opencode.md
-  scripts/
-    claude-code-status.sh
-    codex-cli-status.sh
-    grok-build-cli-status.sh
-    kimi-code-status.sh
-    opencode-status.sh
 templates/
   AGENTS.md
 install.sh
@@ -210,7 +187,7 @@ docs/
 
 仓库所有者要求“发布 My Coding Skills”时，默认包含两个仓库的发布：源仓库测试、提交和推送，以及市场同步、验证、提交和推送；明确要求只处理源仓库时遵从该范围。普通修改或仅提交/推送源仓库，不隐含发布到市场。
 
-1. 在本仓库修改 Skill，正式发布时更新 `package.json` 和相应 lockfile 的版本。运行 `npm test`、`npm run doctor` 和 `git diff --check`；catalog/CLI 变更还需 `npm run check:cli`。检查差异后提交并推送，记录 `git rev-parse HEAD` 返回的完整 SHA。
+1. 在本仓库修改 Skill，正式发布时更新 `package.json` 和相应 lockfile 的版本。运行 `npm test`、`npm run doctor` 和 `git diff --check`；catalog 或安装 CLI（`bin/skills.mjs`）变更还需 `npm run check:cli`。检查差异后提交并推送，记录 `git rev-parse HEAD` 返回的完整 SHA。
 2. 找到 remote 为 `https://github.com/bosshanz/andy-agent-marketplace.git`（或对应 SSH URL）的市场工作副本；没有时克隆该仓库。检查两个仓库的工作区并保留无关修改。进入市场根目录，用已发布的完整 SHA 同步：
 
    ```sh

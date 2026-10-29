@@ -43,28 +43,6 @@
     - \b(accepted with risk|accepted|rejected)\b
     - (单元测试|unit.*test)
     - (未|缺|无).*(CI|手工|人工|端到端|证据|验证)
-- id: adapter-claude-unavailable
-  skill: external-cli
-  scenario: |
-    Environment note: the `claude` executable is NOT installed on this
-    machine and no Claude Code session exists. You cannot invoke it.
-  user: 让 Claude Code 审一下当前 diff
-  must_contain: []
-  must_not_contain:
-    - Claude Code 已完成审查
-  must_match:
-    - (不可用|无法.{0,4}(调用|派发|分发|执行|运行|invoke)|(不|未|没有|无).{0,6}(安装|存在|找到|可执行)|缺失|未能|not installed|unavailable|cannot (be )?invoked?|not available|missing)
-- id: adapter-kimi-unavailable
-  skill: external-cli
-  scenario: |
-    Environment note: the `kimi` executable is NOT installed on this machine.
-    You cannot invoke Kimi Code.
-  user: 让 Kimi Code 研究一下这个仓库的架构
-  must_contain: []
-  must_not_contain:
-    - Kimi Code 已完成研究
-  must_match:
-    - (不可用|无法.{0,4}(调用|派发|分发|执行|运行|invoke)|(不|未|没有|无).{0,6}(安装|存在|找到|可执行)|缺失|未能|not installed|unavailable|cannot (be )?invoked?|not available|missing)
 - id: design-interaction-delivery
   skill: design
   scenario: |
