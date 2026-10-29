@@ -1,6 +1,6 @@
 {
   "name": "my-coding-skills",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Optional software engineering principles, UI design, business verification, decision interviews, and repository-local learning for coding agents.",
   "type": "module",
   "bin": {

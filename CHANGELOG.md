@@ -5,6 +5,8 @@ a coarse 0.x scheme tied to capability batches.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-29
+
 ### Removed
 
 - 删除 `external-cli` Skill 及其参考与状态脚本；安装器拒绝 `external-cli`、`adapters`、`delegation` 和旧适配器别名，卸载器仍可清理遗留目录，`doctor` 不再检测外部 CLI。
