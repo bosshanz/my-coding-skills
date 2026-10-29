@@ -53,8 +53,8 @@ Examples:
   skills add ui --target agents
   skills add verify --target agents
   skills add reflect --target agents
+  skills add grill-me --target agents
   skills add all --target claude --force
-  skills add delegation --target all --force
   skills add design --dest ./skills --dry-run
 `;
 }

@@ -231,18 +231,20 @@
   must_not_contain:
     - 请问
     - 已实现
-- id: reflect-repository-default
+- id: reflect-asks-location-without-log
   skill: reflect
   scenario: |
     A real check in the supplied task record showed that this repository's CLI v2
     rejects --legacy; installed help confirms --current works. Host allows local
-    project learning writes. No learning log exists. No actual tools are available
-    in this text-only evaluation, so only propose an entry, never claim a write.
+    project learning writes. No learning log exists and none is registered in
+    project rules. No actual tools are available in this text-only evaluation,
+    so only propose an entry, never claim a write.
   user: 你又用了旧参数，这次总结一下经验，之后别再犯。
   must_contain:
     - .agent-learning.md
   must_match:
     - (v2|版本)
+    - (放在哪|放在哪里|落点|位置|存放|哪个路径|记录到哪)
     - (未.*(写入|保存)|无法|不能)
   must_not_contain:
     - 已写入

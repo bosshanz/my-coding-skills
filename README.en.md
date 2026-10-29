@@ -16,9 +16,9 @@ Implementation, fixes, refactoring, debugging, developer tests, and code review 
 | `grill-me` | Requested plan challenges and decision interviews: inspect evidence, ask one consequential question at a time, and converge. |
 | `reflect` | Learn automatically from corrections, failures, and supported improvements. Lessons stay in the repository; global memory requires an explicit request. |
 
-`verify` combines the former `qa` and `acceptance` purposes while preserving read-only review, requested test protection, and final-verdict boundaries. Read-only review does not edit the reviewed source or tests; within existing authorization it may run checks, operate on isolated test data, and clean up temporary artifacts. Technical acceptance is not publication authority. Independent review requires actual reviewer separation and applicable authorization.
+`verify` combines the former `qa` and `acceptance` purposes while preserving read-only review, requested test protection, and final-verdict boundaries. Read-only review does not edit the reviewed source or tests; within existing authorization it may run checks, operate on isolated test data, and clean up temporary artifacts. Technical acceptance is not publication authority. Independent review requires actual reviewer separation and applicable authorization. Codex metadata disables implicit invocation for `verify` and `grill-me`.
 
-`reflect` follows host persistence rules. Reuse the repository's designated learning log, otherwise use `.agent-learning.md` at its root when the first useful entry is permitted. If the host forbids automatic persistence, reflect in the conversation only. Distinguish confirmed preferences, evidence-backed lessons, and hypotheses; do not automatically rewrite project instructions. Codex metadata permits implicit invocation; other hosts use the entry description. `$reflect` / `/reflect` remain available for focused retrospectives and maintenance.
+`reflect` follows host persistence rules. Reuse the repository's designated learning log. When no location is known, the first useful entry ends the report with one question about where to keep it (for example root `.agent-learning.md`, a custom path, or conversation only); nothing is written without an answer. If the host forbids automatic persistence, reflect in the conversation only. Distinguish confirmed preferences, evidence-backed lessons, and hypotheses; do not automatically rewrite project instructions. Codex metadata permits implicit invocation; other hosts use the entry description. `$reflect` / `/reflect` remain available for focused retrospectives and maintenance.
 
 ## Choosing A Capability
 
@@ -43,7 +43,7 @@ These are guidance examples, not executed test reports. Upstream attribution exp
 
 ## Product And Architecture Documents
 
-During substantive product design work, `design` creates or maintains the minimum useful product document: user tasks, business rules, flow states, interaction, visuals, motion, and observable acceptance criteria. During substantive architecture changes, `eng` maintains background constraints, module responsibilities, the technology stack, databases and middleware, data and state ownership, key mechanisms, and tradeoffs. Product documents distinguish confirmed decisions, proposals, and hypotheses; architecture documents distinguish the current implementation from planned changes.
+During substantive product design work, `design` creates or maintains the minimum useful product document: user tasks, business rules, flow states, interaction, visuals, motion, and observable acceptance criteria. During substantive architecture changes, `eng` maintains background constraints, module responsibilities, the technology stack, databases and middleware, data and state ownership, key mechanisms, and tradeoffs; when development work changes business rules or user-visible behavior without a design pass, `eng` also syncs affected entries in an existing product document. Product documents distinguish confirmed decisions, proposals, and hypotheses; architecture documents distinguish the current implementation from planned changes.
 
 Check project navigation and reuse existing material first. If no suitable location exists, default to `docs/product.md` and `docs/architecture.md`, creating only the document needed for the task and updating only affected content. Small fixes do not require new documents. When project rules and authorization permit, the project's `AGENTS.md` records actual paths, purposes, and maintenance expectations; the global template gives discovery and maintenance principles without fixed paths. `verify` uses these materials alongside actual evidence; missing documents do not prevent checks that remain valid. Documentation does not automatically chain Skills or add approvals. See [document ownership and project rules](docs/three-layers.md).
 
@@ -79,7 +79,7 @@ These interfaces describe the current source. Until a release includes this chan
 | `meta` | `reflect` |
 | `all` | All five Skills, only when explicitly selected |
 
-Targets: `agents` (default, `~/.agents/skills`), `codex` (`${CODEX_HOME:-$HOME/.codex}/skills`), `claude`, `gemini`, `opencode`, and `all`. The `all` target writes to agents, claude, gemini, and opencode. `--dest DIR` selects one custom directory and cannot be combined with an explicit `--target all`. `--force` replaces an existing same-name Skill.
+`grill-me` has no single-skill group alias; install it directly by name or via `all`. Targets: `agents` (default, `~/.agents/skills`), `codex` (`${CODEX_HOME:-$HOME/.codex}/skills`), `claude`, `gemini`, `opencode`, and `all`. The `all` target writes to agents, claude, gemini, and opencode. `--dest DIR` selects one custom directory and cannot be combined with an explicit `--target all`. `--force` replaces an existing same-name Skill.
 
 The global rules template remains a separate opt-in:
 

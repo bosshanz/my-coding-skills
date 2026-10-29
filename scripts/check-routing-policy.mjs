@@ -45,6 +45,10 @@ export function validateRepository(root) {
       for (const key of ['display_name', 'short_description', 'default_prompt']) {
         check(nonempty(agent?.interface?.[key]), `${agentFile}: missing interface.${key}`);
       }
+      if (agent?.policy !== undefined) {
+        check(typeof agent.policy?.allow_implicit_invocation === 'boolean',
+          `${agentFile}: policy.allow_implicit_invocation must be boolean`);
+      }
     }
   }
 
@@ -83,25 +87,6 @@ export function validateRepository(root) {
       const entry = `${skill}/references/${ref}`;
       check(read(`${skill}/SKILL.md`).includes(`references/${ref}`), `${entry}: unreachable from Skill entry`);
       check(trees.every(tree => tree.has(entry)), `${entry}: missing from a README tree`);
-    }
-  }
-
-  // Standalone engineering documents remain discoverable from their index,
-  // both README trees, and the npm package without a workflow Skill.
-  const referenceDir = path.join(root, 'references');
-  if (fs.existsSync(referenceDir)) {
-    const indexFile = path.join(referenceDir, 'README.md');
-    const index = fs.existsSync(indexFile) ? read('references/README.md') : '';
-    check(nonempty(index), 'standalone references: missing README.md index');
-    for (const file of fs.readdirSync(referenceDir).filter(name => name.endsWith('.md'))) {
-      const entry = `references/${file}`;
-      if (file !== 'README.md') check(index.includes(`](${file})`), `${entry}: missing from standalone index`);
-      check(trees.every(tree => tree.has(entry)), `${entry}: missing from a README tree`);
-    }
-    const packageFile = path.join(root, 'package.json');
-    if (fs.existsSync(packageFile)) {
-      const pkg = JSON.parse(read('package.json'));
-      check(pkg.files?.includes('references'), 'standalone references: absent from package files');
     }
   }
 

@@ -2,3 +2,5 @@ interface:
   display_name: "设计"
   short_description: "依据任务与证据，形成具体的交互、视觉和动效选择。"
   default_prompt: "使用 $design 从用户任务和现有证据定位设计问题，形成具体的交互、视觉或动效选择。遵循设计要求、已有系统和平台惯例，只阅读相关参考，说明取舍并用适合的证据检查结果。"
+policy:
+  allow_implicit_invocation: true

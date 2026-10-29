@@ -1,6 +1,7 @@
 ---
 name: grill-me
 description: "当用户要求深入追问、挑战或推敲时，通过聚焦访谈检验想法、计划或决策。适用于显式 $grill-me / /grill-me 或同等请求；普通问题和实现工作不必进入访谈。"
+when_to_use: "用户明确要求压力测试方案、逐步追问决策或调用 $grill-me / /grill-me 时使用。普通需求澄清、方案评审、直接实现或代码审查不触发本 Skill。"
 argument-hint: "[想法、方案或待决策问题]"
 ---
 

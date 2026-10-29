@@ -2,3 +2,5 @@ interface:
   display_name: "验证"
   short_description: "依据产品预期和实际证据检查业务行为与用户旅程。"
   default_prompt: "使用 $verify 检查指定业务规则、用户旅程或验收范围。先依据已确认需求和产品设计确定预期，再结合架构机制选择检查，报告实际证据、冲突和重要缺口；仅在用户授权范围内修改测试或产品代码。"
+policy:
+  allow_implicit_invocation: false

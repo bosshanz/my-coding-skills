@@ -11,6 +11,10 @@ a coarse 0.x scheme tied to capability batches.
 
 ### Changed
 
+- `reflect` 不再在仓库根目录自动创建 `.agent-learning.md`：没有已登记或已存在的经验日志时，首次记录前在汇报末尾询问一次落点，未回答则只留在对话中；用户明确要求留在仓库但未给路径时使用根目录默认文件。消除默认写入与“共享仓库文件需授权”的冲突。
+- `eng` 解除对 `design` 参考文件的跨 Skill 硬依赖，保留自包含的界面对齐与已有动效约束，避免普通样式改动被拉入像素级设计评审或默认新增动效；新增非界面改动同步既有产品文档受影响条目，并在开始相关工作前按需读取仓库已有经验日志。
+- 显式声明全部 Codex `agents/openai.yaml` 的隐式调用策略（`verify` 与 `grill-me` 关闭隐式调用），为 `grill-me` 和 `reflect` 补齐 `when_to_use` 元数据，并收敛全局模板 `templates/AGENTS.md` 与 `eng` 的重复准则。
+- 清理 `external-cli` 移除后的遗留项：修正 `bin/skills.mjs` 帮助中的失效 `delegation` 示例、`README.md` 的能力计数与文案标点、调试参考的委派口径、设计参考的原生平台说明，以及静态校验器中已废弃的根目录 `references/` 分支。
 - Codex 子智能体编排由默认委派改为按需委派：仅在工作量大且可独立推进、需要隔离上下文、并行收益明确或用户要求时委派；优先级为用户当前请求 > 项目 `AGENTS.md` > 全局规则；委派默认只有一层。
 - 全局编排规则与 README 不再硬编码 Worker 模型，以 `worker.toml` 为准，并增加一致性测试；移除 `CLAUDE.md` 中失效的 `## Taste` 引用。
 - `design` 与 `eng` 分别在实质变化中按需维护产品设计和架构文档，项目规则提供导航；小修复不强制新建文档，也不自动串联 Skills。

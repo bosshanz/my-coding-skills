@@ -52,8 +52,14 @@ test('both installers copy exactly the optional catalog with bundled resources',
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
     assert.ok(fs.existsSync(path.join(dest, 'eng/references/software-quality.md')));
     assert.equal(fs.readFileSync(path.join(dest, 'verify/references/scenarios.md'), 'utf8'), fs.readFileSync(path.join(root, 'verify/references/scenarios.md'), 'utf8'));
-    const reflect = YAML.parse(fs.readFileSync(path.join(dest, 'reflect/agents/openai.yaml'), 'utf8'));
-    assert.equal(reflect.policy.allow_implicit_invocation, true);
+    const expectedImplicit = { design: true, eng: true, grill: false, reflect: true, verify: false };
+    for (const skill of catalog) {
+      const fm = YAML.parse(fs.readFileSync(path.join(dest, skill, 'SKILL.md'), 'utf8').match(/^---\n([\s\S]*?)\n---/)[1]);
+      assert.ok(typeof fm.when_to_use === 'string' && fm.when_to_use.trim().length > 0, `${skill} missing when_to_use`);
+      const agent = YAML.parse(fs.readFileSync(path.join(dest, skill, 'agents/openai.yaml'), 'utf8'));
+      const key = skill === 'grill-me' ? 'grill' : skill;
+      assert.equal(agent.policy?.allow_implicit_invocation, expectedImplicit[key], `${skill} unexpected implicit policy`);
+    }
     assert.ok(!fs.existsSync(path.join(dest, 'references')));
   }
 });
@@ -133,6 +139,13 @@ test('removed external-cli names are rejected on install and remain uninstallabl
       const result = run(kind, [name, '--dest', dest]);
       assert.notEqual(result.status, 0);
       assert.match(result.output, /removed skill or group/i);
+    }
+  }
+  for (const [cmd, args] of [[process.execPath, ['bin/skills.mjs', '--help']], ['bash', ['install.sh', '--help']]]) {
+    const help = spawnSync(cmd, args, { cwd: root, encoding: 'utf8' });
+    assert.equal(help.status, 0);
+    for (const removedName of ['external-cli', 'delegation', 'adapters', ...retired]) {
+      assert.doesNotMatch(help.stdout, new RegExp(`(?:skills add|install\\.sh)\\s+${removedName}\\b`));
     }
   }
   assert.deepEqual(fs.readdirSync(dest), []);

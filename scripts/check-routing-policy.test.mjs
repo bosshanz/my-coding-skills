@@ -44,10 +44,11 @@ test('static validation detects missing and unreachable references', t => {
 test('static validation rejects identity mismatch and invalid fixture targets', t => {
   const repo = repository(t);
   repo.write('sample/SKILL.md', repo.skill('`references/method.md`').replace('name: sample', 'name: wrong'));
+  repo.write('sample/agents/openai.yaml', 'interface:\n  display_name: Sample\n  short_description: Short\n  default_prompt: Run sample\npolicy:\n  allow_implicit_invocation: "yes"\n');
   repo.write('evals/routing/fixtures.yaml', [repo.routing, { ...repo.routing, expect: ['none', 'unknown'] }]);
   repo.write('evals/behavior/fixtures.yaml', [{ ...repo.behavior, skill: 'unknown', must_match: ['['] }]);
   const failures = repo.validate().join('\n');
-  for (const expected of [/name must match/, /duplicate fixture id/, /unknown expected skill/, /none cannot be combined/, /unknown skill/, /invalid regex/]) {
+  for (const expected of [/name must match/, /allow_implicit_invocation must be boolean/, /duplicate fixture id/, /unknown expected skill/, /none cannot be combined/, /unknown skill/, /invalid regex/]) {
     assert.match(failures, expected);
   }
 });
