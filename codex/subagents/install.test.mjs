@@ -11,7 +11,7 @@ import { HEADING, ROLES } from './install.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snippet = fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8');
 const expected = {
-  luna_worker: ['gpt-6.1-terra', 'xhigh'],
+  worker: ['gpt-6.1-terra', 'xhigh'],
 };
 function home(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-home-'));
@@ -59,7 +59,7 @@ test('dry run writes nothing; install is idempotent and leaves config.toml alone
 test('replaces only the managed section, preserves other content, and backs up', t => {
   const dir = home(t);
   fs.mkdirSync(path.join(dir, 'agents'));
-  fs.writeFileSync(path.join(dir, 'agents', 'luna_worker.toml'), 'name = "luna_worker"\n');
+  fs.writeFileSync(path.join(dir, 'agents', 'worker.toml'), 'name = "worker"\n');
   fs.writeFileSync(path.join(dir, 'agents', 'other.toml'), 'name = "other"\n');
   const original = `# 我的规则\n\n前言\n\n${HEADING}\n\n- 旧内容\n\n### 旧子节\n\n- 旧\n\n## 其他\n\n- 保留\n`;
   fs.writeFileSync(path.join(dir, 'AGENTS.md'), original);
@@ -70,7 +70,7 @@ test('replaces only the managed section, preserves other content, and backs up',
   assert.equal(fs.readFileSync(path.join(dir, 'agents', 'other.toml'), 'utf8'), 'name = "other"\n');
   const [backup] = fs.readdirSync(path.join(dir, 'backups'));
   assert.equal(fs.readFileSync(path.join(dir, 'backups', backup, 'AGENTS.md'), 'utf8'), original);
-  assert.equal(fs.readFileSync(path.join(dir, 'backups', backup, 'agents', 'luna_worker.toml'), 'utf8'), 'name = "luna_worker"\n');
+  assert.equal(fs.readFileSync(path.join(dir, 'backups', backup, 'agents', 'worker.toml'), 'utf8'), 'name = "worker"\n');
   assert.match(run(dir), /unchanged/);
   assert.equal(fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8'), md);
 });
@@ -82,7 +82,7 @@ test('appends the section after existing content', t => {
   assert.equal(fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8'), `# 规则\n\n- 已有\n\n${snippet.trimEnd()}\n`);
 });
 
-for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml']) test(`upgrade backs up and removes ${filename}; dry-run preserves it`, t => {
+for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) test(`upgrade backs up and removes ${filename}; dry-run preserves it`, t => {
   const dir = home(t);
   fs.mkdirSync(path.join(dir, 'agents'));
   const retired = path.join(dir, 'agents', filename);

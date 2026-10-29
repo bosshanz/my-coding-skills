@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const HEADING = '## 全局子智能体编排';
-export const ROLES = ['luna_worker'];
+export const ROLES = ['worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
 async function parseToml(text, file) {
@@ -64,7 +64,7 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
     if (prev !== next) plan.push({ dest, prev, next });
   }
   // Retire previous roles and the legacy Luna filename after backing them up.
-  for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml']) {
+  for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) {
     const retired = path.join(home, 'agents', filename);
     if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
   }
