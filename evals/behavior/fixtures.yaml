@@ -59,6 +59,8 @@
     - (重试|retry)
 - id: reflect-authorized-entry-no-repeat-confirmation
   skill: reflect
+  references:
+    - references/preferences-and-maintenance.md
   scenario: "Simulated project: CLAUDE.md has a Taste section. No tools or writes
     are available. The user explicitly authorizes the exact preference and
     destination."
@@ -242,6 +244,7 @@
   user: 你又用了旧参数，这次总结一下经验，之后别再犯。
   must_contain:
     - .agent-learning.md
+    - .agent-learning.local.md
   must_match:
     - (v2|版本)
     - (放在哪|放在哪里|落点|位置|存放|哪个路径|记录到哪)

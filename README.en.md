@@ -11,14 +11,14 @@ Implementation, fixes, refactoring, debugging, developer tests, and code review 
 | Skill | Purpose |
 | --- | --- |
 | `design` | Diagnose design problems from tasks and evidence; choose interaction patterns, visual hierarchy, a consistent design language, and motion. Implementing an established design needs no new design process. |
-| `verify` | Explicitly requested business-rule checks, journey diagnosis, or final acceptance. Add protection only when requested; review alone stays read-only. |
+| `verify` | Explicitly requested business-rule checks and protection, journey diagnosis, or final acceptance. Protecting a named business rule takes the confirmed rule, not current code, as the expectation; adding tests for a feature or change is development work under `eng`. Review alone stays read-only. |
 | `eng` | A common entry for all development work, governing engineering behavior and taste: avoid unnecessary entities, write maintainable code, make contracts clear, expose failures truthfully, own state explicitly, preserve compatibility, and use evidence. No fixed workflow. |
 | `grill-me` | Requested plan challenges and decision interviews: inspect evidence, ask one consequential question at a time, and converge. |
 | `reflect` | Learn automatically from corrections, failures, and supported improvements. Lessons stay in the repository; global memory requires an explicit request. |
 
 `verify` combines the former `qa` and `acceptance` purposes while preserving read-only review, requested test protection, and final-verdict boundaries. Read-only review does not edit the reviewed source or tests; within existing authorization it may run checks, operate on isolated test data, and clean up temporary artifacts. Technical acceptance is not publication authority. Independent review requires actual reviewer separation and applicable authorization. Codex metadata disables implicit invocation for `verify` and `grill-me`.
 
-`reflect` follows host persistence rules. Reuse the repository's designated learning log. When no location is known, the first useful entry ends the report with one question about where to keep it (for example root `.agent-learning.md`, a custom path, or conversation only); nothing is written without an answer. If the host forbids automatic persistence, reflect in the conversation only. Distinguish confirmed preferences, evidence-backed lessons, and hypotheses; do not automatically rewrite project instructions. Codex metadata permits implicit invocation; other hosts use the entry description. `$reflect` / `/reflect` remain available for focused retrospectives and maintenance.
+`reflect` follows host persistence rules. Reuse an existing repository learning log: shared `.agent-learning.md`, uncommitted `.agent-learning.local.md`, or a path registered in project rules. When no location is known, the first useful entry ends the report with one question about where to keep it (shared file, private file, conversation only, or no learning log for this repository); nothing is written without an answer. The private file is ignored through `.git/info/exclude`, leaving the shared `.gitignore` unchanged. If the host forbids automatic persistence, reflect in the conversation only. Distinguish confirmed preferences, evidence-backed lessons, and hypotheses; do not automatically rewrite project instructions. Codex metadata permits implicit invocation; other hosts use the entry description. `$reflect` / `/reflect` remain available for focused retrospectives and maintenance.
 
 ## Choosing A Capability
 
@@ -121,7 +121,7 @@ git diff --check
 
 Static tests cover catalog and reference integrity, fixture loading, evaluator regression, and installer safety. `doctor` checks resources. See [workflow and evaluation](docs/workflow.md) for proxy routing, response checks, host self-reports, and real execution.
 
-The execution fixture no longer injects `dev`. Historical results describe their original versions. Static checks do not prove model behavior or quality after simplification. Establishing benefit requires comparable with/without runs on the same model, tasks, and environment; external model use still needs authorization.
+Reports in `evals/results/` describe the versions they ran against. Static checks do not prove model behavior or quality after simplification. Establishing benefit requires comparable with/without runs on the same model, tasks, and environment; external model use still needs authorization.
 
 ## Repository Structure
 
@@ -159,6 +159,8 @@ reflect/
   SKILL.md
   agents/
     openai.yaml
+  references/
+    preferences-and-maintenance.md
 templates/
   AGENTS.md
 install.sh
