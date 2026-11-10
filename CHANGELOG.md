@@ -8,7 +8,7 @@ a coarse 0.x scheme tied to capability batches.
 ### Changed
 
 - `reflect` 拆分入口与参考：入口聚焦日常复盘、仓库经验落点与持久化规则，将偏好记录、作用域冲突与撤销、日志整理、经验示例移至 `reflect/references/preferences-and-maintenance.md` 按需加载。
-- 经验日志增加不提交的私有约定文件 `.agent-learning.local.md`（通过 `.git/info/exclude` 忽略，首行 `记录：关闭` 表示本仓库不再询问），`eng`、全局模板和文档同步读取，无需将私有路径写进共享的 `AGENTS.md`。
+- 经验日志增加不提交的私有约定文件 `.agent-learning.local.md`（通过 `.git/info/exclude` 忽略；与共享的 `.agent-learning.md` 同时存在时两者都读取。首行 `记录：关闭` 只表示不再自动写入新条目、也不再询问落点，不阻止读取已有共享日志），`eng`、全局模板和文档同步读取，无需将私有路径写进共享的 `AGENTS.md`。
 - `verify` 按测试对象明确边界：保护指定业务规则（以已确认规则而非现有代码为预期）归 `verify`，为功能或改动补测试归 `eng`。
 - `eng` 将可见界面与已有动效的沿用规则移入工程原则，“与其他能力协作”仅保留分工；`eng`、`design`、`reflect` 末尾统一收敛为一条边界说明。
 - Codex 子智能体编排：浏览器操作（页面交互、表单、上传下载、浏览器内终端和浏览器验收）统一委派给 Worker，简单任务也不例外，作为“需要隔离上下文”的固定场景并写明原因与成本；通用片段与角色说明不再出现具体环境工具名。

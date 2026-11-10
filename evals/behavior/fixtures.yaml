@@ -252,6 +252,49 @@
   must_not_contain:
     - 已写入
     - ~/self-improving
+- id: reflect-closed-flag-still-reads-shared
+  skill: reflect
+  scenario: |
+    Host allows local project learning writes. The repository root has
+    `.agent-learning.md` with a team lesson that draft save must wait for
+    persistence confirmation. `.agent-learning.local.md` exists; its first
+    line is `记录：关闭`. No other learning log is registered in project
+    rules. No actual tools are available in this text-only evaluation,
+    so never claim a write.
+  user: 你又在持久化确认前就报告保存成功了，总结一下经验。
+  must_contain:
+    - .agent-learning.md
+    - 记录：关闭
+  must_match:
+    - (持久化|确认|acknowledg)
+    - (不.*写入|不保存|不记录|不自动写入)
+  must_not_contain:
+    - 已写入
+    - 请选择
+    - 放在哪里？
+    - 放在哪？
+- id: reflect-reads-both-learning-logs
+  skill: reflect
+  scenario: |
+    Host allows local project learning writes. Both convention files exist.
+    `.agent-learning.md` records the team lesson that draft save must wait
+    for persistence confirmation. `.agent-learning.local.md` is a personal
+    log (not closed) recording that this machine's CLI v2 rejects --legacy
+    and --current works. No other path is registered in project rules.
+    No actual tools are available in this text-only evaluation, so never
+    claim a write. The user wants prior lessons applied, not a new location.
+  user: 这次既要改草稿保存提示，也要用到本地 CLI，先根据已有经验说说该注意什么，先别写入新条目。
+  must_contain:
+    - .agent-learning.md
+    - .agent-learning.local.md
+  must_match:
+    - (持久化|确认|acknowledg)
+    - (v2|--legacy|--current|旧参数)
+  must_not_contain:
+    - 已写入
+    - 请选择
+    - 放在哪里？
+    - 放在哪？
 - id: reflect-host-persistence-limit
   skill: reflect
   scenario: |
