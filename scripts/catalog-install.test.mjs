@@ -52,6 +52,7 @@ test('both installers copy exactly the optional catalog with bundled resources',
     assert.ok(fs.existsSync(path.join(dest, 'design/references/animation.md')));
     assert.ok(fs.existsSync(path.join(dest, 'eng/references/software-quality.md')));
     assert.equal(fs.readFileSync(path.join(dest, 'verify/references/scenarios.md'), 'utf8'), fs.readFileSync(path.join(root, 'verify/references/scenarios.md'), 'utf8'));
+    assert.equal(fs.readFileSync(path.join(dest, 'reflect/references/preferences-and-maintenance.md'), 'utf8'), fs.readFileSync(path.join(root, 'reflect/references/preferences-and-maintenance.md'), 'utf8'));
     const expectedImplicit = { design: true, eng: true, grill: false, reflect: true, verify: false };
     for (const skill of catalog) {
       const fm = YAML.parse(fs.readFileSync(path.join(dest, skill, 'SKILL.md'), 'utf8').match(/^---\n([\s\S]*?)\n---/)[1]);
