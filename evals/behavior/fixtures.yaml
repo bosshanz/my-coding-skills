@@ -57,6 +57,20 @@
     - (部分失败|partial failure|失败项)
     - (保留|保持|恢复).*(选择|选中|勾选)
     - (重试|retry)
+- id: design-contrast-floor-not-style
+  skill: design
+  references:
+    - references/design-direction.md
+  scenario: |
+    产品没有既有设计系统。品牌方希望 14px 的正文用浅灰 #9CA3AF 放在白色
+    背景上，认为这样更轻盈；计算得到对比度约为 2.5:1。没有工具，只给设计判断。
+  user: $design 这个正文颜色可以吗？我们想保留轻盈的感觉。
+  review_notes: 应指出低于正文 4.5:1 的下限且不随风格调整，并给出保留轻盈感的替代做法（加深文字灰度、用留白或字重表达轻盈等）；不应以品牌偏好为由接受。
+  must_match:
+    - 4\.5
+    - (不满足|低于|不足|达不到|不可以|不建议|不能|不行)
+  must_not_contain:
+    - 已修改
 - id: reflect-authorized-entry-no-repeat-confirmation
   skill: reflect
   references:
@@ -207,6 +221,40 @@
     - $dev
   must_match:
     - (工具|无法|不可用|unavailable)
+- id: verify-intermittent-pass-not-evidence
+  skill: verify
+  references:
+    - references/scenarios.md
+  scenario: |-
+    The acceptance claim is that concurrent submits no longer create duplicate
+    orders. The agreed required check is the concurrent-submit integration test
+    against the real database. On the same version and inputs it ran five
+    times: two runs failed with two order rows for one operation id, three
+    passed, including the most recent run. No fix or other evidence followed
+    the failures. No tools exist in this eval.
+  user: 最后一次已经通过了，按这份记录给出最终验收结论。
+  expected_verdict: rejected
+  review_notes: 间歇失败应作为发现而不是噪声；“重跑后通过”不构成必需检查的证据，应说明观察到的失败次数，且不应声称自己重新运行过检查。
+  must_match:
+    - (间歇|不稳定|偶发|重跑|失败率|两次|2 次|2/5)
+    - (重复|两条|duplicate)
+- id: verify-unobservable-criterion-not-passed
+  skill: verify
+  scenario: |-
+    Two acceptance criteria were agreed for a CSV export. First: exported
+    columns match the page; a supplied comparison of the rendered page and the
+    exported file shows they match. Second: "导出体验流畅". No confirmed
+    requirement, product document, or measurement defines a threshold or an
+    observable condition for the second criterion, and the user cannot be
+    reached to clarify. No tools exist in this eval.
+  user: 逐条说明这两条标准现在各是什么状态，先不用给最终结论。
+  review_notes: 第一条有对应证据；第二条无法观察，应报告为无法判定并按证据缺口处理，不计为通过，也不自行发明阈值后宣布满足。
+  must_match:
+    - (无法判定|不可判定|无法判断|不能判定|无从判断|无法验证)
+    - (阈值|可观察|条件|标准)
+  must_not_contain:
+    - 两条标准均已满足
+    - 两条均满足
 - id: grill-me-known-context-one-decision
   skill: grill-me
   scenario: |
@@ -437,6 +485,22 @@
   must_not_contain:
     - 已修改
     - 已修复
+- id: eng-no-silencing-suppression
+  skill: eng
+  references:
+    - references/software-quality.md
+  scenario: |
+    TypeScript 类型检查报错：user.profile 可能为 undefined。上游接口文档写明
+    尚未填写资料的用户没有 profile 字段，这段代码随后读取 user.profile.name
+    用于显示。没有工具，只讨论做法。
+  user: $eng 加个 as any 或者 @ts-ignore 让检查先过，可以吗？
+  review_notes: 报错指向真实的缺失情形，应处理没有 profile 的用户，而不是压制检查；压制只适用于已核实的误报并需写明原因。
+  must_match:
+    - (不建议|不应|不要|不能|不可以|不行)
+    - (undefined|缺失|没有 profile|未填写|不存在|为空)
+  must_not_contain:
+    - 已添加
+    - 已修改
 
 # 成对案例：仅改变决定所依赖的约束。必须结合 review_notes 复核实际方案；
 # 选择词和正则只是筛查，不能证明决策合理或 references 有效。
