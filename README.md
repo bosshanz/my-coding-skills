@@ -35,11 +35,11 @@
 | 复盘并积累经验 | `$reflect 复盘这次修复，将有证据的经验留在仓库。` | 区分事实、经验和假设，复用仓库日志并遵从宿主写入规则。 |
 | 记录明确偏好 | `$reflect 将本项目的包管理器偏好从 pnpm 改为 npm，更新项目 AGENTS.md 的偏好段。` | 在宿主允许的机制内更新同作用域旧条目，不重复记录、不扩展成全局偏好。 |
 
-设计参考覆盖诊断与取舍、视觉基本功、交互模式、动效、设计语言和结果判断，适用于产品工具、展示网站及原生界面。除三类产品的[选择示例](design/references/design-direction.md#calibration-examples)，还提供六组成对案例：[浏览与比较、表单依赖、动作可逆性](design/references/interaction.md#paired-examples)、[既有品牌约束](design/references/design-direction.md#paired-examples)、[操作频率与减少动态效果](design/references/animation.md#paired-examples)。每组固定背景，只改变关键约束，说明具体方案、理由、代价、重新判断条件和验证方法。渲染检查外观，实际操作检查流程，正常速度播放及中断操作检查动画。
+设计参考覆盖诊断与取舍、视觉基本功与参数起点、交互模式、动效、设计语言和结果判断，适用于产品工具、展示网站及原生界面。除三类产品的[选择示例](design/references/design-direction.md#calibration-examples)，还提供六组成对案例：[浏览与比较、表单依赖、动作可逆性](design/references/interaction.md#paired-examples)、[既有品牌约束](design/references/design-direction.md#paired-examples)、[操作频率与减少动态效果](design/references/animation.md#paired-examples)。每组固定背景，只改变关键约束，说明具体方案、理由、代价、重新判断条件和验证方法。渲染检查外观，实际操作检查流程，正常速度播放及中断操作检查动画。
 
 工程例证覆盖[幂等与租户隔离](eng/references/software-quality.md#worked-examples-idempotency-and-tenant-scope)、[兼容迁移](eng/references/database-engineering.md#worked-example-renaming-a-populated-column)和[发布状态归属](eng/references/architecture-decisions.md#worked-example-one-owner-for-publish-state)。数据库专属语法标注适用引擎，不作为跨数据库通则。
 
-`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换、批量部分完成，以及文档冲突或缺失、请求乱序、隔离复现和证据充分性。它沿产品预期、技术机制和实际证据推导检查，区分不符合要求、必需证据缺失和非阻塞风险，复用已有工具而不要求新测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；记录始终受宿主规则约束；不会默认写入全局。
+`verify` 的[场景参考](verify/references/scenarios.md)覆盖支付响应丢失、草稿恢复、账号权限切换、批量部分完成，以及文档冲突或缺失、请求乱序、隔离复现、证据充分性、性能主张、已有数据升级和间歇失败。它沿产品预期、技术机制和实际证据推导检查，区分不符合要求、必需证据缺失和非阻塞风险，复用已有工具而不要求新测试框架。`reflect` 支持同范围替换、局部例外和明确撤销；记录始终受宿主规则约束；不会默认写入全局。
 
 这些例子是指导资料，不是已执行的测试报告。上游来源用于说明借鉴的方法，不代表已经证明本库的模型增益。具体证据层级见[工作流程与评估](docs/workflow.md)，规则与偏好的落点见[职责说明](docs/three-layers.md)。
 
