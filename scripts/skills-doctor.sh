@@ -44,7 +44,7 @@ for skill in design verify eng reflect grill-me; do
   fi
 done
 
-for ref in debugging.md architecture-decisions.md ablation.md software-architecture.md software-quality.md database-engineering.md; do
+for ref in debugging.md architecture-decisions.md code-review.md ablation.md software-architecture.md software-quality.md database-engineering.md; do
   check_file "eng/references/$ref"
 done
 

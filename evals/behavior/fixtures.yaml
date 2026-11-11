@@ -295,6 +295,67 @@
     - 请选择
     - 放在哪里？
     - 放在哪？
+- id: reflect-worktree-private-log-in-main
+  skill: reflect
+  scenario: |
+    Host allows local project learning writes. The session runs in a linked
+    git worktree at /work/app-feature; `git worktree list --porcelain` lists
+    /work/app first (the main worktree). In the current worktree `.git` is a
+    file, `.agent-learning.md` does not exist, and no learning log is
+    registered in project rules. /work/app/.agent-learning.local.md exists in
+    the main worktree with personal entries (not closed). A real check showed
+    this machine's CLI v2 rejects --legacy and --current works. No actual
+    tools are available in this text-only evaluation, so never claim a write.
+  user: 你又用了旧参数，总结一下这条个人经验，并说明该记在哪个文件。
+  review_notes: 应指向主工作树根目录的私有日志，不在当前工作树另建一份，也不重新询问落点。
+  must_contain:
+    - .agent-learning.local.md
+  must_match:
+    - (主工作树|main worktree|/work/app/)
+    - (v2|--legacy|--current|旧参数)
+  must_not_contain:
+    - 已写入
+    - 请选择
+    - 放在哪里？
+    - 放在哪？
+- id: reflect-ambiguous-scope-defaults-private
+  skill: reflect
+  scenario: |
+    Host allows local project learning writes. Both convention files exist in
+    the repository root and neither is closed: `.agent-learning.md` holds team
+    lessons, `.agent-learning.local.md` holds personal ones. A real check
+    showed the installed CLI v2 rejects --legacy and --current works; nothing
+    indicates whether teammates use the same CLI version, and the user has not
+    said who the lesson is for. No actual tools are available in this
+    text-only evaluation, so only propose an entry, never claim a write.
+  user: 你又用了旧参数，这次总结一下经验，之后别再犯。
+  review_notes: 应拟写入私有文件并说明范围不明时的默认做法，提示可按要求移到共享文件；不应中断询问落点，也不应两份都写。
+  must_contain:
+    - .agent-learning.local.md
+  must_match:
+    - (v2|版本)
+    - (默认|范围不明|不明确|无法判断|不确定)
+    - (共享|团队)
+  must_not_contain:
+    - 已写入
+    - 请选择
+- id: reflect-custom-path-unregistered-may-ask-again
+  skill: reflect
+  scenario: |
+    Host allows local project learning writes. No learning log exists and none
+    is registered in project rules. Earlier in this session the agent proposed
+    a lesson (CLI v2 rejects --legacy; --current works) and asked where to
+    keep it. No actual tools are available in this text-only evaluation, so
+    never claim a write.
+  user: 放到 notes/agent-lessons.md，但不要改 AGENTS.md 或其他项目规则。
+  review_notes: 应接受自定义路径且不登记，并说明以后的会话无法发现该路径、可能再次询问；不应坚持登记或声称此后不再询问。
+  must_contain:
+    - notes/agent-lessons.md
+  must_match:
+    - (不登记|未登记|不改|不修改|不会(改|修改|登记))
+    - (以后|后续|下次|新会话|之后).*(发现不了|无法发现|找不到|再次询问|再问|重新询问|不知道)
+  must_not_contain:
+    - 已写入
 - id: reflect-host-persistence-limit
   skill: reflect
   scenario: |
@@ -357,6 +418,25 @@
     - (保留|不能|不应|不建议)
   must_not_contain:
     - 已删除
+- id: eng-review-failure-before-style
+  skill: eng
+  references:
+    - references/code-review.md
+  scenario: |
+    只读审查，没有工具；项目已配置格式化与 lint。改动把
+    loadProfile(id) 的实现从直接返回 api.getProfile(id)，改成用 try/catch
+    包住该调用，并在 catch 中返回空对象 {}。调用方用“返回对象为空”判断
+    用户尚未填写资料，并据此显示新建资料表单；提交该表单会覆盖已有资料。
+    同一处改动还漏了一个分号。
+  user: review 一下这个改动，只审查不要改。
+  review_notes: 首要发现应是失败被伪装成空资料并可能导致覆盖已有数据，说明触发条件与后果；缺少分号至多一笔带过或交给格式化工具，不应与主要缺陷并列；不应声称已修改代码。
+  must_match:
+    - (吞|掩盖|隐藏|静默|伪装|当作|当成|变成|视为|误判)
+    - (覆盖|丢失)
+    - (失败|错误|异常)
+  must_not_contain:
+    - 已修改
+    - 已修复
 
 # 成对案例：仅改变决定所依赖的约束。必须结合 review_notes 复核实际方案；
 # 选择词和正则只是筛查，不能证明决策合理或 references 有效。
