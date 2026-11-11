@@ -41,7 +41,7 @@ argument-hint: "[开发任务 / 改动范围 / 工程取舍]"
 
 遇到具体取舍或证据缺口时，只阅读能补充当前判断的资料。不要按技术栈加载整套清单，也不要因为入口适用于所有开发任务就读取全部参考。
 
-仓库已有经验日志（项目规则登记的路径，以及根目录已存在的 `.agent-learning.md`、`.agent-learning.local.md`，两者都在时都读取）时，开始相关工作前只读取与当前任务匹配的条目，并复核其中可能已经变化的事实。
+仓库已有经验日志（项目规则登记的路径，以及根目录已存在的 `.agent-learning.md`、`.agent-learning.local.md`，两者都在时都读取；在链接 worktree 中，私有的 `.agent-learning.local.md` 位于主工作树根目录）时，开始相关工作前只读取与当前任务匹配的条目，并复核其中可能已经变化的事实。
 
 | 当前问题 | 参考 |
 | --- | --- |
@@ -50,6 +50,7 @@ argument-hint: "[开发任务 / 改动范围 / 工程取舍]"
 | 契约、状态、副作用、资源、测试和交付物如何保持可信 | `references/software-quality.md` |
 | 存储约束、事务、查询、迁移和回填有哪些限制 | `references/database-engineering.md` |
 | 原因不明或修复反复失败，缺少什么可证伪证据 | `references/debugging.md` |
+| 审查改动或 PR 时关注什么，怎样报告可核对的发现 | `references/code-review.md` |
 | 是否需要受控比较来判断某个可选元素的贡献 | `references/ablation.md` |
 
 参考中的例子有自己的适用条件。平台和框架细节按实际需要查阅现有专业能力、项目代码或官方资料，不把它们扩展为通用工程禁令。

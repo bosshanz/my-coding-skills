@@ -64,6 +64,13 @@
   strict: false
   rationale: 开发任务使用 eng 的共同工程准则，不增加固定流程；已有授权与禁用要求优先。
   source: design
+- id: eng-preset-style-not-design
+  prompt: 按设计稿把标题字号改成 18px，颜色换成品牌主色
+  expect:
+    - eng
+  strict: false
+  rationale: 按既定设计实现和简单样式修改属于开发工作；design 的 description 已写明排除。
+  source: design
 - id: none-weather
   prompt: 今天上海天气怎么样
   expect:
