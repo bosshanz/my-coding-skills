@@ -347,8 +347,8 @@
   source: workflow-alignment
 - id: none-product-delivery-material-choice
   phase: delivery
-  context: the current agent is implementing order archival. Repository inspection
-    and ordinary the current agentelopment questions cannot settle legally
+  context: The current agent is implementing order archival. Repository inspection
+    and ordinary development questions cannot settle legally
     significant retention versus permanent deletion; the product owner must
     choose.
   prompt: 现在需要确定永久删除还是保留归档这项产品决策。
@@ -360,7 +360,7 @@
   source: workflow-alignment
 - id: eng-resume-after-decision
   phase: delivery
-  context: "Implementation was requested. a product discussion resolved the only
+  context: "Implementation was requested. A product discussion resolved the only
     material choice: archive, never permanently delete."
   prompt: 按已定的归档方案继续实现
   expect:

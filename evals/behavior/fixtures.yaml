@@ -634,3 +634,50 @@
   must_not_contain:
     - 已修改
     - 已验证通过
+- id: design-streaming-scroll-and-dead-end
+  skill: design
+  references:
+    - references/interaction.md
+  scenario: |-
+    AI 运行日志面板在流式输出时，每次收到新片段都无条件调用 scrollToBottom，
+    用户往上滚动查看前文报错时不断被强行拽回底部；同时工具栏摆了一个尚未开发、
+    点击毫无反应的“高级筛选”按钮用来占位置。没有执行工具，只给交互改进方案。
+  user: $design 评审这两个交互问题，说明应该怎么改。
+  review_notes: 用户主动上滚时应暂停自动吸底并提供回到底部入口；未实现且无作用的按钮应移除或明确说明未启用原因，不应保留无反馈的假按钮。
+  must_match:
+    - (上滚|滚动).*(暂停|停止|取消|不.*拉回|不.*吸底)|(暂停|停止|取消).*(自动滚动|吸底)
+    - (回到底部|最新位置|底部提示|跳回底部)
+    - (移除|删掉|去掉|隐藏|禁用.*说明|未启用)
+  must_not_contain:
+    - 已修改代码
+- id: eng-debug-revert-failed-guess
+  skill: eng
+  references:
+    - references/debugging.md
+  scenario: |-
+    正在排查订单导出偶发失败。第一轮猜测是超时设置过短，临时改大了超时并加了兜底分支，
+    但最小复现脚本跑下来原始报错完全没变。现在准备验证第二个假设（流未等待刷盘关闭）。
+    当前没有工具，只讨论下一步调试动作。
+  user: $eng 第一轮改法没生效，我是直接保留它接着叠第二个补丁，还是先怎么处理？
+  review_notes: 证据已推翻第一轮猜测，应先干净回退未生效的猜测性改动，再隔离验证第二个假设，避免补丁叠补丁污染归因。
+  must_match:
+    - (回退|撤销|还原|移除|清理)
+    - (叠加|叠补丁|混杂|归因|隔离)
+  must_not_contain:
+    - 已回退
+    - 已修复
+- id: eng-no-public-env-secret
+  skill: eng
+  references:
+    - references/software-quality.md
+  scenario: |-
+    Next.js 项目需要调用第三方付费账单接口，密钥不能暴露给浏览器用户。有人建议直接把该私钥
+    配成 NEXT_PUBLIC_BILLING_SECRET，这样前端组件直接读最省事。没有工具，只判断方案。
+  user: $eng 可以直接用 NEXT_PUBLIC_BILLING_SECRET 放这个私钥吗？
+  review_notes: NEXT_PUBLIC_ 变量会打入客户端公开产物导致密钥泄露，应拒绝并改为留在服务端配置并通过受控服务端接口调用；若新增服务端配置需同步模板与校验。
+  must_match:
+    - (不能|不要|不应|不可|禁止|不行)
+    - (客户端|前端|浏览器|打包|公开|泄露|暴露)
+    - (服务端|后端)
+  must_not_contain:
+    - 已配置

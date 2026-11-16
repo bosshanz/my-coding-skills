@@ -7,6 +7,8 @@ a coarse 0.x scheme tied to capability batches.
 
 ### Changed
 
+- 补充针对 Coding Agent 常见盲区的 9 项高杠杆准则：`design` 新增禁放无行为“断头路控件”与区分两类空状态、流式/实时刷新时上滚暂停自动吸底、关键识别信息防无脑尾部截断与弹性收缩/媒体比例占位、优先绑定语义 token 与克制厚重黑灰阴影；`eng` 新增动笔前对齐相邻文件既有惯例、非法数据在入口边界治本与接口变更全链路闭合、调试假设证伪后先回退无效改动（禁补丁叠补丁）、前端公开构建变量与服务端凭据隔离及模板同步、错误传播保留 `cause` 与脱敏业务上下文；新增 3 条对应行为评估夹具（仅完成静态与干跑检查）。
+- 重构全部 Skill 入口与 8 份核心 `references/` 以提升可读性与指令清晰度：`reflect` 将仓库记忆落点改为条件表并将链接 worktree / 忽略规则归入参考；`eng` 收敛多重对冲长句，拆分“核心原则”与“执行与收尾检查”，并厘清 `architecture-decisions.md`（模块切分与调研）、`software-architecture.md`（跨进程状态/依赖/兼容与缓存队列运维）、`software-quality.md`（实现品味、收尾、行为测试与租户幂等示例）、`database-engineering.md`（建模、生命周期表、生产只读与在线迁移）四份参考的职责边界以消除跨文件重复；`design` 三份参考移除基础术语词典表、重复验证免责段与无引用 HTML 锚点，保留全部参数起点、无障碍下限与六组成对案例；`verify` 入口去重并将 `scenarios.md` 按场景分组收紧；修复路由夹具中的 `agentelopment` 替换笔误。
 - `reflect` 拆分入口与参考：入口聚焦日常复盘、仓库经验落点与持久化规则，将偏好记录、作用域冲突与撤销、日志整理、经验示例移至 `reflect/references/preferences-and-maintenance.md` 按需加载。
 - 经验日志增加不提交的私有约定文件 `.agent-learning.local.md`（通过 `.git/info/exclude` 忽略；与共享的 `.agent-learning.md` 同时存在时两者都读取。首行 `记录：关闭` 只表示不再自动写入新条目、也不再询问落点，不阻止读取已有共享日志），`eng`、全局模板和文档同步读取，无需将私有路径写进共享的 `AGENTS.md`。
 - `verify` 按测试对象明确边界：保护指定业务规则（以已确认规则而非现有代码为预期）归 `verify`，为功能或改动补测试归 `eng`。
