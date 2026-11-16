@@ -3,7 +3,7 @@
 Notable changes to this skill collection. Dates are absolute; versions follow
 a coarse 0.x scheme tied to capability batches.
 
-## [Unreleased]
+## [0.9.0] - 2026-11-16
 
 ### Changed
 
