@@ -39,7 +39,7 @@ Groups:
   meta         Install reflect (repository-local learning)
 
 Options:
-  --target TARGET   agents (default), codex, claude, gemini, opencode, or all
+  --target TARGET   agents (default), codex, claude, antigravity, antigravity-cli, opencode, or all
   --dest DIR        Custom Skills directory; cannot be / or a system path
   --dry-run         Print operations without changing files
   --list            List available Skills and groups
@@ -55,12 +55,13 @@ Examples:
   ./install.sh --global-rules --target codex --dry-run
 
 Targets:
-  agents    $HOME/.agents/skills
-  codex     ${CODEX_HOME:-$HOME/.codex}/skills
-  claude    $HOME/.claude/skills
-  gemini    $HOME/.gemini/skills
-  opencode  $HOME/.config/opencode/skills
-  all       agents, claude, gemini, and opencode locations
+  agents           $HOME/.agents/skills
+  codex            ${CODEX_HOME:-$HOME/.codex}/skills
+  claude           $HOME/.claude/skills
+  antigravity      $HOME/.gemini/config/skills
+  antigravity-cli  $HOME/.gemini/antigravity-cli/skills
+  opencode         $HOME/.config/opencode/skills
+  all              agents, claude, antigravity, antigravity-cli, and opencode locations
 EOF
 }
 
@@ -159,8 +160,14 @@ resolve_destinations() {
     claude)
       DESTINATIONS+=("$HOME/.claude/skills")
       ;;
+    antigravity)
+      DESTINATIONS+=("$HOME/.gemini/config/skills")
+      ;;
+    antigravity-cli)
+      DESTINATIONS+=("$HOME/.gemini/antigravity-cli/skills")
+      ;;
     gemini)
-      DESTINATIONS+=("$HOME/.gemini/skills")
+      fail "deprecated target: gemini; use antigravity or antigravity-cli"
       ;;
     opencode)
       DESTINATIONS+=("$HOME/.config/opencode/skills")
@@ -169,7 +176,8 @@ resolve_destinations() {
       DESTINATIONS+=(
         "$HOME/.agents/skills"
         "$HOME/.claude/skills"
-        "$HOME/.gemini/skills"
+        "$HOME/.gemini/config/skills"
+        "$HOME/.gemini/antigravity-cli/skills"
         "$HOME/.config/opencode/skills"
       )
       ;;

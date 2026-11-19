@@ -79,7 +79,7 @@ These interfaces describe the current source. Until a release includes this chan
 | `meta` | `reflect` |
 | `all` | All five Skills, only when explicitly selected |
 
-`grill-me` has no single-skill group alias; install it directly by name or via `all`. Targets: `agents` (default, `~/.agents/skills`), `codex` (`${CODEX_HOME:-$HOME/.codex}/skills`), `claude`, `gemini`, `opencode`, and `all`. The `all` target writes to agents, claude, gemini, and opencode. `--dest DIR` selects one custom directory and cannot be combined with an explicit `--target all`. `--force` replaces an existing same-name Skill.
+`grill-me` has no single-skill group alias; install it directly by name or via `all`. Targets: `agents` (default, `~/.agents/skills`), `codex` (`${CODEX_HOME:-$HOME/.codex}/skills`), `claude`, `antigravity` (`~/.gemini/config/skills`), `antigravity-cli` (`~/.gemini/antigravity-cli/skills`), `opencode`, and `all`. The `all` target writes to agents, claude, antigravity, antigravity-cli, and opencode. `--dest DIR` selects one custom directory and cannot be combined with an explicit `--target all`. `--force` replaces an existing same-name Skill.
 
 The global rules template remains a separate opt-in:
 

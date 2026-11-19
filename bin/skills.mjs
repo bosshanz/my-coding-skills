@@ -27,7 +27,7 @@ function usage() {
 
 Usage:
   skills list
-  skills add <skill|group...> [--target agents|codex|claude|gemini|opencode|all] [--dest <dir>] [--force] [--dry-run]
+  skills add <skill|group...> [--target agents|codex|claude|antigravity|antigravity-cli|opencode|all] [--dest <dir>] [--force] [--dry-run]
   skills references
   skills doctor
 
@@ -42,12 +42,13 @@ Groups:
   meta         Install reflect (repository-local learning)
 
 Targets:
-  agents       ${join(homedir(), '.agents', 'skills')} (default)
-  codex        ${join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'skills')}
-  claude       ${join(homedir(), '.claude', 'skills')}
-  gemini       ${join(homedir(), '.gemini', 'skills')}
-  opencode     ${join(homedir(), '.config', 'opencode', 'skills')}
-  all          Install to agents, claude, gemini, and opencode target directories
+  agents           ${join(homedir(), '.agents', 'skills')} (default)
+  codex            ${join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'skills')}
+  claude           ${join(homedir(), '.claude', 'skills')}
+  antigravity      ${join(homedir(), '.gemini', 'config', 'skills')}
+  antigravity-cli  ${join(homedir(), '.gemini', 'antigravity-cli', 'skills')}
+  opencode         ${join(homedir(), '.config', 'opencode', 'skills')}
+  all              Install to agents, claude, antigravity, antigravity-cli, and opencode target directories
 
 Examples:
   skills add ui --target agents
@@ -98,11 +99,15 @@ function targetDirs(target, dest) {
     standard: join(homedir(), '.agents', 'skills'),
     codex: join(codexHome, 'skills'),
     claude: join(homedir(), '.claude', 'skills'),
-    gemini: join(homedir(), '.gemini', 'skills'),
+    antigravity: join(homedir(), '.gemini', 'config', 'skills'),
+    'antigravity-cli': join(homedir(), '.gemini', 'antigravity-cli', 'skills'),
     opencode: join(homedir(), '.config', 'opencode', 'skills'),
   };
+  if (target === 'gemini') {
+    throw new Error('deprecated target: gemini; use antigravity or antigravity-cli');
+  }
   if (target === 'all') {
-    return [targets.agents, targets.claude, targets.gemini, targets.opencode];
+    return [targets.agents, targets.claude, targets.antigravity, targets['antigravity-cli'], targets.opencode];
   }
   if (!targets[target]) {
     throw new Error(`unknown target: ${target}`);

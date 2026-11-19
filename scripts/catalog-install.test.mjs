@@ -15,15 +15,15 @@ function workspace(t) {
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   return dir;
 }
-function run(kind, args) {
+function run(kind, args, env = process.env) {
   const command = kind === 'npm' ? process.execPath : 'bash';
   const prefix = kind === 'npm' ? ['bin/skills.mjs', 'add'] : [kind === 'remove' ? 'uninstall.sh' : 'install.sh'];
-  const result = spawnSync(command, [...prefix, ...args], { cwd: root, encoding: 'utf8' });
+  const result = spawnSync(command, [...prefix, ...args], { cwd: root, encoding: 'utf8', env });
   assert.ifError(result.error);
   return { status: result.status, output: result.stdout + result.stderr };
 }
-function succeeds(kind, args) {
-  const result = run(kind, args);
+function succeeds(kind, args, env = process.env) {
+  const result = run(kind, args, env);
   assert.equal(result.status, 0, result.output);
   return result.output;
 }
@@ -169,5 +169,39 @@ test('references are packaged and readable without a development Skill', () => {
   assert.equal(result.status, 0, result.stderr);
   for (const file of fs.readdirSync(path.join(root, 'eng/references'))) {
     assert.ok(result.stdout.includes(path.join(root, 'eng/references', file)));
+  }
+});
+
+test('antigravity and antigravity-cli replace deprecated gemini target across installers', t => {
+  const home = workspace(t);
+  const env = { ...process.env, HOME: home };
+  const expectedDirs = [
+    path.join(home, '.agents', 'skills'),
+    path.join(home, '.claude', 'skills'),
+    path.join(home, '.gemini', 'config', 'skills'),
+    path.join(home, '.gemini', 'antigravity-cli', 'skills'),
+    path.join(home, '.config', 'opencode', 'skills'),
+  ];
+  for (const kind of ['npm', 'shell', 'remove']) {
+    const deprecated = run(kind, ['design', '--target', 'gemini', '--dry-run'], env);
+    assert.notEqual(deprecated.status, 0);
+    assert.match(deprecated.output, /deprecated target: gemini/i);
+
+    const allDry = succeeds(kind, ['design', '--target', 'all', '--dry-run'], env);
+    for (const dir of expectedDirs) {
+      assert.ok(allDry.includes(path.join(dir, 'design')), `${kind} --target all missing ${dir}`);
+    }
+    assert.ok(!allDry.includes(path.join(home, '.gemini', 'skills')), `${kind} --target all still includes legacy gemini path`);
+  }
+  for (const [target, dir] of [
+    ['antigravity', path.join(home, '.gemini', 'config', 'skills')],
+    ['antigravity-cli', path.join(home, '.gemini', 'antigravity-cli', 'skills')],
+  ]) {
+    succeeds('shell', ['design', '--target', target], env);
+    assert.ok(fs.existsSync(path.join(dir, 'design', 'SKILL.md')));
+    succeeds('remove', ['design', '--target', target], env);
+    assert.ok(!fs.existsSync(path.join(dir, 'design')));
+    succeeds('npm', ['design', '--target', target], env);
+    assert.ok(fs.existsSync(path.join(dir, 'design', 'SKILL.md')));
   }
 });

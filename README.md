@@ -83,7 +83,7 @@ npx --package my-coding-skills skills references
 | `meta` | `reflect` |
 | `all` | 全部 5 个 Skill，显式选择才安装 |
 
-`grill-me` 不设单成员分组别名，按名称直接安装或通过 `all` 安装。目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`gemini`、`opencode` 和 `all`。`all` 写入 agents、claude、gemini、opencode 四处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
+`grill-me` 不设单成员分组别名，按名称直接安装或通过 `all` 安装。目标支持 `agents`（默认的 `~/.agents/skills`）、`codex`（`${CODEX_HOME:-$HOME/.codex}/skills`）、`claude`、`antigravity`（`~/.gemini/config/skills`）、`antigravity-cli`（`~/.gemini/antigravity-cli/skills`）、`opencode` 和 `all`。`all` 写入 agents、claude、antigravity、antigravity-cli、opencode 五处。`--dest DIR` 指定一个自定义目录，不能与显式 `--target all` 同用；`--force` 替换已存在的同名 Skill。
 
 通用规则模板保留为独立选项，不随 Skill 安装：
 
