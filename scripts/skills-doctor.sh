@@ -96,6 +96,7 @@ check_absent "andy-coding"
 check_absent "andy-dev"
 check_absent "codebase-improve"
 check_absent "loop-engineering"
+check_absent "codex/subagents"
 
 if grep -R "_SKILL_DIR" "$ROOT" --exclude-dir=.git --exclude-dir=node_modules --exclude=skills-doctor.sh >/tmp/skills-doctor-grep.$$ 2>/dev/null; then
   fail "undocumented *_SKILL_DIR reference found"

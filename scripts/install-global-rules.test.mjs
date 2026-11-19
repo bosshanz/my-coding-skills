@@ -10,8 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const template = fs.readFileSync(path.join(root, 'templates/AGENTS.md'), 'utf8').trimEnd();
 const begin = '<!-- my-coding-skills:global-rules:start -->';
 const end = '<!-- my-coding-skills:global-rules:end -->';
-const snippet = fs.readFileSync(path.join(root, 'codex/subagents/AGENTS.snippet.md'), 'utf8').trimEnd();
-const histories = JSON.parse(fs.readFileSync(path.join(root, 'codex/subagents/AGENTS.legacy.json'), 'utf8'));
+const legacySubagentSection = '## 3. 全局子智能体编排\n\n- 既有用户编排规则';
 function workspace(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'global-rules-test-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -58,9 +57,9 @@ test('update replaces only the managed block, keeping prefix and suffix', t => {
 test('adopts an exact unmarked template and refuses conflicting unmarked rules', t => {
   const dir = workspace(t);
   const file = path.join(dir, 'AGENTS.md');
-  fs.writeFileSync(file, `${template}\n\n${snippet}\n`);
+  fs.writeFileSync(file, `${template}\n\n${legacySubagentSection}\n`);
   assert.equal(run(dir).status, 0);
-  assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}\n`);
+  assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${legacySubagentSection}\n`);
   const custom = '## 1. 工程与协作原则\n\n自己的规则\n';
   fs.writeFileSync(file, custom);
   assert.notEqual(run(dir).status, 0);
@@ -79,16 +78,16 @@ test('moves an existing subagent section out of the managed block', t => {
   const dir = workspace(t);
   const file = path.join(dir, 'AGENTS.md');
   const extra = '\n\n### 用户补充\n保留内容';
-  fs.writeFileSync(file, `${begin}\nold rules\n\n${snippet}${extra}\n${end}\n`);
+  fs.writeFileSync(file, `${begin}\nold rules\n\n${legacySubagentSection}${extra}\n${end}\n`);
   assert.equal(run(dir).status, 0);
-  assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}${extra}\n`);
+  assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${legacySubagentSection}${extra}\n`);
   assert.match(run(dir).stdout, /unchanged/);
 });
 
 test('reconciles exact existing duplicates and rejects divergent copies', t => {
   const dir = workspace(t);
   const file = path.join(dir, 'AGENTS.md');
-  fs.writeFileSync(file, `${template}\n\n${snippet}\n\n${begin}\n${template}\n${end}\n`);
+  fs.writeFileSync(file, `${template}\n\n${legacySubagentSection}\n\n${begin}\n${template}\n${end}\n`);
   assert.equal(run(dir).status, 0);
   const result = fs.readFileSync(file, 'utf8');
   assert.equal(result.split('## 1. 工程与协作原则').length - 1, 1);
@@ -98,69 +97,6 @@ test('reconciles exact existing duplicates and rejects divergent copies', t => {
   fs.writeFileSync(file, divergent);
   assert.notEqual(run(dir).status, 0);
   assert.equal(fs.readFileSync(file, 'utf8'), divergent);
-});
-
-test('reconciles previous duplicate state in either installer order', t => {
-  for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
-    const dir = path.join(workspace(t), order[0]);
-    fs.mkdirSync(dir);
-    const file = path.join(dir, 'AGENTS.md');
-    fs.writeFileSync(file, `${template}\n\n${snippet}\n\n${begin}\n${template}\n${end}\n`);
-    for (const kind of [...order, ...order]) {
-      const result = kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
-      assert.equal(result.status, 0, result.stderr);
-    }
-    const result = fs.readFileSync(file, 'utf8');
-    for (const heading of ['## 1. 工程与协作原则', '## 2. 面向用户的输出与表达规范', '## 3. 全局子智能体编排']) {
-      assert.equal(result.split(heading).length - 1, 1);
-    }
-  }
-});
-
-test('both installers remain idempotent in either order', t => {
-  for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
-    const dir = path.join(workspace(t), order[0]);
-    fs.mkdirSync(dir);
-    const execute = kind => kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
-    for (const kind of order) assert.equal(execute(kind).status, 0);
-    const file = path.join(dir, 'AGENTS.md');
-    const before = fs.readFileSync(file, 'utf8');
-    for (const kind of order) assert.equal(execute(kind).status, 0);
-    assert.equal(fs.readFileSync(file, 'utf8'), before);
-    assert.equal(before.split(begin).length - 1, 1);
-    assert.equal(before.split(end).length - 1, 1);
-    assert.equal(before.split('## 3. 全局子智能体编排').length - 1, 1);
-  }
-});
-
-test('existing complete unmarked rules survive installation in either order', t => {
-  for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
-    const dir = path.join(workspace(t), order[0]);
-    fs.mkdirSync(dir);
-    const file = path.join(dir, 'AGENTS.md');
-    fs.writeFileSync(file, `${template}\n\n${snippet}\n`);
-    for (const kind of order) {
-      const result = kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
-      assert.equal(result.status, 0, result.stderr);
-    }
-    assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}\n`);
-  }
-});
-
-test('published legacy sections migrate in either installer order', t => {
-  for (const { source, content } of histories) {
-    for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
-      const dir = path.join(workspace(t), `${source}-${order[0]}`);
-      fs.mkdirSync(dir);
-      const file = path.join(dir, 'AGENTS.md');
-      fs.writeFileSync(file, `${begin}\nold managed rules\n${end}\n\n${content}\n`);
-      for (const kind of [...order, ...order]) {
-        const result = kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
-        assert.equal(result.status, 0, `${source} ${order}: ${result.stderr}`);
-      }
-      assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}\n`, source);
-    }
-  }
 });
 
 test('malformed blocks and overrides fail without changing rules or creating backups', t => {
