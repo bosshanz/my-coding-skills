@@ -43,8 +43,20 @@ function install(directory, dryRun) {
     const before = previous.slice(0, previous.indexOf(begin));
     const managed = previous.slice(previous.indexOf(begin) + begin.length, previous.indexOf(end));
     const after = previous.slice(previous.indexOf(end) + end.length);
+    const outside = before + after;
+    const outsideIndex = outside.indexOf(template);
+    const outsideExact = outsideIndex !== -1 && (outsideIndex === 0 || outside[outsideIndex - 1] === '\n') &&
+      (outsideIndex + template.length === outside.length || outside[outsideIndex + template.length] === '\n');
+    const outsideRules = /^(?:# Agent 工作约定|## (?:1\. 工程与协作原则|2\. 面向用户的输出与表达规范))\s*$/m.test(outside);
     const section = /^## (?:3\. )?全局子智能体编排\s*$/m.exec(managed);
-    if (section) {
+    if (outsideRules) {
+      const remainder = outside.slice(0, outsideIndex) + outside.slice(outsideIndex + template.length);
+      if (managed.trim() !== template || !outsideExact || outside.indexOf(template, outsideIndex + 1) !== -1 ||
+          /^(?:# Agent 工作约定|## (?:1\. 工程与协作原则|2\. 面向用户的输出与表达规范))\s*$/m.test(remainder)) {
+        throw new Error('duplicate global rules require manual reconciliation before installation');
+      }
+      next = outside.slice(0, outsideIndex) + block + outside.slice(outsideIndex + template.length);
+    } else if (section) {
       if (/^## (?:3\. )?全局子智能体编排\s*$/m.test(before + after)) {
         throw new Error('duplicate subagent sections; reconcile AGENTS.md first');
       }

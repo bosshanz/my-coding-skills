@@ -20,7 +20,8 @@ node codex/subagents/install.mjs --codex-home /path/to/codex-home
 安装器的行为：
 
 - 先校验角色 TOML 能解析，且包含 `name`、`description`、`developer_instructions`、`model`、`model_reasoning_effort`。用仓库依赖 `smol-toml` 解析，没有 `node_modules` 时退回 Python 3.11+ 的 `tomllib`。非空或非普通文件的 `AGENTS.override.md` 会阻止安装，以免规则被遮蔽。
-- 识别当前章节和仓库提供的旧版章节；保留章节末尾追加的自定义内容。已有章节内容无法识别时拒绝修改，需先人工核对；全局规则模板与子智能体章节可以按任意顺序安装和重复执行。
+- 识别当前章节和 `AGENTS.legacy.json` 中保存的历史发布版本；保留章节末尾追加的自定义内容。已有章节内容无法识别时拒绝修改，需先人工核对；全局规则模板与子智能体章节可以按任意顺序安装和重复执行。维护者修改当前章节时，应把旧版章节加入该文件，以支持下次升级。
+- 更新已有规则和角色文件时保留原有权限，拒绝覆盖符号链接或非普通文件；首次创建使用仅当前用户可读写的权限。
 - 修改前把要覆盖的角色文件、`AGENTS.md` 以及现有 `config.toml` 备份到 `$CODEX_HOME/backups/subagents-<时间戳>/`。
 - 不修改 `config.toml`。Codex 会自动发现 `$CODEX_HOME/agents/` 下的角色文件，不需要额外注册，也不会改动主会话的模型或 effort。
 - 可重复执行：内容一致时输出 `unchanged`，不写文件也不产生备份。升级时备份并移除旧版 Sol 角色（`sol_worker.toml`、`sol_deep_worker.toml` 及其连字符文件名）和旧 Luna 文件（`luna-worker.toml`、`luna_worker.toml`）（包括该文件的本地修改，可从备份恢复），统一使用 `worker.toml`；不删除其他角色。

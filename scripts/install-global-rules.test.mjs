@@ -11,6 +11,7 @@ const template = fs.readFileSync(path.join(root, 'templates/AGENTS.md'), 'utf8')
 const begin = '<!-- my-coding-skills:global-rules:start -->';
 const end = '<!-- my-coding-skills:global-rules:end -->';
 const snippet = fs.readFileSync(path.join(root, 'codex/subagents/AGENTS.snippet.md'), 'utf8').trimEnd();
+const histories = JSON.parse(fs.readFileSync(path.join(root, 'codex/subagents/AGENTS.legacy.json'), 'utf8'));
 function workspace(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'global-rules-test-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -84,6 +85,38 @@ test('moves an existing subagent section out of the managed block', t => {
   assert.match(run(dir).stdout, /unchanged/);
 });
 
+test('reconciles exact existing duplicates and rejects divergent copies', t => {
+  const dir = workspace(t);
+  const file = path.join(dir, 'AGENTS.md');
+  fs.writeFileSync(file, `${template}\n\n${snippet}\n\n${begin}\n${template}\n${end}\n`);
+  assert.equal(run(dir).status, 0);
+  const result = fs.readFileSync(file, 'utf8');
+  assert.equal(result.split('## 1. 工程与协作原则').length - 1, 1);
+  assert.equal(result.split('## 3. 全局子智能体编排').length - 1, 1);
+  assert.match(run(dir).stdout, /unchanged/);
+  const divergent = `${template}\n\n${begin}\nchanged managed rules\n${end}\n`;
+  fs.writeFileSync(file, divergent);
+  assert.notEqual(run(dir).status, 0);
+  assert.equal(fs.readFileSync(file, 'utf8'), divergent);
+});
+
+test('reconciles previous duplicate state in either installer order', t => {
+  for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
+    const dir = path.join(workspace(t), order[0]);
+    fs.mkdirSync(dir);
+    const file = path.join(dir, 'AGENTS.md');
+    fs.writeFileSync(file, `${template}\n\n${snippet}\n\n${begin}\n${template}\n${end}\n`);
+    for (const kind of [...order, ...order]) {
+      const result = kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
+      assert.equal(result.status, 0, result.stderr);
+    }
+    const result = fs.readFileSync(file, 'utf8');
+    for (const heading of ['## 1. 工程与协作原则', '## 2. 面向用户的输出与表达规范', '## 3. 全局子智能体编排']) {
+      assert.equal(result.split(heading).length - 1, 1);
+    }
+  }
+});
+
 test('both installers remain idempotent in either order', t => {
   for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
     const dir = path.join(workspace(t), order[0]);
@@ -111,6 +144,22 @@ test('existing complete unmarked rules survive installation in either order', t 
       assert.equal(result.status, 0, result.stderr);
     }
     assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}\n`);
+  }
+});
+
+test('published legacy sections migrate in either installer order', t => {
+  for (const { source, content } of histories) {
+    for (const order of [['global', 'subagent'], ['subagent', 'global']]) {
+      const dir = path.join(workspace(t), `${source}-${order[0]}`);
+      fs.mkdirSync(dir);
+      const file = path.join(dir, 'AGENTS.md');
+      fs.writeFileSync(file, `${begin}\nold managed rules\n${end}\n\n${content}\n`);
+      for (const kind of [...order, ...order]) {
+        const result = kind === 'global' ? run(dir) : spawnSync(process.execPath, [path.join(root, 'codex/subagents/install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
+        assert.equal(result.status, 0, `${source} ${order}: ${result.stderr}`);
+      }
+      assert.equal(fs.readFileSync(file, 'utf8'), `${begin}\n${template}\n${end}\n\n${snippet}\n`, source);
+    }
   }
 });
 

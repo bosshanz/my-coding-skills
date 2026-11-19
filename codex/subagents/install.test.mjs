@@ -10,7 +10,8 @@ import { HEADING, ROLES } from './install.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snippet = fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8');
-const legacy = fs.readFileSync(path.join(here, 'AGENTS.legacy.snippet.md'), 'utf8').trimEnd();
+const histories = JSON.parse(fs.readFileSync(path.join(here, 'AGENTS.legacy.json'), 'utf8'));
+const legacy = histories[0].content;
 const expected = {
   worker: ['gpt-6.1-terra', 'xhigh'],
 };
@@ -125,6 +126,45 @@ test('refuses a shadowing AGENTS.override.md without changing files', t => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /would shadow AGENTS.md/);
   assert.deepEqual(fs.readdirSync(dir), ['AGENTS.override.md']);
+});
+
+test('migrates each published legacy section while preserving appended custom text', t => {
+  for (const { source, content } of histories) {
+    const dir = path.join(home(t), source);
+    fs.mkdirSync(dir);
+    const file = path.join(dir, 'AGENTS.md');
+    const extra = '\n\n### 自定义\n保留\n';
+    fs.writeFileSync(file, content + extra);
+    run(dir);
+    assert.equal(fs.readFileSync(file, 'utf8'), snippet.trimEnd() + extra, source);
+    assert.match(run(dir), /unchanged/);
+  }
+});
+
+test('preserves permissions when updating rules and role files', t => {
+  const dir = home(t);
+  fs.mkdirSync(path.join(dir, 'agents'));
+  const rules = path.join(dir, 'AGENTS.md');
+  const role = path.join(dir, 'agents', 'worker.toml');
+  fs.writeFileSync(rules, legacy + '\n', { mode: 0o600 });
+  fs.writeFileSync(role, 'name = "worker"\n', { mode: 0o640 });
+  run(dir);
+  assert.equal(fs.statSync(rules).mode & 0o777, 0o600);
+  assert.equal(fs.statSync(role).mode & 0o777, 0o640);
+});
+
+test('refuses symlinked rules and role files without modifying their targets', t => {
+  for (const relative of ['AGENTS.md', 'agents/worker.toml']) {
+    const dir = home(t);
+    const target = path.join(dir, 'external');
+    fs.writeFileSync(target, 'original');
+    fs.mkdirSync(path.dirname(path.join(dir, relative)), { recursive: true });
+    fs.symlinkSync(target, path.join(dir, relative));
+    const result = spawnSync(process.execPath, [path.join(here, 'install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
+    assert.notEqual(result.status, 0);
+    assert.equal(fs.readFileSync(target, 'utf8'), 'original');
+    assert.equal(fs.lstatSync(path.join(dir, relative)).isSymbolicLink(), true);
+  }
 });
 
 for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) test(`upgrade backs up and removes ${filename}; dry-run preserves it`, t => {

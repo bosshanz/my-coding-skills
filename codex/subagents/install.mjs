@@ -10,8 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const HEADING = '## 3. 全局子智能体编排';
 const LEGACY_HEADING = '## 全局子智能体编排';
-const legacy = fs.readFileSync(path.join(here, 'AGENTS.legacy.snippet.md'), 'utf8').trimEnd();
-const knownSections = [legacy, legacy.replace('独立审查仅在用户明确要求时触发', '独立审查仅在已要求且获准时进行')];
+const knownSections = JSON.parse(fs.readFileSync(path.join(here, 'AGENTS.legacy.json'), 'utf8')).map(entry => entry.content);
 export const ROLES = ['worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
@@ -63,18 +62,25 @@ export function upsertSection(previous, snippet) {
 export async function install({ codexHome, dryRun = false, log = console.log }) {
   const home = path.resolve(codexHome || process.env.CODEX_HOME || path.join(os.homedir(), '.codex'));
   const plan = [];
+  function readExisting(file) {
+    const stat = fs.lstatSync(file, { throwIfNoEntry: false });
+    if (!stat) return { text: null, mode: 0o600 };
+    if (!stat.isFile()) throw new Error(`refusing a symlink or non-regular file: ${file}`);
+    return { text: fs.readFileSync(file, 'utf8'), mode: stat.mode & 0o777 };
+  }
   for (const role of ROLES) {
     const src = path.join(here, 'agents', `${role}.toml`);
     await validateRole(src);
     const dest = path.join(home, 'agents', `${role}.toml`);
     const next = fs.readFileSync(src, 'utf8');
-    const prev = fs.existsSync(dest) ? fs.readFileSync(dest, 'utf8') : null;
-    if (prev !== next) plan.push({ dest, prev, next });
+    const { text: prev, mode } = readExisting(dest);
+    if (prev !== next) plan.push({ dest, prev, next, mode });
   }
   // Retire previous roles and the legacy Luna filename after backing them up.
   for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) {
     const retired = path.join(home, 'agents', filename);
-    if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
+    const { text: prev } = readExisting(retired);
+    if (prev !== null) plan.push({ dest: retired, prev, next: null });
   }
   const agentsMd = path.join(home, 'AGENTS.md');
   const override = path.join(home, 'AGENTS.override.md');
@@ -82,9 +88,9 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
   if (overrideStat && (!overrideStat.isFile() || fs.readFileSync(override, 'utf8').trim())) {
     throw new Error(`active or non-regular ${override} would shadow AGENTS.md; reconcile it first`);
   }
-  const prevMd = fs.existsSync(agentsMd) ? fs.readFileSync(agentsMd, 'utf8') : null;
+  const { text: prevMd, mode } = readExisting(agentsMd);
   const nextMd = upsertSection(prevMd ?? '', fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8'));
-  if (prevMd !== nextMd) plan.push({ dest: agentsMd, prev: prevMd, next: nextMd });
+  if (prevMd !== nextMd) plan.push({ dest: agentsMd, prev: prevMd, next: nextMd, mode });
 
   if (!plan.length) { log(`unchanged ${home}`); return { home, changed: [] }; }
   for (const item of plan) log(`${dryRun ? 'would ' : ''}${item.next === null ? 'remove' : item.prev === null ? 'create' : 'update'} ${item.dest}`);
@@ -104,7 +110,8 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
     if (item.next === null) { fs.unlinkSync(item.dest); continue; }
     fs.mkdirSync(path.dirname(item.dest), { recursive: true });
     const tmp = `${item.dest}.tmp-${process.pid}`;
-    fs.writeFileSync(tmp, item.next);
+    fs.writeFileSync(tmp, item.next, { mode: item.mode });
+    fs.chmodSync(tmp, item.mode);
     fs.renameSync(tmp, item.dest);
   }
   for (const role of ROLES) await validateRole(path.join(home, 'agents', `${role}.toml`));
