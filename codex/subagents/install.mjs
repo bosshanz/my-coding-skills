@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const HEADING = '## 3. 全局子智能体编排';
 const LEGACY_HEADING = '## 全局子智能体编排';
+const legacy = fs.readFileSync(path.join(here, 'AGENTS.legacy.snippet.md'), 'utf8').trimEnd();
+const knownSections = [legacy, legacy.replace('独立审查仅在用户明确要求时触发', '独立审查仅在已要求且获准时进行')];
 export const ROLES = ['worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
@@ -46,11 +48,16 @@ export function upsertSection(previous, snippet) {
     return `${previous.replace(/\n*$/, '')}\n\n${block}\n`;
   }
   const start = starts[0];
-  let end = lines.findIndex((line, i) => i > start && (/^#{1,2} /.test(line) || line.trimEnd() === '<!-- my-coding-skills:global-rules:end -->'));
+  let end = lines.findIndex((line, i) => i > start && (/^#{1,2} /.test(line) || /^<!-- my-coding-skills:global-rules:(?:start|end) -->$/.test(line.trimEnd())));
   if (end === -1) end = lines.length;
+  const current = lines.slice(start, end).join('\n').trimEnd();
+  if (current === block || current.startsWith(`${block}\n`)) return previous;
+  const known = knownSections.find(section => current === section || current.startsWith(`${section}\n`));
+  if (!known) throw new Error('existing subagent section contains unrecognized content; reconcile AGENTS.md first');
+  const extra = current.slice(known.length);
   const before = lines.slice(0, start).join('\n');
   const after = lines.slice(end).join('\n');
-  return `${before}${before ? '\n' : ''}${block}\n${after ? `\n${after}` : ''}`.replace(/\n*$/, '\n');
+  return `${before}${before ? '\n' : ''}${block}${extra}\n${after ? `\n${after}` : ''}`.replace(/\n*$/, '\n');
 }
 
 export async function install({ codexHome, dryRun = false, log = console.log }) {
@@ -70,6 +77,11 @@ export async function install({ codexHome, dryRun = false, log = console.log }) 
     if (fs.existsSync(retired)) plan.push({ dest: retired, prev: fs.readFileSync(retired, 'utf8'), next: null });
   }
   const agentsMd = path.join(home, 'AGENTS.md');
+  const override = path.join(home, 'AGENTS.override.md');
+  const overrideStat = fs.lstatSync(override, { throwIfNoEntry: false });
+  if (overrideStat && (!overrideStat.isFile() || fs.readFileSync(override, 'utf8').trim())) {
+    throw new Error(`active or non-regular ${override} would shadow AGENTS.md; reconcile it first`);
+  }
   const prevMd = fs.existsSync(agentsMd) ? fs.readFileSync(agentsMd, 'utf8') : null;
   const nextMd = upsertSection(prevMd ?? '', fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8'));
   if (prevMd !== nextMd) plan.push({ dest: agentsMd, prev: prevMd, next: nextMd });

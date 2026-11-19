@@ -10,6 +10,7 @@ import { HEADING, ROLES } from './install.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const snippet = fs.readFileSync(path.join(here, 'AGENTS.snippet.md'), 'utf8');
+const legacy = fs.readFileSync(path.join(here, 'AGENTS.legacy.snippet.md'), 'utf8').trimEnd();
 const expected = {
   worker: ['gpt-6.1-terra', 'xhigh'],
 };
@@ -72,7 +73,7 @@ test('replaces only the managed section, preserves other content, and backs up',
   fs.mkdirSync(path.join(dir, 'agents'));
   fs.writeFileSync(path.join(dir, 'agents', 'worker.toml'), 'name = "worker"\n');
   fs.writeFileSync(path.join(dir, 'agents', 'other.toml'), 'name = "other"\n');
-  const original = `# 我的规则\n\n前言\n\n${HEADING}\n\n- 旧内容\n\n### 旧子节\n\n- 旧\n\n## 其他\n\n- 保留\n`;
+  const original = `# 我的规则\n\n前言\n\n${legacy}\n\n## 其他\n\n- 保留\n`;
   fs.writeFileSync(path.join(dir, 'AGENTS.md'), original);
   run(dir);
   const md = fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8');
@@ -96,10 +97,34 @@ test('appends the section after existing content', t => {
 test('upgrades legacy headings and preserves managed block boundaries', t => {
   const dir = home(t);
   const file = path.join(dir, 'AGENTS.md');
-  fs.writeFileSync(file, '<!-- my-coding-skills:global-rules:start -->\n# 规则\n\n## 全局子智能体编排\n\n旧规则\n<!-- my-coding-skills:global-rules:end -->\n');
+  fs.writeFileSync(file, `<!-- my-coding-skills:global-rules:start -->\n# 规则\n\n${legacy}\n<!-- my-coding-skills:global-rules:end -->\n`);
   run(dir);
   assert.equal(fs.readFileSync(file, 'utf8'), `<!-- my-coding-skills:global-rules:start -->\n# 规则\n\n${snippet.trimEnd()}\n\n<!-- my-coding-skills:global-rules:end -->\n`);
   assert.match(run(dir), /unchanged/);
+});
+
+test('preserves appended custom text and refuses altered sections', t => {
+  const dir = home(t);
+  const file = path.join(dir, 'AGENTS.md');
+  const custom = '\n\n### 我的补充\n\n- 自定义内容\n';
+  fs.writeFileSync(file, snippet.trimEnd() + custom);
+  run(dir);
+  assert.equal(fs.readFileSync(file, 'utf8'), snippet.trimEnd() + custom);
+  const altered = `${HEADING}\n\n- 自定义规则\n`;
+  fs.writeFileSync(file, altered);
+  const result = spawnSync(process.execPath, [path.join(here, 'install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /unrecognized content/);
+  assert.equal(fs.readFileSync(file, 'utf8'), altered);
+});
+
+test('refuses a shadowing AGENTS.override.md without changing files', t => {
+  const dir = home(t);
+  fs.writeFileSync(path.join(dir, 'AGENTS.override.md'), 'custom override');
+  const result = spawnSync(process.execPath, [path.join(here, 'install.mjs'), '--codex-home', dir], { encoding: 'utf8' });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /would shadow AGENTS.md/);
+  assert.deepEqual(fs.readdirSync(dir), ['AGENTS.override.md']);
 });
 
 for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) test(`upgrade backs up and removes ${filename}; dry-run preserves it`, t => {

@@ -38,9 +38,38 @@ function install(directory, dryRun) {
   if (starts !== ends || starts > 1 || (starts && previous.indexOf(end) < previous.indexOf(begin))) {
     throw new Error('malformed or duplicate managed block; refusing to alter existing rules');
   }
-  const next = starts
-    ? previous.slice(0, previous.indexOf(begin)) + block + previous.slice(previous.indexOf(end) + end.length)
-    : previous + (previous ? (previous.endsWith('\n') ? '\n' : '\n\n') : '') + block + '\n';
+  let next;
+  if (starts) {
+    const before = previous.slice(0, previous.indexOf(begin));
+    const managed = previous.slice(previous.indexOf(begin) + begin.length, previous.indexOf(end));
+    const after = previous.slice(previous.indexOf(end) + end.length);
+    const section = /^## (?:3\. )?全局子智能体编排\s*$/m.exec(managed);
+    if (section) {
+      if (/^## (?:3\. )?全局子智能体编排\s*$/m.test(before + after)) {
+        throw new Error('duplicate subagent sections; reconcile AGENTS.md first');
+      }
+      // A previous installation may have placed the section in this block.
+      // Move it outside before replacing the template, preserving its contents.
+      next = `${before}${block}\n\n${managed.slice(section.index).trimEnd()}${after}`;
+    } else {
+      next = before + block + after;
+    }
+  } else {
+    const index = previous.indexOf(template);
+    const exact = index !== -1 && (index === 0 || previous[index - 1] === '\n') &&
+      (index + template.length === previous.length || previous[index + template.length] === '\n');
+    if (exact && previous.indexOf(template, index + 1) === -1) {
+      const rest = previous.slice(0, index) + previous.slice(index + template.length);
+      if (/^(?:# Agent 工作约定|## (?:1\. 工程与协作原则|2\. 面向用户的输出与表达规范))\s*$/m.test(rest)) {
+        throw new Error('duplicate global rules require manual reconciliation before installation');
+      }
+      next = previous.slice(0, index) + block + previous.slice(index + template.length);
+    } else if (exact || /^(?:# Agent 工作约定|## (?:1\. 工程与协作原则|2\. 面向用户的输出与表达规范))\s*$/m.test(previous)) {
+      throw new Error('existing global rules require manual reconciliation before installation');
+    } else {
+      next = previous + (previous ? (previous.endsWith('\n') ? '\n' : '\n\n') : '') + block + '\n';
+    }
+  }
   if (next === previous) { console.log(`unchanged ${target}`); return; }
   if (dryRun === '1') {
     console.log(`would ${stat ? 'back up and update' : 'create'} ${target}\n${block}`);
