@@ -7,7 +7,7 @@
 | 文件 | 安装位置 | 作用 |
 | --- | --- | --- |
 | `agents/worker.toml` | `$CODEX_HOME/agents/` | 模型与 effort 以该 TOML 为准：自主完成目标、边界和完成标准明确的探索、局部方案、实现、调试、测试和修正；关键判断由主智能体负责 |
-| `AGENTS.snippet.md` | `$CODEX_HOME/AGENTS.md` | 创建或只替换 `## 全局子智能体编排` 一节，保留其他内容 |
+| `AGENTS.snippet.md` | `$CODEX_HOME/AGENTS.md` | 创建或只替换 `## 3. 全局子智能体编排` 一节（兼容旧标题），保留其他内容 |
 
 `CODEX_HOME` 未设置时使用 `~/.codex`。角色按职责命名为 `worker`，模型与 effort 见 `agents/worker.toml`；旧调用中的 `luna_worker` 需改为 `worker`。
 

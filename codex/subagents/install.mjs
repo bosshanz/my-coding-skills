@@ -8,7 +8,8 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-export const HEADING = '## 全局子智能体编排';
+export const HEADING = '## 3. 全局子智能体编排';
+const LEGACY_HEADING = '## 全局子智能体编排';
 export const ROLES = ['worker'];
 const REQUIRED = ['name', 'description', 'developer_instructions', 'model', 'model_reasoning_effort'];
 
@@ -38,14 +39,14 @@ export async function validateRole(file) {
 export function upsertSection(previous, snippet) {
   const block = snippet.trimEnd();
   const lines = previous.split('\n');
-  const starts = lines.flatMap((line, i) => (line.trimEnd() === HEADING ? [i] : []));
+  const starts = lines.flatMap((line, i) => ([HEADING, LEGACY_HEADING].includes(line.trimEnd()) ? [i] : []));
   if (starts.length > 1) throw new Error(`duplicate "${HEADING}" sections; reconcile AGENTS.md first`);
   if (!starts.length) {
     if (!previous.trim()) return `${block}\n`;
     return `${previous.replace(/\n*$/, '')}\n\n${block}\n`;
   }
   const start = starts[0];
-  let end = lines.findIndex((line, i) => i > start && /^#{1,2} /.test(line));
+  let end = lines.findIndex((line, i) => i > start && (/^#{1,2} /.test(line) || line.trimEnd() === '<!-- my-coding-skills:global-rules:end -->'));
   if (end === -1) end = lines.length;
   const before = lines.slice(0, start).join('\n');
   const after = lines.slice(end).join('\n');

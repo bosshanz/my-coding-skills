@@ -93,6 +93,15 @@ test('appends the section after existing content', t => {
   assert.equal(fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8'), `# 规则\n\n- 已有\n\n${snippet.trimEnd()}\n`);
 });
 
+test('upgrades legacy headings and preserves managed block boundaries', t => {
+  const dir = home(t);
+  const file = path.join(dir, 'AGENTS.md');
+  fs.writeFileSync(file, '<!-- my-coding-skills:global-rules:start -->\n# 规则\n\n## 全局子智能体编排\n\n旧规则\n<!-- my-coding-skills:global-rules:end -->\n');
+  run(dir);
+  assert.equal(fs.readFileSync(file, 'utf8'), `<!-- my-coding-skills:global-rules:start -->\n# 规则\n\n${snippet.trimEnd()}\n\n<!-- my-coding-skills:global-rules:end -->\n`);
+  assert.match(run(dir), /unchanged/);
+});
+
 for (const filename of ['sol_worker.toml', 'sol-worker.toml', 'sol_deep_worker.toml', 'sol-deep-worker.toml', 'luna-worker.toml', 'luna_worker.toml']) test(`upgrade backs up and removes ${filename}; dry-run preserves it`, t => {
   const dir = home(t);
   fs.mkdirSync(path.join(dir, 'agents'));
